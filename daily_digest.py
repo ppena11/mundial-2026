@@ -31,6 +31,7 @@ except Exception:
     pass
 import predict_match as pm   # reutiliza fit_model, apply_adjustments, one_x_two, MAP, HOSTS
 
+BRAND = "aiwithpedro"
 DISCLAIMER = ("Contenido informativo y de entretenimiento. No es consejo de apuestas ni "
               "garantía de resultados. +18. Juega con responsabilidad.")
 
@@ -81,7 +82,7 @@ def build_digest(target):
     sq = pm.apply_adjustments(atk, dfn)
     def bajas(t): return [n for n,w,av in sq.get(t,{}).get("key_players",[]) if not av]
 
-    md = [f"# ⚽ Mundial 2026 — Pronóstico del día · {fecha_h}\n"]
+    md = [f"# ⚽ {BRAND} · Mundial 2026", f"### Pronóstico del día · {fecha_h}\n"]
     if not games:
         md.append("_Hoy no hay partidos del Mundial._ El torneo arranca el **11 de junio**.\n")
     else:
@@ -101,7 +102,8 @@ def build_digest(target):
         md.append("## 🏆 Carrera por el título (hoy)")
         for t, v in top: md.append(f"- {t}: **{v:.1f}%**")
         md.append("")
-    md.append(f"---\n_{DISCLAIMER}_")
+    md.append(f"---\n**{BRAND}** · Mundial de fútbol 2026\n")
+    md.append(f"_{DISCLAIMER}_")
     text = "\n".join(md)
 
     # HTML simple a partir del markdown (suficiente para email/newsletter)

@@ -62,13 +62,15 @@ def main():
     ax.imshow(grad_rgb.reshape(256, 1, 3), extent=[0, 1, 0, 1], aspect="auto", zorder=0)
 
     # --- cabecera ---
-    ax.text(0.5, 0.957, "MUNDIAL 2026", ha="center", va="center", color=GOLD,
-            fontproperties=black(50), zorder=5)
-    ax.text(0.5, 0.920, "¿QUIÉN SERÁ CAMPEÓN?", ha="center", va="center", color=WHITE,
-            fontproperties=black(31), zorder=5)
-    ax.text(0.5, 0.892, "Modelo + mercado · 20.000 simulaciones · con lesiones",
+    ax.text(0.5, 0.967, "@aiwithpedro", ha="center", va="center", color=CYAN,
+            fontproperties=black(22), zorder=5)
+    ax.text(0.5, 0.933, "MUNDIAL 2026", ha="center", va="center", color=GOLD,
+            fontproperties=black(46), zorder=5)
+    ax.text(0.5, 0.902, "¿QUIÉN SERÁ CAMPEÓN?", ha="center", va="center", color=WHITE,
+            fontproperties=black(29), zorder=5)
+    ax.text(0.5, 0.879, "Modelo + mercado · 20.000 simulaciones · con lesiones",
             ha="center", va="center", color=MUTE, fontproperties=heavy(15), zorder=5)
-    ax.plot([0.1, 0.9], [0.873, 0.873], color=CYAN, lw=2.5, alpha=0.8, zorder=5)
+    ax.plot([0.1, 0.9], [0.863, 0.863], color=CYAN, lw=2.5, alpha=0.8, zorder=5)
 
     # --- barras ---
     top_y, bot_y = 0.848, 0.090

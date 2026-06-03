@@ -192,10 +192,13 @@ muestra del premium) → CTA al **Pase Mundial** → Discord premium → retenci
   Canadá, versión gratis, API para envío automático; alternativa: Buttondown).
 - **Envío:** **email automático** (adaptador Resend ya implementado en `daily_digest.py`).
 
+**Decidido (2026-06-03, cont.):**
+- **Idioma:** solo **español**.
+- **Marca:** **aiwithpedro** (handle **@aiwithpedro**) · producto "Mundial de fútbol 2026".
+  Ya aplicada al digest y al gráfico de TikTok.
+
 **Pendiente de decidir:**
-1. ¿Idioma(s)? (español; ¿también inglés?)
-2. ¿Precio final y peso del "Pase Mundial" vs mensual?
-3. ¿Marca/nombre y handle de las redes?
+1. ¿Precio final y peso del "Pase Mundial" vs mensual? (propuesta: Premium $4/mes, Pase $9.99)
 
 **Estado de construcción:** `daily_digest.py` YA construido y probado (genera el digest de
 todos los partidos del día + carrera por el título, en Markdown/HTML, con envío opcional por
