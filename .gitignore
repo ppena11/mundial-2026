@@ -16,9 +16,11 @@ results.csv
 wc_results_mock.json
 wc_ko_mock.json
 
-# === Digest generado (se regenera/envía cada día) ===
+# === Digest/resumen generado (se regenera cada día/semana) ===
 digest.md
 digest.html
+weekly.md
+weekly.html
 
 # === Artefactos del reel/voz (locales, por día) ===
 voiceover.txt
