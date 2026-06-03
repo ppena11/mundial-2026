@@ -32,15 +32,18 @@ os.environ["PYTHONIOENCODING"] = "utf-8"
 
 LOG=lambda m: print(f"[{datetime.now():%H:%M:%S}] {m}")
 
-FALLOS=[]   # se acumulan aquí para la notificación final
+FALLOS=[]      # todos los fallos (para la notificación)
+CRITICOS=[]    # solo los que deben marcar el run como fallido
 
-def step(name, fn):
+def step(name, fn, critico=False):
     LOG(f"▶ {name}")
     try:
         fn(); LOG(f"  ✓ {name}")
     except Exception as e:
         LOG(f"  ✗ {name} falló: {e}  (sigue con lo demás)")
         FALLOS.append(f"{name}: {e}")
+        if critico:
+            CRITICOS.append(name)
 
 def notify_failures(fallos):
     """Avisa de los fallos por Slack o email, según lo que esté configurado en .env.
@@ -105,14 +108,16 @@ def make_tiktok():
 
 if __name__=="__main__":
     LOG("=== PIPELINE DIARIO MUNDIAL 2026 ===")
-    step("1. Actualizar resultados reales", update_results)
-    step("2. Lesiones (scraper ESPN gratis -> injuries.json)", fetch_players)
-    step("3. Snapshot de cuotas (sharp money)", snapshot_odds)
-    step("4. Simulación 20.000 (modelo v7 + lesiones)", run_sim)
-    step("5. Detección de movimiento de línea", detect_money)
-    step("6. Ensemble modelo+mercado (gráfico)", make_ensemble)
-    step("7. Gráfico TikTok 9:16 (con bajas)", make_tiktok)
+    step("1. Actualizar resultados reales", update_results, critico=True)
+    step("2. Lesiones (scraper ESPN gratis -> injuries.json)", fetch_players)   # opcional
+    step("3. Snapshot de cuotas (sharp money)", snapshot_odds)                   # opcional
+    step("4. Simulación 20.000 (modelo v7 + lesiones)", run_sim, critico=True)
+    step("5. Detección de movimiento de línea", detect_money)                   # opcional
+    step("6. Ensemble modelo+mercado (gráfico)", make_ensemble, critico=True)
+    step("7. Gráfico TikTok 9:16 (con bajas)", make_tiktok, critico=True)
     notify_failures(FALLOS)
     LOG("=== LISTO. Gráficos: champ_today.png, champ_ensemble.png y champ_tiktok.png ===")
     LOG("Nota: las noticias blandas y el video final siguen siendo manuales.")
-    sys.exit(1 if FALLOS else 0)
+    if CRITICOS:
+        LOG(f"Fallaron pasos críticos: {CRITICOS}"); sys.exit(1)
+    sys.exit(0)

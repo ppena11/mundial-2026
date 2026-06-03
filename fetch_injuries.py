@@ -24,7 +24,12 @@ except ImportError:
 
 URL = ("https://www.espn.com/soccer/story/_/id/48572979/"
        "2026-fifa-world-cup-injuries-tracker-which-stars-miss-latest-info")
-HEAD = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
+HEAD = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+                  "(KHTML, like Gecko) Chrome/124.0 Safari/537.36",
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    "Accept-Language": "en-US,en;q=0.9",
+}
 
 # alias de nombres de ESPN (inglés) -> inglés del namemap
 ESPN_ALIASES = {
@@ -77,8 +82,23 @@ def scrape():
     return out
 
 if __name__ == "__main__":
-    data = scrape()
+    import os
+    # Si el scraping falla o devuelve vacío, NO rompemos nada ni borramos lo bueno:
+    # conservamos el injuries.json anterior (las lesiones de selecciones cambian poco).
+    try:
+        data = scrape()
+    except Exception as e:
+        print(f"⚠️  No se pudo leer ESPN ({e}).")
+        if os.path.exists("injuries.json"):
+            print("   Conservo el injuries.json anterior. El pipeline sigue normal.")
+        else:
+            print("   No hay injuries.json previo; el modelo correrá sin ajuste por lesiones.")
+        sys.exit(0)
+
     n_players = sum(len(v) for v in data.values())
+    if n_players == 0 and os.path.exists("injuries.json"):
+        print("⚠️  ESPN devolvió 0 lesiones; conservo el injuries.json anterior."); sys.exit(0)
+
     print(f"Lesiones halladas: {n_players} jugadores en {len(data)} selecciones (fuente: ESPN, gratis)\n")
     for team in sorted(data):
         fuera = [p["player"] for p in data[team] if p["status"] == "out"]
