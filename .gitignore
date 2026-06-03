@@ -12,8 +12,9 @@ logs/
 # === Base de datos re-descargable (la baja el pipeline cada vez) ===
 results.csv
 
-# === Archivo de prueba (forzaría datos falsos en el pipeline si se sube) ===
+# === Archivos de prueba (forzarían datos falsos en el pipeline si se suben) ===
 wc_results_mock.json
+wc_ko_mock.json
 
 # === Archivos temporales del SO ===
 Thumbs.db
