@@ -59,10 +59,14 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add -A
           git commit -m "Contenido del día $(date -u +%Y-%m-%d)" || echo "sin cambios"
-          git pull --rebase --autostash origin main || true
-          git push
+          for i in 1 2 3; do
+            git fetch origin main
+            git merge -X ours --no-edit origin/main || true   # lo recién generado gana en conflicto
+            git push origin HEAD:main && break || sleep 5
+          done
 
       - name: Subir el contenido del día (descargable)
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: contenido-del-dia
