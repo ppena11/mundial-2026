@@ -147,6 +147,51 @@ def descripcion(a, b, pw, pdr, pl, lh, la, is_ko, bajas_a, bajas_b, label):
         return pre + cuerpo[0].upper() + cuerpo[1:] + ". El que pierde queda fuera."
     return cuerpo[0].upper() + cuerpo[1:] + "."
 
+AI_DIGEST_SYS = (
+    "Eres el editor de @aiwithpedro, un creador que enseña inteligencia artificial. Con los datos del día del "
+    "Mundial 2026, devuelve EXCLUSIVAMENTE un objeto JSON (sin ``` ni texto extra) con estas claves:\n"
+    '"titulo": título viral para el post (máx ~70 caracteres, con gancho, máximo 1 emoji).\n'
+    '"intro": 1 o 2 frases de apertura que enganchen, destacando el ángulo más jugoso del día.\n'
+    '"jugada": 1 o 2 frases sobre la jugada de valor del día, explicada simple y atractiva.\n'
+    "Español, cercano y enérgico, apto para todo público, nada de apuestas. Usa SOLO los datos dados; NO inventes números.")
+
+def _digest_summary(fecha_h, data, pick, top, tr):
+    L = [f"Fecha: {fecha_h}."]
+    played = [d for d in data if not d.get("skip")]
+    if not played:
+        L.append("Hoy no hay partidos del Mundial."); return "\n".join(L)
+    L.append("Partidos de hoy:")
+    for d in played:
+        fv, fp = (d["a"], d["pw"]) if d["pw"] >= d["pl"] else (d["b"], d["pl"])
+        L.append(f"- {d['a']} contra {d['b']}: favorito {fv} {round(100*fp)} por ciento; empate "
+                 f"{round(100*d['pdr'])}; marcador probable {d['sx']}-{d['sy']}.")
+    if pick:
+        t, mpb, mkp, edge = pick[1]
+        L.append(f"Jugada de valor: {t} (modelo {round(100*mpb)} por ciento, mercado {round(100*mkp)} por ciento; infravalorada).")
+    if top:
+        L.append("Campeón: " + ", ".join(f"{t} {v} por ciento" for t, v in top[:3]) + ".")
+    if tr.get("n", 0) > 0:
+        L.append(f"Historial del modelo: {tr['aciertos_1x2']} de {tr['n']} aciertos.")
+    return "\n".join(L)
+
+def ai_digest(summary):
+    """Claude redacta titulo + intro + jugada virales (los datos siguen siendo exactos). {} si no hay key."""
+    key = os.environ.get("ANTHROPIC_API_KEY", "").strip()
+    if not key or requests is None:
+        return {}
+    model = os.environ.get("ANTHROPIC_MODEL", "claude-sonnet-4-6")
+    try:
+        r = requests.post("https://api.anthropic.com/v1/messages",
+            headers={"x-api-key": key, "anthropic-version": "2023-06-01", "content-type": "application/json"},
+            json={"model": model, "max_tokens": 500, "system": AI_DIGEST_SYS,
+                  "messages": [{"role": "user", "content": "Datos:\n" + summary}]}, timeout=45)
+        if r.status_code != 200:
+            print(f"(IA digest no disponible: {r.status_code})"); return {}
+        txt = r.json()["content"][0]["text"]
+        return json.loads(txt[txt.find("{"):txt.rfind("}")+1])
+    except Exception as e:
+        print(f"(IA digest falló: {e})"); return {}
+
 def build_digest(target):
     fecha_h = f"{target[6:8]}/{target[4:6]}/{target[0:4]}"
     games = matches_on(target)
@@ -195,12 +240,19 @@ def build_digest(target):
     except Exception:
         tr = {"n": 0}
 
+    # Claude redacta lo viral (título, gancho, jugada); los datos siguen exactos
+    adig = ai_digest(_digest_summary(fecha_h, data, pick, top, tr)) if games else {}
+    titulo_sug = (adig.get("titulo") or "").strip()
+
     # ====== ARMADO DEL EMAIL (estilo newsletter) ======
     md = [f"# ⚽ {BRAND} · Mundial 2026", f"#### Tu pronóstico del {fecha_h} · horas del Este (ET)\n"]
 
     if not games:
         md.append("Hoy **no hay partidos** del Mundial. 😴 Vuelve cuando ruede el balón — el torneo arranca el **11 de junio**.\n")
     else:
+        # --- gancho viral de apertura (Claude) ---
+        if adig.get("intro"):
+            md.append(adig["intro"].strip()); md.append("")
         # --- TL;DR de 10 segundos ---
         md.append("👋 Esto es lo que dice el modelo para hoy, en **10 segundos**:")
         md.append(f"- 📅 **{len(played) or len(games)} partido(s)** en juego")
@@ -219,9 +271,12 @@ def build_digest(target):
             d, (team, mpb, mkp, edge) = pick
             rival = d["b"] if team == d["a"] else d["a"]
             md.append("## 💎 La jugada del día")
-            md.append(f"**{team}** (vs {rival} · {d['m']['label']} · {hora_et(d['m']['utc'])}). "
-                      f"Nuestro modelo le da **{mpb:.0%}** de ganar, pero las casas la pagan como si tuviera solo "
-                      f"**{mkp:.0%}**. Traducción: está **infravalorada**. 👀")
+            if adig.get("jugada"):
+                md.append(adig["jugada"].strip())
+            else:
+                md.append(f"**{team}** (vs {rival} · {d['m']['label']} · {hora_et(d['m']['utc'])}). "
+                          f"Nuestro modelo le da **{mpb:.0%}** de ganar, pero las casas la pagan como si tuviera solo "
+                          f"**{mkp:.0%}**. Traducción: está **infravalorada**. 👀")
             md.append("")
 
         # --- partidos del día (una línea humana cada uno) ---
@@ -278,7 +333,7 @@ def build_digest(target):
         elif ln.strip(): html_lines.append(f"<p style='margin:4px 0'>{b(ln)}</p>")
     html = ("<div style='font-family:Arial,Helvetica,sans-serif;max-width:640px;margin:auto;"
             "color:#0b1437;padding:8px 14px'>" + "".join(html_lines) + "</div>")
-    return text, html, len(games)
+    return text, html, len(games), titulo_sug
 
 def send_email(subject, html):
     key = os.environ.get("RESEND_API_KEY", "").strip()
@@ -295,10 +350,12 @@ def send_email(subject, html):
 
 if __name__ == "__main__":
     target = sys.argv[sys.argv.index("--date")+1] if "--date" in sys.argv else date.today().strftime("%Y%m%d")
-    text, html, ngames = build_digest(target)
+    text, html, ngames, titulo = build_digest(target)
     open("digest.md", "w", encoding="utf-8").write(text)
     open("digest.html", "w", encoding="utf-8").write(html)
     print(text)
+    if titulo:
+        print(f"\n📌 Título sugerido para Substack: {titulo}")
     print(f"\n→ digest.md y digest.html guardados ({ngames} partido(s))")
     if "--send" in sys.argv:
         send_email(f"{BRAND} · Mundial 2026 — Pronóstico del {target[6:8]}/{target[4:6]}", html)
