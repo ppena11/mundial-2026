@@ -145,6 +145,18 @@ def build_digest(target):
     sq = pm.apply_adjustments(atk, dfn)
     def bajas(t): return [n for n,w,av in sq.get(t,{}).get("key_players",[]) if not av]
 
+    # cuotas 1X2 del mercado (de-vigueadas) por partido, para detectar VALUE (1 sola llamada)
+    mkt = {}
+    try:
+        import fetch_odds
+        for ev in fetch_odds.h2h():
+            probs_es = {EN2ES.get(k, k): v for k, v in ev["clean_probs"].items()}
+            teams = [t for t in probs_es if t != "Draw"]
+            if len(teams) == 2:
+                mkt[frozenset(teams)] = probs_es
+    except Exception as e:
+        print(f"(sin cuotas de partido para value: {e})")
+
     md = [f"# ⚽ {BRAND} · Mundial 2026", f"### Pronóstico del día · {fecha_h} _(horas en ET)_\n"]
     if not games:
         md.append("_Hoy no hay partidos del Mundial._ El torneo arranca el **11 de junio**.\n")
@@ -161,6 +173,18 @@ def build_digest(target):
             md.append(f"**{a} vs {b}**")
             md.append(f"- **1** {a}: **{100*pw:.0f}%** · **X** Empate: **{100*pdr:.0f}%** · **2** {b}: **{100*pl:.0f}%**")
             md.append(f"- Goles esperados: {a} {lh:.2f} – {la:.2f} {b} · Marcador más probable: **{sx}-{sy}**")
+            # mercado + value (si hay cuotas del partido)
+            mp = mkt.get(frozenset((a, b)))
+            if mp:
+                ma, mx, mb = mp.get(a), mp.get("Draw"), mp.get(b)
+                if ma is not None and mx is not None and mb is not None:
+                    vals = []
+                    if pw >= 0.12 and pw > ma * 1.10: vals.append(f"1 ({a})")
+                    if pdr > mx * 1.10: vals.append("X")
+                    if pl >= 0.12 and pl > mb * 1.10: vals.append(f"2 ({b})")
+                    linea = f"- 💰 Mercado: 1 {100*ma:.0f}% · X {100*mx:.0f}% · 2 {100*mb:.0f}%"
+                    if vals: linea += f"  → 💎 **VALUE** en {', '.join(vals)}"
+                    md.append(linea)
             md.append(f"- 📝 {descripcion(a,b,pw,pdr,pl,lh,la,m['is_ko'],ba,bb,m['label'])}")
             if ba: md.append(f"- ⚠️ Bajas {a}: {', '.join(ba)}")
             if bb: md.append(f"- ⚠️ Bajas {b}: {', '.join(bb)}")
