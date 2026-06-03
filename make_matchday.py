@@ -107,17 +107,19 @@ def main(target):
         if d["vc"]:
             ax.text(0.915,yc+rh*0.28,f"VALOR: {d['vc'][0][0]}",ha="right",va="center",color=GOLD_DK,fontproperties=blk(13),zorder=5)
         afav = pw>=pl
-        # nombres + banderas (favorito resaltado en su color)
-        flag(a,0.10,yc+rh*0.06,zoom=0.26); ax.text(0.14,yc+rh*0.06,a.upper(),ha="left",va="center",
-             color=(GREEN if afav else INK),fontproperties=blk(18),zorder=5)
-        flag(b,0.90,yc+rh*0.06,zoom=0.26); ax.text(0.86,yc+rh*0.06,b.upper(),ha="right",va="center",
-             color=(GOLD_DK if not afav else INK),fontproperties=blk(18),zorder=5)
+        # nombres + banderas (favorito resaltado en su color) + MARCADOR PREVISTO al centro
+        flag(a,0.095,yc+rh*0.10,zoom=0.25); ax.text(0.135,yc+rh*0.10,a.upper(),ha="left",va="center",
+             color=(GREEN if afav else INK),fontproperties=blk(17),zorder=5)
+        flag(b,0.905,yc+rh*0.10,zoom=0.25); ax.text(0.865,yc+rh*0.10,b.upper(),ha="right",va="center",
+             color=(GOLD_DK if not afav else INK),fontproperties=blk(17),zorder=5)
+        ax.text(0.50,yc+rh*0.28,"marcador previsto",ha="center",va="center",color=SUB,fontproperties=hvy(10),zorder=5)
+        ax.text(0.50,yc+rh*0.10,f"{d['sx']} - {d['sy']}",ha="center",va="center",color=INK,fontproperties=blk(19),zorder=5)
         # porcentajes grandes (favorito más grande)
-        ax.text(0.14,yc-rh*0.13,f"{100*pw:.0f}%",ha="left",va="center",color=GREEN,fontproperties=blk(20 if afav else 15),zorder=5)
+        ax.text(0.135,yc-rh*0.13,f"{100*pw:.0f}%",ha="left",va="center",color=GREEN,fontproperties=blk(20 if afav else 15),zorder=5)
         ax.text(0.50,yc-rh*0.13,f"empate {100*pdr:.0f}%",ha="center",va="center",color=SUB,fontproperties=hvy(13),zorder=5)
-        ax.text(0.86,yc-rh*0.13,f"{100*pl:.0f}%",ha="right",va="center",color=GOLD_DK,fontproperties=blk(20 if not afav else 15),zorder=5)
+        ax.text(0.865,yc-rh*0.13,f"{100*pl:.0f}%",ha="right",va="center",color=GOLD_DK,fontproperties=blk(20 if not afav else 15),zorder=5)
         # barra fina de proporción
-        x0,x1=0.14,0.86; W=x1-x0; ybar=yc-rh*0.31; hb=rh*0.075; x=x0
+        x0,x1=0.135,0.865; W=x1-x0; ybar=yc-rh*0.31; hb=rh*0.075; x=x0
         for frac,col in [(pw,GREEN),(pdr,GREYBAR),(pl,GOLDBAR)]:
             ax.add_patch(plt.Rectangle((x,ybar),W*frac,hb,fc=col,ec="none",zorder=4)); x+=W*frac
 
