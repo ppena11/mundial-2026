@@ -127,7 +127,7 @@ ESPN="https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world"
 EN2ES={en:es for es,en in MAP.items()}
 EN2ES.update({"Czechia":"Chequia","Czech Republic":"Chequia","USA":"Estados Unidos","United States":"Estados Unidos",
               "South Korea":"Corea del Sur","Korea Republic":"Corea del Sur","IR Iran":"Iran","Türkiye":"Turquia",
-              "Bosnia & Herzegovina":"Bosnia","Bosnia and Herzegovina":"Bosnia","Côte d'Ivoire":"Costa de Marfil"})
+              "Bosnia & Herzegovina":"Bosnia","Bosnia and Herzegovina":"Bosnia","Bosnia-Herzegovina":"Bosnia","Côte d'Ivoire":"Costa de Marfil"})
 KO_SLUGS={"round-of-32","round-of-16","quarterfinals","semifinals","final","3rd-place"}
 
 def _get(url):

@@ -42,7 +42,8 @@ ESPN = "https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world"
 EN2ES = {en: es for es, en in pm.MAP.items()}
 EN2ES.update({"Czechia":"Chequia","Czech Republic":"Chequia","USA":"Estados Unidos",
               "United States":"Estados Unidos","South Korea":"Corea del Sur","IR Iran":"Iran",
-              "Türkiye":"Turquia","Bosnia & Herzegovina":"Bosnia","Côte d'Ivoire":"Costa de Marfil"})
+              "Türkiye":"Turquia","Bosnia & Herzegovina":"Bosnia","Bosnia-Herzegovina":"Bosnia",
+              "Bosnia and Herzegovina":"Bosnia","Côte d'Ivoire":"Costa de Marfil","Cabo Verde":"Cabo Verde"})
 
 def _get(url):
     try:

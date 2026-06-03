@@ -32,7 +32,7 @@ def _en2es():
     m.update({"Czechia":"Chequia", "Czech Republic":"Chequia", "USA":"Estados Unidos",
               "United States":"Estados Unidos", "Korea Republic":"Corea del Sur",
               "South Korea":"Corea del Sur", "IR Iran":"Iran", "Türkiye":"Turquia",
-              "Bosnia & Herzegovina":"Bosnia", "Bosnia and Herzegovina":"Bosnia",
+              "Bosnia & Herzegovina":"Bosnia", "Bosnia and Herzegovina":"Bosnia", "Bosnia-Herzegovina":"Bosnia",
               "Côte d'Ivoire":"Costa de Marfil", "Cape Verde Islands":"Cabo Verde"})
     return m
 
