@@ -202,13 +202,14 @@ def build_digest(target):
                       f"(_edge +{(edge-1)*100:.0f}%_).")
             md.append("")
         md.append("Probabilidades del modelo (Dixon-Coles + 20.000 simulaciones):\n")
-        # --- 2ª pasada: renderizar cada partido ---
+        # --- 2ª pasada: renderizar cada partido (título: partido · horario · grupo/ronda) ---
         for d in data:
-            m = d["m"]; head = f"### {m['label']} · {hora_et(m['utc'])}"
+            m = d["m"]; hora = hora_et(m["utc"])
             if d.get("skip"):
-                md.append(f"{head}\n**{d['a']} vs {d['b']}** _(equipo por definir)_\n"); continue
+                md.append(f"### {m['label']} · {hora}")
+                md.append(f"_{d['a']} vs {d['b']} — equipos por definir_\n"); continue
             a, b = d["a"], d["b"]
-            md.append(head); md.append(f"**{a} vs {b}**")
+            md.append(f"### {a} vs {b} · {hora} · {m['label']}")
             md.append(f"- **1** {a}: **{100*d['pw']:.0f}%** · **X** Empate: **{100*d['pdr']:.0f}%** · **2** {b}: **{100*d['pl']:.0f}%**")
             md.append(f"- Goles esperados: {a} {d['lh']:.2f} – {d['la']:.2f} {b} · Marcador más probable: **{d['sx']}-{d['sy']}**")
             if d["ma"] is not None:
