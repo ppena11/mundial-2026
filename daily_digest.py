@@ -166,37 +166,58 @@ def build_digest(target):
     except Exception as e:
         print(f"(sin cuotas de partido para value: {e})")
 
+    VAL_MARGIN = 1.20   # el modelo debe superar al mercado por 20%+ para marcar value
+    VAL_FLOOR = 0.20    # y la prob del modelo debe ser >= 20% (evita longshots ruidosos)
+
     md = [f"# ⚽ {BRAND} · Mundial 2026", f"### Pronóstico del día · {fecha_h} _(horas en ET)_\n"]
     if not games:
         md.append("_Hoy no hay partidos del Mundial._ El torneo arranca el **11 de junio**.\n")
     else:
-        md.append(f"**{len(games)} partido(s) hoy.** Probabilidades del modelo (Dixon-Coles + 20.000 simulaciones):\n")
+        # --- 1ª pasada: calcular todo y juntar candidatos a value (solo 1 y 2, no empate) ---
+        data = []
         for m in sorted(games, key=lambda x: x["utc"]):
             a, b = m["a"], m["b"]
-            head = f"### {m['label']} · {hora_et(m['utc'])}"
             if a not in pm.MAP or b not in pm.MAP:
-                md.append(f"{head}\n**{a} vs {b}** _(equipo fuera del modelo)_\n"); continue
+                data.append({"m": m, "a": a, "b": b, "skip": True}); continue
             pw, pdr, pl, lh, la, (sx, sy) = pm.one_x_two(a, b, atk, dfn, c, g, rho, local_anfitrion=True)
-            ba, bb = bajas(a), bajas(b)
-            md.append(head)
-            md.append(f"**{a} vs {b}**")
-            md.append(f"- **1** {a}: **{100*pw:.0f}%** · **X** Empate: **{100*pdr:.0f}%** · **2** {b}: **{100*pl:.0f}%**")
-            md.append(f"- Goles esperados: {a} {lh:.2f} – {la:.2f} {b} · Marcador más probable: **{sx}-{sy}**")
-            # mercado + value (si hay cuotas del partido)
             mp = mkt.get(frozenset((a, b)))
+            ma = mx = mb = None; vcands = []
             if mp:
                 ma, mx, mb = mp.get(a), mp.get("Draw"), mp.get(b)
-                if ma is not None and mx is not None and mb is not None:
-                    vals = []
-                    if pw >= 0.12 and pw > ma * 1.10: vals.append(f"1 ({a})")
-                    if pdr > mx * 1.10: vals.append("X")
-                    if pl >= 0.12 and pl > mb * 1.10: vals.append(f"2 ({b})")
-                    linea = f"- 💰 Mercado: 1 {100*ma:.0f}% · X {100*mx:.0f}% · 2 {100*mb:.0f}%"
-                    if vals: linea += f"  → 💎 **VALUE** en {', '.join(vals)}"
-                    md.append(linea)
-            md.append(f"- 📝 {descripcion(a,b,pw,pdr,pl,lh,la,m['is_ko'],ba,bb,m['label'])}")
-            if ba: md.append(f"- ⚠️ Bajas {a}: {', '.join(ba)}")
-            if bb: md.append(f"- ⚠️ Bajas {b}: {', '.join(bb)}")
+                if ma and pw >= VAL_FLOOR and pw > ma * VAL_MARGIN: vcands.append((a, pw, ma, pw/ma))
+                if mb and pl >= VAL_FLOOR and pl > mb * VAL_MARGIN: vcands.append((b, pl, mb, pl/mb))
+            data.append({"m": m, "a": a, "b": b, "pw": pw, "pdr": pdr, "pl": pl, "lh": lh, "la": la,
+                         "sx": sx, "sy": sy, "ma": ma, "mx": mx, "mb": mb, "vcands": vcands,
+                         "ba": bajas(a), "bb": bajas(b)})
+        # --- Pick del día: el value de mayor "edge" (modelo/mercado) de toda la jornada ---
+        allv = [(d, v) for d in data if not d.get("skip") for v in d["vcands"]]
+        pick = max(allv, key=lambda x: x[1][3]) if allv else None
+        md.append(f"**{len(games)} partidos hoy.**\n")
+        if pick:
+            d, (team, mpb, mkp, edge) = pick
+            rival = d["b"] if team == d["a"] else d["a"]
+            md.append("## 💎 PICK DEL DÍA")
+            md.append(f"**{team}** vs {rival} ({d['m']['label']}, {hora_et(d['m']['utc'])}) — "
+                      f"el modelo le da **{100*mpb:.0f}%** y el mercado solo **{100*mkp:.0f}%** "
+                      f"(_edge +{(edge-1)*100:.0f}%_).")
+            md.append("")
+        md.append("Probabilidades del modelo (Dixon-Coles + 20.000 simulaciones):\n")
+        # --- 2ª pasada: renderizar cada partido ---
+        for d in data:
+            m = d["m"]; head = f"### {m['label']} · {hora_et(m['utc'])}"
+            if d.get("skip"):
+                md.append(f"{head}\n**{d['a']} vs {d['b']}** _(equipo por definir)_\n"); continue
+            a, b = d["a"], d["b"]
+            md.append(head); md.append(f"**{a} vs {b}**")
+            md.append(f"- **1** {a}: **{100*d['pw']:.0f}%** · **X** Empate: **{100*d['pdr']:.0f}%** · **2** {b}: **{100*d['pl']:.0f}%**")
+            md.append(f"- Goles esperados: {a} {d['lh']:.2f} – {d['la']:.2f} {b} · Marcador más probable: **{d['sx']}-{d['sy']}**")
+            if d["ma"] is not None:
+                linea = f"- 💰 Mercado: 1 {100*d['ma']:.0f}% · X {100*d['mx']:.0f}% · 2 {100*d['mb']:.0f}%"
+                if d["vcands"]: linea += f"  → 💎 **VALUE** en {', '.join(v[0] for v in d['vcands'])}"
+                md.append(linea)
+            md.append(f"- 📝 {descripcion(a,b,d['pw'],d['pdr'],d['pl'],d['lh'],d['la'],m['is_ko'],d['ba'],d['bb'],m['label'])}")
+            if d["ba"]: md.append(f"- ⚠️ Bajas {a}: {', '.join(d['ba'])}")
+            if d["bb"]: md.append(f"- ⚠️ Bajas {b}: {', '.join(d['bb'])}")
             md.append("")
     top = champion_top()
     if top:
