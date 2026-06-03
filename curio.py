@@ -98,27 +98,33 @@ def web_news():
 # ---------- Claude (gancho viral) ----------
 CURIO_SYS = (
     "Eres el guionista y editor de @aiwithpedro, un creador que enseña inteligencia artificial. "
-    "HOY NO HAY PARTIDOS del Mundial 2026: tu trabajo es mantener a la audiencia enganchada con un dato "
-    "curioso o una noticia, dejando claro que hoy no rueda el balon. Te doy material REAL (una noticia con su "
-    "fuente y/o un dato EXACTO de mis simulaciones). Devuelve EXCLUSIVAMENTE un objeto JSON (sin ``` ni texto "
-    "extra) con EXACTAMENTE estas claves:\n"
+    "HOY NO HAY PARTIDOS del Mundial 2026: tu trabajo es mantener a la audiencia enganchada, dejando claro que hoy "
+    "no rueda el balon. Te indico el ESTADO del torneo y te doy material REAL (una noticia con su fuente y/o un dato "
+    "EXACTO de mis simulaciones). Devuelve EXCLUSIVAMENTE un objeto JSON (sin ``` ni texto extra) con EXACTAMENTE "
+    "estas claves:\n"
     '"titulo": titulo viral para el post (max ~70 caracteres, gancho, max 1 emoji).\n'
     '"gancho": 1 o 2 frases para el digest; engancha y deja claro que hoy no hay partidos.\n'
     '"voz": guion HABLADO de 45 a 70 palabras (~20 s). Gancho fuerte al inicio; SIN emojis ni simbolos (lo lee un '
-    "sintetizador de voz); numeros con digitos y 'por ciento'; cierra con la cuenta regresiva e invita al Substack "
-    "('el link esta en mi perfil') y firma como aiwithpedro.\n"
-    '"card": frase MUY corta y potente para una imagen (max 8 palabras, sin emojis).\n'
+    "sintetizador de voz); numeros con digitos y 'por ciento'; invita al Substack ('el link esta en mi perfil') y "
+    "firma como aiwithpedro.\n"
+    '"card": resumen MUY corto y potente para una imagen (max 8 palabras, sin emojis, sin cortar a media palabra). '
+    "Si hay noticia, es el titular resumido de forma viral.\n"
     '"caption": 1 o 2 lineas para TikTok, con gancho; puede llevar 1 o 2 emojis; NO incluyas hashtags aqui.\n'
     '"hashtags": lista de EXACTAMENTE 5 hashtags virales; incluye #Mundial2026, #IA y #parati.\n'
+    "REGLAS DE ESTADO: si el torneo AUN NO empieza, puedes usar la cuenta regresiva (faltan N dias). "
+    "Si el torneo YA EMPEZO (dia de descanso), NO menciones ninguna cuenta regresiva ni 'faltan dias'; "
+    "manda al frente la NOTICIA mas viral del Mundial y cierra invitando a volver cuando haya partidos.\n"
     "Si el material trae una NOTICIA, MENCIONA la fuente en el gancho y en la voz, y NO agregues datos que no esten "
     "en el material. Espanol cercano y energico, apto para todo publico, nada de apuestas. NUNCA inventes numeros.")
 
 def _material(p):
     L = []
     if p["days"] > 0:
-        L.append(f"Faltan {p['days']} dias para el inicio del Mundial 2026 (11 de junio).")
+        L.append(f"ESTADO: PRE-TORNEO. Faltan {p['days']} dias para el inicio del Mundial 2026 (11 de junio). "
+                 "Puedes usar la cuenta regresiva.")
     else:
-        L.append("Hoy es un dia de descanso del Mundial (sin partidos), pero el torneo sigue.")
+        L.append("ESTADO: TORNEO EN CURSO, hoy es un dia de descanso (sin partidos). NO uses cuenta regresiva; "
+                 "lleva al frente la noticia mas viral del Mundial.")
     if p["news"]:
         L.append(f"NOTICIA REAL (fuente {p['news']['source']}): {p['news']['title']}")
     L.append("DATO EXACTO DE MIS SIMULACIONES (usalo, no inventes otros numeros): " + p["model_fact"])
@@ -162,19 +168,20 @@ def build(target):
     p = gather(target)
     ai = ai_curio(_material(p))
     days, news, mf, champ = p["days"], p["news"], p["model_fact"], p["champ"]
-    cd = f"Faltan {days} dias para el Mundial." if days > 0 else "Hoy descansan, pero el Mundial sigue."
+    pre = days > 0                                  # pre-torneo (cuenta regresiva) vs torneo en curso
+    cd = f"Faltan {days} dias para el Mundial." if pre else "El Mundial continua cuando vuelvan los partidos."
     via = f" (via {news['source']})" if news else ""
 
     titulo = (ai.get("titulo") or "").strip() or (
-        (news["title"][:64]) if news else ("Cuenta regresiva: " + (f"faltan {days} dias" if days > 0 else "el Mundial sigue")))
+        (news["title"][:64]) if news else (f"Cuenta regresiva: faltan {days} dias" if pre else "El Mundial, en pausa"))
     gancho = (ai.get("gancho") or "").strip() or (
         (f"Hoy no rueda el balon, pero hay novedades: {news['title']}{via}. {cd}") if news
         else f"Hoy no hay partidos, pero mi IA no descansa. {mf} {cd}")
     voz = (ai.get("voz") or "").strip() or (
-        f"Hoy no hay partidos del Mundial, pero te dejo un dato. "
+        "Hoy no hay partidos del Mundial, pero te dejo algo. "
         + (f"{news['title']}, segun {news['source']}. " if news else f"{mf} ")
         + f"{cd} El analisis completo lo tienes gratis en mi Substack, el link esta en mi perfil. "
-          f"Soy {BRAND}, nos vemos manana.")
+          f"Soy {BRAND}, nos vemos pronto.")
     card = (ai.get("card") or "").strip() or ((news["title"][:60]) if news else mf[:60])
     caption = (ai.get("caption") or "").strip() or (
         "Hoy sin partidos, pero el Mundial no para 👀 Analisis gratis en mi Substack (link en bio).")

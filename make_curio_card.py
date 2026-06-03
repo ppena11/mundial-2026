@@ -72,7 +72,7 @@ def render(target):
             yy -= 0.048
 
     # ===== pie =====
-    ax.text(0.5, 0.10, f"Vuelve {'el 11 de junio' if days > 0 else 'mañana'} · análisis gratis en mi Substack",
+    ax.text(0.5, 0.10, f"Vuelve {'el 11 de junio' if days > 0 else 'cuando rueden los partidos'} · análisis gratis en mi Substack",
             ha="center", va="center", color=WHITE, fontproperties=hvy(16), zorder=5)
     ax.text(0.5, 0.040, "Modelo propio · 20.000 simulaciones · contenido informativo y de entretenimiento",
             ha="center", va="center", color=MUTE, fontproperties=reg(11), zorder=5)

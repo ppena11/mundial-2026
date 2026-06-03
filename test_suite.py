@@ -270,6 +270,10 @@ ok("curio: voz apta para TTS (sin # ni emojis)",
    "#" not in cu["voz"] and all(ord(ch) < 0x2190 for ch in cu["voz"]), "la voz trae símbolos/emojis")
 ok("curio: caption final arma >=5 hashtags",
    (cu["caption"].rstrip() + " " + " ".join(cu["hashtags"])).count("#") >= 5, "menos de 5")
+cu2 = curio.build("20260620")   # torneo YA empezado (día de descanso) -> sin cuenta regresiva
+ok("curio en torneo NO usa cuenta regresiva",
+   "altan" not in cu2["voz"] and "altan" not in cu2["card"] and "altan" not in cu2["gancho"],
+   f"voz={cu2['voz'][:90]}")
 import make_curio_card
 try:
     make_curio_card.render("20260603")
