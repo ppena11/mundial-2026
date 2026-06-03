@@ -102,16 +102,25 @@ def fetch_all():
         out.append({"a": a, "b": b, "utc": dt_utc, "label": label, "is_ko": is_ko})
     return out
 
+def _et(dt_utc):
+    return datetime.strptime(dt_utc[:16], "%Y-%m-%dT%H:%M") + ET_OFFSET
+
 def hora_et(dt_utc):
     try:
-        d = datetime.strptime(dt_utc[:16], "%Y-%m-%dT%H:%M") + ET_OFFSET
-        return d.strftime("%H:%M") + " ET"
+        return _et(dt_utc).strftime("%H:%M") + " ET"
     except Exception:
         return "—"
 
+def et_date(dt_utc):
+    """Fecha del partido en hora del Este (ET), como 'YYYY-MM-DD'."""
+    try:
+        return _et(dt_utc).strftime("%Y-%m-%d")
+    except Exception:
+        return dt_utc[:10]
+
 def matches_on(yyyymmdd):
     iso = f"{yyyymmdd[0:4]}-{yyyymmdd[4:6]}-{yyyymmdd[6:8]}"
-    return [m for m in fetch_all() if m["utc"][:10] == iso]
+    return [m for m in fetch_all() if et_date(m["utc"]) == iso]   # día en ET, no UTC
 
 def champion_top(n=5):
     try:
@@ -194,6 +203,16 @@ def build_digest(target):
         md.append("## 🏆 Carrera por el título (hoy)")
         for t, v in top: md.append(f"- {t}: **{v:.1f}%**")
         md.append("")
+    # historial de aciertos (transparencia) — lo genera track_record.py
+    try:
+        tr = json.load(open("track_record.json", encoding="utf-8"))
+        if tr.get("n", 0) > 0:
+            md.append("## 📈 Historial del modelo")
+            md.append(f"- Aciertos 1X2: **{tr['aciertos_1x2']}/{tr['n']} ({tr['tasa_1x2']}%)** · "
+                      f"marcador exacto {tr['tasa_exacta']}% · Brier {tr['brier']} _(más bajo = mejor)_")
+            md.append("")
+    except Exception:
+        pass
     md.append(f"---\n**{BRAND}** · Mundial de fútbol 2026\n")
     md.append(f"_{DISCLAIMER}_")
     text = "\n".join(md)
