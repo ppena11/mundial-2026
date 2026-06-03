@@ -11,13 +11,43 @@ Incluye:
 USO: python make_weekly.py [--date YYYYMMDD]   (por defecto: hoy; el --date fija "el lunes")
 Genera: weekly.md y weekly.html
 """
-import sys, json
+import sys, os, json
 from datetime import datetime, timedelta, date
 import daily_digest as dd
 import predict_match as pm
 import track_record as tr
+try:
+    import requests
+except ImportError:
+    requests = None
 
 BRAND = "aiwithpedro"
+
+AI_WEEKLY_SYS = (
+    "Eres el editor de @aiwithpedro, un creador que enseña inteligencia artificial. Con los datos de la SEMANA "
+    "del Mundial 2026, devuelve EXCLUSIVAMENTE un objeto JSON (sin ``` ni texto extra) con estas claves:\n"
+    '"titulo": título viral para el resumen semanal (máx ~70 caracteres, con gancho, máximo 1 emoji).\n'
+    '"intro": 1 o 2 frases de apertura que resuman la semana y enganchen (cómo le fue al modelo, el dato más jugoso).\n'
+    '"cierre": 1 frase motivadora que invite a seguir el pronóstico diario en TikTok @aiwithpedro y el Substack.\n'
+    "Español, cercano y enérgico, apto para todo público, nada de apuestas. Usa SOLO los datos dados; NO inventes números.")
+
+def ai_weekly(summary):
+    """Claude redacta titulo + intro + cierre virales del semanal. {} si no hay key."""
+    key = os.environ.get("ANTHROPIC_API_KEY", "").strip()
+    if not key or requests is None:
+        return {}
+    model = os.environ.get("ANTHROPIC_MODEL", "claude-sonnet-4-6")
+    try:
+        r = requests.post("https://api.anthropic.com/v1/messages",
+            headers={"x-api-key": key, "anthropic-version": "2023-06-01", "content-type": "application/json"},
+            json={"model": model, "max_tokens": 500, "system": AI_WEEKLY_SYS,
+                  "messages": [{"role": "user", "content": "Datos de la semana:\n" + summary}]}, timeout=45)
+        if r.status_code != 200:
+            print(f"(IA semanal no disponible: {r.status_code})"); return {}
+        txt = r.json()["content"][0]["text"]
+        return json.loads(txt[txt.find("{"):txt.rfind("}")+1])
+    except Exception as e:
+        print(f"(IA semanal falló: {e})"); return {}
 
 def build(today_str):
     today = datetime.strptime(today_str, "%Y%m%d").date()
@@ -58,12 +88,30 @@ def build(today_str):
 
     # ---------- texto ----------
     rng = f"{wk_start.strftime('%d/%m')} al {(today-timedelta(days=1)).strftime('%d/%m')}"
-    md = [f"## ⚽ El Mundial con IA — resumen de la semana ({rng})\n"]
+
+    # ---- resumen de datos para Claude ----
+    destac = (surprises[:1] + confident[:2]) if surprises else confident[:2]
+    sm = [f"Semana del {rng}."]
+    if n > 0:
+        sm.append(f"Récord: {hits} de {n} aciertos ({round(100*hits/n)} por ciento).")
+        for r in destac:
+            sm.append(f"Acertó {r['a']} contra {r['b']} ({r.get('marcador_real','')}).")
+    if champ:
+        sm.append("Campeón: " + ", ".join(f"{t} {v} por ciento" for t, v in champ[:3]) + ".")
+    for u in claves[:4]:
+        sm.append(f"Próximo clave: {u['a']} contra {u['b']}, favorito {u['fav']} {round(100*u['fp'])} por ciento.")
+    aw = ai_weekly("\n".join(sm))
+    titulo = (aw.get("titulo") or "").strip()
+
+    # ---- armado (Claude pone lo viral; los datos van exactos) ----
+    head = titulo or "⚽ El Mundial con IA — resumen de la semana"
+    md = [f"## {head}", f"_Semana {rng}_\n"]
+    if aw.get("intro"):
+        md.append(aw["intro"].strip()); md.append("")
 
     if n > 0:
-        md.append(f"### 📈 ¿Cómo nos fue?")
+        md.append("### 📈 ¿Cómo nos fue?")
         md.append(f"El modelo acertó **{hits} de {n}** partidos esta semana (**{100*hits/n:.0f}%**).")
-        destac = (surprises[:1] + confident[:2]) if surprises else confident[:2]
         seen = set()
         for r in destac:
             if r["key"] in seen: continue
@@ -85,7 +133,10 @@ def build(today_str):
                       f"{u['a']} vs {u['b']} — favorita **{u['fav']} ({u['fp']:.0%})**")
         md.append("")
 
-    md.append(f"_Sigue el pronóstico **diario** en mi TikTok **@{BRAND}** y en el archivo del Substack._")
+    if aw.get("cierre"):
+        md.append(f"_{aw['cierre'].strip()}_")
+    else:
+        md.append(f"_Sigue el pronóstico **diario** en mi TikTok **@{BRAND}** y en el archivo del Substack._")
     md.append(f"_Contenido informativo y de entretenimiento. Predicciones de un modelo, no certezas._")
     text = "\n".join(md)
 
@@ -98,12 +149,14 @@ def build(today_str):
         elif ln.startswith("- "): html.append(f"<p style='margin:3px 0'>{b(ln[2:])}</p>")
         elif ln.strip(): html.append(f"<p style='margin:4px 0'>{b(ln)}</p>")
     html_doc = "<div style='font-family:Arial,sans-serif;max-width:640px;color:#0b1437'>" + "".join(html) + "</div>"
-    return text, html_doc, n, len(claves)
+    return text, html_doc, n, len(claves), titulo
 
 if __name__ == "__main__":
     target = sys.argv[sys.argv.index("--date")+1] if "--date" in sys.argv else date.today().strftime("%Y%m%d")
-    text, html, n, k = build(target)
+    text, html, n, k, titulo = build(target)
     open("weekly.md","w",encoding="utf-8").write(text)
     open("weekly.html","w",encoding="utf-8").write(html)
     print(text)
+    if titulo:
+        print(f"\n📌 Título sugerido: {titulo}")
     print(f"\n→ weekly.md y weekly.html guardados ({n} partidos calificados, {k} clave próximos)")
