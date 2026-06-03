@@ -140,7 +140,7 @@ def main(target):
                 ha="center",va="center",color=MUTE,fontproperties=hvy(15),zorder=5)
     else:
         ax.text(0.5,0.072,"El historial de aciertos aparece cuando arranque el torneo",ha="center",va="center",color=MUTE,fontproperties=hvy(14),zorder=5)
-    ax.text(0.5,0.040,"Modelo propio · 20.000 simulaciones · contenido informativo · +18",ha="center",va="center",color=MUTE,fontproperties=reg(11),zorder=5)
+    ax.text(0.5,0.040,"Modelo propio · 20.000 simulaciones · contenido informativo y de entretenimiento",ha="center",va="center",color=MUTE,fontproperties=reg(11),zorder=5)
     fig.savefig("matchday.png",facecolor=BG)
     print("→ matchday.png guardado (1080x1920)")
 

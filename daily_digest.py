@@ -25,8 +25,8 @@ except Exception:
 import predict_match as pm   # fit_model, apply_adjustments, one_x_two, MAP, HOSTS
 
 BRAND = "aiwithpedro"
-DISCLAIMER = ("Contenido informativo y de entretenimiento. No es consejo de apuestas ni "
-              "garantía de resultados. +18. Juega con responsabilidad.")
+DISCLAIMER = ("Contenido informativo y de entretenimiento. Son predicciones de un modelo "
+              "estadístico, no certezas.")
 ET_OFFSET = timedelta(hours=-4)   # America/Toronto = EDT (UTC-4) durante jun–jul 2026
 
 GROUPS = {"A":["Mexico","Sudafrica","Corea del Sur","Chequia"],"B":["Canada","Bosnia","Catar","Suiza"],
