@@ -169,68 +169,99 @@ def build_digest(target):
     VAL_MARGIN = 1.20   # el modelo debe superar al mercado por 20%+ para marcar value
     VAL_FLOOR = 0.20    # y la prob del modelo debe ser >= 20% (evita longshots ruidosos)
 
-    md = [f"# ⚽ {BRAND} · Mundial 2026", f"### Pronóstico del día · {fecha_h} _(horas en ET)_\n"]
+    # --- calcular todo (probabilidades + candidatos a "valor") ---
+    data = []
+    for m in sorted(games, key=lambda x: x["utc"]):
+        a, b = m["a"], m["b"]
+        if a not in pm.MAP or b not in pm.MAP:
+            data.append({"m": m, "a": a, "b": b, "skip": True}); continue
+        pw, pdr, pl, lh, la, (sx, sy) = pm.one_x_two(a, b, atk, dfn, c, g, rho, local_anfitrion=True)
+        mp = mkt.get(frozenset((a, b))); vcands = []
+        if mp:
+            ma, mb = mp.get(a), mp.get(b)
+            if ma and pw >= VAL_FLOOR and pw > ma * VAL_MARGIN: vcands.append((a, pw, ma, pw/ma))
+            if mb and pl >= VAL_FLOOR and pl > mb * VAL_MARGIN: vcands.append((b, pl, mb, pl/mb))
+        data.append({"m": m, "a": a, "b": b, "pw": pw, "pdr": pdr, "pl": pl, "sx": sx, "sy": sy,
+                     "vcands": vcands, "ba": bajas(a), "bb": bajas(b)})
+    played = [d for d in data if not d.get("skip")]
+    allv = [(d, v) for d in played for v in d["vcands"]]
+    pick = max(allv, key=lambda x: x[1][3]) if allv else None
+    def fav(d): return (d["a"], d["pw"]) if d["pw"] >= d["pl"] else (d["b"], d["pl"])
+    clearest = max(played, key=lambda d: max(d["pw"], d["pl"]), default=None)
+    evenest  = min(played, key=lambda d: max(d["pw"], d["pl"]), default=None)
+    top = champion_top()
+    try:
+        tr = json.load(open("track_record.json", encoding="utf-8"))
+    except Exception:
+        tr = {"n": 0}
+
+    # ====== ARMADO DEL EMAIL (estilo newsletter) ======
+    md = [f"# ⚽ {BRAND} · Mundial 2026", f"#### Tu pronóstico del {fecha_h} · horas del Este (ET)\n"]
+
     if not games:
-        md.append("_Hoy no hay partidos del Mundial._ El torneo arranca el **11 de junio**.\n")
+        md.append("Hoy **no hay partidos** del Mundial. 😴 Vuelve cuando ruede el balón — el torneo arranca el **11 de junio**.\n")
     else:
-        # --- 1ª pasada: calcular todo y juntar candidatos a value (solo 1 y 2, no empate) ---
-        data = []
-        for m in sorted(games, key=lambda x: x["utc"]):
-            a, b = m["a"], m["b"]
-            if a not in pm.MAP or b not in pm.MAP:
-                data.append({"m": m, "a": a, "b": b, "skip": True}); continue
-            pw, pdr, pl, lh, la, (sx, sy) = pm.one_x_two(a, b, atk, dfn, c, g, rho, local_anfitrion=True)
-            mp = mkt.get(frozenset((a, b)))
-            ma = mx = mb = None; vcands = []
-            if mp:
-                ma, mx, mb = mp.get(a), mp.get("Draw"), mp.get(b)
-                if ma and pw >= VAL_FLOOR and pw > ma * VAL_MARGIN: vcands.append((a, pw, ma, pw/ma))
-                if mb and pl >= VAL_FLOOR and pl > mb * VAL_MARGIN: vcands.append((b, pl, mb, pl/mb))
-            data.append({"m": m, "a": a, "b": b, "pw": pw, "pdr": pdr, "pl": pl, "lh": lh, "la": la,
-                         "sx": sx, "sy": sy, "ma": ma, "mx": mx, "mb": mb, "vcands": vcands,
-                         "ba": bajas(a), "bb": bajas(b)})
-        # --- Pick del día: el value de mayor "edge" (modelo/mercado) de toda la jornada ---
-        allv = [(d, v) for d in data if not d.get("skip") for v in d["vcands"]]
-        pick = max(allv, key=lambda x: x[1][3]) if allv else None
-        md.append(f"**{len(games)} partidos hoy.**\n")
+        # --- TL;DR de 10 segundos ---
+        md.append("👋 Esto es lo que dice el modelo para hoy, en **10 segundos**:")
+        md.append(f"- 📅 **{len(played) or len(games)} partido(s)** en juego")
+        if pick:
+            dp, (pteam, *_ ) = pick
+            md.append(f"- 💎 **La jugada del día:** {pteam} (el mercado la está subestimando)")
+        if clearest:
+            ft, fp = fav(clearest)
+            md.append(f"- 🔥 **El resultado más claro:** {ft} ({fp:.0%}) en {clearest['a']} vs {clearest['b']}")
+        if evenest and evenest is not clearest:
+            md.append(f"- ⚖️ **El más impredecible:** {evenest['a']} vs {evenest['b']}")
+        md.append("")
+
+        # --- jugada del día (explicada en simple) ---
         if pick:
             d, (team, mpb, mkp, edge) = pick
             rival = d["b"] if team == d["a"] else d["a"]
-            md.append("## 💎 PICK DEL DÍA")
-            md.append(f"**{team}** vs {rival} ({d['m']['label']}, {hora_et(d['m']['utc'])}) — "
-                      f"el modelo le da **{100*mpb:.0f}%** y el mercado solo **{100*mkp:.0f}%** "
-                      f"(_edge +{(edge-1)*100:.0f}%_).")
+            md.append("## 💎 La jugada del día")
+            md.append(f"**{team}** (vs {rival} · {d['m']['label']} · {hora_et(d['m']['utc'])}). "
+                      f"Nuestro modelo le da **{mpb:.0%}** de ganar, pero las casas la pagan como si tuviera solo "
+                      f"**{mkp:.0%}**. Traducción: está **infravalorada**. 👀")
             md.append("")
-        md.append("**Probabilidades del modelo** — 1 = gana el primero · X = empate · 2 = gana el segundo · 🎯 marcador más probable\n")
-        # --- 2ª pasada: UNA LÍNEA por partido ---
+
+        # --- partidos del día (una línea humana cada uno) ---
+        md.append("## ⚽ Los partidos de hoy")
+        md.append("_El % es la probabilidad de ganar según el modelo. 🎯 = marcador más probable._\n")
         for d in data:
             m = d["m"]; hora = hora_et(m["utc"])
             if d.get("skip"):
-                md.append(f"- 🕒 **{hora}** · {m['label']} — _{d['a']} vs {d['b']} (por definir)_")
-                continue
-            a, b = d["a"], d["b"]
-            p1 = f"**{100*d['pw']:.0f}%**" if d['pw'] >= d['pl'] else f"{100*d['pw']:.0f}%"
-            p2 = f"**{100*d['pl']:.0f}%**" if d['pl'] > d['pw'] else f"{100*d['pl']:.0f}%"
-            val = f" · 💎 **VALOR: {d['vcands'][0][0]}**" if d["vcands"] else ""
-            inj = " · ⚠️ bajas" if (d["ba"] or d["bb"]) else ""
-            md.append(f"- 🕒 **{hora}** · {m['label']} · **{a} vs {b}** — 1 {p1} · X {100*d['pdr']:.0f}% · 2 {p2} · 🎯{d['sx']}-{d['sy']}{val}{inj}")
+                md.append(f"- ⏳ **{hora} · {m['label']}** — {d['a']} vs {d['b']} _(rivales por definir)_"); continue
+            a, b = d["a"], d["b"]; pdr = d["pdr"]
+            ft, fp = fav(d)
+            if fp >= 0.62:   tag, frase = "🔥", f"**{ft}** gran favorito (**{fp:.0%}**)"
+            elif fp >= 0.45: tag, frase = "🟢", f"favorita **{ft}** (**{fp:.0%}**)"
+            else:            tag, frase = "⚖️", f"muy parejo — leve ventaja **{ft}** (**{fp:.0%}**)"
+            val = f" · 💎 **valor en {d['vcands'][0][0]}**" if d["vcands"] else ""
+            inj = " · ⚠️ con bajas" if (d["ba"] or d["bb"]) else ""
+            md.append(f"- {tag} **{hora} · {a} vs {b}** — {frase} · empate {pdr:.0%} · 🎯 {d['sx']}-{d['sy']}{val}{inj}")
         md.append("")
-    top = champion_top()
+
+    # --- campeón (storytelling) ---
     if top:
-        md.append("## 🏆 Carrera por el título (hoy)")
-        for t, v in top: md.append(f"- {t}: **{v:.1f}%**")
+        medals = ["🥇", "🥈", "🥉"]
+        parts = [f"{medals[i] if i < 3 else '•'} {t} {v:.1f}%" for i, (t, v) in enumerate(top)]
+        md.append("## 🏆 ¿Quién va ganando el Mundial?")
+        md.append("Probabilidad de salir campeón (20.000 simulaciones de hoy):")
+        md.append("- " + "  ".join(parts))
         md.append("")
-    # historial de aciertos (transparencia) — lo genera track_record.py
-    try:
-        tr = json.load(open("track_record.json", encoding="utf-8"))
-        if tr.get("n", 0) > 0:
-            md.append("## 📈 Historial del modelo")
-            md.append(f"- Aciertos 1X2: **{tr['aciertos_1x2']}/{tr['n']} ({tr['tasa_1x2']}%)** · "
-                      f"marcador exacto {tr['tasa_exacta']}% · Brier {tr['brier']} _(más bajo = mejor)_")
-            md.append("")
-    except Exception:
-        pass
-    md.append(f"---\n**{BRAND}** · Mundial de fútbol 2026\n")
+
+    # --- historial (transparencia, en simple) ---
+    if tr.get("n", 0) > 0:
+        md.append("## 📈 ¿Le venimos atinando?")
+        md.append(f"De los últimos **{tr['n']} partidos**, acertamos quién ganó en **{tr['aciertos_1x2']} "
+                  f"(≈{tr['tasa_1x2']:.0f}%)**. Te mostramos los aciertos **y** los fallos — transparencia total. "
+                  f"_(Calibración Brier {tr['brier']}; más bajo = mejor.)_")
+        md.append("")
+
+    # --- cierre / CTA ---
+    md.append("---")
+    md.append("¿Te sirvió? **Reenvíaselo a un amigo futbolero** 🙌  ·  Responde este correo con tus dudas.")
+    md.append(f"**{BRAND}** · Mundial de fútbol 2026")
     md.append(f"_{DISCLAIMER}_")
     text = "\n".join(md)
 
@@ -238,7 +269,8 @@ def build_digest(target):
     def b(s): return re.sub(r"\*\*(.+?)\*\*", r"<b>\1</b>", s).replace("_", "")
     html_lines = []
     for ln in md:
-        if ln.startswith("### "): html_lines.append(f"<h3 style='margin:14px 0 2px'>{b(ln[4:])}</h3>")
+        if ln.startswith("#### "): html_lines.append(f"<p style='color:#5566aa;margin:0 0 10px;font-size:14px'>{b(ln[5:])}</p>")
+        elif ln.startswith("### "): html_lines.append(f"<h3 style='margin:14px 0 2px'>{b(ln[4:])}</h3>")
         elif ln.startswith("## "): html_lines.append(f"<h2 style='color:#1f3b8b;margin:18px 0 6px'>{b(ln[3:])}</h2>")
         elif ln.startswith("# "): html_lines.append(f"<h1 style='margin:0'>{b(ln[2:])}</h1>")
         elif ln.startswith("- "): html_lines.append(f"<p style='margin:4px 0;line-height:1.45'>{b(ln[2:])}</p>")
