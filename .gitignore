@@ -29,6 +29,9 @@ matchday.mp4
 matchday.png
 _frame*.png
 
+# === Banderas cacheadas (se re-descargan de flagcdn) ===
+flags/
+
 # === Archivos temporales del SO ===
 Thumbs.db
 .DS_Store
