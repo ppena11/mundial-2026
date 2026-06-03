@@ -43,21 +43,32 @@ def _summary(fh, played, pick, clearest, tr):
         L.append(f"Resultado más claro: {clearest['fav']} con {round(100*clearest['fp'])} por ciento en {clearest['a']} contra {clearest['b']}.")
     if tr.get("n", 0) > 0:
         L.append(f"Historial del modelo: {tr['aciertos_1x2']} aciertos de {tr['n']} ({tr['tasa_1x2']} por ciento).")
+    try:
+        champ = json.load(open("champ_today.json", encoding="utf-8"))["campeon"]
+        playing = {d["a"] for d in played} | {d["b"] for d in played}
+        stars = [t for t in champ if t in playing][:2]
+        if stars:
+            L.append("Equipos más buscados que juegan hoy (úsalos en los hashtags): " + ", ".join(stars) + ".")
+    except Exception:
+        pass
     return "\n".join(L)
 
 AI_SYSTEM = (
-    "Eres el guionista de @aiwithpedro, un creador que enseña inteligencia artificial. Escribes el GUION "
-    "HABLADO de un video corto de TikTok (35 a 45 segundos, 90 a 120 palabras) sobre los pronósticos del "
-    "Mundial 2026 que hace su propia IA. Estilo: cercano, enérgico, claro, español neutro, primera persona "
-    "('mi IA', 'mi modelo'). REGLAS ESTRICTAS: sin emojis ni símbolos (lo lee un sintetizador de voz); escribe "
-    "los números con dígitos y la palabra 'por ciento'; di 'contra' en vez de 'vs'; arranca con un GANCHO fuerte "
-    "en la primera frase; destaca el dato más jugoso del día (la jugada de valor o una sorpresa); cierra "
-    "invitando a ver el análisis completo gratis en el Substack (link en la bio) y firma diciendo que es "
-    "aiwithpedro, inteligencia artificial aplicada al fútbol. Nada de apuestas; apto para todo público. "
-    "Varía el arranque cada día para que no suene repetitivo. Devuelve SOLO el guion, sin comillas ni títulos.")
+    "Eres el guionista y community manager de @aiwithpedro, un creador que enseña inteligencia artificial. "
+    "Con los datos del día del Mundial 2026, genera el contenido de un video de TikTok y devuelve EXCLUSIVAMENTE "
+    "un objeto JSON válido (sin ``` ni texto extra) con EXACTAMENTE estas claves:\n"
+    '"voiceover": el guion HABLADO, 80 a 100 palabras (~35 s). Gancho fuerte en la primera frase; destaca el dato '
+    "más jugoso del día (la jugada de valor o una sorpresa); cierra invitando al Substack ('el link está en la bio') "
+    "y firma como aiwithpedro. SIN emojis ni símbolos (lo lee un sintetizador de voz); números con dígitos y "
+    "'por ciento'; 'contra' en vez de 'vs'; varía el arranque para no repetir.\n"
+    '"caption": 1 o 2 líneas cortas para la descripción de TikTok, con gancho; puede llevar 1 o 2 emojis; menciona '
+    "que el análisis completo está gratis en el Substack (link en bio). NO incluyas hashtags aquí.\n"
+    '"hashtags": lista de EXACTAMENTE 5 hashtags, los más virales; incluye #Mundial2026, los 2 equipos más buscados '
+    "que juegan hoy, y #IA y #parati.\n"
+    "Español neutro, cercano y enérgico. Apto para todo público, nada de apuestas.")
 
-def ai_voiceover(summary):
-    """Pide a Claude que redacte el guion del día. Devuelve None si no hay API key o falla."""
+def ai_content(summary):
+    """Claude redacta guion + caption + 5 hashtags. Devuelve (voiceover, caption, hashtags) o None."""
     key = os.environ.get("ANTHROPIC_API_KEY", "").strip()
     if not key or requests is None:
         return None
@@ -65,14 +76,18 @@ def ai_voiceover(summary):
     try:
         r = requests.post("https://api.anthropic.com/v1/messages",
             headers={"x-api-key": key, "anthropic-version": "2023-06-01", "content-type": "application/json"},
-            json={"model": model, "max_tokens": 600, "system": AI_SYSTEM,
+            json={"model": model, "max_tokens": 800, "system": AI_SYSTEM,
                   "messages": [{"role": "user", "content": "Datos de hoy:\n" + summary}]}, timeout=45)
         if r.status_code != 200:
-            print(f"(guion IA no disponible: {r.status_code} {r.text[:150]})"); return None
-        txt = r.json()["content"][0]["text"].strip().strip('"').strip()
-        return txt or None
+            print(f"(IA no disponible: {r.status_code} {r.text[:150]})"); return None
+        txt = r.json()["content"][0]["text"]
+        data = json.loads(txt[txt.find("{"):txt.rfind("}")+1])   # extrae el JSON
+        vo = (data.get("voiceover") or "").strip()
+        cap = (data.get("caption") or "").strip()
+        tags = [str(t).strip() for t in data.get("hashtags", []) if str(t).strip()]
+        return vo, cap, tags
     except Exception as e:
-        print(f"(guion IA falló: {e})"); return None
+        print(f"(IA falló: {e})"); return None
 
 def day_hashtags(played):
     """Exactamente 5 hashtags virales, 2 según los equipos estrella del día."""
@@ -138,16 +153,25 @@ def build(target):
             S.append(f"Y para que confíes en el modelo: llevamos {tr['aciertos_1x2']} aciertos de {tr['n']} partidos.")
     S.append(f"El análisis completo de todos los partidos lo tienes gratis en mi Substack, el link está en mi perfil. "
              f"Soy {BRAND}, esto es inteligencia artificial aplicada al fútbol. Nos vemos mañana.")
-    voiceover=" ".join(S)   # plantilla (respaldo)
-    # guion fresco/viral con IA (Claude); si no hay ANTHROPIC_API_KEY, usa la plantilla
-    ai = ai_voiceover(_summary(target[6:8]+"/"+target[4:6]+"/"+target[0:4], played, pick, clearest, tr))
-    if ai:
-        voiceover = ai
-
-    # ---------- CAPTION TikTok ----------
+    voiceover=" ".join(S)   # guion de respaldo (plantilla)
+    # caption de respaldo (plantilla)
     cap_pick = f" Pick del día: {pick[1][0]}." if pick else ""
-    caption=(f"Mi IA predice el Mundial 2026 ⚽🤖{cap_pick} Análisis completo gratis en mi Substack (link en bio). "
-             + day_hashtags(played))
+    caption = (f"Mi IA predice el Mundial 2026 ⚽🤖{cap_pick} Análisis completo gratis en mi Substack (link en bio). "
+               + day_hashtags(played))
+
+    # ---- Claude redacta guion + caption + 5 hashtags (si hay ANTHROPIC_API_KEY) ----
+    fh = target[6:8]+"/"+target[4:6]+"/"+target[0:4]
+    res = ai_content(_summary(fh, played, pick, clearest, tr))
+    if res:
+        vo_ai, cap_ai, tags_ai = res
+        if vo_ai:
+            voiceover = vo_ai
+        if cap_ai:
+            tags = [(t if t.startswith("#") else "#"+t) for t in tags_ai]
+            for t in day_hashtags(played).split():     # completa a 5 si Claude devolvió menos
+                if len(tags) >= 5: break
+                if t not in tags: tags.append(t)
+            caption = cap_ai.rstrip() + " " + " ".join(tags[:5])
     return voiceover, caption, len(played)
 
 if __name__=="__main__":
