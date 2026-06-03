@@ -12,7 +12,7 @@ USO:
 
 NOTA: si el XI aún no está publicado (faltan >1-2h), ESPN devuelve 0 titulares y se avisa.
 """
-import sys, json
+import sys, json, urllib.parse
 try:
     import requests
 except ImportError:
@@ -20,7 +20,10 @@ except ImportError:
 
 LEAGUE = "fifa.world"
 BASE = f"https://site.api.espn.com/apis/site/v2/sports/soccer/{LEAGUE}"
-HEAD = {"User-Agent": "Mozilla/5.0"}
+HEAD = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+                      "(KHTML, like Gecko) Chrome/124.0 Safari/537.36"}
+# Proxy de respaldo si la IP directa está bloqueada (p.ej. servidores de GitHub).
+PROXY = "https://api.codetabs.com/v1/proxy/?quest="
 
 # ESPN (inglés) -> español del modelo. Partimos de namemap y añadimos alias de ESPN.
 def _en2es():
@@ -34,7 +37,16 @@ def _en2es():
     return m
 
 def get(path, **params):
-    return requests.get(f"{BASE}/{path}", headers=HEAD, params=params, timeout=25).json()
+    url = f"{BASE}/{path}"
+    if params:
+        url += "?" + urllib.parse.urlencode(params)
+    # 1) directo
+    try:
+        return requests.get(url, headers=HEAD, timeout=25).json()
+    except Exception:
+        pass
+    # 2) respaldo vía proxy (IP no bloqueada por ESPN)
+    return requests.get(PROXY + urllib.parse.quote(url, safe=""), headers=HEAD, timeout=45).json()
 
 def fixtures(dates=None):
     """Próximos partidos del Mundial con su ID de ESPN."""
