@@ -20,6 +20,12 @@ wc_ko_mock.json
 digest.md
 digest.html
 
+# === Artefactos del reel/voz (locales, por día) ===
+voiceover.txt
+caption.txt
+voice.mp3
+matchday.mp4
+
 # === Archivos temporales del SO ===
 Thumbs.db
 .DS_Store
