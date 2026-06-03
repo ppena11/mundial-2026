@@ -16,11 +16,15 @@ FRAGILIDAD (honestidad): depende del HTML de ESPN. Si ESPN cambia la maqueta,
 hay que reajustar los patrones de abajo (busca 'PATRONES'). El modelo NO se rompe
 si esto falla: player_layer usa injuries.json solo si existe.
 """
-import sys, json, re
+import sys, json, re, urllib.parse
 try:
     import requests
 except ImportError:
     print("Falta requests:  pip install requests"); sys.exit(1)
+
+# Proxy gratuito de respaldo: si la IP directa está bloqueada (p.ej. servidores de
+# GitHub Actions en Azure), reintenta por aquí, que sale con la IP del proxy.
+PROXY = "https://api.codetabs.com/v1/proxy/?quest="
 
 URL = ("https://www.espn.com/soccer/story/_/id/48572979/"
        "2026-fifa-world-cup-injuries-tracker-which-stars-miss-latest-info")
@@ -41,8 +45,23 @@ ESPN_ALIASES = {
 def _strip_tags(s):
     return re.sub(r"<[^>]+>", "", s).strip()
 
+def _fetch_html():
+    """Trae el HTML del artículo. 1) directo; 2) si la IP está bloqueada, vía proxy."""
+    # 1) intento directo
+    try:
+        r = requests.get(URL, headers=HEAD, timeout=25); r.encoding = "utf-8"
+        if "Will miss the World Cup" in r.text:
+            return r.text, "directo"
+    except Exception:
+        pass
+    # 2) respaldo vía proxy (IP no bloqueada por ESPN)
+    r = requests.get(PROXY + urllib.parse.quote(URL, safe=""), headers=HEAD, timeout=45)
+    r.encoding = "utf-8"
+    return r.text, "proxy"
+
 def scrape():
-    html = requests.get(URL, headers=HEAD, timeout=25).text
+    html, via = _fetch_html()
+    print(f"(fuente ESPN: {via})")
     # --- PATRONES (ajustar aquí si ESPN cambia la maqueta) ---
     # 3 secciones por estado
     i_out  = html.find("Will miss the World Cup")
