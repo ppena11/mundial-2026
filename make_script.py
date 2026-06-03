@@ -17,6 +17,30 @@ VAL_MARGIN, VAL_FLOOR = 1.20, 0.20
 
 def pct(x): return f"{round(100*x)} por ciento"
 
+# nombres con espacios/acentos -> hashtag limpio
+_TAG = {"Estados Unidos":"USA","Corea del Sur":"Corea","Arabia Saudi":"ArabiaSaudita",
+        "Paises Bajos":"PaisesBajos","Nueva Zelanda":"NuevaZelanda","Cabo Verde":"CaboVerde",
+        "Costa de Marfil":"CostaDeMarfil","R.D. Congo":"Congo","Sudafrica":"Sudafrica"}
+def _tag(team): return "#" + _TAG.get(team, team.replace(" ", ""))
+
+def day_hashtags(played):
+    """Exactamente 5 hashtags virales, 2 según los equipos estrella del día."""
+    teams = []
+    try:
+        champ = json.load(open("champ_today.json", encoding="utf-8"))["campeon"]  # ordenado por prob desc
+        playing = {d["a"] for d in played} | {d["b"] for d in played}
+        teams = [t for t in champ if t in playing][:2]   # los 2 más "buscados" que juegan hoy
+    except Exception:
+        pass
+    tags = ["#Mundial2026"] + [_tag(t) for t in teams] + ["#IA", "#parati"]
+    for fill in ("#futbol", "#WorldCup2026"):            # relleno si hoy no hay equipos (raro)
+        if len(tags) >= 5: break
+        if fill not in tags: tags.append(fill)
+    out = []
+    for t in tags:
+        if t not in out: out.append(t)
+    return " ".join(out[:5])
+
 def build(target):
     games = dd.matches_on(target)
     atk,dfn,c,g,rho = pm.fit_model(); pm.apply_adjustments(atk,dfn)
@@ -67,8 +91,8 @@ def build(target):
 
     # ---------- CAPTION TikTok ----------
     cap_pick = f" Pick del día: {pick[1][0]}." if pick else ""
-    HASHTAGS = "#Mundial2026 #WorldCup2026 #futbol #IA #parati"   # SIEMPRE exactamente 5, los más virales
-    caption=(f"Mi IA predice el Mundial 2026 ⚽🤖{cap_pick} Análisis completo gratis en mi Substack (link en bio). {HASHTAGS}")
+    caption=(f"Mi IA predice el Mundial 2026 ⚽🤖{cap_pick} Análisis completo gratis en mi Substack (link en bio). "
+             + day_hashtags(played))
     return voiceover, caption, len(played)
 
 if __name__=="__main__":
