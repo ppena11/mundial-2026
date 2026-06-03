@@ -23,8 +23,11 @@ digest.html
 # === Artefactos del reel/voz (locales, por día) ===
 voiceover.txt
 caption.txt
+hook.txt
 voice.mp3
 matchday.mp4
+matchday.png
+_frame*.png
 
 # === Archivos temporales del SO ===
 Thumbs.db

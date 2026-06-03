@@ -65,6 +65,15 @@ def build(target):
              f"Soy {BRAND}, esto es inteligencia artificial aplicada al fútbol. Nos vemos mañana.")
     voiceover=" ".join(S)
 
+    # ---------- HOOK quemado (3 s) — corto y en mayúsculas ----------
+    if pick:
+        hook = f"PICK DEL DÍA\n{pick[1][0].upper()}"
+    elif clearest:
+        hook = "¿QUIÉN GANA HOY?\nLO DICE MI IA"
+    else:
+        hook = "MUNDIAL 2026\nLO PREDICE MI IA"
+    open("hook.txt", "w", encoding="utf-8").write(hook)
+
     # ---------- CAPTION TikTok ----------
     fh=f"{target[6:8]}/{target[4:6]}"
     cap_pick = f" Pick del día: {pick[1][0]}." if pick else ""
