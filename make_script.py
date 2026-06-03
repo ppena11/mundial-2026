@@ -130,6 +130,11 @@ def build(target):
             if mb and pl>=VAL_FLOOR and pl>mb*VAL_MARGIN: vc.append((b,pl,mb,pl/mb))
         fav,fp=(a,pw) if pw>=pl else (b,pl)
         played.append({"a":a,"b":b,"fav":fav,"fp":fp,"vc":vc})
+    if not played:                                   # día sin partidos -> dato curioso (voz + caption)
+        import curio
+        cu = curio.ensure(target)
+        caption = cu["caption"].rstrip() + " " + " ".join(cu["hashtags"][:5])
+        return cu["voz"], caption, 0
     pickall=[(d,v) for d in played for v in d["vc"]]
     pick=max(pickall,key=lambda x:x[1][3]) if pickall else None
     clearest=max(played,key=lambda d:d["fp"],default=None)

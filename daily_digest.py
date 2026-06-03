@@ -248,7 +248,18 @@ def build_digest(target):
     md = [f"# ⚽ {BRAND} · Mundial 2026", f"#### Tu pronóstico del {fecha_h} · horas del Este (ET)\n"]
 
     if not games:
-        md.append("Hoy **no hay partidos** del Mundial. 😴 Vuelve cuando ruede el balón — el torneo arranca el **11 de junio**.\n")
+        import curio
+        cu = curio.ensure(target)
+        titulo_sug = cu.get("titulo") or titulo_sug
+        if cu.get("gancho"):
+            md.append(cu["gancho"].strip()); md.append("")
+        cd = f"Faltan **{cu['days']} días** para el inicio (11 de junio)." if cu.get("days", 0) > 0 else "Hoy es **día de descanso** del torneo."
+        md.append(f"📅 Hoy **no hay partidos** del Mundial. {cd}")
+        if cu.get("is_news") and cu.get("link"):
+            md.append(f"📰 **Dato del día:** {cu.get('card','')} — fuente: [{cu.get('source','')}]({cu['link']}).")
+        elif cu.get("card"):
+            md.append(f"🤖 **Dato del día (mi modelo):** {cu['card']}")
+        md.append("")
     else:
         # --- gancho viral de apertura (Claude) ---
         if adig.get("intro"):

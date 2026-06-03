@@ -1,0 +1,203 @@
+"""
+curio.py — MOTOR DE "DATO CURIOSO" para los días SIN partido del Mundial.
+Mantiene la cadencia diaria (video + digest + caption) cuando no rueda el balón.
+
+Regla de oro (credibilidad de @aiwithpedro):
+  - Las NOTICIAS salen de un feed real (Google News RSS) y SIEMPRE se cita la fuente + link.
+  - Claude solo reformula con gancho; NUNCA inventa números ni noticias.
+  - Si no hay noticia relevante, cae a un DATO EXACTO de las 20.000 simulaciones del modelo.
+
+Genera/lee curio_today.json (cacheado por fecha) para que el video, el digest y el caption
+del día cuenten exactamente lo mismo. Una sola llamada a Claude y una sola al feed por día.
+
+USO:  python curio.py [--date YYYYMMDD]
+"""
+import sys, os, json, urllib.parse
+from datetime import datetime, date
+try:
+    import requests
+except ImportError:
+    requests = None
+try:
+    from env_loader import load_env; load_env()
+except Exception:
+    pass
+
+KICKOFF = date(2026, 6, 11)
+CURIO_FILE = "curio_today.json"
+BRAND = "aiwithpedro"
+HEAD = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+                      "(KHTML, like Gecko) Chrome/124.0 Safari/537.36"}
+PROXY = "https://api.codetabs.com/v1/proxy/?quest="
+NEWS_RSS = "https://news.google.com/rss/search?q={q}&hl=es-419&gl=US&ceid=US:es-419"
+NEWS_QUERY = ('("Mundial 2026" OR "World Cup 2026") '
+              '(IA OR "inteligencia artificial" OR tecnologia OR VAR OR FIFA OR balon)')
+
+# ---------- material seguro ----------
+def days_to_kickoff(target):
+    td = datetime.strptime(target, "%Y%m%d").date()
+    return (KICKOFF - td).days
+
+def _champ():
+    try:
+        return list(json.load(open("champ_today.json", encoding="utf-8"))["campeon"].items())
+    except Exception:
+        return []
+
+def model_fact(champ, days):
+    """Un dato EXACTO derivado de las simulaciones; rota por día para no repetir."""
+    if not champ:
+        return "Mi inteligencia artificial corre 20.000 simulaciones del Mundial cada dia."
+    f = []
+    t1, v1 = champ[0]
+    f.append(f"Segun mis 20.000 simulaciones, el favorito al titulo es {t1} con {round(v1)} por ciento.")
+    if len(champ) >= 2:
+        t2, v2 = champ[1]
+        f.append(f"La pelea por el numero uno esta cerrada: {t1} con {round(v1)} por ciento contra {t2} con {round(v2)} por ciento.")
+    if len(champ) >= 3:
+        t3, v3 = champ[2]
+        f.append(f"Dato que sorprende: mi IA mete a {t3} entre los tres favoritos, con {round(v3)} por ciento de ser campeon.")
+    dh = [(t, v) for t, v in champ[5:11] if v >= 1.0]
+    if dh:
+        t, v = dh[0]
+        f.append(f"El tapado del Mundial: {t} sale campeon en {round(v)} de cada 100 simulaciones, y casi nadie habla de el.")
+    return f[days % len(f)] if f else ""
+
+def web_news():
+    """Top noticia REAL (IA x Mundial) del feed de Google News. None si no hay nada relevante."""
+    if requests is None:
+        return None
+    import xml.etree.ElementTree as ET
+    url = NEWS_RSS.format(q=urllib.parse.quote(NEWS_QUERY))
+    raw = None
+    for u in (url, PROXY + urllib.parse.quote(url, safe="")):
+        try:
+            r = requests.get(u, headers=HEAD, timeout=20)
+            if r.status_code == 200 and "<item" in r.text:
+                raw = r.text; break
+        except Exception:
+            pass
+    if not raw:
+        return None
+    try:
+        root = ET.fromstring(raw)
+        for item in root.iter("item"):
+            title = (item.findtext("title") or "").strip()
+            link = (item.findtext("link") or "").strip()
+            src_el = item.find("source")
+            source = (src_el.text.strip() if src_el is not None and src_el.text else "")
+            low = title.lower()
+            if any(k in low for k in ("mundial", "world cup", "fifa", "2026")):
+                if " - " in title and not source:        # Google News: "Título - Fuente"
+                    title, source = title.rsplit(" - ", 1)
+                return {"title": title.strip(), "source": (source or "Google News").strip(), "link": link}
+    except Exception:
+        pass
+    return None
+
+# ---------- Claude (gancho viral) ----------
+CURIO_SYS = (
+    "Eres el guionista y editor de @aiwithpedro, un creador que enseña inteligencia artificial. "
+    "HOY NO HAY PARTIDOS del Mundial 2026: tu trabajo es mantener a la audiencia enganchada con un dato "
+    "curioso o una noticia, dejando claro que hoy no rueda el balon. Te doy material REAL (una noticia con su "
+    "fuente y/o un dato EXACTO de mis simulaciones). Devuelve EXCLUSIVAMENTE un objeto JSON (sin ``` ni texto "
+    "extra) con EXACTAMENTE estas claves:\n"
+    '"titulo": titulo viral para el post (max ~70 caracteres, gancho, max 1 emoji).\n'
+    '"gancho": 1 o 2 frases para el digest; engancha y deja claro que hoy no hay partidos.\n'
+    '"voz": guion HABLADO de 45 a 70 palabras (~20 s). Gancho fuerte al inicio; SIN emojis ni simbolos (lo lee un '
+    "sintetizador de voz); numeros con digitos y 'por ciento'; cierra con la cuenta regresiva e invita al Substack "
+    "('el link esta en mi perfil') y firma como aiwithpedro.\n"
+    '"card": frase MUY corta y potente para una imagen (max 8 palabras, sin emojis).\n'
+    '"caption": 1 o 2 lineas para TikTok, con gancho; puede llevar 1 o 2 emojis; NO incluyas hashtags aqui.\n'
+    '"hashtags": lista de EXACTAMENTE 5 hashtags virales; incluye #Mundial2026, #IA y #parati.\n'
+    "Si el material trae una NOTICIA, MENCIONA la fuente en el gancho y en la voz, y NO agregues datos que no esten "
+    "en el material. Espanol cercano y energico, apto para todo publico, nada de apuestas. NUNCA inventes numeros.")
+
+def _material(p):
+    L = []
+    if p["days"] > 0:
+        L.append(f"Faltan {p['days']} dias para el inicio del Mundial 2026 (11 de junio).")
+    else:
+        L.append("Hoy es un dia de descanso del Mundial (sin partidos), pero el torneo sigue.")
+    if p["news"]:
+        L.append(f"NOTICIA REAL (fuente {p['news']['source']}): {p['news']['title']}")
+    L.append("DATO EXACTO DE MIS SIMULACIONES (usalo, no inventes otros numeros): " + p["model_fact"])
+    if p["champ"]:
+        L.append("Top campeon hoy: " + ", ".join(f"{t} {round(v)} por ciento" for t, v in p["champ"][:3]) + ".")
+    return "\n".join(L)
+
+def ai_curio(material):
+    key = os.environ.get("ANTHROPIC_API_KEY", "").strip()
+    if not key or requests is None:
+        return {}
+    model = os.environ.get("ANTHROPIC_MODEL", "claude-sonnet-4-6")
+    try:
+        r = requests.post("https://api.anthropic.com/v1/messages",
+            headers={"x-api-key": key, "anthropic-version": "2023-06-01", "content-type": "application/json"},
+            json={"model": model, "max_tokens": 700, "system": CURIO_SYS,
+                  "messages": [{"role": "user", "content": "Material de hoy:\n" + material}]}, timeout=45)
+        if r.status_code != 200:
+            print(f"(IA curio no disponible: {r.status_code})"); return {}
+        txt = r.json()["content"][0]["text"]
+        return json.loads(txt[txt.find("{"):txt.rfind("}")+1])
+    except Exception as e:
+        print(f"(IA curio falló: {e})"); return {}
+
+# ---------- ensamblado + caché ----------
+def _five(tags, champ):
+    base = ["#Mundial2026"] + ["#" + t.replace(" ", "").replace(".", "") for t, _ in champ[:2]] + ["#IA", "#parati"]
+    out = []
+    for t in [str(x) for x in tags] + base:
+        t = t if t.startswith("#") else "#" + t
+        if t not in out:
+            out.append(t)
+    return out[:5]
+
+def gather(target):
+    days = days_to_kickoff(target)
+    champ = _champ()
+    return {"days": days, "champ": champ, "model_fact": model_fact(champ, days), "news": web_news()}
+
+def build(target):
+    p = gather(target)
+    ai = ai_curio(_material(p))
+    days, news, mf, champ = p["days"], p["news"], p["model_fact"], p["champ"]
+    cd = f"Faltan {days} dias para el Mundial." if days > 0 else "Hoy descansan, pero el Mundial sigue."
+    via = f" (via {news['source']})" if news else ""
+
+    titulo = (ai.get("titulo") or "").strip() or (
+        (news["title"][:64]) if news else ("Cuenta regresiva: " + (f"faltan {days} dias" if days > 0 else "el Mundial sigue")))
+    gancho = (ai.get("gancho") or "").strip() or (
+        (f"Hoy no rueda el balon, pero hay novedades: {news['title']}{via}. {cd}") if news
+        else f"Hoy no hay partidos, pero mi IA no descansa. {mf} {cd}")
+    voz = (ai.get("voz") or "").strip() or (
+        f"Hoy no hay partidos del Mundial, pero te dejo un dato. "
+        + (f"{news['title']}, segun {news['source']}. " if news else f"{mf} ")
+        + f"{cd} El analisis completo lo tienes gratis en mi Substack, el link esta en mi perfil. "
+          f"Soy {BRAND}, nos vemos manana.")
+    card = (ai.get("card") or "").strip() or ((news["title"][:60]) if news else mf[:60])
+    caption = (ai.get("caption") or "").strip() or (
+        "Hoy sin partidos, pero el Mundial no para 👀 Analisis gratis en mi Substack (link en bio).")
+    tags = _five(ai.get("hashtags") or [], champ)
+
+    out = {"date": target, "titulo": titulo, "gancho": gancho, "voz": voz, "card": card,
+           "caption": caption, "hashtags": tags, "is_news": bool(news),
+           "source": (news["source"] if news else ""), "link": (news["link"] if news else ""), "days": days}
+    json.dump(out, open(CURIO_FILE, "w", encoding="utf-8"), ensure_ascii=False, indent=2)
+    return out
+
+def ensure(target):
+    """Devuelve el curio del día; lo genera una vez y lo cachea (mismo dato para video/digest/caption)."""
+    try:
+        c = json.load(open(CURIO_FILE, encoding="utf-8"))
+        if c.get("date") == target:
+            return c
+    except Exception:
+        pass
+    return build(target)
+
+if __name__ == "__main__":
+    target = sys.argv[sys.argv.index("--date")+1] if "--date" in sys.argv else date.today().strftime("%Y%m%d")
+    c = build(target)
+    print(json.dumps(c, ensure_ascii=False, indent=2))
+    print(f"\n→ {CURIO_FILE} guardado ({'noticia: '+c['source'] if c['is_news'] else 'dato del modelo'})")

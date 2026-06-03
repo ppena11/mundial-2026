@@ -42,6 +42,9 @@ pm.fit_model = lambda: (dict(_a), dict(_d), _c, _g, _rho)   # copia fresca por l
 _ALL = dd.fetch_all()
 dd.fetch_all = lambda: _ALL
 fetch_odds.h2h = lambda: []                    # sin gastar cuota
+import curio
+curio.web_news = lambda: None                  # offline + determinista: fuerza el dato del modelo
+if os.path.exists(curio.CURIO_FILE): os.remove(curio.CURIO_FILE)
 TEAMS = list(pm.MAP.keys())                    # 48 selecciones (es)
 
 # ============================================================
@@ -256,6 +259,25 @@ except Exception as e:
     ok("champ tras grupos válido", False, f"{e}")
 os.remove("wc_results_mock.json")
 if os.path.exists("_bak_champ2.json"): shutil.move("_bak_champ2.json", "champ_today.json")
+
+# ============================================================
+section("12) DATO CURIOSO (días sin partido) — contenido + render")
+cu = curio.build("20260603")    # web_news mockeado a None -> usa el dato exacto del modelo
+ok("curio genera todos los campos", all(cu.get(k) for k in ("titulo","gancho","voz","card","caption","hashtags")),
+   f"campos incompletos: {list(cu.keys())}")
+ok("curio: exactamente 5 hashtags", len(cu["hashtags"]) == 5, f"{cu['hashtags']}")
+ok("curio: voz apta para TTS (sin # ni emojis)",
+   "#" not in cu["voz"] and all(ord(ch) < 0x2190 for ch in cu["voz"]), "la voz trae símbolos/emojis")
+ok("curio: caption final arma >=5 hashtags",
+   (cu["caption"].rstrip() + " " + " ".join(cu["hashtags"])).count("#") >= 5, "menos de 5")
+import make_curio_card
+try:
+    make_curio_card.render("20260603")
+    with open("matchday.png", "rb") as f: h = f.read(8)
+    ok("make_curio_card renderiza PNG válido (>8KB)", h.startswith(b"\x89PNG") and os.path.getsize("matchday.png") > 8000, "PNG inválido")
+except Exception as e:
+    ok("make_curio_card renderiza PNG válido (>8KB)", False, f"{type(e).__name__}: {e}")
+if os.path.exists(curio.CURIO_FILE): os.remove(curio.CURIO_FILE)
 
 # ============================================================
 print(f"\n========== RESULTADO: {PASS} PASS / {FAIL} FAIL ==========")

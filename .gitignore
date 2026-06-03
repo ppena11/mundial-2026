@@ -22,6 +22,9 @@ digest.html
 weekly.md
 weekly.html
 
+# === Dato curioso del día (días sin partido; se regenera) ===
+curio_today.json
+
 # === Artefactos del reel/voz (locales, por día) ===
 voiceover.txt
 caption.txt
