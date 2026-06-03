@@ -34,6 +34,11 @@ _frame*.png
 # === Banderas cacheadas (se re-descargan de flagcdn) ===
 flags/
 
+# === Banner y posts de contenido (locales) ===
+banner.png
+intro_post.html
+intro_post.md
+
 # === Archivos temporales del SO ===
 Thumbs.db
 .DS_Store
