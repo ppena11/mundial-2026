@@ -16,6 +16,10 @@ results.csv
 wc_results_mock.json
 wc_ko_mock.json
 
+# === Digest generado (se regenera/envía cada día) ===
+digest.md
+digest.html
+
 # === Archivos temporales del SO ===
 Thumbs.db
 .DS_Store
