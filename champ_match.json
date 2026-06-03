@@ -1,0 +1,19 @@
+{
+  "local": "Espana",
+  "visitante": "Francia",
+  "p1": 43.7,
+  "pX": 28.6,
+  "p2": 27.7,
+  "xg_local": 1.35,
+  "xg_visitante": 1.02,
+  "marcador": "1-1",
+  "bajas_local": [
+    "Fermín López",
+    "Lamine Yamal",
+    "Mikel Merino"
+  ],
+  "bajas_visitante": [
+    "Hugo Ekitiké",
+    "William Saliba"
+  ]
+}

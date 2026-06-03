@@ -1,0 +1,54 @@
+name: Predecir partido
+
+on:
+  workflow_dispatch:
+    inputs:
+      local:
+        description: "Equipo local (como en namemap.json, ej: Espana)"
+        required: true
+      visitante:
+        description: "Equipo visitante (ej: Francia)"
+        required: true
+      local_anfitrion:
+        description: "¿El local juega en casa? (Mexico/Estados Unidos/Canada)"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: mundial-commit
+  cancel-in-progress: false
+
+jobs:
+  partido:
+    runs-on: ubuntu-latest
+    env:
+      ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
+      API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Instalar dependencias
+        run: pip install -r requirements.txt
+      - name: Descargar base de datos
+        run: python -c "import urllib.request;urllib.request.urlretrieve('https://raw.githubusercontent.com/martj42/international_results/master/results.csv','results.csv')"
+      - name: Bajar XI confirmado (si está disponible)
+        run: python fetch_lineup.py "${{ inputs.local }}" "${{ inputs.visitante }}" || echo "XI aún no publicado; sigo solo con lesiones"
+      - name: Predecir el partido
+        run: |
+          FLAG=""
+          if [ "${{ inputs.local_anfitrion }}" = "true" ]; then FLAG="--local-anfitrion"; fi
+          python predict_match.py "${{ inputs.local }}" "${{ inputs.visitante }}" $FLAG
+      - name: Guardar gráfico del partido en el repo
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Partido ${{ inputs.local }} vs ${{ inputs.visitante }}" || echo "sin cambios"
+          git pull --rebase --autostash origin main || true
+          git push

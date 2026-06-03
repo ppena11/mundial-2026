@@ -1,0 +1,146 @@
+{
+  "Brasil": [
+    {
+      "player": "Estêvão",
+      "status": "out"
+    },
+    {
+      "player": "Rodrygo",
+      "status": "out"
+    },
+    {
+      "player": "Éder Militão",
+      "status": "out"
+    },
+    {
+      "player": "Neymar",
+      "status": "doubtful"
+    }
+  ],
+  "Alemania": [
+    {
+      "player": "Serge Gnabry",
+      "status": "out"
+    },
+    {
+      "player": "Marc-André ter Stegen",
+      "status": "out"
+    }
+  ],
+  "Paises Bajos": [
+    {
+      "player": "Xavi Simons",
+      "status": "out"
+    },
+    {
+      "player": "Jerdy Schouten",
+      "status": "out"
+    },
+    {
+      "player": "Matthijs de Ligt",
+      "status": "out"
+    },
+    {
+      "player": "Jurriën Timber",
+      "status": "doubtful"
+    }
+  ],
+  "Japon": [
+    {
+      "player": "Kaoru Mitoma",
+      "status": "out"
+    },
+    {
+      "player": "Takumi Minamino",
+      "status": "out"
+    }
+  ],
+  "Francia": [
+    {
+      "player": "Hugo Ekitiké",
+      "status": "out"
+    },
+    {
+      "player": "William Saliba",
+      "status": "doubtful"
+    }
+  ],
+  "Estados Unidos": [
+    {
+      "player": "Patrick Agyemang",
+      "status": "out"
+    },
+    {
+      "player": "Johnny Cardoso",
+      "status": "out"
+    }
+  ],
+  "Australia": [
+    {
+      "player": "Lewis Miller",
+      "status": "out"
+    },
+    {
+      "player": "Aiden O'Neill",
+      "status": "doubtful"
+    }
+  ],
+  "Espana": [
+    {
+      "player": "Fermín López",
+      "status": "out"
+    },
+    {
+      "player": "Lamine Yamal",
+      "status": "doubtful"
+    },
+    {
+      "player": "Mikel Merino",
+      "status": "doubtful"
+    }
+  ],
+  "Canada": [
+    {
+      "player": "Marcelo Flores",
+      "status": "out"
+    },
+    {
+      "player": "Alphonso Davies",
+      "status": "doubtful"
+    }
+  ],
+  "Escocia": [
+    {
+      "player": "Billy Gilmour",
+      "status": "out"
+    }
+  ],
+  "Argentina": [
+    {
+      "player": "Cristian Romero",
+      "status": "doubtful"
+    },
+    {
+      "player": "Nahuel Molina",
+      "status": "doubtful"
+    }
+  ],
+  "Inglaterra": [
+    {
+      "player": "Tino Livramento",
+      "status": "doubtful"
+    }
+  ],
+  "Ghana": [
+    {
+      "player": "Mohammed Kudus",
+      "status": "doubtful"
+    }
+  ],
+  "Uruguay": [
+    {
+      "player": "Jose Giménez",
+      "status": "doubtful"
+    }
+  ]
+}

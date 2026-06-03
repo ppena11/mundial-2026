@@ -1,0 +1,17 @@
+# === NUNCA subir: secretos ===
+.env
+
+# === Entorno virtual (se reinstala con requirements.txt) ===
+venv/
+__pycache__/
+*.pyc
+
+# === Logs locales ===
+logs/
+
+# === Base de datos re-descargable (la baja el pipeline cada vez) ===
+results.csv
+
+# === Archivos temporales del SO ===
+Thumbs.db
+.DS_Store
