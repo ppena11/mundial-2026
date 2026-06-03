@@ -201,25 +201,20 @@ def build_digest(target):
                       f"el modelo le da **{100*mpb:.0f}%** y el mercado solo **{100*mkp:.0f}%** "
                       f"(_edge +{(edge-1)*100:.0f}%_).")
             md.append("")
-        md.append("Probabilidades del modelo (Dixon-Coles + 20.000 simulaciones):\n")
-        # --- 2ª pasada: renderizar cada partido (título: partido · horario · grupo/ronda) ---
+        md.append("**Probabilidades del modelo** — 1 = gana el primero · X = empate · 2 = gana el segundo · 🎯 marcador más probable\n")
+        # --- 2ª pasada: UNA LÍNEA por partido ---
         for d in data:
             m = d["m"]; hora = hora_et(m["utc"])
             if d.get("skip"):
-                md.append(f"### {m['label']} · {hora}")
-                md.append(f"_{d['a']} vs {d['b']} — equipos por definir_\n"); continue
+                md.append(f"- 🕒 **{hora}** · {m['label']} — _{d['a']} vs {d['b']} (por definir)_")
+                continue
             a, b = d["a"], d["b"]
-            md.append(f"### {a} vs {b} · {hora} · {m['label']}")
-            md.append(f"- **1** {a}: **{100*d['pw']:.0f}%** · **X** Empate: **{100*d['pdr']:.0f}%** · **2** {b}: **{100*d['pl']:.0f}%**")
-            md.append(f"- Goles esperados: {a} {d['lh']:.2f} – {d['la']:.2f} {b} · Marcador más probable: **{d['sx']}-{d['sy']}**")
-            if d["ma"] is not None:
-                linea = f"- 💰 Mercado: 1 {100*d['ma']:.0f}% · X {100*d['mx']:.0f}% · 2 {100*d['mb']:.0f}%"
-                if d["vcands"]: linea += f"  → 💎 **VALUE** en {', '.join(v[0] for v in d['vcands'])}"
-                md.append(linea)
-            md.append(f"- 📝 {descripcion(a,b,d['pw'],d['pdr'],d['pl'],d['lh'],d['la'],m['is_ko'],d['ba'],d['bb'],m['label'])}")
-            if d["ba"]: md.append(f"- ⚠️ Bajas {a}: {', '.join(d['ba'])}")
-            if d["bb"]: md.append(f"- ⚠️ Bajas {b}: {', '.join(d['bb'])}")
-            md.append("")
+            p1 = f"**{100*d['pw']:.0f}%**" if d['pw'] >= d['pl'] else f"{100*d['pw']:.0f}%"
+            p2 = f"**{100*d['pl']:.0f}%**" if d['pl'] > d['pw'] else f"{100*d['pl']:.0f}%"
+            val = f" · 💎 **VALOR: {d['vcands'][0][0]}**" if d["vcands"] else ""
+            inj = " · ⚠️ bajas" if (d["ba"] or d["bb"]) else ""
+            md.append(f"- 🕒 **{hora}** · {m['label']} · **{a} vs {b}** — 1 {p1} · X {100*d['pdr']:.0f}% · 2 {p2} · 🎯{d['sx']}-{d['sy']}{val}{inj}")
+        md.append("")
     top = champion_top()
     if top:
         md.append("## 🏆 Carrera por el título (hoy)")
@@ -239,16 +234,18 @@ def build_digest(target):
     md.append(f"_{DISCLAIMER}_")
     text = "\n".join(md)
 
+    import re
+    def b(s): return re.sub(r"\*\*(.+?)\*\*", r"<b>\1</b>", s).replace("_", "")
     html_lines = []
     for ln in md:
-        if ln.startswith("### "): html_lines.append(f"<h3 style='margin:14px 0 2px'>{ln[4:]}</h3>")
-        elif ln.startswith("## "): html_lines.append(f"<h2>{ln[3:]}</h2>")
-        elif ln.startswith("# "): html_lines.append(f"<h1>{ln[2:]}</h1>")
-        elif ln.startswith("- "): html_lines.append(f"<p style='margin:2px 0'>{ln[2:]}</p>")
-        elif ln.strip() == "---": html_lines.append("<hr>")
-        elif ln.strip(): html_lines.append(f"<p>{ln}</p>")
-    html = ("<div style='font-family:Arial,sans-serif;max-width:600px;margin:auto;color:#0b1437'>"
-            + "".join(html_lines).replace("**","") + "</div>")
+        if ln.startswith("### "): html_lines.append(f"<h3 style='margin:14px 0 2px'>{b(ln[4:])}</h3>")
+        elif ln.startswith("## "): html_lines.append(f"<h2 style='color:#1f3b8b;margin:18px 0 6px'>{b(ln[3:])}</h2>")
+        elif ln.startswith("# "): html_lines.append(f"<h1 style='margin:0'>{b(ln[2:])}</h1>")
+        elif ln.startswith("- "): html_lines.append(f"<p style='margin:4px 0;line-height:1.45'>{b(ln[2:])}</p>")
+        elif ln.strip() == "---": html_lines.append("<hr style='border:none;border-top:1px solid #d9deec;margin:14px 0'>")
+        elif ln.strip(): html_lines.append(f"<p style='margin:4px 0'>{b(ln)}</p>")
+    html = ("<div style='font-family:Arial,Helvetica,sans-serif;max-width:640px;margin:auto;"
+            "color:#0b1437;padding:8px 14px'>" + "".join(html_lines) + "</div>")
     return text, html, len(games)
 
 def send_email(subject, html):
