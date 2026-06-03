@@ -1,0 +1,76 @@
+name: Contenido diario (6 AM ET)
+
+on:
+  schedule:
+    - cron: "0 10 * * *"     # 10:00 UTC = 6:00 AM ET (EDT, UTC-4) durante el Mundial
+  workflow_dispatch: {}        # también se puede correr a mano con un botón
+
+permissions:
+  contents: write
+
+concurrency:
+  group: mundial-commit
+  cancel-in-progress: false
+
+jobs:
+  contenido:
+    runs-on: ubuntu-latest
+    env:
+      ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
+      API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
+      ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+      ELEVENLABS_VOICE_ID: ${{ secrets.ELEVENLABS_VOICE_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Instalar dependencias
+        run: pip install -r requirements.txt
+
+      - name: 1) Datos + simulación del modelo
+        run: python run_all.py
+
+      - name: 2) Historial de aciertos (califica + registra)
+        run: python track_record.py
+
+      - name: 3) Infografía del día
+        run: python make_matchday.py
+
+      - name: 4) Digest diario (para Substack)
+        run: python daily_digest.py
+
+      - name: 5) Reel con tu voz (ElevenLabs) — opcional
+        continue-on-error: true
+        run: |
+          python make_script.py
+          python make_voice.py
+          python make_reel.py
+
+      - name: 6) Resumen semanal (solo los lunes)
+        run: |
+          if [ "$(date -u +%u)" = "1" ]; then python make_weekly.py; else echo "hoy no es lunes, sin resumen semanal"; fi
+
+      - name: Guardar estado en el repo (histórico, modelo, aciertos)
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Contenido del día $(date -u +%Y-%m-%d)" || echo "sin cambios"
+          git pull --rebase --autostash origin main || true
+          git push
+
+      - name: Subir el contenido del día (descargable)
+        uses: actions/upload-artifact@v4
+        with:
+          name: contenido-del-dia
+          path: |
+            matchday.mp4
+            matchday.png
+            digest.html
+            caption.txt
+            voiceover.txt
+            weekly.html
+          if-no-files-found: ignore
+          retention-days: 14
