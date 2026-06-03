@@ -260,8 +260,8 @@ def build_digest(target):
 
     # --- cierre / CTA ---
     md.append("---")
-    md.append("¿Te sirvió? **Reenvíaselo a un amigo futbolero** 🙌  ·  Responde este correo con tus dudas.")
-    md.append(f"**{BRAND}** · Mundial de fútbol 2026")
+    md.append(f"🎬 Mira el **video del análisis de hoy** en mi TikTok **@{BRAND}**  ·  🙌 Compártelo con un amigo futbolero.")
+    md.append("📩 Cada semana mando un resumen por correo — suscríbete para no perdértelo.")
     md.append(f"_{DISCLAIMER}_")
     text = "\n".join(md)
 
