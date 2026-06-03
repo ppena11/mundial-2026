@@ -67,8 +67,8 @@ def build(target):
 
     # ---------- CAPTION TikTok ----------
     cap_pick = f" Pick del día: {pick[1][0]}." if pick else ""
-    caption=(f"Mi IA predice el Mundial 2026 ⚽🤖{cap_pick} Análisis completo gratis en mi Substack (link en bio). "
-             f"#Mundial2026 #WorldCup2026 #IA #inteligenciaartificial #futbol #{BRAND} #datos #predicciones")
+    HASHTAGS = "#Mundial2026 #WorldCup2026 #futbol #IA #parati"   # SIEMPRE exactamente 5, los más virales
+    caption=(f"Mi IA predice el Mundial 2026 ⚽🤖{cap_pick} Análisis completo gratis en mi Substack (link en bio). {HASHTAGS}")
     return voiceover, caption, len(played)
 
 if __name__=="__main__":
