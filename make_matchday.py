@@ -16,8 +16,11 @@ from datetime import date
 import daily_digest as dd
 import predict_match as pm
 
-BG="#0a1024"; CARD="#141d3a"; CYAN="#27E1C1"; GOLD="#FFD23F"; GREY="#7f8db0"
-WHITE="#F5F7FF"; MUTE="#8AA0C8"; RED="#FF5C7A"
+# Paleta Mundial de fútbol: verde césped + dorado trofeo + blanco
+BG_TOP="#0c7a52"; BG_BOT="#04231a"          # césped -> noche de estadio
+CARD="#0c3c2b"; CARD_EDGE="#13654a"
+GOLD="#F7C548"; LIME="#2EE07F"; GREY="#6f8c7f"; WHITE="#FFFFFF"; MUTE="#a7c8b8"; INK="#04231a"
+BG=BG_BOT
 _FONTDIRS=[os.path.join(os.environ.get("WINDIR",r"C:\Windows"),"Fonts"),
            "/usr/share/fonts/truetype/liberation","/usr/share/fonts/truetype/dejavu"]
 def _fp(size,*names):
@@ -69,73 +72,67 @@ def main(target):
 
     fig=plt.figure(figsize=(10.8,19.2),dpi=100); ax=fig.add_axes([0,0,1,1]); ax.axis("off")
     ax.set_xlim(0,1); ax.set_ylim(0,1)
-    grad=(np.array([5,8,20])/255.)+((np.array([14,22,52])-np.array([5,8,20]))/255.)*np.linspace(0,1,256).reshape(-1,1)
+    ct=np.array([12,122,82])/255.; cb=np.array([4,35,26])/255.
+    grad=cb+(ct-cb)*np.linspace(0,1,256).reshape(-1,1)
     ax.imshow(grad.reshape(256,1,3),extent=[0,1,0,1],aspect="auto",zorder=0)
 
-    # cabecera
-    ax.text(0.5,0.972,"@aiwithpedro",ha="center",color=CYAN,fontproperties=blk(22),zorder=5)
-    ax.text(0.5,0.945,"MUNDIAL 2026",ha="center",color=GOLD,fontproperties=blk(50),zorder=5)
-    ax.text(0.5,0.917,f"Pronóstico del {fh} · horas ET",ha="center",color=MUTE,fontproperties=hvy(17),zorder=5)
+    # ===== cabecera (estilo Mundial) =====
+    ax.text(0.5,0.972,"@aiwithpedro",ha="center",color=WHITE,fontproperties=hvy(20),zorder=5)
+    ax.text(0.5,0.943,"MUNDIAL 2026",ha="center",color=GOLD,fontproperties=blk(60),zorder=5)
+    ax.text(0.5,0.914,f"¿QUIÉN GANA HOY? · {fh} · hora del Este",ha="center",color=WHITE,fontproperties=hvy(17),zorder=5)
+    ax.plot([0.1,0.9],[0.898,0.898],color=GOLD,lw=3,zorder=5)
 
-    # pick del día
-    if pick:
-        d,(team,mpb,mkp,edge)=pick; riv=d["b"] if team==d["a"] else d["a"]
-        ax.add_patch(FancyBboxPatch((0.06,0.862),0.88,0.044,boxstyle="round,pad=0.006,rounding_size=0.012",
-                     fc="#2a2410",ec=GOLD,lw=2,zorder=3))
-        ax.text(0.085,0.884,"PICK DEL DÍA",ha="left",va="center",color=GOLD,fontproperties=blk(16),zorder=5)
-        ax.text(0.52,0.884,f"{team}  ·  {d['m']['label']}",ha="center",va="center",color=WHITE,fontproperties=blk(19),zorder=5)
-        ax.text(0.915,0.884,f"+{(edge-1)*100:.0f}% valor",ha="right",va="center",color=CYAN,fontproperties=blk(16),zorder=5)
-
-    # ---- bandas de partidos ----
     games=[r for r in rows]
-    ytop,ybot=0.845,0.34; n=max(1,len(games)); rh=(ytop-ybot)/n
+    ytop,ybot=0.880,0.345; n=max(1,len(games)); rh=(ytop-ybot)/n
     for i,d in enumerate(games):
         yc=ytop-(i+0.5)*rh; m=d["m"]
-        # tarjeta de fondo
-        ax.add_patch(FancyBboxPatch((0.05,yc-rh*0.40),0.90,rh*0.80,boxstyle="round,pad=0.004,rounding_size=0.010",
-                     fc=CARD,ec="none",zorder=2))
-        chip=f"{dd.hora_et(m['utc'])}   ·   {m['label']}"
-        ax.text(0.075,yc+rh*0.30,chip,ha="left",va="center",color=MUTE,fontproperties=hvy(14),zorder=5)
+        ax.add_patch(FancyBboxPatch((0.05,yc-rh*0.42),0.90,rh*0.84,boxstyle="round,pad=0.004,rounding_size=0.010",
+                     fc=CARD,ec=CARD_EDGE,lw=1.2,zorder=2))
+        ax.text(0.075,yc+rh*0.31,f"{dd.hora_et(m['utc'])}   ·   {m['label']}",ha="left",va="center",
+                color=MUTE,fontproperties=hvy(13),zorder=5)
         if d.get("skip"):
-            ax.text(0.5,yc-rh*0.05,f"{d['a']}  vs  {d['b']}",ha="center",va="center",color=GREY,fontproperties=hvy(16),zorder=5)
+            ax.text(0.5,yc-rh*0.05,f"{d['a']}  vs  {d['b']}",ha="center",va="center",color=MUTE,fontproperties=hvy(16),zorder=5)
             continue
         a,b=d["a"],d["b"]; pw,pdr,pl=d["pw"],d["pdr"],d["pl"]
         if d["vc"]:
-            ax.text(0.925,yc+rh*0.30,f"VALOR: {d['vc'][0][0]}",ha="right",va="center",color="#46d39a",fontproperties=blk(14),zorder=5)
-        # nombres (centro de la banda) + marcador previsto al centro
-        ax.text(0.075,yc+rh*0.04,a.upper(),ha="left",va="center",color=WHITE,fontproperties=blk(19),zorder=5)
-        ax.text(0.925,yc+rh*0.04,b.upper(),ha="right",va="center",color=WHITE,fontproperties=blk(19),zorder=5)
-        ax.text(0.5,yc+rh*0.04,f"{d['sx']}–{d['sy']}",ha="center",va="center",color=MUTE,fontproperties=blk(16),zorder=5)
-        # barra de probabilidad 1X2
-        x0,x1=0.32,0.68; W=x1-x0; ybar=yc-rh*0.24; hb=rh*0.15
-        x=x0
-        for frac,col in [(pw,CYAN),(pdr,GREY),(pl,GOLD)]:
+            ax.text(0.925,yc+rh*0.31,f"VALOR: {d['vc'][0][0]}",ha="right",va="center",color=GOLD,fontproperties=blk(13),zorder=5)
+        # nombres grandes a los lados
+        ax.text(0.075,yc+rh*0.10,a.upper(),ha="left",va="center",color=WHITE,fontproperties=blk(20),zorder=5)
+        ax.text(0.925,yc+rh*0.10,b.upper(),ha="right",va="center",color=WHITE,fontproperties=blk(20),zorder=5)
+        # barra ganador: local(verde) | empate(gris) | visitante(dorado)
+        x0,x1=0.075,0.925; W=x1-x0; ybar=yc-rh*0.10; hb=rh*0.16; x=x0
+        for frac,col in [(pw,LIME),(pdr,GREY),(pl,GOLD)]:
             ax.add_patch(plt.Rectangle((x,ybar),W*frac,hb,fc=col,ec="none",zorder=4)); x+=W*frac
-        ax.text(x0-0.012,ybar+hb/2,f"{100*pw:.0f}%",ha="right",va="center",color=CYAN,fontproperties=blk(16),zorder=5)
-        ax.text(x1+0.012,ybar+hb/2,f"{100*pl:.0f}%",ha="left",va="center",color=GOLD,fontproperties=blk(16),zorder=5)
-        ax.text((x0+x1)/2,ybar-rh*0.14,f"empate {100*pdr:.0f}%",ha="center",va="center",color=GREY,fontproperties=hvy(12),zorder=5)
+        # % dentro/junto a cada extremo
+        ax.text(x0+0.008,ybar+hb/2,f"{100*pw:.0f}%",ha="left",va="center",color=INK,fontproperties=blk(15),zorder=6)
+        ax.text(x1-0.008,ybar+hb/2,f"{100*pl:.0f}%",ha="right",va="center",color=INK,fontproperties=blk(15),zorder=6)
+        # MENSAJE CLARO: quién gana
+        favn,favp,favc=(a,pw,LIME) if pw>=pl else (b,pl,GOLD)
+        ax.text(0.075,yc-rh*0.30,f"GANA {favn.upper()}  {100*favp:.0f}%",ha="left",va="center",color=favc,fontproperties=blk(16),zorder=5)
+        ax.text(0.925,yc-rh*0.30,f"empate {100*pdr:.0f}%  ·  marcador {d['sx']}-{d['sy']}",ha="right",va="center",
+                color=MUTE,fontproperties=hvy(13),zorder=5)
 
-    # ---- carrera al título ----
-    ax.text(0.075,0.30,"CARRERA POR EL TÍTULO",ha="left",color=GOLD,fontproperties=blk(20),zorder=5)
+    # ===== carrera al título =====
+    ax.text(0.075,0.305,"CARRERA POR EL TÍTULO",ha="left",color=GOLD,fontproperties=blk(21),zorder=5)
     if champ:
-        cmax=max(v for _,v in champ); yy=0.265
-        for t,v in champ:
-            ax.text(0.075,yy,t,ha="left",va="center",color=WHITE,fontproperties=hvy(15),zorder=5)
-            ax.add_patch(plt.Rectangle((0.34,yy-0.009),0.45*(v/cmax),0.018,fc=GOLD,ec="none",zorder=4))
-            ax.text(0.34+0.45*(v/cmax)+0.01,yy,f"{v:.1f}%",ha="left",va="center",color=GOLD,fontproperties=blk(14),zorder=5)
-            yy-=0.034
+        cmax=max(v for _,v in champ); yy=0.268
+        for j,(t,v) in enumerate(champ):
+            ax.text(0.075,yy,f"{j+1}. {t}",ha="left",va="center",color=WHITE,fontproperties=hvy(15),zorder=5)
+            ax.add_patch(plt.Rectangle((0.40,yy-0.010),0.40*(v/cmax),0.020,fc=GOLD,ec="none",zorder=4))
+            ax.text(0.40+0.40*(v/cmax)+0.012,yy,f"{v:.1f}%",ha="left",va="center",color=GOLD,fontproperties=blk(14),zorder=5)
+            yy-=0.035
 
-    # ---- historial ----
+    # ===== historial (confianza) =====
     if tr.get("n",0)>0:
-        ax.add_patch(FancyBboxPatch((0.06,0.055),0.88,0.05,boxstyle="round,pad=0.006,rounding_size=0.012",
-                     fc="#10221a",ec="#46d39a",lw=1.5,zorder=3))
-        ax.text(0.085,0.08,"HISTORIAL DEL MODELO",ha="left",va="center",color="#46d39a",fontproperties=blk(15),zorder=5)
-        ax.text(0.915,0.08,f"{tr['aciertos_1x2']}/{tr['n']} aciertos 1X2  ·  {tr['tasa_1x2']}%  ·  Brier {tr['brier']}",
-                ha="right",va="center",color=WHITE,fontproperties=hvy(15),zorder=5)
+        ax.add_patch(FancyBboxPatch((0.06,0.055),0.88,0.052,boxstyle="round,pad=0.006,rounding_size=0.012",
+                     fc="#0a2f22",ec=GOLD,lw=1.5,zorder=3))
+        ax.text(0.085,0.081,"LE VENIMOS ATINANDO",ha="left",va="center",color=GOLD,fontproperties=blk(15),zorder=5)
+        ax.text(0.915,0.081,f"{tr['aciertos_1x2']} de {tr['n']} aciertos  ·  {tr['tasa_1x2']:.0f}%",
+                ha="right",va="center",color=WHITE,fontproperties=blk(16),zorder=5)
     else:
-        ax.text(0.5,0.08,"El historial aparece cuando se jueguen partidos",ha="center",color=MUTE,fontproperties=hvy(14),zorder=5)
+        ax.text(0.5,0.081,"El historial de aciertos aparece cuando arranque el torneo",ha="center",color=MUTE,fontproperties=hvy(14),zorder=5)
 
-    ax.text(0.5,0.022,"Contenido informativo · no es consejo de apuestas · +18",ha="center",color=MUTE,fontproperties=reg(12),zorder=5)
+    ax.text(0.5,0.024,"Modelo propio · 20.000 simulaciones · contenido informativo · +18",ha="center",color=MUTE,fontproperties=reg(12),zorder=5)
     fig.savefig("matchday.png",facecolor=BG)
     print("→ matchday.png guardado (1080x1920)")
 
