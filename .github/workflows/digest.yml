@@ -2,7 +2,7 @@ name: Contenido diario (6 AM ET)
 
 on:
   schedule:
-    - cron: "0 10 * * *"     # 10:00 UTC = 6:00 AM ET (EDT, UTC-4) durante el Mundial
+    - cron: "10 10 * * *"    # 10:10 UTC = 6:10 AM ET (EDT, UTC-4). El minuto 10 evita la congestión de la hora en punto (menos retrasos/saltos)
   workflow_dispatch: {}        # también se puede correr a mano con un botón
 
 permissions:
