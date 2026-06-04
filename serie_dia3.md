@@ -11,7 +11,7 @@
 
 ## 🎙️ Guion de voz (pégalo en ElevenLabs → voice.mp3)
 
-Un modelo es inútil sin datos frescos. Y los datos buenos suelen costar dinero. Así que el reto del día tres fue: cómo alimento mi IA del Mundial sin pagar nada. Primero, resultados y alineaciones: los saco de ESPN, que tiene una puerta de datos pública y gratis. Segundo, las cuotas de las casas: uso una API con plan gratuito, y con eso detecto cuándo mi modelo ve algo distinto al mercado. A eso le llamo valor. Y un detalle honesto: una API de pago me bloqueó los datos del Mundial. En vez de soltar la billetera, le pedí a la IA que buscara una alternativa gratis. La encontró en minutos. Resultado: el sistema se alimenta solo, en tiempo real, sin costo de datos. Lo que parecía necesitar presupuesto, lo resolví dirigiendo a una IA. Mañana, lo más loco: cómo lo puse a correr solo en la nube. Soy aiwithpedro.
+Un modelo es inútil sin datos frescos. Y los datos buenos suelen costar dinero. Así que el reto del día tres fue: cómo alimento mi IA del Mundial sin pagar nada. Primero, resultados y alineaciones: los saco de ESPN, que tiene una puerta de datos pública y gratis. Segundo, las cuotas de las casas: uso una API con plan gratuito, y con eso detecto cuándo mi modelo ve algo distinto al mercado. A eso le llamo valor. Y un detalle honesto: una API de pago me bloqueó los datos del Mundial. En vez de soltar la billetera, le pedí a la IA que buscara una alternativa gratis. La encontró en minutos. Resultado: el sistema se alimenta solo, en tiempo real, sin costo de datos. Lo que parecía necesitar presupuesto, lo resolví dirigiendo a una IA. En el siguiente video, lo más loco: cómo corre solo en la nube. Soy aiwithpedro.
 
 ## 📱 Caption (TikTok — 5 hashtags)
 
@@ -26,7 +26,7 @@ Alimenté mi IA del Mundial con datos en tiempo real… sin pagar nada 🆓⚽ Y
 | **~15-25s** | "…las cuotas de las casas… a eso le llamo valor…" | `matchday.png` con el **sello "VALOR"** resaltado (zoom) / `odds_live.json` |
 | **~25-38s** | "…una API de pago me bloqueó… la IA encontró otra gratis…" | texto en pantalla **"API de pago ❌ → ESPN gratis ✅"** (el giro más compartible) |
 | **~38-48s** | "…el sistema se alimenta solo, en tiempo real…" | 🎥 **screen-recording de GitHub Actions**: paso "Datos + simulación" en **verde** |
-| **Cierre** | "…mañana: cómo lo puse a correr solo en la nube. Soy aiwithpedro." | tarjeta final **@aiwithpedro · mañana: la nube** |
+| **Cierre** | "…en el siguiente: cómo corre solo en la nube. Soy aiwithpedro." | tarjeta final **@aiwithpedro · siguiente: la nube** |
 
 **La toma que más engancha (captúrala en 30s):**
 - 🆚 Una placa simple **"API DE PAGO ❌ vs ESPN GRATIS ✅"** — el "truco" gratis es lo que la gente comenta y comparte.
