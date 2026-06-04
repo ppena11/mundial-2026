@@ -49,6 +49,10 @@ jobs:
           python make_voice.py
           python make_reel.py
 
+      - name: 5b) Cierre de anoche (resultados vs pronóstico) — opcional
+        continue-on-error: true
+        run: python auto_recap.py
+
       - name: 6) Resumen semanal (solo los lunes)
         run: |
           if [ "$(date -u +%u)" = "1" ]; then python make_weekly.py; else echo "hoy no es lunes, sin resumen semanal"; fi
@@ -77,5 +81,10 @@ jobs:
             caption.txt
             voiceover.txt
             weekly.html
+            recap.mp4
+            recap.png
+            recap_digest.html
+            recap_caption.txt
+            recap_voiceover.txt
           if-no-files-found: ignore
           retention-days: 14

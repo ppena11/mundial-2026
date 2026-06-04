@@ -23,6 +23,7 @@ import make_weekly as mw
 import flags
 import fetch_odds
 import track_record as tr
+import recap
 # por si .env volvió a inyectar la clave al importar:
 os.environ.pop("ANTHROPIC_API_KEY", None)
 
@@ -282,6 +283,45 @@ try:
 except Exception as e:
     ok("make_curio_card renderiza PNG válido (>8KB)", False, f"{type(e).__name__}: {e}")
 if os.path.exists(curio.CURIO_FILE): os.remove(curio.CURIO_FILE)
+
+# ============================================================
+section("13) CIERRE DEL DÍA (recap: resultados vs pronóstico)")
+bak_log = "predictions_log.jsonl"; bak_tr = "track_record.json"
+for f in (bak_log, bak_tr):
+    if os.path.exists(f): shutil.copy(f, f + ".bak")
+tr.fetch_results = lambda: {}                  # offline: el log ya viene calificado
+rday = "20260611"
+ms_day = dd.matches_on(rday)[:2]
+ctrl = []
+for i, m in enumerate(ms_day):
+    a, b = m["a"], m["b"]; acierto = (i == 0)   # 1º acierta, 2º falla
+    ctrl.append({"key": tr._key(a, b, dd.et_date(m["utc"])), "fecha": dd.et_date(m["utc"]),
+                 "a": a, "b": b, "label": m["label"], "p1": 0.6, "pX": 0.25, "p2": 0.15, "pick": "1",
+                 "marcador_pred": "2-0", "actual": "1" if acierto else "2",
+                 "marcador_real": "2-0" if acierto else "0-1",
+                 "acierto_1x2": acierto, "acierto_exacto": acierto})
+tr.save_log(ctrl)
+try:
+    cu = recap.build(rday)
+    ok("recap arma todos los campos",
+       (not cu.get("empty")) and all(cu.get(k) for k in ("titulo", "gancho", "voz", "caption", "hashtags", "matches")),
+       f"campos: {list(cu.keys())}")
+    ok("recap cuenta bien los aciertos del día (1 de 2)", cu.get("n") == 2 and cu.get("hits") == 1, f"{cu.get('hits')}/{cu.get('n')}")
+    ok("recap: exactamente 5 hashtags", len(cu.get("hashtags", [])) == 5, f"{cu.get('hashtags')}")
+    ok("recap: voz apta para TTS (sin # ni emojis)",
+       "#" not in cu["voz"] and all(ord(ch) < 0x2190 for ch in cu["voz"]), "voz con símbolos")
+    ok("recap: 'lo que viene' apunta a una fecha posterior", bool(cu.get("proximo")) and cu["proximo"]["fecha_h"] != cu["fecha_h"], f"{cu.get('proximo')}")
+    import make_recap
+    make_recap.render(rday)
+    with open("recap.png", "rb") as f: h = f.read(8)
+    ok("make_recap renderiza PNG válido (>8KB)", h.startswith(b"\x89PNG") and os.path.getsize("recap.png") > 8000, "PNG inválido")
+except Exception as e:
+    ok("recap end-to-end", False, f"{type(e).__name__}: {e}")
+for f in (bak_log, bak_tr):
+    if os.path.exists(f + ".bak"): shutil.move(f + ".bak", f)
+    elif os.path.exists(f): os.remove(f)
+for f in ("recap_today.json", "recap_voiceover.txt", "recap_caption.txt"):
+    if os.path.exists(f): os.remove(f)
 
 # ============================================================
 print(f"\n========== RESULTADO: {PASS} PASS / {FAIL} FAIL ==========")

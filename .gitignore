@@ -25,6 +25,16 @@ weekly.html
 # === Dato curioso del día (días sin partido; se regenera) ===
 curio_today.json
 
+# === Cierre del día (resultados vs pronóstico; se regenera) ===
+recap.png
+recap.mp4
+recap_voice.mp3
+recap_voiceover.txt
+recap_caption.txt
+recap_digest.md
+recap_digest.html
+recap_today.json
+
 # === Artefactos del reel/voz (locales, por día) ===
 voiceover.txt
 caption.txt
