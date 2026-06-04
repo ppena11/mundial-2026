@@ -17,15 +17,20 @@ En el primer video te dije que construí una IA que predice el Mundial, sin cód
 
 El cerebro de mi IA que predice el Mundial: aprende de 50.000 partidos y juega el torneo 20.000 veces 🧠⚽ Y no escribí código. Pronósticos diarios gratis en mi Substack (link en bio). #Mundial2026 #IA #parati #Estadistica #NoCode
 
-## 🎞️ Texto en pantalla / b-roll (con lo que ya tienes)
+## 🎞️ Texto en pantalla / b-roll (concreto, con assets que ya tienes o capturas en 1 min)
 
-| Momento | En pantalla | Voz dice… |
+| Seg | Voz dice… | Visual exacto |
 |---|---|---|
-| 0-3s | **"20.000 MUNDIALES EN PARALELO"** sobre `champ_today.png` | "…te muestro su cerebro…" |
-| Paso 1 (fuerza) | lista de selecciones / la carrera por el título | "…qué tan bien ataca y qué tan bien defiende…" |
-| Paso 2 (contexto) | infografía con bajas / un marcador 1-0 | "…la ventaja de local… pocos goles…" |
-| Paso 3 (20k sims) | la tabla de campeón llenándose / `matchday.png` | "…jugara el Mundial veinte mil veces…" |
-| Cierre | tarjeta "@aiwithpedro · mañana: los datos gratis" | "…son veinte mil mundiales en paralelo…" |
+| **0-3s** | "…te muestro su cerebro…" | `champ_today.png` con el texto **"20.000 MUNDIALES EN PARALELO"** quemado |
+| **~3-12s** | "…la fuerza… 50.000 partidos… ataca y defiende…" | 🎥 **screen-recording scrolleando `results.csv`** (miles de filas) → corta a `champ_tiktok.png` |
+| **~12-22s** | "…la ventaja de local… pocos goles…" | `matchday.png` (que se vea un marcador bajo tipo 1-0) o la infografía con la nota de bajas |
+| **~22-40s** | "…jugara el Mundial veinte mil veces… grupos… campeón…" | 🎥 **screen-recording del terminal: `python sim_live.py`** mostrando "20.000 simulaciones" y la tabla de % apareciendo → cierra en `champ_today.png` |
+| **~40-50s** | "…no es opinión… solo se lo pedí en español…" | 🎥 (opcional, el más potente) screen-recording de **ti escribiéndole un prompt a la IA** |
+| **Cierre** | "…mañana, los datos gratis. Soy aiwithpedro." | tarjeta final **@aiwithpedro · mañana: los datos gratis** |
+
+**Las 2 tomas que más impactan (captúralas en 1 min):**
+1. 📜 **`results.csv` scrolleando** → prueba visual de "50.000 partidos reales" (ábrelo en Excel/VS Code y graba mientras bajas rápido).
+2. 💻 **`python sim_live.py` en el terminal** → se ve "20.000 simulaciones" y las probabilidades imprimiéndose. Prueba pura del "20.000 mundiales".
 
 ## 💬 Comentario fijado (para generar debate)
 > "¿A qué selección le darías tú más chance de ser campeón? El modelo ya tiene su favorita 👇"
