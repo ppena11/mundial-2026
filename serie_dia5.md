@@ -11,7 +11,7 @@
 
 ## 🎙️ Guion de voz (pégalo en ElevenLabs → voice.mp3)
 
-Escucha bien esta voz, la que te habla ahora mismo. No la grabé hoy, ni ayer: es un clon de mi voz, hecho con inteligencia artificial. Esta es la última pieza. Cloné mi voz una sola vez, con unos minutos de audio. Desde entonces, cada día el sistema escribe el guion con IA y se lo entrega a mi voz clonada, que lo narra sola. El video del Mundial se arma completo, con mi voz, sin que yo abra el micrófono. Lo grabé una vez, narra para siempre. Y con esto se cierra la magia: un modelo que predice, datos gratis, un agente que corre solo en la nube, y mi voz contándolo. Todo en un día, dirigiendo a una IA, sin escribir código. Ahora viene lo mejor: el Mundial empieza el once de junio, y te voy a mostrar los aciertos, y también los fallos, con total honestidad. Sígueme. Soy aiwithpedro.
+Escucha bien esta voz, la que te habla ahora mismo. No la grabé hoy, ni ayer: es un clon de mi voz, hecho con inteligencia artificial. Esta es la última pieza. Cloné mi voz una sola vez, con unos minutos de audio. Desde entonces, cada día el sistema escribe el guion con IA y se lo entrega a mi voz clonada, que lo narra sola. El video del Mundial se arma completo, con mi voz, sin que yo abra el micrófono. Lo grabé una vez, narra para siempre. Y con esto se cierra la magia: un modelo que predice, datos gratis, un agente que corre solo en la nube, y mi voz contándolo. Todo en un día, dirigiendo a una IA, sin escribir código. Ahora viene lo mejor: el Mundial empieza el once de junio, y te voy a mostrar los aciertos, y también los fallos, con total honestidad. Sígueme. Soy éi ái uíz Pédro.
 
 ## 📱 Caption (TikTok — 5 hashtags)
 
@@ -27,7 +27,7 @@ La voz que narra mis videos del Mundial no la grabo: es un clon de IA de mi prop
 | **~28-38s** | "…el video se arma completo, con mi voz…" | el reel `matchday.mp4` reproduciéndose **con tu voz** |
 | **~38-48s** | "…se cierra la magia: modelo, datos, nube y voz…" | **montaje rápido** de los 4 posts: `champ_today.png` → ESPN → Actions verde → onda de audio |
 | **~48-58s** | "…aciertos y también fallos, con honestidad… el 11 de junio…" | `recap.png` (tarjeta Veredicto con ✓/✗) |
-| **Cierre** | "…Sígueme. Soy aiwithpedro." | tarjeta final **@aiwithpedro · el 11 arranca el Mundial** |
+| **Cierre** | "…Sígueme. Soy éi ái uíz Pédro." | tarjeta final **@aiwithpedro · el 11 arranca el Mundial** |
 
 **La toma que más engancha:**
 - 🎙️ **El reel sonando con tu voz** mientras el texto dice "ESTA VOZ ES IA" → el efecto meta hace que la gente lo reproduzca dos veces (y eso es oro para el algoritmo).

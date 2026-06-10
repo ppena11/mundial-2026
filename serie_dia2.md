@@ -11,7 +11,7 @@
 
 ## 🎙️ Guion de voz (pégalo en ElevenLabs → voice.mp3)
 
-En el primer video te dije que construí una IA que predice el Mundial, sin código. Hoy te muestro su cerebro, y es más simple de lo que crees. Le pedí tres cosas. Una: que aprendiera la fuerza de cada selección con casi cincuenta mil partidos reales. Cada equipo queda con dos números, qué tan bien ataca y qué tan bien defiende. Dos: que ajustara el contexto. La ventaja de jugar en casa, y una corrección para los partidos de pocos goles, que son los más difíciles de predecir. Y tres, lo más potente: que jugara el Mundial completo veinte mil veces. En cada simulación inventa los goles de cada partido según esos números, resuelve los grupos, las eliminatorias y la final, y anota quién sale campeón. Al terminar, cuenta cuántas veces ganó cada selección. Eso es la probabilidad. No es opinión: son veinte mil mundiales en paralelo. Y yo solo se lo pedí, en español. En el siguiente video te muestro de dónde saco los datos, gratis. Soy aiwithpedro.
+En el primer video te dije que construí una IA que predice el Mundial, sin código. Hoy te muestro su cerebro, y es más simple de lo que crees. Le pedí tres cosas. Una: que aprendiera la fuerza de cada selección con casi cincuenta mil partidos reales. Cada equipo queda con dos números, qué tan bien ataca y qué tan bien defiende. Dos: que ajustara el contexto. La ventaja de jugar en casa, y una corrección para los partidos de pocos goles, que son los más difíciles de predecir. Y tres, lo más potente: que jugara el Mundial completo veinte mil veces. En cada simulación inventa los goles de cada partido según esos números, resuelve los grupos, las eliminatorias y la final, y anota quién sale campeón. Al terminar, cuenta cuántas veces ganó cada selección. Eso es la probabilidad. No es opinión: son veinte mil mundiales en paralelo. Y yo solo se lo pedí, en español. En el siguiente video te muestro de dónde saco los datos, gratis. Soy éi ái uíz Pédro.
 
 ## 📱 Caption (TikTok — 5 hashtags)
 
@@ -26,7 +26,7 @@ El cerebro de mi IA que predice el Mundial: aprende de 50.000 partidos y juega e
 | **~12-22s** | "…la ventaja de local… pocos goles…" | `matchday.png` (que se vea un marcador bajo tipo 1-0) o la infografía con la nota de bajas |
 | **~22-40s** | "…jugara el Mundial veinte mil veces… grupos… campeón…" | 🎥 **screen-recording del terminal: `python sim_live.py`** mostrando "20.000 simulaciones" y la tabla de % apareciendo → cierra en `champ_today.png` |
 | **~40-50s** | "…no es opinión… solo se lo pedí en español…" | 🎥 (opcional, el más potente) screen-recording de **ti escribiéndole un prompt a la IA** |
-| **Cierre** | "…en el siguiente, los datos gratis. Soy aiwithpedro." | tarjeta final **@aiwithpedro · siguiente: los datos gratis** |
+| **Cierre** | "…en el siguiente, los datos gratis. Soy éi ái uíz Pédro." | tarjeta final **@aiwithpedro · siguiente: los datos gratis** |
 
 **Las 2 tomas que más impactan (captúralas en 1 min):**
 1. 📜 **`results.csv` scrolleando** → prueba visual de "50.000 partidos reales" (ábrelo en Excel/VS Code y graba mientras bajas rápido).

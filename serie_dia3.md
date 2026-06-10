@@ -11,7 +11,7 @@
 
 ## 🎙️ Guion de voz (pégalo en ElevenLabs → voice.mp3)
 
-Mi inteligencia artificial predice el Mundial. Pero una IA sin datos es como un cerebro sin ojos: no ve nada. Y los buenos datos casi siempre cuestan dinero. Mi reto del día tres fue conseguirlos gratis. Los resultados y las alineaciones los saco de ESPN, gratis y en vivo. Y para saber si mi IA ve algo que los demás no ven, comparo sus números con los de los expertos. Pero pasó algo: una página de datos de pago me bloqueó el Mundial. ¿Y sabes qué hice? No pagué nada. Le pedí a la IA que buscara otra forma gratis, y la encontró en minutos. Así mi sistema se alimenta solo, en vivo, sin gastar un peso. Lo que parecía costar una fortuna, lo resolví solo hablándole a una IA. En el siguiente video, lo más loco: cómo trabaja solo mientras yo duermo. Soy aiwithpedro.
+Mi inteligencia artificial predice el Mundial. Pero una IA sin datos es como un cerebro sin ojos: no ve nada. Y los buenos datos casi siempre cuestan dinero. Mi reto del día tres fue conseguirlos gratis. Los resultados y las alineaciones los saco de ESPN, gratis y en vivo. Y para saber si mi IA ve algo que los demás no ven, comparo sus números con los de los expertos. Pero pasó algo: una página de datos de pago me bloqueó el Mundial. ¿Y sabes qué hice? No pagué nada. Le pedí a la IA que buscara otra forma gratis, y la encontró en minutos. Así mi sistema se alimenta solo, en vivo, sin gastar un peso. Lo que parecía costar una fortuna, lo resolví solo hablándole a una IA. En el siguiente video, lo más loco: cómo trabaja solo mientras yo duermo. Soy éi ái uíz Pédro.
 
 ## 📱 Caption (TikTok — 5 hashtags)
 
@@ -26,7 +26,7 @@ Alimenté mi IA del Mundial con datos en tiempo real… sin pagar nada 🆓⚽ Y
 | **~15-25s** | "…comparo sus números con los de los expertos…" | `matchday.png` (comparación de números) |
 | **~25-38s** | "…una página de pago me bloqueó… la IA encontró otra gratis…" | texto en pantalla **"Página de pago ❌ → ESPN gratis ✅"** (el giro más compartible) |
 | **~38-48s** | "…mi sistema se alimenta solo, en vivo…" | 🎥 **screen-recording de GitHub Actions**: paso "Datos + simulación" en **verde** |
-| **Cierre** | "…cómo trabaja solo mientras yo duermo. Soy aiwithpedro." | tarjeta final **@aiwithpedro · siguiente: la nube** |
+| **Cierre** | "…cómo trabaja solo mientras yo duermo. Soy éi ái uíz Pédro." | tarjeta final **@aiwithpedro · siguiente: la nube** |
 
 **La toma que más engancha (captúrala en 30s):**
 - 🆚 Una placa simple **"PÁGINA DE PAGO ❌ vs ESPN GRATIS ✅"** — el "truco" gratis es lo que la gente comenta y comparte.

@@ -26,6 +26,7 @@ except Exception:
 KICKOFF = date(2026, 6, 11)
 CURIO_FILE = "curio_today.json"
 BRAND = "aiwithpedro"
+BRAND_VOZ = "éi ái uíz Pédro"   # cómo se pronuncia @aiwithpedro en la voz (ElevenLabs)
 HEAD = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
                       "(KHTML, like Gecko) Chrome/124.0 Safari/537.36"}
 PROXY = "https://api.codetabs.com/v1/proxy/?quest="
@@ -106,7 +107,7 @@ CURIO_SYS = (
     '"gancho": 1 o 2 frases para el digest; engancha y deja claro que hoy no hay partidos.\n'
     '"voz": guion HABLADO de 45 a 70 palabras (~20 s). Gancho fuerte al inicio; SIN emojis ni simbolos (lo lee un '
     "sintetizador de voz); numeros con digitos y 'por ciento'; invita al Substack ('el link esta en mi perfil') y "
-    "firma como aiwithpedro.\n"
+    "firma la voz diciendo EXACTAMENTE: Soy éi ái uíz Pédro (así se pronuncia @aiwithpedro).\n"
     '"card": resumen MUY corto y potente para una imagen (max 8 palabras, sin emojis, sin cortar a media palabra). '
     "Si hay noticia, es el titular resumido de forma viral.\n"
     '"caption": 1 o 2 lineas para TikTok, con gancho; puede llevar 1 o 2 emojis; NO incluyas hashtags aqui.\n'
@@ -183,7 +184,7 @@ def build(target):
         "Hoy no hay partidos del Mundial, pero te dejo algo. "
         + (f"{news['title']}, segun {news['source']}. " if news else f"{mf} ")
         + f"{cd} El analisis completo lo tienes gratis en mi Substack, el link esta en mi perfil. "
-          f"Soy {BRAND}, nos vemos pronto.")
+          f"Soy {BRAND_VOZ}, nos vemos pronto.")
     card = (ai.get("card") or "").strip() or ((news["title"][:60]) if news else mf[:60])
     caption = (ai.get("caption") or "").strip() or (
         "Hoy sin partidos, pero el Mundial no para 👀 Analisis gratis en mi Substack (link en bio).")

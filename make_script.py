@@ -17,6 +17,7 @@ except ImportError:
     requests = None
 
 BRAND = "aiwithpedro"
+BRAND_VOZ = "éi ái uíz Pédro"   # cómo se pronuncia @aiwithpedro en la voz (ElevenLabs)
 VAL_MARGIN, VAL_FLOOR = 1.20, 0.20
 
 def pct(x): return f"{round(100*x)} por ciento"
@@ -59,7 +60,8 @@ AI_SYSTEM = (
     "un objeto JSON válido (sin ``` ni texto extra) con EXACTAMENTE estas claves:\n"
     '"voiceover": el guion HABLADO, 80 a 100 palabras (~35 s). Gancho fuerte en la primera frase; destaca el dato '
     "más jugoso del día (la jugada de valor o una sorpresa); cierra invitando al Substack ('el link está en la bio') "
-    "y firma como aiwithpedro. SIN emojis ni símbolos (lo lee un sintetizador de voz); números con dígitos y "
+    "y firma la voz diciendo EXACTAMENTE: Soy éi ái uíz Pédro (así se pronuncia @aiwithpedro). SIN otros emojis ni "
+    "símbolos (lo lee un sintetizador de voz); números con dígitos y "
     "'por ciento'; 'contra' en vez de 'vs'; varía el arranque para no repetir.\n"
     '"caption": 1 o 2 líneas cortas para la descripción de TikTok, con gancho; puede llevar 1 o 2 emojis; menciona '
     "que el análisis completo está gratis en el Substack (link en bio). NO incluyas hashtags aquí.\n"
@@ -159,7 +161,7 @@ def build(target):
         if tr.get("n",0)>0:
             S.append(f"Y para que confíes en el modelo: llevamos {tr['aciertos_1x2']} aciertos de {tr['n']} partidos.")
     S.append(f"El análisis completo de todos los partidos lo tienes gratis en mi Substack, el link está en mi perfil. "
-             f"Soy {BRAND}, esto es inteligencia artificial aplicada al fútbol. Nos vemos mañana.")
+             f"Soy {BRAND_VOZ}, esto es inteligencia artificial aplicada al fútbol. Nos vemos mañana.")
     voiceover=" ".join(S)   # guion de respaldo (plantilla)
     # caption de respaldo (plantilla)
     cap_pick = f" Pick del día: {pick[1][0]}." if pick else ""
