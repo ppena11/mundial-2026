@@ -106,7 +106,7 @@ CURIO_SYS = (
     '"titulo": titulo viral para el post (max ~70 caracteres, gancho, max 1 emoji).\n'
     '"gancho": 1 o 2 frases para el digest; engancha y deja claro que hoy no hay partidos.\n'
     '"voz": guion HABLADO de 45 a 70 palabras (~20 s). Gancho fuerte al inicio; SIN emojis ni simbolos (lo lee un '
-    "sintetizador de voz); numeros con digitos y 'por ciento'; invita al Substack ('el link esta en mi perfil') y "
+    "sintetizador de voz); numeros con digitos y 'por ciento'; invita a ver mas en el link de mi bio (NO nombres 'Substack' en la voz) y "
     "firma la voz diciendo EXACTAMENTE: Soy éi ái uíz Pédro (así se pronuncia @aiwithpedro).\n"
     '"card": resumen MUY corto y potente para una imagen (max 8 palabras, sin emojis, sin cortar a media palabra). '
     "Si hay noticia, es el titular resumido de forma viral.\n"
@@ -183,7 +183,7 @@ def build(target):
     voz = (ai.get("voz") or "").strip() or (
         "Hoy no hay partidos del Mundial, pero te dejo algo. "
         + (f"{news['title']}, segun {news['source']}. " if news else f"{mf} ")
-        + f"{cd} El analisis completo lo tienes gratis en mi Substack, el link esta en mi perfil. "
+        + f"{cd} El análisis completo está en el link de mi bio. "
           f"Soy {BRAND_VOZ}, nos vemos pronto.")
     card = (ai.get("card") or "").strip() or ((news["title"][:60]) if news else mf[:60])
     caption = (ai.get("caption") or "").strip() or (

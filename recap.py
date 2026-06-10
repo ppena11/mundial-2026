@@ -47,7 +47,7 @@ AI_RECAP_SYS = (
     '"gancho": 1 o 2 frases para el digest; engancha con cómo nos fue (acierto destacado o sorpresa).\n'
     '"voz": guion HABLADO de 45 a 70 palabras (~20 s). Empieza fuerte (cómo nos fue anoche), nombra el acierto más '
     "jugoso, reconoce con humildad un fallo si lo hubo, da el récord acumulado, y cierra con un teaser de lo que "
-    "viene + invitación al Substack ('el link está en mi perfil') y firma la voz diciendo EXACTAMENTE: "
+    "viene + invitación a ver el cierre en el link de mi bio (NO nombres 'Substack' en la voz) y firma la voz diciendo EXACTAMENTE: "
     "Soy éi ái uíz Pédro (así se pronuncia @aiwithpedro). SIN emojis ni símbolos "
     "(lo lee un sintetizador de voz); números con dígitos y 'por ciento'.\n"
     '"caption": 1 o 2 líneas para TikTok, con gancho; puede llevar 1 o 2 emojis; NO incluyas hashtags aquí.\n'
@@ -166,8 +166,8 @@ def build(target):
         f"Veamos como nos fue anoche en el Mundial. Mi inteligencia artificial acerto {hits} de {n} partidos. "
         + (f"Lo mas claro fue {best['a']} contra {best['b']}. " if best else "")
         + (f"Se nos escapo {miss['a']} contra {miss['b']}, asi es el futbol. " if miss else "")
-        + f"En total llevamos {rec_txt}.{prox_txt} El analisis completo lo tienes gratis en mi Substack, "
-          f"el link está en mi perfil. Soy {BRAND_VOZ}, nos vemos mañana.")
+        + f"En total llevamos {rec_txt}.{prox_txt} El análisis completo está en el link de mi bio. "
+          f"Soy {BRAND_VOZ}, nos vemos mañana.")
     caption = (ai.get("caption") or "").strip() or (
         f"Así nos fue anoche: {hits}/{n} aciertos 🎯 Mostramos aciertos y fallos. Análisis gratis en mi Substack (link en bio).")
     tags = _five(ai.get("hashtags") or [], [matches[0]["a"], matches[0]["b"]])

@@ -59,7 +59,8 @@ AI_SYSTEM = (
     "Con los datos del día del Mundial 2026, genera el contenido de un video de TikTok y devuelve EXCLUSIVAMENTE "
     "un objeto JSON válido (sin ``` ni texto extra) con EXACTAMENTE estas claves:\n"
     '"voiceover": el guion HABLADO, 80 a 100 palabras (~35 s). Gancho fuerte en la primera frase; destaca el dato '
-    "más jugoso del día (la jugada de valor o una sorpresa); cierra invitando al Substack ('el link está en la bio') "
+    "más jugoso del día (la jugada de valor o una sorpresa); cierra invitando a ver el análisis completo en el link "
+    "de mi bio (NO nombres 'Substack' en la voz) "
     "y firma la voz diciendo EXACTAMENTE: Soy éi ái uíz Pédro (así se pronuncia @aiwithpedro). SIN otros emojis ni "
     "símbolos (lo lee un sintetizador de voz); números con dígitos y "
     "'por ciento'; 'contra' en vez de 'vs'; varía el arranque para no repetir.\n"
@@ -160,7 +161,7 @@ def build(target):
                      f"el favorito es {clearest['fav']}, con {pct(clearest['fp'])}.")
         if tr.get("n",0)>0:
             S.append(f"Y para que confíes en el modelo: llevamos {tr['aciertos_1x2']} aciertos de {tr['n']} partidos.")
-    S.append(f"El análisis completo de todos los partidos lo tienes gratis en mi Substack, el link está en mi perfil. "
+    S.append(f"El análisis completo de todos los partidos lo tienes en el link de mi bio. "
              f"Soy {BRAND_VOZ}, esto es inteligencia artificial aplicada al fútbol. Nos vemos mañana.")
     voiceover=" ".join(S)   # guion de respaldo (plantilla)
     # caption de respaldo (plantilla)
