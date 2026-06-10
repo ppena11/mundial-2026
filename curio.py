@@ -48,20 +48,21 @@ def _champ():
 def model_fact(champ, days):
     """Un dato EXACTO derivado de las simulaciones; rota por día para no repetir."""
     if not champ:
-        return "Mi inteligencia artificial corre 20.000 simulaciones del Mundial cada dia."
+        return "Mi inteligencia artificial corre 20.000 simulaciones del Mundial cada día."
+    import daily_digest as dd
     f = []
     t1, v1 = champ[0]
-    f.append(f"Segun mis 20.000 simulaciones, el favorito al titulo es {t1} con {round(v1)} por ciento.")
+    f.append(f"Según mis 20.000 simulaciones, quien más veces queda campeón es {dd.acc(t1)}, con {round(v1)} por ciento.")
     if len(champ) >= 2:
         t2, v2 = champ[1]
-        f.append(f"La pelea por el numero uno esta cerrada: {t1} con {round(v1)} por ciento contra {t2} con {round(v2)} por ciento.")
+        f.append(f"La pelea por el primer puesto está cerrada: {dd.acc(t1)} con {round(v1)} por ciento contra {dd.acc(t2)} con {round(v2)} por ciento.")
     if len(champ) >= 3:
         t3, v3 = champ[2]
-        f.append(f"Dato que sorprende: mi IA mete a {t3} entre los tres favoritos, con {round(v3)} por ciento de ser campeon.")
+        f.append(f"Dato que sorprende: mi IA mete a {dd.acc(t3)} entre los tres primeros, con {round(v3)} por ciento de quedar campeón.")
     dh = [(t, v) for t, v in champ[5:11] if v >= 1.0]
     if dh:
         t, v = dh[0]
-        f.append(f"El tapado del Mundial: {t} sale campeon en {round(v)} de cada 100 simulaciones, y casi nadie habla de el.")
+        f.append(f"El tapado del Mundial: {dd.acc(t)} queda campeón en {round(v)} de cada 100 simulaciones, y casi nadie habla de él.")
     return f[days % len(f)] if f else ""
 
 def web_news():
@@ -121,18 +122,20 @@ CURIO_SYS = (
     "sintetizador de voz y la acentuación es OBLIGATORIA.")
 
 def _material(p):
+    import daily_digest as dd
     L = []
     if p["days"] > 0:
-        L.append(f"ESTADO: PRE-TORNEO. Faltan {p['days']} dias para el inicio del Mundial 2026 (11 de junio). "
-                 "Puedes usar la cuenta regresiva.")
+        dtxt = "Falta un día" if p["days"] == 1 else f"Faltan {p['days']} días"
+        L.append(f"ESTADO: PRE-TORNEO. {dtxt} para el inicio del Mundial 2026 (11 de junio). "
+                 "Puedes usar la cuenta regresiva (di 'un día' en singular, no 'uno día').")
     else:
-        L.append("ESTADO: TORNEO EN CURSO, hoy es un dia de descanso (sin partidos). NO uses cuenta regresiva; "
-                 "lleva al frente la noticia mas viral del Mundial.")
+        L.append("ESTADO: TORNEO EN CURSO, hoy es un día de descanso (sin partidos). NO uses cuenta regresiva; "
+                 "lleva al frente la noticia más viral del Mundial.")
     if p["news"]:
         L.append(f"NOTICIA REAL (fuente {p['news']['source']}): {p['news']['title']}")
-    L.append("DATO EXACTO DE MIS SIMULACIONES (usalo, no inventes otros numeros): " + p["model_fact"])
+    L.append("DATO EXACTO DE MIS SIMULACIONES (úsalo, no inventes otros números): " + p["model_fact"])
     if p["champ"]:
-        L.append("Top campeon hoy: " + ", ".join(f"{t} {round(v)} por ciento" for t, v in p["champ"][:3]) + ".")
+        L.append("Top campeón hoy: " + ", ".join(f"{dd.acc(t)} {round(v)} por ciento" for t, v in p["champ"][:3]) + ".")
     return "\n".join(L)
 
 def ai_curio(material):
@@ -172,17 +175,18 @@ def build(target):
     ai = ai_curio(_material(p))
     days, news, mf, champ = p["days"], p["news"], p["model_fact"], p["champ"]
     pre = days > 0                                  # pre-torneo (cuenta regresiva) vs torneo en curso
-    cd = f"Faltan {days} dias para el Mundial." if pre else "El Mundial continua cuando vuelvan los partidos."
-    via = f" (via {news['source']})" if news else ""
+    cd = (("Falta un día para el Mundial." if days == 1 else f"Faltan {days} días para el Mundial.")
+          if pre else "El Mundial continúa cuando vuelvan los partidos.")
+    via = f" (vía {news['source']})" if news else ""
 
     titulo = (ai.get("titulo") or "").strip() or (
-        (news["title"][:64]) if news else (f"Cuenta regresiva: faltan {days} dias" if pre else "El Mundial, en pausa"))
+        (news["title"][:64]) if news else (("Cuenta regresiva: falta 1 día" if days == 1 else f"Cuenta regresiva: faltan {days} días") if pre else "El Mundial, en pausa"))
     gancho = (ai.get("gancho") or "").strip() or (
-        (f"Hoy no rueda el balon, pero hay novedades: {news['title']}{via}. {cd}") if news
+        (f"Hoy no rueda el balón, pero hay novedades: {news['title']}{via}. {cd}") if news
         else f"Hoy no hay partidos, pero mi IA no descansa. {mf} {cd}")
     voz = (ai.get("voz") or "").strip() or (
         "Hoy no hay partidos del Mundial, pero te dejo algo. "
-        + (f"{news['title']}, segun {news['source']}. " if news else f"{mf} ")
+        + (f"{news['title']}, según {news['source']}. " if news else f"{mf} ")
         + f"{cd} El análisis completo está en el link de mi bio. "
           f"Soy {BRAND_VOZ}, nos vemos pronto.")
     card = (ai.get("card") or "").strip() or ((news["title"][:60]) if news else mf[:60])

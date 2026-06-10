@@ -36,18 +36,18 @@ def _summary(fh, played, pick, clearest, tr):
         return "\n".join(L)
     L.append("Partidos de hoy y favorito del modelo:")
     for d in played:
-        L.append(f"- {d['a']} contra {d['b']}: favorito {d['fav']} con {round(100*d['fp'])} por ciento.")
+        L.append(f"- {dd.acc(d['a'])} contra {dd.acc(d['b'])}: favorito {dd.acc(d['fav'])} con {round(100*d['fp'])} por ciento.")
     if pick:
         t, mpb, mkp, edge = pick[1]
-        L.append(f"Jugada de valor del día: {t} (el modelo le da {round(100*mpb)} por ciento y el mercado solo {round(100*mkp)} por ciento; está infravalorada).")
+        L.append(f"Jugada de valor del día: {dd.acc(t)} (el modelo le da {round(100*mpb)} por ciento y el mercado solo {round(100*mkp)} por ciento; está infravalorada).")
     if clearest:
-        L.append(f"Resultado más claro: {clearest['fav']} con {round(100*clearest['fp'])} por ciento en {clearest['a']} contra {clearest['b']}.")
+        L.append(f"Resultado más claro: {dd.acc(clearest['fav'])} con {round(100*clearest['fp'])} por ciento en {dd.acc(clearest['a'])} contra {dd.acc(clearest['b'])}.")
     if tr.get("n", 0) > 0:
         L.append(f"Historial del modelo: {tr['aciertos_1x2']} aciertos de {tr['n']} ({tr['tasa_1x2']} por ciento).")
     try:
         champ = json.load(open("champ_today.json", encoding="utf-8"))["campeon"]
         playing = {d["a"] for d in played} | {d["b"] for d in played}
-        stars = [t for t in champ if t in playing][:2]
+        stars = [dd.acc(t) for t in champ if t in playing][:2]
         if stars:
             L.append("Equipos más buscados que juegan hoy (úsalos en los hashtags): " + ", ".join(stars) + ".")
     except Exception:
@@ -154,11 +154,11 @@ def build(target):
         S.append("Quién gana hoy en el Mundial. Mi inteligencia artificial corrió veinte mil simulaciones, y esto es lo que encontró.")
         if pick:
             d,(team,mpb,mkp,edge)=pick; riv=d["b"] if team==d["a"] else d["a"]
-            S.append(f"La jugada del día es {team}, contra {riv}. Mi modelo le da {pct(mpb)} de ganar, "
+            S.append(f"La jugada del día es {dd.acc(team)}, contra {dd.acc(riv)}. Mi modelo le da {pct(mpb)} de ganar, "
                      f"pero las casas la pagan como si fuera mucho más difícil. Para mí, está infravalorada.")
         if clearest:
-            S.append(f"El resultado más claro del día: en {clearest['a']} contra {clearest['b']}, "
-                     f"el favorito es {clearest['fav']}, con {pct(clearest['fp'])}.")
+            S.append(f"El resultado más claro del día: en {dd.acc(clearest['a'])} contra {dd.acc(clearest['b'])}, "
+                     f"el favorito es {dd.acc(clearest['fav'])}, con {pct(clearest['fp'])}.")
         if tr.get("n",0)>0:
             S.append(f"Y para que confíes en el modelo: llevamos {tr['aciertos_1x2']} aciertos de {tr['n']} partidos.")
     S.append(f"El análisis completo de todos los partidos lo tienes en el link de mi bio. "

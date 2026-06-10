@@ -143,29 +143,29 @@ def build(target):
     best = max((x for x in matches if x["ok1x2"]), key=lambda x: x["ppick"], default=None)
     miss = next((x for x in matches if not x["ok1x2"]), None)
     surprise = min((x for x in matches if x["ok1x2"]), key=lambda x: x["ppick"], default=None)
-    sm = [f"Cierre del {fecha_h}. El modelo acerto {hits} de {n} partidos."]
+    sm = [f"Cierre del {fecha_h}. El modelo acertó {hits} de {n} partidos."]
     for x in matches:
-        sm.append(f"- {x['a']} {x['marcador_real']} {x['b']}: dijimos {x['pick_team']} "
+        sm.append(f"- {dd.acc(x['a'])} {x['marcador_real']} {dd.acc(x['b'])}: dijimos {dd.acc(x['pick_team'])} "
                   f"({round(100*x['ppick'])} por ciento), {'ACERTAMOS' if x['ok1x2'] else 'FALLAMOS'}.")
     if surprise and surprise["ppick"] < 0.55:
-        sm.append(f"Sorpresa bien clavada: {surprise['pick_team']} (le daban {round(100*surprise['ppick'])} por ciento).")
+        sm.append(f"Sorpresa bien clavada: {dd.acc(surprise['pick_team'])} (le daban {round(100*surprise['ppick'])} por ciento).")
     if record.get("n", 0) > 0:
-        sm.append(f"Record acumulado: {record['aciertos_1x2']} de {record['n']} ({record['tasa_1x2']} por ciento).")
+        sm.append(f"Récord acumulado: {record['aciertos_1x2']} de {record['n']} ({record['tasa_1x2']} por ciento).")
     if prox:
-        sm.append(f"Lo que viene: {prox['a']} contra {prox['b']}, favorito {prox['fav']} {round(100*prox['fp'])} por ciento.")
+        sm.append(f"Lo que viene: {dd.acc(prox['a'])} contra {dd.acc(prox['b'])}, favorito {dd.acc(prox['fav'])} {round(100*prox['fp'])} por ciento.")
     ai = ai_recap("\n".join(sm))
 
     # --- textos (Claude redacta; datos exactos) ---
     rec_txt = (f"{record['aciertos_1x2']} de {record['n']} ({record['tasa_1x2']} por ciento)"
                if record.get("n", 0) > 0 else "arrancando el historial")
-    prox_txt = (f" Manana ojo con {prox['a']} contra {prox['b']}." if prox else "")
+    prox_txt = (f" Mañana ojo con {dd.acc(prox['a'])} contra {dd.acc(prox['b'])}." if prox else "")
     titulo = (ai.get("titulo") or "").strip() or f"Le atinamos {hits} de {n} anoche en el Mundial"
     gancho = (ai.get("gancho") or "").strip() or (
-        f"Cerramos la jornada: el modelo acerto {hits} de {n}." + (f" Bien clavado: {best['a']} vs {best['b']}." if best else ""))
+        f"Cerramos la jornada: el modelo acertó {hits} de {n}." + (f" Bien clavado: {dd.acc(best['a'])} vs {dd.acc(best['b'])}." if best else ""))
     voz = (ai.get("voz") or "").strip() or (
-        f"Veamos como nos fue anoche en el Mundial. Mi inteligencia artificial acerto {hits} de {n} partidos. "
-        + (f"Lo mas claro fue {best['a']} contra {best['b']}. " if best else "")
-        + (f"Se nos escapo {miss['a']} contra {miss['b']}, asi es el futbol. " if miss else "")
+        f"Veamos cómo nos fue anoche en el Mundial. Mi inteligencia artificial acertó {hits} de {n} partidos. "
+        + (f"Lo más claro fue {dd.acc(best['a'])} contra {dd.acc(best['b'])}. " if best else "")
+        + (f"Se nos escapó {dd.acc(miss['a'])} contra {dd.acc(miss['b'])}, así es el fútbol. " if miss else "")
         + f"En total llevamos {rec_txt}.{prox_txt} El análisis completo está en el link de mi bio. "
           f"Soy {BRAND_VOZ}, nos vemos mañana.")
     caption = (ai.get("caption") or "").strip() or (

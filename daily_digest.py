@@ -52,6 +52,12 @@ EN2ES.update({"Czechia":"Chequia","Czech Republic":"Chequia","USA":"Estados Unid
               "Congo DR":"R.D. Congo","DR Congo":"R.D. Congo","Cape Verde":"Cabo Verde",
               "Cape Verde Islands":"Cabo Verde","Curaçao":"Curazao"})
 
+# nombres del modelo (ASCII) -> con acentos, para MOSTRAR y para la VOZ (ElevenLabs los pronuncia bien)
+ACENTOS = {"Mexico":"México","Sudafrica":"Sudáfrica","Canada":"Canadá","Haiti":"Haití","Turquia":"Turquía",
+           "Paises Bajos":"Países Bajos","Japon":"Japón","Tunez":"Túnez","Belgica":"Bélgica","Iran":"Irán",
+           "Espana":"España","Arabia Saudi":"Arabia Saudí","Uzbekistan":"Uzbekistán","Panama":"Panamá"}
+def acc(t): return ACENTOS.get(t, t)
+
 def _get(url):
     try:
         return requests.get(url, headers=HEAD, timeout=20).json()
