@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import FancyBboxPatch
 from matplotlib.offsetbox import OffsetImage, AnnotationBbox
 from datetime import date
-import curio, flags
+import curio, flags, daily_digest as dd
 from make_matchday import blk, hvy, reg, GOLD, WHITE, MUTE, BG, CARD, CARD_EDGE, INK, SUB, GOLD_DK, GOLDBAR
 
 def render(target):
@@ -31,12 +31,13 @@ def render(target):
     ax.imshow(grad.reshape(256, 1, 3), extent=[0, 1, 0, 1], aspect="auto", zorder=0)
 
     # ===== cabecera =====
-    ax.text(0.5, 0.962, "@aiwithpedro", ha="center", va="center", color=MUTE, fontproperties=hvy(19), zorder=5)
-    ax.text(0.5, 0.930, "MUNDIAL 2026", ha="center", va="center", color=GOLD, fontproperties=blk(56), zorder=5)
+    ax.add_patch(FancyBboxPatch((0.325, 0.945), 0.35, 0.035, boxstyle="round,pad=0.003,rounding_size=0.017", fc=GOLD, ec="none", zorder=4))
+    ax.text(0.5, 0.9625, "@aiwithpedro", ha="center", va="center", color="#0b3b29", fontproperties=blk(23), zorder=6)
+    ax.text(0.5, 0.921, "MUNDIAL 2026", ha="center", va="center", color=GOLD, fontproperties=blk(50), zorder=5)
     # cuenta regresiva / día de descanso
-    cd = (f"FALTAN {days} DÍAS" if days > 0 else "HOY DESCANSAN")
-    ax.text(0.5, 0.892, cd, ha="center", va="center", color=WHITE, fontproperties=blk(30), zorder=5)
-    ax.text(0.5, 0.864, f"{fh}  ·  hoy no hay partidos", ha="center", va="center", color=MUTE, fontproperties=hvy(16), zorder=5)
+    cd = (("FALTA 1 DÍA" if days == 1 else f"FALTAN {days} DÍAS") if days > 0 else "HOY DESCANSAN")
+    ax.text(0.5, 0.884, cd, ha="center", va="center", color=WHITE, fontproperties=blk(30), zorder=5)
+    ax.text(0.5, 0.856, f"{fh}  ·  hoy no hay partidos", ha="center", va="center", color=MUTE, fontproperties=hvy(16), zorder=5)
 
     # ===== tarjeta del dato curioso (grande, central) =====
     ax.add_patch(FancyBboxPatch((0.06, 0.40), 0.88, 0.42,
@@ -66,7 +67,7 @@ def render(target):
             if p:
                 try: ax.add_artist(AnnotationBbox(OffsetImage(plt.imread(p), zoom=0.26), (0.11, yy), frameon=False, zorder=6))
                 except Exception: pass
-            ax.text(0.16, yy, f"{j+1}. {t}", ha="left", va="center", color=INK, fontproperties=hvy(17), zorder=5)
+            ax.text(0.16, yy, f"{j+1}. {dd.acc(t)}", ha="left", va="center", color=INK, fontproperties=hvy(17), zorder=5)
             ax.add_patch(plt.Rectangle((0.50, yy - 0.010), 0.30 * (v / cmax), 0.020, fc=GOLDBAR, ec="none", zorder=4))
             ax.text(0.50 + 0.30 * (v / cmax) + 0.012, yy, f"{v:.1f}%", ha="left", va="center", color=GOLD_DK, fontproperties=blk(15), zorder=5)
             yy -= 0.048

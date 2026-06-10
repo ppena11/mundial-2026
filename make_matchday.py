@@ -89,9 +89,11 @@ def main(target):
         except Exception: pass
 
     # ===== cabecera =====
-    ax.text(0.5,0.966,"@aiwithpedro",ha="center",va="center",color=MUTE,fontproperties=hvy(19),zorder=5)
-    ax.text(0.5,0.934,"MUNDIAL 2026",ha="center",va="center",color=GOLD,fontproperties=blk(56),zorder=5)
-    ax.text(0.5,0.905,f"¿Quién gana hoy?  ·  {fh}  ·  hora del Este",ha="center",va="center",color=WHITE,fontproperties=hvy(17),zorder=5)
+    # marca en badge dorado (bien visible)
+    ax.add_patch(FancyBboxPatch((0.325,0.949),0.35,0.035,boxstyle="round,pad=0.003,rounding_size=0.017",fc=GOLD,ec="none",zorder=4))
+    ax.text(0.5,0.9665,"@aiwithpedro",ha="center",va="center",color="#0b3b29",fontproperties=blk(23),zorder=6)
+    ax.text(0.5,0.927,"MUNDIAL 2026",ha="center",va="center",color=GOLD,fontproperties=blk(52),zorder=5)
+    ax.text(0.5,0.898,f"¿Quién gana hoy?  ·  {fh}  ·  hora ET",ha="center",va="center",color=WHITE,fontproperties=blk(19),zorder=5)
 
     # ===== tarjetas de partido (claras, con aire) =====
     games=[r for r in rows]
@@ -103,16 +105,16 @@ def main(target):
         ax.text(0.085,yc+rh*0.28,f"{dd.hora_et(m['utc'])}   ·   {m['label']}",ha="left",va="center",
                 color=SUB,fontproperties=hvy(13),zorder=5)
         if d.get("skip"):
-            ax.text(0.5,yc-rh*0.06,f"{d['a']}  vs  {d['b']}",ha="center",va="center",color=SUB,fontproperties=hvy(16),zorder=5)
+            ax.text(0.5,yc-rh*0.06,f"{dd.acc(d['a'])}  vs  {dd.acc(d['b'])}",ha="center",va="center",color=SUB,fontproperties=hvy(16),zorder=5)
             continue
         a,b=d["a"],d["b"]; pw,pdr,pl=d["pw"],d["pdr"],d["pl"]
         if d["vc"]:
-            ax.text(0.915,yc+rh*0.28,f"VALOR: {d['vc'][0][0]}",ha="right",va="center",color=GOLD_DK,fontproperties=blk(13),zorder=5)
+            ax.text(0.915,yc+rh*0.28,f"VALOR: {dd.acc(d['vc'][0][0])}",ha="right",va="center",color=GOLD_DK,fontproperties=blk(13),zorder=5)
         afav = pw>=pl
         # nombres + banderas (favorito resaltado en su color) + MARCADOR PREVISTO al centro
-        flag(a,0.095,yc+rh*0.10,zoom=0.25); ax.text(0.135,yc+rh*0.10,a.upper(),ha="left",va="center",
+        flag(a,0.095,yc+rh*0.10,zoom=0.25); ax.text(0.135,yc+rh*0.10,dd.acc(a).upper(),ha="left",va="center",
              color=(GREEN if afav else INK),fontproperties=blk(17),zorder=5)
-        flag(b,0.905,yc+rh*0.10,zoom=0.25); ax.text(0.865,yc+rh*0.10,b.upper(),ha="right",va="center",
+        flag(b,0.905,yc+rh*0.10,zoom=0.25); ax.text(0.865,yc+rh*0.10,dd.acc(b).upper(),ha="right",va="center",
              color=(GOLD_DK if not afav else INK),fontproperties=blk(17),zorder=5)
         ax.text(0.50,yc+rh*0.28,"marcador previsto",ha="center",va="center",color=SUB,fontproperties=hvy(10),zorder=5)
         ax.text(0.50,yc+rh*0.10,f"{d['sx']} - {d['sy']}",ha="center",va="center",color=INK,fontproperties=blk(19),zorder=5)
@@ -133,7 +135,7 @@ def main(target):
         cmax=max(v for _,v in champ); yy=0.280
         for j,(t,v) in enumerate(champ):
             flag(t,0.10,yy,zoom=0.24)
-            ax.text(0.145,yy,f"{j+1}. {t}",ha="left",va="center",color=INK,fontproperties=hvy(15),zorder=5)
+            ax.text(0.145,yy,f"{j+1}. {dd.acc(t)}",ha="left",va="center",color=INK,fontproperties=hvy(15),zorder=5)
             ax.add_patch(plt.Rectangle((0.46,yy-0.009),0.34*(v/cmax),0.018,fc=GOLDBAR,ec="none",zorder=4))
             ax.text(0.46+0.34*(v/cmax)+0.012,yy,f"{v:.1f}%",ha="left",va="center",color=GOLD_DK,fontproperties=blk(14),zorder=5)
             yy-=0.040

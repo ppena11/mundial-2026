@@ -11,7 +11,7 @@ import matplotlib; matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from matplotlib.patches import FancyBboxPatch, Ellipse
 from matplotlib.offsetbox import OffsetImage, AnnotationBbox
-import recap, flags
+import recap, flags, daily_digest as dd
 from make_matchday import blk, hvy, reg, GOLD, WHITE, MUTE, BG, CARD, CARD_EDGE, INK, SUB, GREEN, GOLD_DK
 
 RED = "#DC2626"
@@ -49,10 +49,11 @@ def render(target):
     ax.imshow(grad.reshape(256, 1, 3), extent=[0, 1, 0, 1], aspect="auto", zorder=0)
 
     # ===== cabecera =====
-    ax.text(0.5, 0.966, "@aiwithpedro", ha="center", va="center", color=MUTE, fontproperties=hvy(19), zorder=5)
-    ax.text(0.5, 0.934, "MUNDIAL 2026", ha="center", va="center", color=GOLD, fontproperties=blk(56), zorder=5)
-    ax.text(0.5, 0.905, f"¿LE ATINAMOS?  ·  {cu['fecha_h']}  ·  hora del Este", ha="center", va="center",
-            color=WHITE, fontproperties=hvy(17), zorder=5)
+    ax.add_patch(FancyBboxPatch((0.325, 0.949), 0.35, 0.035, boxstyle="round,pad=0.003,rounding_size=0.017", fc=GOLD, ec="none", zorder=4))
+    ax.text(0.5, 0.9665, "@aiwithpedro", ha="center", va="center", color="#0b3b29", fontproperties=blk(23), zorder=6)
+    ax.text(0.5, 0.927, "MUNDIAL 2026", ha="center", va="center", color=GOLD, fontproperties=blk(52), zorder=5)
+    ax.text(0.5, 0.898, f"¿LE ATINAMOS?  ·  {cu['fecha_h']}  ·  hora ET", ha="center", va="center",
+            color=WHITE, fontproperties=blk(19), zorder=5)
 
     # ===== tarjetas de partido (marcador REAL + sello + pronóstico) =====
     ytop, ybot = 0.878, 0.455; n = max(1, len(matches)); rh = (ytop - ybot) / n
@@ -69,15 +70,15 @@ def render(target):
         col_a = (GREEN if d["ok1x2"] else RED) if d["pick_code"] == "1" else INK
         col_b = (GREEN if d["ok1x2"] else RED) if d["pick_code"] == "2" else INK
         flag(ax, a, 0.095, yc+rh*0.08, zoom=0.25)
-        ax.text(0.135, yc+rh*0.08, a.upper(), ha="left", va="center", color=col_a, fontproperties=blk(17), zorder=5)
+        ax.text(0.135, yc+rh*0.08, dd.acc(a).upper(), ha="left", va="center", color=col_a, fontproperties=blk(17), zorder=5)
         flag(ax, b, 0.905, yc+rh*0.08, zoom=0.25)
-        ax.text(0.865, yc+rh*0.08, b.upper(), ha="right", va="center", color=col_b, fontproperties=blk(17), zorder=5)
+        ax.text(0.865, yc+rh*0.08, dd.acc(b).upper(), ha="right", va="center", color=col_b, fontproperties=blk(17), zorder=5)
         # marcador REAL grande al centro
         real = d["marcador_real"].replace("-", " - ")
         ax.text(0.5, yc+rh*0.06, real, ha="center", va="center", color=INK, fontproperties=blk(24), zorder=5)
         # pronóstico
         pickcol = GREEN if d["ok1x2"] else RED
-        dijimos = "empate" if d["pick_code"] == "X" else d["pick_team"]
+        dijimos = "empate" if d["pick_code"] == "X" else dd.acc(d["pick_team"])
         ax.text(0.5, yc-rh*0.16, f"dijimos: {dijimos} ({d['ppick']:.0%})", ha="center", va="center",
                 color=pickcol, fontproperties=blk(15), zorder=5)
         ax.text(0.5, yc-rh*0.32, f"previsto {d['marcador_pred']}  ·  real {d['marcador_real']}"
@@ -101,11 +102,11 @@ def render(target):
         ax.text(0.5, 0.295, f"{prox['fecha_h']}  ·  {prox['hora']}", ha="center", va="center",
                 color=SUB, fontproperties=hvy(14), zorder=5)
         flag(ax, prox["a"], 0.16, 0.232, zoom=0.26)
-        ax.text(0.22, 0.232, prox["a"].upper(), ha="left", va="center", color=INK, fontproperties=blk(17), zorder=5)
+        ax.text(0.22, 0.232, dd.acc(prox["a"]).upper(), ha="left", va="center", color=INK, fontproperties=blk(17), zorder=5)
         ax.text(0.5, 0.232, "vs", ha="center", va="center", color=SUB, fontproperties=hvy(14), zorder=5)
-        ax.text(0.78, 0.232, prox["b"].upper(), ha="right", va="center", color=INK, fontproperties=blk(17), zorder=5)
+        ax.text(0.78, 0.232, dd.acc(prox["b"]).upper(), ha="right", va="center", color=INK, fontproperties=blk(17), zorder=5)
         flag(ax, prox["b"], 0.84, 0.232, zoom=0.26)
-        ax.text(0.5, 0.168, f"favorito: {prox['fav']} ({prox['fp']:.0%})", ha="center", va="center",
+        ax.text(0.5, 0.168, f"favorito: {dd.acc(prox['fav'])} ({prox['fp']:.0%})", ha="center", va="center",
                 color=GOLD_DK, fontproperties=blk(16), zorder=5)
     else:
         ax.text(0.5, 0.227, "El calendario se actualiza pronto", ha="center", va="center",
