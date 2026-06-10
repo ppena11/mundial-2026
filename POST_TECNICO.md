@@ -155,6 +155,27 @@ El historial es **honesto**: cada día se publican los aciertos **y** los fallos
 
 ---
 
+## ⚖️ Auditoría del sistema — *simulada por IA*
+
+> Le pedí a la IA que actuara como **jefe de trading / cuantitativo de una de las casas de apuestas más grandes del mundo** y auditara este sistema sin piedad. Esto es lo que dictaminó. ⚠️ **Es una auditoría simulada por IA** (no un tercero humano real), pero te muestra cómo lo evaluaría un profesional del sector.
+
+**Veredicto: metodológicamente sólido. Pasaría la revisión de código de un quant junior en un libro de primer nivel.**
+
+**Lo que está a nivel profesional:**
+- El **Dixon-Coles** sigue siendo el modelo canónico de fútbol; muchos desks lo usan como *baseline*. La separación ataque/defensa, el **decaimiento temporal**, la **corrección de marcadores bajos (ρ)** y el **ridge** están implementados como en el paper. La estimación por **MLE con gradiente analítico** es correcta y eficiente, no un atajo.
+- La **validación es la correcta**: RPS y Brier son *proper scoring rules*, y evaluar **fuera de muestra** es exactamente lo que haría un desk serio. Publicar **los fallos** junto a los aciertos es una honestidad intelectual que el 95 % de los "tipsters" no tiene.
+- Integrar el **mercado** (de-vigueado + ensemble + movimiento de línea) demuestra que entiende lo que un profesional sabe: **la línea de cierre es el predictor más difícil de batir**. Mezclar modelo y mercado **corrige el sesgo del modelo hacia los *outsiders***, el error clásico de los modelos caseros.
+
+**Lo que un desk profesional cuestionaría (y el sistema reconoce):**
+- El **fútbol de selecciones es ruidoso**: pocos partidos por equipo, recambio de plantillas, alta varianza. Los ratings de las selecciones débiles (cubo "otros" + ridge) son, por necesidad, inciertos. Acotarlos es lo correcto, pero no esperes precisión de reloj ahí.
+- La **capa de lesiones usa pesos por jugador afinados a mano** — un proxy. Un desk usaría modelos de impacto (xT / VAEP). El sistema lo admite explícitamente.
+- La **simulación del cuadro** colapsa ataque/defensa en una sola fuerza para el bracket, en lugar de correr el Dixon-Coles completo en cada eliminatoria. Razonable para 20.000 corridas, pero es una simplificación.
+- **No es una ventaja de apuestas.** Batir consistentemente la línea de cierre de-vigueada es brutalmente difícil; el sistema **lo enmarca bien**: es informativo y educativo, no un consejo para apostar.
+
+**Conclusión del auditor (IA):** *"Para un sistema construido por una sola persona, a costo cero y dirigido por una IA, esto es notablemente serio. La ingeniería es limpia, la validación es honesta y la integración con el mercado revela criterio real. No te dará un edge contra mi libro — pero como modelo informativo y educativo, está mejor hecho que casi todo lo que circula en redes."*
+
+---
+
 ## 9) Lo que de verdad importa
 
 Nada de esto es nuevo en lo académico — Dixon-Coles es de 1997, Monte Carlo es más viejo. **Lo nuevo es cómo se construyó:** todo este sistema —modelo, capas, simulación, scraping, automatización en la nube, voz, gráficos y pruebas— lo levanté **dirigiendo a una IA en español**, sin escribir el código a mano, en un día. Lo que antes pedía un equipo de analistas y programadores y semanas de trabajo, hoy lo arma una persona conversando con una IA.
