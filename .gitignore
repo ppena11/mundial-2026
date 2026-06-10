@@ -59,3 +59,6 @@ intro_post.md
 # === Archivos temporales del SO ===
 Thumbs.db
 .DS_Store
+
+# === Post tecnico (se regenera de POST_TECNICO.md) ===
+tech_post.html
