@@ -161,6 +161,10 @@ Nada de esto es nuevo en lo académico — Dixon-Coles es de 1997, Monte Carlo e
 
 Ese es el mensaje del canal: con las herramientas de hoy, **construir cosas que parecían imposibles ya no requiere ser programador — requiere saber dirigir a la IA**.
 
+## 🔍 ¿No me crees? Audítalo
+
+Todo el código está abierto: **github.com/ppena11/mundial-2026** — el modelo Dixon-Coles, las capas de lesiones y mercado, el motor Monte Carlo, los workflows de GitHub Actions y las 37 pruebas. Léelo, rómpelo, mejóralo. No hay magia: hay matemática, datos abiertos e ingeniería — y una IA que lo escribió todo.
+
 ---
 
 *Si llegaste hasta aquí, eres justo el tipo de persona que quería impresionar. Sígueme para ver el modelo en acción durante todo el Mundial — con sus aciertos y sus fallos. Contenido informativo y educativo; no es consejo de apuestas.*
