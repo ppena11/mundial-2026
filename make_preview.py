@@ -37,6 +37,13 @@ DISP = {"Mexico": "México", "Sudafrica": "Sudáfrica", "Canada": "Canadá", "Ha
         "Espana": "España", "Arabia Saudi": "Arabia Saudí", "Uzbekistan": "Uzbekistán", "Panama": "Panamá"}
 def disp(t): return DISP.get(t, t)
 
+MESES = ["", "ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"]
+def fecha_corta(utc):
+    try:
+        d = dd._et(utc); return f"{d.day} {MESES[d.month]}"
+    except Exception:
+        return ""
+
 AI_PREVIEW_SYS = (
     "Eres el editor de @aiwithpedro, un creador que enseña inteligencia artificial. Escribe la narrativa de una "
     "GUÍA PRE-MUNDIAL 2026 educativa, basada en un modelo estadístico (Dixon-Coles + Montecarlo, 20.000 "
@@ -200,7 +207,7 @@ def render():
         for x in d["rows"]:
             m = x["m"]; a, b = x["a"], x["b"]; da, db = disp(a), disp(b)
             fav, fp = (da, x["pw"]) if x["pw"] >= x["pl"] else (db, x["pl"])
-            md.append(f"- **{dd.hora_et(m['utc'])} · {da} vs {db}**")
+            md.append(f"- **{fecha_corta(m['utc'])} · {dd.hora_et(m['utc'])} · {da} vs {db}**")
             md.append(f"  - 1X2: {da} **{x['pw']:.0%}** · empate {x['pdr']:.0%} · {db} **{x['pl']:.0%}**")
             md.append(f"  - 🎯 Marcador probable: **{x['sx']}-{x['sy']}** · goles esp. {x['lh']:.1f}–{x['la']:.1f}")
             bj = []
