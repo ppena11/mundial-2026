@@ -29,7 +29,8 @@ AI_WEEKLY_SYS = (
     '"titulo": título viral para el resumen semanal (máx ~70 caracteres, con gancho, máximo 1 emoji).\n'
     '"intro": 1 o 2 frases de apertura que resuman la semana y enganchen (cómo le fue al modelo, el dato más jugoso).\n'
     '"cierre": 1 frase motivadora que invite a seguir el pronóstico diario en TikTok @aiwithpedro y el Substack.\n'
-    "Español, cercano y enérgico, apto para todo público, nada de apuestas. Usa SOLO los datos dados; NO inventes números.")
+    "Español, cercano y enérgico, apto para todo público, nada de apuestas. Usa SOLO los datos dados; NO inventes números. "
+    "ESCRIBE EN ESPAÑOL CON TODAS LAS TILDES Y SIGNOS CORRECTOS (á, é, í, ó, ú, ñ, ¿, ¡).")
 
 def ai_weekly(summary):
     """Claude redacta titulo + intro + cierre virales del semanal. {} si no hay key."""

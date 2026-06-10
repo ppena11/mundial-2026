@@ -115,7 +115,9 @@ CURIO_SYS = (
     "Si el torneo YA EMPEZO (dia de descanso), NO menciones ninguna cuenta regresiva ni 'faltan dias'; "
     "manda al frente la NOTICIA mas viral del Mundial y cierra invitando a volver cuando haya partidos.\n"
     "Si el material trae una NOTICIA, MENCIONA la fuente en el gancho y en la voz, y NO agregues datos que no esten "
-    "en el material. Espanol cercano y energico, apto para todo publico, nada de apuestas. NUNCA inventes numeros.")
+    "en el material. Español cercano y enérgico, apto para todo público, nada de apuestas. NUNCA inventes números. "
+    "ESCRIBE EN ESPAÑOL CON TODAS LAS TILDES Y SIGNOS CORRECTOS (á, é, í, ó, ú, ñ, ¿, ¡): el texto lo lee un "
+    "sintetizador de voz y la acentuación es OBLIGATORIA.")
 
 def _material(p):
     L = []

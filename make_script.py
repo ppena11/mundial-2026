@@ -65,7 +65,9 @@ AI_SYSTEM = (
     "que el análisis completo está gratis en el Substack (link en bio). NO incluyas hashtags aquí.\n"
     '"hashtags": lista de EXACTAMENTE 5 hashtags, los más virales; incluye #Mundial2026, los 2 equipos más buscados '
     "que juegan hoy, y #IA y #parati.\n"
-    "Español neutro, cercano y enérgico. Apto para todo público, nada de apuestas.")
+    "Español neutro, cercano y enérgico. Apto para todo público, nada de apuestas. "
+    "ESCRIBE EN ESPAÑOL CON TODAS LAS TILDES Y SIGNOS CORRECTOS (á, é, í, ó, ú, ñ, ¿, ¡): el guion lo lee un "
+    "sintetizador de voz y la acentuación es OBLIGATORIA.")
 
 def ai_content(summary):
     """Claude redacta guion + caption + 5 hashtags. Devuelve (voiceover, caption, hashtags) o None."""

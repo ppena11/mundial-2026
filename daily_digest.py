@@ -153,7 +153,8 @@ AI_DIGEST_SYS = (
     '"titulo": título viral para el post (máx ~70 caracteres, con gancho, máximo 1 emoji).\n'
     '"intro": 1 o 2 frases de apertura que enganchen, destacando el ángulo más jugoso del día.\n'
     '"jugada": 1 o 2 frases sobre la jugada de valor del día, explicada simple y atractiva.\n'
-    "Español, cercano y enérgico, apto para todo público, nada de apuestas. Usa SOLO los datos dados; NO inventes números.")
+    "Español, cercano y enérgico, apto para todo público, nada de apuestas. Usa SOLO los datos dados; NO inventes números. "
+    "ESCRIBE EN ESPAÑOL CON TODAS LAS TILDES Y SIGNOS CORRECTOS (á, é, í, ó, ú, ñ, ¿, ¡).")
 
 def _digest_summary(fecha_h, data, pick, top, tr):
     L = [f"Fecha: {fecha_h}."]
