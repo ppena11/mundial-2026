@@ -42,6 +42,7 @@ AI_PREVIEW_SYS = (
     "GUÍA PRE-MUNDIAL 2026 educativa, basada en un modelo estadístico (Dixon-Coles + Montecarlo, 20.000 "
     "simulaciones) ajustado por lesiones y por el mercado. Te doy datos EXACTOS. Devuelve EXCLUSIVAMENTE un objeto "
     "JSON (sin ``` ni texto extra) con estas claves:\n"
+    '"titulo": título viral para el post de Substack (máx ~70 caracteres, con gancho, máximo 1 emoji).\n'
     '"intro": 2 o 3 frases que expliquen, simple y enganchador, qué es el modelo y sus tres ajustes (lesiones, '
     "forma y localía, mercado).\n"
     '"grupos": un objeto con una clave por grupo ("A".."L"); cada valor es 1 o 2 frases sobre ese grupo (quién '
@@ -145,6 +146,17 @@ def render():
               "**forma/localía** y el **mercado**. Aquí están sus mejores predicciones. _Solo información y educación._")
     md.append("")
 
+    # ---- cómo leer (para quien no sabe de probabilidades) ----
+    md.append("## 📖 Cómo leer estas predicciones (en 30 segundos)")
+    md.append("- **El % de un equipo** = de cada 100 mundiales simulados, en cuántos gana. Ej.: 84% = gana 84 de cada 100… pero pierde 16. **Nada está garantizado.**")
+    md.append("- **Empate %** = probabilidad de que terminen iguales (en grupos sí hay empates).")
+    md.append("- **🎯 Marcador probable** = el resultado que más se repite en las simulaciones (no el único posible).")
+    md.append("- **Goles esperados** = cuántos goles, en promedio, se espera que marque cada equipo.")
+    md.append("- **Ensemble (modelo + mercado)** = mezclamos nuestro modelo con las casas de apuestas; suele ser más preciso que cualquiera por separado.")
+    md.append("- **Avanzan** = los **2 primeros** de cada grupo pasan directo; el 3º puede colarse como **mejor tercero**.")
+    md.append("- ⚠️ **Son probabilidades, no certezas.** Si el favorito al 84% pierde, el modelo no \"falló\": ese 16% también existía. Por eso publicamos los aciertos **y** los fallos cada día.")
+    md.append("")
+
     # ---- campeón: modelo vs mercado vs ensemble ----
     md.append("## 🥇 ¿Quién gana el Mundial? (modelo vs mercado)")
     if ens_top:
@@ -230,13 +242,15 @@ def render():
     html_doc = ("<div style='font-family:Arial,Helvetica,sans-serif;max-width:680px;margin:auto;"
                 "color:#0b1437;padding:8px 14px;line-height:1.5'>" + "".join(html) + "</div>")
 
-    titulo = (ai.get("intro", "").strip()[:0] or "")  # placeholder
+    titulo = (ai.get("titulo") or "").strip() or "Guía del Mundial 2026 según la IA: predicciones de toda la fase de grupos"
     n_matches = sum(len(GD[g]["rows"]) for g in GD)
-    return text, html_doc, n_matches, (ens_top[0][0] if ens_top else (next(iter(champ_model), "—")))
+    return text, html_doc, n_matches, (disp(ens_top[0][0]) if ens_top else disp(next(iter(champ_model), "—"))), titulo
 
 if __name__ == "__main__":
-    text, html, n, fav = render()
+    text, html, n, fav, titulo = render()
     open("preview.md", "w", encoding="utf-8").write(text)
     open("preview.html", "w", encoding="utf-8").write(html)
-    print(text[:1500])
-    print(f"\n... [recortado] ...\n\n→ preview.md y preview.html guardados ({n} partidos de grupos · favorito: {fav})")
+    print(text[:1200])
+    print(f"\n... [recortado] ...")
+    print(f"\n📌 Título sugerido para Substack: {titulo}")
+    print(f"\n→ preview.md y preview.html guardados ({n} partidos de grupos · favorito: {fav})")
