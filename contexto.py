@@ -91,9 +91,59 @@ def resumen_torneo(target, con_noticia=True):
             L.append(f"Titular real de hoy (fuente {n['source']}): {n['title']}")
     return "\n".join(L)
 
+def dato_curioso(target):
+    """Un 'dato curioso' del torneo hasta `target` (incluido), calculado de datos reales. Rota por día. '' si no hay."""
+    import daily_digest as dd
+    from datetime import date
+    iso = f"{target[0:4]}-{target[4:6]}-{target[6:8]}"
+    jug = [r for r in _log() if r.get("actual") is not None and r.get("marcador_real") and r.get("fecha", "") <= iso]
+    def _gol(r):
+        try:
+            x, y = r["marcador_real"].split("-"); return int(x), int(y)
+        except Exception:
+            return None
+    cands = []
+    if jug:
+        tot = nm = 0
+        for r in jug:
+            g = _gol(r)
+            if g: tot += g[0] + g[1]; nm += 1
+        if nm:
+            cands.append(f"En el Mundial ya se han marcado {tot} goles en {nm} partidos, un promedio de "
+                         f"{tot/nm:.1f} por partido.")
+        gole = max(jug, key=lambda r: (abs(_gol(r)[0]-_gol(r)[1]) if _gol(r) else -1))
+        g = _gol(gole)
+        if g and abs(g[0]-g[1]) >= 3:
+            cands.append(f"La goleada del torneo hasta ahora: {dd.acc(gole['a'])} {gole['marcador_real']} {dd.acc(gole['b'])}.")
+        ups = []
+        for r in jug:
+            o = r.get("actual")
+            if o == "1" and r.get("p1", 1) < 0.40: ups.append((r.get("p1", 1), r["a"]))
+            elif o == "2" and r.get("p2", 1) < 0.40: ups.append((r.get("p2", 1), r["b"]))
+        if ups:
+            p, w = min(ups, key=lambda x: x[0])
+            cands.append(f"La mayor sorpresa del Mundial: {dd.acc(w)} ganó cuando la IA le daba solo "
+                         f"{round(100*p)} por ciento.")
+    try:
+        champ = list(json.load(open("champ_today.json", encoding="utf-8"))["campeon"].items())
+        dh = [(t, v) for t, v in champ[5:11] if v >= 1.0]
+        if dh:
+            cands.append(f"El tapado del Mundial: {dd.acc(dh[0][0])} sale campeón en {round(dh[0][1])} de cada 100 "
+                         "simulaciones, y casi nadie habla de él.")
+    except Exception:
+        pass
+    if not cands:
+        return ""
+    try:
+        n = (date.fromisoformat(iso) - date(2026, 6, 11)).days
+    except Exception:
+        n = 0
+    return cands[n % len(cands)]
+
 if __name__ == "__main__":
     import sys
     from datetime import date
     t = sys.argv[sys.argv.index("--date")+1] if "--date" in sys.argv else date.today().strftime("%Y%m%d")
     out = resumen_torneo(t)
     print(out or "(sin contexto aún: el torneo no ha empezado o no hay resultados calificados)")
+    print("\nDATO CURIOSO:", dato_curioso(t) or "(aún no hay)")

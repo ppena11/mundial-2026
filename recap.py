@@ -56,7 +56,8 @@ AI_RECAP_SYS = (
     '"hashtags": lista de EXACTAMENTE 5 hashtags virales; incluye #Mundial2026, #IA y #parati.\n'
     "Tono honesto y cercano (mostrar fallos suma credibilidad), apto para todo público, nada de apuestas. "
     "Si hay CONTEXTO del torneo (resultados de jornadas previas, un titular o el récord), téjelo en 1 frase para "
-    "que el cierre suene al día. Usa SOLO los datos dados; NUNCA inventes números ni marcadores. "
+    "que el cierre suene al día. Si hay un DATO CURIOSO, ciérralo mencionándolo (engancha). "
+    "Usa SOLO los datos dados; NUNCA inventes números ni marcadores. "
     "ESCRIBE EN ESPAÑOL CON TODAS LAS TILDES Y SIGNOS CORRECTOS (á, é, í, ó, ú, ñ, ¿, ¡): la voz la lee un "
     "sintetizador y la acentuación es OBLIGATORIA.")
 
@@ -167,6 +168,8 @@ def build(target):
         import contexto
         ctx = contexto.resumen_torneo(target)
         if ctx: sm.append(ctx)
+        dc = contexto.dato_curioso(target)
+        if dc: sm.append("DATO CURIOSO del torneo (úsalo para cerrar con un gancho): " + dc)
     except Exception:
         pass
     ai = ai_recap("\n".join(sm))
