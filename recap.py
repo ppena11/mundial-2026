@@ -39,7 +39,8 @@ def _iso(yyyymmdd): return f"{yyyymmdd[0:4]}-{yyyymmdd[4:6]}-{yyyymmdd[6:8]}"
 
 # ---------- Claude (gancho viral) ----------
 AI_RECAP_SYS = (
-    "Eres el guionista y editor de @aiwithpedro, un creador que enseña inteligencia artificial. Es el CIERRE DEL DÍA "
+    "Eres el guionista y editor de @aiwithpedro, un creador que enseña inteligencia artificial. "
+    "DATO FIJO: el Mundial 2026 arrancó el 11 de junio de 2026; respeta esa cronología. Es el CIERRE DEL DÍA "
     "del Mundial 2026: confrontamos el pronóstico de la mañana con lo que de verdad pasó. Te doy los datos EXACTOS "
     "(aciertos, fallos, marcadores, récord). Devuelve EXCLUSIVAMENTE un objeto JSON (sin ``` ni texto extra) con "
     "EXACTAMENTE estas claves:\n"

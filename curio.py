@@ -100,6 +100,7 @@ def web_news():
 # ---------- Claude (gancho viral) ----------
 CURIO_SYS = (
     "Eres el guionista y editor de @aiwithpedro, un creador que enseña inteligencia artificial. "
+    "DATO FIJO: el Mundial 2026 arrancó el 11 de junio de 2026; respeta esa cronología (no digas que 'comienza hoy'). "
     "HOY NO HAY PARTIDOS del Mundial 2026: tu trabajo es mantener a la audiencia enganchada, dejando claro que hoy "
     "no rueda el balon. Te indico el ESTADO del torneo y te doy material REAL (una noticia con su fuente y/o un dato "
     "EXACTO de mis simulaciones). Devuelve EXCLUSIVAMENTE un objeto JSON (sin ``` ni texto extra) con EXACTAMENTE "

@@ -18,6 +18,7 @@ except ImportError:
 
 BRAND = "aiwithpedro"
 BRAND_VOZ = "éi ái uíz Pédro"   # cómo se pronuncia @aiwithpedro en la voz (ElevenLabs)
+KICKOFF = date(2026, 6, 11)     # día inaugural del Mundial 2026 (anclaje temporal para Claude)
 VAL_MARGIN, VAL_FLOOR = 1.20, 0.20
 
 def pct(x): return f"{round(100*x)} por ciento"
@@ -31,6 +32,18 @@ def _tag(team): return "#" + _TAG.get(team, team.replace(" ", ""))
 def _summary(fh, played, pick, clearest, tr):
     """Resumen de datos del día que se le pasa a Claude para que redacte el guion."""
     L = [f"Fecha: {fh}."]
+    # anclaje temporal: evita que Claude diga "el Mundial comienza/comenzó hoy" en día equivocado
+    try:
+        td = date(int(fh[6:10]), int(fh[3:5]), int(fh[0:2]))
+        if td < KICKOFF:
+            L.append("El Mundial aún no empieza (arranca el 11 de junio de 2026).")
+        elif td == KICKOFF:
+            L.append("HOY, 11 de junio, ARRANCA el Mundial 2026 (día inaugural).")
+        else:
+            L.append(f"El Mundial 2026 YA ESTÁ EN MARCHA (arrancó el 11 de junio); hoy es el día {(td-KICKOFF).days+1} "
+                     "del torneo. NO digas que el Mundial 'comienza' ni 'comenzó hoy'.")
+    except Exception:
+        pass
     if not played:
         L.append("Hoy no hay partidos del Mundial (el torneo arranca el 11 de junio).")
         return "\n".join(L)
@@ -56,6 +69,8 @@ def _summary(fh, played, pick, clearest, tr):
 
 AI_SYSTEM = (
     "Eres el guionista y community manager de @aiwithpedro, un creador que enseña inteligencia artificial. "
+    "DATO FIJO: el Mundial 2026 ARRANCÓ el 11 de junio de 2026; NO afirmes que 'comienza' ni 'comenzó hoy' salvo "
+    "que la fecha del día sea exactamente el 11 de junio (mírala en los datos). "
     "Con los datos del día del Mundial 2026, genera el contenido de un video de TikTok y devuelve EXCLUSIVAMENTE "
     "un objeto JSON válido (sin ``` ni texto extra) con EXACTAMENTE estas claves:\n"
     '"voiceover": el guion HABLADO, 80 a 100 palabras (~35 s). Gancho fuerte en la primera frase; destaca el dato '
