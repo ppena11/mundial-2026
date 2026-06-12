@@ -62,7 +62,7 @@ def ai_preview(summary):
     key = os.environ.get("ANTHROPIC_API_KEY", "").strip()
     if not key or requests is None:
         return {}
-    model = os.environ.get("ANTHROPIC_MODEL", "claude-sonnet-4-6")
+    model = os.environ.get("ANTHROPIC_MODEL", "claude-haiku-4-5-20251001")  # todo en Haiku (barato)
     try:
         r = requests.post("https://api.anthropic.com/v1/messages",
             headers={"x-api-key": key, "anthropic-version": "2023-06-01", "content-type": "application/json"},
