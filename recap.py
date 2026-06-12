@@ -27,6 +27,7 @@ except Exception:
 
 BRAND = "aiwithpedro"
 BRAND_VOZ = "éi ái uíz Pédro"   # cómo se pronuncia @aiwithpedro en la voz (ElevenLabs)
+KICKOFF = date(2026, 6, 11)     # día inaugural del Mundial 2026
 RECAP_FILE = "recap_today.json"
 DISCLAIMER = "Contenido informativo y de entretenimiento. Predicciones de un modelo, no certezas."
 
@@ -54,7 +55,8 @@ AI_RECAP_SYS = (
     '"caption": 1 o 2 líneas para TikTok, con gancho; puede llevar 1 o 2 emojis; NO incluyas hashtags aquí.\n'
     '"hashtags": lista de EXACTAMENTE 5 hashtags virales; incluye #Mundial2026, #IA y #parati.\n'
     "Tono honesto y cercano (mostrar fallos suma credibilidad), apto para todo público, nada de apuestas. "
-    "Usa SOLO los datos dados; NUNCA inventes números ni marcadores. "
+    "Si hay CONTEXTO del torneo (resultados de jornadas previas, un titular o el récord), téjelo en 1 frase para "
+    "que el cierre suene al día. Usa SOLO los datos dados; NUNCA inventes números ni marcadores. "
     "ESCRIBE EN ESPAÑOL CON TODAS LAS TILDES Y SIGNOS CORRECTOS (á, é, í, ó, ú, ñ, ¿, ¡): la voz la lee un "
     "sintetizador y la acentuación es OBLIGATORIA.")
 
@@ -154,6 +156,19 @@ def build(target):
         sm.append(f"Récord acumulado: {record['aciertos_1x2']} de {record['n']} ({record['tasa_1x2']} por ciento).")
     if prox:
         sm.append(f"Lo que viene: {dd.acc(prox['a'])} contra {dd.acc(prox['b'])}, favorito {dd.acc(prox['fav'])} {round(100*prox['fp'])} por ciento.")
+    # marco temporal + contexto del torneo (resultados previos + titular real), igual que el pronóstico
+    try:
+        td = date.fromisoformat(target_iso)
+        if td > KICKOFF:
+            sm.insert(1, f"Anoche fue el día {(td - KICKOFF).days + 1} del torneo (el Mundial arrancó el 11 de junio).")
+    except Exception:
+        pass
+    try:
+        import contexto
+        ctx = contexto.resumen_torneo(target)
+        if ctx: sm.append(ctx)
+    except Exception:
+        pass
     ai = ai_recap("\n".join(sm))
 
     # --- textos (Claude redacta; datos exactos) ---
