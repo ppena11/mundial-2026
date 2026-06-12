@@ -46,6 +46,8 @@ fetch_odds.h2h = lambda: []                    # sin gastar cuota
 import curio
 curio.web_news = lambda: None                  # offline + determinista: fuerza el dato del modelo
 if os.path.exists(curio.CURIO_FILE): os.remove(curio.CURIO_FILE)
+import contexto
+contexto.noticia_mundial = lambda: None        # offline: sin red en las pruebas
 TEAMS = list(pm.MAP.keys())                    # 48 selecciones (es)
 
 # ============================================================

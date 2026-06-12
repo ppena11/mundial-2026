@@ -44,6 +44,13 @@ def _summary(fh, played, pick, clearest, tr):
                      "del torneo. NO digas que el Mundial 'comienza' ni 'comenzó hoy'.")
     except Exception:
         pass
+    # contexto de lo que ha pasado en el torneo (resultados, sorpresas, récord, titular) — datos reales
+    try:
+        import contexto
+        ctx = contexto.resumen_torneo(f"{fh[6:10]}{fh[3:5]}{fh[0:2]}")
+        if ctx: L.append(ctx)
+    except Exception:
+        pass
     if not played:
         L.append("Hoy no hay partidos del Mundial (el torneo arranca el 11 de junio).")
         return "\n".join(L)
@@ -78,7 +85,8 @@ AI_SYSTEM = (
     "de mi bio (NO nombres 'Substack' en la voz) "
     "y firma la voz diciendo EXACTAMENTE: Soy éi ái uíz Pédro (así se pronuncia @aiwithpedro). SIN otros emojis ni "
     "símbolos (lo lee un sintetizador de voz); números con dígitos y "
-    "'por ciento'; 'contra' en vez de 'vs'; varía el arranque para no repetir.\n"
+    "'por ciento'; 'contra' en vez de 'vs'; varía el arranque para no repetir. Si en los datos hay CONTEXTO del "
+    "torneo (resultados recientes, una sorpresa, el récord o un titular), téjelo en 1 frase para que suene al día.\n"
     '"caption": 1 o 2 líneas cortas para la descripción de TikTok, con gancho; puede llevar 1 o 2 emojis; menciona '
     "que el análisis completo está gratis en el Substack (link en bio). NO incluyas hashtags aquí.\n"
     '"hashtags": lista de EXACTAMENTE 5 hashtags, los más virales; incluye #Mundial2026, los 2 equipos más buscados '

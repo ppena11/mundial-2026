@@ -137,6 +137,12 @@ def _material(p):
     L.append("DATO EXACTO DE MIS SIMULACIONES (úsalo, no inventes otros números): " + p["model_fact"])
     if p["champ"]:
         L.append("Top campeón hoy: " + ", ".join(f"{dd.acc(t)} {round(v)} por ciento" for t, v in p["champ"][:3]) + ".")
+    try:
+        import contexto
+        ctx = contexto.resumen_torneo(p.get("target", ""), con_noticia=False)  # curio ya trae su propia noticia
+        if ctx: L.append(ctx)
+    except Exception:
+        pass
     return "\n".join(L)
 
 def ai_curio(material):
@@ -169,7 +175,7 @@ def _five(tags, champ):
 def gather(target):
     days = days_to_kickoff(target)
     champ = _champ()
-    return {"days": days, "champ": champ, "model_fact": model_fact(champ, days), "news": web_news()}
+    return {"target": target, "days": days, "champ": champ, "model_fact": model_fact(champ, days), "news": web_news()}
 
 def build(target):
     p = gather(target)
