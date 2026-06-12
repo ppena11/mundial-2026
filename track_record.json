@@ -1,4 +1,8 @@
 {
-  "n": 0,
-  "mensaje": "Aún no hay partidos calificados."
+  "n": 2,
+  "aciertos_1x2": 2,
+  "tasa_1x2": 100.0,
+  "aciertos_exactos": 0,
+  "tasa_exacta": 0.0,
+  "brier": 0.409
 }
