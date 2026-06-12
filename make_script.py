@@ -54,9 +54,10 @@ def _summary(fh, played, pick, clearest, tr):
     if not played:
         L.append("Hoy no hay partidos del Mundial (el torneo arranca el 11 de junio).")
         return "\n".join(L)
-    L.append("Partidos de hoy y favorito del modelo:")
+    L.append(f"Partidos de hoy ({len(played)}). MENCIÓNALOS TODOS con su marcador previsto:")
     for d in played:
-        L.append(f"- {dd.acc(d['a'])} contra {dd.acc(d['b'])}: favorito {dd.acc(d['fav'])} con {round(100*d['fp'])} por ciento.")
+        L.append(f"- {dd.acc(d['a'])} contra {dd.acc(d['b'])}: favorito {dd.acc(d['fav'])} con {round(100*d['fp'])} "
+                 f"por ciento; marcador previsto {dd.acc(d['a'])} {d['sx']} - {d['sy']} {dd.acc(d['b'])}.")
     if pick:
         t, mpb, mkp, edge = pick[1]
         L.append(f"Jugada de valor del día: {dd.acc(t)} (el modelo le da {round(100*mpb)} por ciento y el mercado solo {round(100*mkp)} por ciento; está infravalorada).")
@@ -80,8 +81,11 @@ AI_SYSTEM = (
     "que la fecha del día sea exactamente el 11 de junio (mírala en los datos). "
     "Con los datos del día del Mundial 2026, genera el contenido de un video de TikTok y devuelve EXCLUSIVAMENTE "
     "un objeto JSON válido (sin ``` ni texto extra) con EXACTAMENTE estas claves:\n"
-    '"voiceover": el guion HABLADO, 80 a 100 palabras (~35 s). Gancho fuerte en la primera frase; destaca el dato '
-    "más jugoso del día (la jugada de valor o una sorpresa); cierra invitando a ver el análisis completo en el link "
+    '"voiceover": el guion HABLADO. Gancho fuerte en la primera frase; luego haz un REPASO de TODOS los partidos de '
+    "hoy diciendo el favorito y su MARCADOR PREVISTO (ej.: 'España golea dos a cero a Cabo Verde'); MENCIONA CADA "
+    "PARTIDO con su marcador, no solo el más importante (puedes resaltar el más jugoso, pero no omitas ninguno). "
+    "Sé ágil: la duración se adapta al número de partidos (~30 s con 2-3, hasta ~60 s con 6). "
+    "Cierra invitando a ver el análisis completo en el link "
     "de mi bio (NO nombres 'Substack' en la voz) "
     "y firma la voz diciendo EXACTAMENTE: Soy éi ái uíz Pédro (así se pronuncia @aiwithpedro). SIN otros emojis ni "
     "símbolos (lo lee un sintetizador de voz); números con dígitos y "
@@ -157,7 +161,7 @@ def build(target):
             if ma and pw>=VAL_FLOOR and pw>ma*VAL_MARGIN: vc.append((a,pw,ma,pw/ma))
             if mb and pl>=VAL_FLOOR and pl>mb*VAL_MARGIN: vc.append((b,pl,mb,pl/mb))
         fav,fp=(a,pw) if pw>=pl else (b,pl)
-        played.append({"a":a,"b":b,"fav":fav,"fp":fp,"vc":vc})
+        played.append({"a":a,"b":b,"fav":fav,"fp":fp,"vc":vc,"sx":sx,"sy":sy,"pdr":pdr})
     if not played:                                   # día sin partidos -> dato curioso (voz + caption)
         import curio
         cu = curio.ensure(target)
@@ -174,7 +178,8 @@ def build(target):
     if not played:
         S.append("Hoy no hay partidos del Mundial, pero mi inteligencia artificial ya está lista para cuando ruede el balón.")
     else:
-        S.append("Quién gana hoy en el Mundial. Mi inteligencia artificial corrió veinte mil simulaciones, y esto es lo que encontró.")
+        S.append("Quién gana hoy en el Mundial. Mi inteligencia artificial corrió veinte mil simulaciones, y estos son los marcadores que proyecta.")
+        S.append(". ".join(f"{dd.acc(d['a'])} {d['sx']} a {d['sy']} {dd.acc(d['b'])}" for d in played) + ".")
         if pick:
             d,(team,mpb,mkp,edge)=pick; riv=d["b"] if team==d["a"] else d["a"]
             S.append(f"La jugada del día es {dd.acc(team)}, contra {dd.acc(riv)}. Mi modelo le da {pct(mpb)} de ganar, "
