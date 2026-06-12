@@ -42,6 +42,8 @@ recap_today.json
 # === Artefactos del reel/voz (locales, por día) ===
 voiceover.txt
 caption.txt
+youtube.txt
+recap_youtube.txt
 hook.txt
 voice.mp3
 matchday.mp4

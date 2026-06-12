@@ -114,6 +114,9 @@ CURIO_SYS = (
     "Si hay noticia, es el titular resumido de forma viral.\n"
     '"caption": 1 o 2 lineas para TikTok, con gancho; puede llevar 1 o 2 emojis; NO incluyas hashtags aqui.\n'
     '"hashtags": lista de EXACTAMENTE 5 hashtags virales; incluye #Mundial2026, #IA y #parati.\n'
+    '"youtube_titulo": título SEO para YouTube Shorts (al inicio "Mundial 2026" y el tema del día); máx ~90 caracteres.\n'
+    '"youtube_descripcion": 2 o 3 frases con palabras clave (Mundial 2026, predicción con IA), con CTA (link en la bio). NO incluyas hashtags.\n'
+    '"youtube_hashtags": lista de EXACTAMENTE 5 hashtags buscables; incluye #Mundial2026 y #Shorts.\n'
     "REGLAS DE ESTADO: si el torneo AUN NO empieza, puedes usar la cuenta regresiva (faltan N dias). "
     "Si el torneo YA EMPEZO (dia de descanso), NO menciones ninguna cuenta regresiva ni 'faltan dias'; "
     "manda al frente la NOTICIA mas viral del Mundial y cierra invitando a volver cuando haya partidos.\n"
@@ -201,8 +204,20 @@ def build(target):
         "Hoy sin partidos, pero el Mundial no para 👀 Analisis gratis en mi Substack (link en bio).")
     tags = _five(ai.get("hashtags") or [], champ)
 
+    # YouTube (SEO) para el video de día sin partido
+    yt_t = (ai.get("youtube_titulo") or "").strip() or (
+        f"Mundial 2026: {('faltan ' + str(days) + ' días' if days > 0 else 'dato del día')} | predicción con IA")
+    yt_d = (ai.get("youtube_descripcion") or "").strip() or (
+        f"Mundial 2026 con inteligencia artificial. {(card or '')} Pronósticos diarios y análisis del modelo. "
+        "Todo gratis, link en la bio.")
+    yt_h = [(t if str(t).startswith("#") else "#"+str(t)) for t in (ai.get("youtube_hashtags") or [])]
+    for extra in ["#Mundial2026", "#Shorts", "#IA", "#Pronosticos", "#WorldCup2026"]:
+        if len(yt_h) >= 5: break
+        if extra not in yt_h: yt_h.append(extra)
+
     out = {"date": target, "titulo": titulo, "gancho": gancho, "voz": voz, "card": card,
            "caption": caption, "hashtags": tags, "is_news": bool(news),
+           "youtube_titulo": yt_t[:95], "youtube_descripcion": yt_d, "youtube_hashtags": yt_h[:5],
            "source": (news["source"] if news else ""), "link": (news["link"] if news else ""), "days": days}
     json.dump(out, open(CURIO_FILE, "w", encoding="utf-8"), ensure_ascii=False, indent=2)
     return out

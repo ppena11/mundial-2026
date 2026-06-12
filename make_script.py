@@ -95,6 +95,14 @@ AI_SYSTEM = (
     "que el análisis completo está gratis en el Substack (link en bio). NO incluyas hashtags aquí.\n"
     '"hashtags": lista de EXACTAMENTE 5 hashtags, los más virales; incluye #Mundial2026, los 2 equipos más buscados '
     "que juegan hoy, y #IA y #parati.\n"
+    '"youtube_titulo": título para YouTube Shorts OPTIMIZADO PARA BÚSQUEDA (SEO). Pon AL INICIO las palabras que la '
+    "gente busca: los equipos de hoy, 'Mundial 2026' y 'pronóstico' o 'predicción'. Máx ~90 caracteres, máximo 1 emoji. "
+    "Ej.: 'Brasil vs Marruecos HOY: pronóstico y marcador | Mundial 2026 con IA'.\n"
+    '"youtube_descripcion": 2 o 3 frases para la descripción de YouTube, RICAS EN PALABRAS CLAVE (los equipos del día, '
+    "Mundial 2026, predicción con inteligencia artificial, marcador, probabilidades), con un CTA al análisis completo "
+    "(link en la bio). NO incluyas hashtags aquí.\n"
+    '"youtube_hashtags": lista de EXACTAMENTE 5 hashtags buscables para YouTube; incluye #Mundial2026, los equipos clave '
+    "del día y #Shorts.\n"
     "Español neutro, cercano y enérgico. Apto para todo público, nada de apuestas. "
     "ESCRIBE EN ESPAÑOL CON TODAS LAS TILDES Y SIGNOS CORRECTOS (á, é, í, ó, ú, ñ, ¿, ¡): el guion lo lee un "
     "sintetizador de voz y la acentuación es OBLIGATORIA.")
@@ -117,7 +125,9 @@ def ai_content(summary):
         vo = (data.get("voiceover") or "").strip()
         cap = (data.get("caption") or "").strip()
         tags = [str(t).strip() for t in data.get("hashtags", []) if str(t).strip()]
-        return vo, cap, tags
+        yt = ((data.get("youtube_titulo") or "").strip(), (data.get("youtube_descripcion") or "").strip(),
+              [str(t).strip() for t in data.get("youtube_hashtags", []) if str(t).strip()])
+        return vo, cap, tags, yt
     except Exception as e:
         print(f"(IA falló: {e})"); return None
 
@@ -138,6 +148,34 @@ def day_hashtags(played):
     for t in tags:
         if t not in out: out.append(t)
     return " ".join(out[:5])
+
+def _yt_tags(tags, played):
+    """5 hashtags buscables para YouTube (#Mundial2026 + equipos del día + #Shorts/#Pronosticos)."""
+    teams = []
+    try:
+        champ = json.load(open("champ_today.json", encoding="utf-8"))["campeon"]
+        playing = {d["a"] for d in played} | {d["b"] for d in played}
+        teams = [t for t in champ if t in playing][:2]
+    except Exception:
+        pass
+    base = ["#Mundial2026"] + [_tag(t) for t in teams] + ["#Shorts", "#Pronosticos", "#WorldCup2026"]
+    out = []
+    for t in [(x if str(x).startswith("#") else "#"+str(x)) for x in tags] + base:
+        if t not in out: out.append(t)
+    return out[:5]
+
+def write_youtube(path, played, fh, yt_ai):
+    """Escribe título + descripción + 5 hashtags optimizados para SEO de YouTube. yt_ai=(t,d,h) de Claude o None."""
+    yt_t, yt_d, yt_h = (yt_ai or ("", "", []))
+    nombres = " · ".join(f"{dd.acc(d['a'])} vs {dd.acc(d['b'])}" for d in played[:2]) if played else ""
+    if not yt_t:
+        yt_t = (f"{nombres}: pronóstico y marcador | Mundial 2026 con IA" if nombres
+                else "Mundial 2026: pronóstico del día con IA")[:95]
+    if not yt_d:
+        yt_d = (f"Predicción del Mundial 2026 con inteligencia artificial para hoy ({fh}): marcadores y probabilidades "
+                f"de cada partido según el modelo. {nombres}. Análisis completo gratis, link en la bio.")
+    yt_h = _yt_tags(yt_h, played)
+    open(path, "w", encoding="utf-8").write(f"{yt_t}\n\n{yt_d}\n\n{' '.join(yt_h[:5])}")
 
 def build(target):
     games = dd.matches_on(target)
@@ -166,6 +204,9 @@ def build(target):
         import curio
         cu = curio.ensure(target)
         caption = cu["caption"].rstrip() + " " + " ".join(cu["hashtags"][:5])
+        open("youtube.txt", "w", encoding="utf-8").write(
+            f"{cu.get('youtube_titulo','')}\n\n{cu.get('youtube_descripcion','')}\n\n"
+            f"{' '.join(cu.get('youtube_hashtags', [])[:5])}")
         return cu["voz"], caption, 0
     pickall=[(d,v) for d in played for v in d["vc"]]
     pick=max(pickall,key=lambda x:x[1][3]) if pickall else None
@@ -200,8 +241,9 @@ def build(target):
     # ---- Claude redacta guion + caption + 5 hashtags (si hay ANTHROPIC_API_KEY) ----
     fh = target[6:8]+"/"+target[4:6]+"/"+target[0:4]
     res = ai_content(_summary(fh, played, pick, clearest, tr))
+    yt_ai = None
     if res:
-        vo_ai, cap_ai, tags_ai = res
+        vo_ai, cap_ai, tags_ai, yt_ai = res
         if vo_ai:
             voiceover = vo_ai
         if cap_ai:
@@ -210,6 +252,7 @@ def build(target):
                 if len(tags) >= 5: break
                 if t not in tags: tags.append(t)
             caption = cap_ai.rstrip() + " " + " ".join(tags[:5])
+    write_youtube("youtube.txt", played, fh, yt_ai)     # título + descripción + 5 hashtags SEO de YouTube
     return voiceover, caption, len(played)
 
 if __name__=="__main__":
@@ -221,4 +264,7 @@ if __name__=="__main__":
     print(vo)
     print("\n===== CAPTION TikTok =====\n")
     print(cap)
-    print(f"\n→ voiceover.txt y caption.txt guardados ({n} partidos)")
+    print("\n===== YOUTUBE (título · descripción · 5 hashtags) =====\n")
+    try: print(open("youtube.txt", encoding="utf-8").read())
+    except Exception: pass
+    print(f"\n→ voiceover.txt, caption.txt y youtube.txt guardados ({n} partidos)")

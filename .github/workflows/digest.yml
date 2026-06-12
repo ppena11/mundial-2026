@@ -80,11 +80,13 @@ jobs:
             digest.html
             caption.txt
             voiceover.txt
+            youtube.txt
             weekly.html
             recap.mp4
             recap.png
             recap_digest.html
             recap_caption.txt
             recap_voiceover.txt
+            recap_youtube.txt
           if-no-files-found: ignore
           retention-days: 14
