@@ -36,25 +36,37 @@ def _norm(s):
     s = "".join(c for c in s if unicodedata.category(c) != "Mn")
     return re.sub(r"[^a-z]", "", s.lower())
 
-# Sílabas que Whisper puede transcribir de la marca hablada "éi ái uíz Pédro" (= @aiwithpedro).
-_FONEMAS_MARCA = {"ei", "ai", "ay", "a", "e", "i", "hey", "eye",
-                  "uiz", "uis", "uith", "with", "wiz", "wis", "guis", "ui", "is"}
+# Letras que aparecen al pronunciar "éi ái uíz" / "ai with" (para reconocer sílabas sueltas: ei, ai, uiz, with, eiu...).
+_LETRAS_FONEMA = set("aeiouywhzstg")
+
+def _es_fonema_marca(w):
+    """¿El token parece una sílaba de la marca hablada (éi, ái, uíz, with, eiu, ais...)?
+    Token corto formado solo por letras de esa pronunciación; nunca 'soy' (es la firma, se conserva)."""
+    n = _norm(w)
+    return bool(n) and 1 <= len(n) <= 5 and n != "soy" and all(c in _LETRAS_FONEMA for c in n)
 
 def fusionar_marca(palabras):
-    """Colapsa la pronunciación fonética de la marca (p.ej. 'éi ái uíz Pédro') en un
-    único token 'aiwithpedro', conservando los tiempos. Whisper transcribe la VOZ
-    (fonética, para que ElevenLabs suene bien); en el subtítulo queremos la marca escrita.
-    Funciona aunque la frase quede partida en varias palabras/cues."""
+    """Colapsa la pronunciación fonética de la marca en un único token 'aiwithpedro',
+    conservando los tiempos. Whisper transcribe la VOZ (fonética, para que ElevenLabs suene
+    bien: 'éi ái uíz Pédro'); en el subtítulo queremos la marca escrita.
+
+    Robusto ante cómo Whisper fusione las sílabas: ancla en CUALQUIER palabra que CONTENGA
+    'pedro' (Pédro, Ispedro, withpedro, espedro...) y absorbe las sílabas fonéticas previas
+    (EIU, éi, ái, uíz, with...). Dispara si: hay ≥1 sílaba fonética antes, o la propia palabra
+    trae prefijo/sufijo pegado (len>5: 'ispedro'), o viene justo después de 'Soy' (la firma).
+    No toca un 'Pedro' normal aislado, ni se traga 'Soy' ni palabras corrientes."""
     out = []
     for w, a, b in palabras:
-        if _norm(w) == "pedro":
-            # ¿cuántos fonemas de la marca preceden inmediatamente a "Pedro"?
+        n = _norm(w)
+        if "pedro" in n:
             k = 0
-            while k < 4 and len(out) - 1 - k >= 0 and _norm(out[-1 - k][0]) in _FONEMAS_MARCA:
+            while k < 4 and len(out) - 1 - k >= 0 and _es_fonema_marca(out[-1 - k][0]):
                 k += 1
-            if k >= 1:
-                start = out[-k][1]
-                del out[-k:]
+            prev_soy = (len(out) - 1 - k >= 0) and _norm(out[-1 - k][0]) == "soy"
+            if k >= 1 or len(n) > len("pedro") or prev_soy:
+                start = out[-k][1] if k >= 1 else a
+                if k >= 1:
+                    del out[-k:]
                 tail = re.search(r"[.,!?;:]+$", w.strip())
                 out.append(("aiwithpedro" + (tail.group(0) if tail else ""), start, b))
                 continue
