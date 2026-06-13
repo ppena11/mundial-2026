@@ -48,6 +48,9 @@ curio.web_news = lambda: None                  # offline + determinista: fuerza 
 if os.path.exists(curio.CURIO_FILE): os.remove(curio.CURIO_FILE)
 import contexto
 contexto.noticia_mundial = lambda: None        # offline: sin red en las pruebas
+# CRÍTICO: env_loader re-inyecta la clave al importar curio/contexto -> forzar VACÍA para que las pruebas
+# nunca llamen a Claude (deterministas y SIN gastar créditos).
+os.environ["ANTHROPIC_API_KEY"] = ""
 TEAMS = list(pm.MAP.keys())                    # 48 selecciones (es)
 
 # ============================================================

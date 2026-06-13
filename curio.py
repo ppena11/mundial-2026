@@ -12,7 +12,7 @@ del día cuenten exactamente lo mismo. Una sola llamada a Claude y una sola al f
 
 USO:  python curio.py [--date YYYYMMDD]
 """
-import sys, os, json, urllib.parse
+import sys, os, json, re, urllib.parse
 from datetime import datetime, date
 try:
     import requests
@@ -200,7 +200,7 @@ def build(target):
         + f"{cd} El análisis completo está en el link de mi bio. "
           f"Soy {BRAND_VOZ}, nos vemos pronto.")
     card = (ai.get("card") or "").strip() or ((news["title"][:60]) if news else mf[:60])
-    caption = (ai.get("caption") or "").strip() or (
+    caption = re.sub(r"\s*#\S+", "", (ai.get("caption") or "").strip()).strip() or (
         "Hoy sin partidos, pero el Mundial no para 👀 Analisis gratis en mi Substack (link en bio).")
     tags = _five(ai.get("hashtags") or [], champ)
 

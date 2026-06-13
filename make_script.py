@@ -247,6 +247,8 @@ def build(target):
         if vo_ai:
             voiceover = vo_ai
         if cap_ai:
+            import re
+            cap_ai = re.sub(r"\s*#\S+", "", cap_ai).strip()   # Claude a veces mete hashtags en el caption: quitarlos
             tags = [(t if t.startswith("#") else "#"+t) for t in tags_ai]
             for t in day_hashtags(played).split():     # completa a 5 si Claude devolvió menos
                 if len(tags) >= 5: break

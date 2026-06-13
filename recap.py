@@ -190,7 +190,7 @@ def build(target):
         + (f"Se nos escapó {dd.acc(miss['a'])} contra {dd.acc(miss['b'])}, así es el fútbol. " if miss else "")
         + f"En total llevamos {rec_txt}.{prox_txt} El análisis completo está en el link de mi bio. "
           f"Soy {BRAND_VOZ}, nos vemos mañana.")
-    caption = (ai.get("caption") or "").strip() or (
+    caption = re.sub(r"\s*#\S+", "", (ai.get("caption") or "").strip()).strip() or (
         f"Así nos fue anoche: {hits}/{n} aciertos 🎯 Mostramos aciertos y fallos. Análisis gratis en mi Substack (link en bio).")
     tags = _five(ai.get("hashtags") or [], [matches[0]["a"], matches[0]["b"]])
 
