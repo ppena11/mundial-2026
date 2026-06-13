@@ -76,8 +76,9 @@ def extraer_audio(video):
 def quemar(video, srt_path, out):
     ff = _ffmpeg(con_subs=True)
     # estilo Shorts: grande, negrita, blanco con borde negro, centrado en el tercio inferior
-    estilo = ("Fontname=Arial,Bold=1,Fontsize=11,PrimaryColour=&H00FFFFFF,OutlineColour=&H00000000,"
-              "BorderStyle=1,Outline=3,Shadow=1,Alignment=2,MarginV=120")
+    # Alignment=2 = abajo-centro; MarginV en unidades del script (~PlayResY 288) -> ~16% desde abajo (tercio inferior)
+    estilo = ("Fontname=Arial,Bold=1,Fontsize=13,PrimaryColour=&H00FFFFFF,OutlineColour=&H00000000,"
+              "BorderStyle=1,Outline=3,Shadow=1,Alignment=2,MarginV=48")
     srt_ff = srt_path.replace("\\", "/").replace(":", "\\:")   # escape para Windows en el filtro
     vf = f"subtitles='{srt_ff}':force_style='{estilo}'"
     tmp = out + ".tmp.mp4"
