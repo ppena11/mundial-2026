@@ -329,6 +329,29 @@ for f in ("recap_today.json", "recap_voiceover.txt", "recap_caption.txt"):
     if os.path.exists(f): os.remove(f)
 
 # ============================================================
+section("14) SUBTÍTULOS (texto = nuestro guion; Whisper solo para el tiempo)")
+import subtitulos as sub
+guion_sub = "Aqui estan los pronosticos del dia. Catar pierde con Suiza. Brasil empata. Soy éi ái uíz Pédro."
+ok("normalizar_marca_texto: la firma fonética -> aiwithpedro",
+   "aiwithpedro" in sub.normalizar_marca_texto(guion_sub) and "íz" not in sub.normalizar_marca_texto(guion_sub),
+   sub.normalizar_marca_texto(guion_sub)[-25:])
+# validación: galimatías (como el bug real) da ratio bajo; transcripción buena da ratio alto
+galim = [(w, i*0.3, i*0.3+0.3) for i, w in enumerate("en la Bogchia que nostitra los ghospiertas borrowing copio".split())]
+bueno = [(w, i*0.3, i*0.3+0.3) for i, w in enumerate("Aqui estan los pronosticos del dia Catar pierde con Suiza Brasil".split())]
+ok("similitud detecta galimatías (ratio bajo)", sub.similitud(galim, guion_sub) < 0.3, f"{sub.similitud(galim, guion_sub):.2f}")
+ok("similitud aprueba transcripción buena (ratio alto)", sub.similitud(bueno, guion_sub) >= 0.55, f"{sub.similitud(bueno, guion_sub):.2f}")
+# fallback proporcional: cobertura completa, texto = guion (sin galimatías), marca normalizada
+srt_p = sub.srt_proporcional(guion_sub, 30.0)
+times = [l for l in srt_p.splitlines() if "-->" in l]
+ok("srt_proporcional cubre desde 0s", times and times[0].startswith("00:00:00,0"), times[0] if times else "vacío")
+ok("srt_proporcional llega cerca del final", times and times[-1].split(" --> ")[1].startswith("00:00:30"), times[-1] if times else "vacío")
+ok("srt_proporcional usa el guion (sin galimatías) + marca", "Bogchia" not in srt_p and "aiwithpedro" in srt_p, "texto incorrecto")
+# alinear: cada palabra del guion recibe tiempo monótono; el texto mostrado ES el guion
+pal = sub.alinear(guion_sub, bueno, 30.0)
+ok("alinear da tiempos monótonos y crecientes", pal and all(pal[i][1] >= pal[i-1][1] for i in range(1, len(pal))), "no monótono")
+ok("alinear muestra nuestro texto (marca al final = aiwithpedro)", pal and pal[-1][0].startswith("aiwithpedro"), pal[-1][0] if pal else "vacío")
+
+# ============================================================
 print(f"\n========== RESULTADO: {PASS} PASS / {FAIL} FAIL ==========")
 if FAILS:
     print("Fallos:")

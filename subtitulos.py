@@ -1,15 +1,21 @@
 """
 subtitulos.py — quema SUBTÍTULOS (frase por frase) en un video ya producido.
-Transcribe el audio con faster-whisper (ligero, CPU) y quema un SRT con ffmpeg.
 
-Sirve para cualquier video; en el pipeline lo usamos para matchday.mp4 y recap.mp4.
-Es robusto: si falta faster-whisper o el ffmpeg no soporta el filtro de subtítulos,
-deja el video TAL CUAL (no rompe nada).
+ESTRATEGIA (a prueba de balas):
+  El texto que se MUESTRA es SIEMPRE nuestro guion (voiceover.txt) -> nombres y marcadores
+  nunca salen mal. Whisper se usa SOLO para el TIEMPO (sincronía con el habla):
+    1) transcribe el audio,
+    2) validamos su transcripción contra el guion (ratio de coincidencia),
+    3) si es confiable -> alineamos el guion a los tiempos de Whisper (forced alignment ligero),
+    4) si NO es confiable -> repartimos el guion por la duración (cobertura completa garantizada).
+  Así, aunque Whisper alucine un día, el subtítulo nunca queda en galimatías.
+
+Es robusto: si falta faster-whisper o el ffmpeg no soporta subtítulos, deja el video TAL CUAL.
 
 USO:
   python subtitulos.py --video matchday.mp4 [--audio voice.mp3] [--text voiceover.txt] [--out matchday.mp4]
 """
-import os, sys, shutil, subprocess, tempfile, re, unicodedata
+import os, sys, shutil, subprocess, tempfile, re, unicodedata, difflib
 
 def arg(flag, default=None):
     return sys.argv[sys.argv.index(flag)+1] if flag in sys.argv else default
@@ -31,30 +37,140 @@ def _segundos_a_srt(t):
     return f"{h:02d}:{m:02d}:{s:02d},{ms:03d}"
 
 def _norm(s):
-    """minúsculas, sin acentos, solo letras (para comparar fonemas)."""
+    """minúsculas, sin acentos, solo letras (para comparar palabras/fonemas)."""
     s = unicodedata.normalize("NFD", s)
     s = "".join(c for c in s if unicodedata.category(c) != "Mn")
     return re.sub(r"[^a-z]", "", s.lower())
 
-# Letras que aparecen al pronunciar "éi ái uíz" / "ai with" (para reconocer sílabas sueltas: ei, ai, uiz, with, eiu...).
+def _tokens(texto):
+    """Palabras del guion conservando la puntuación pegada (para cortar frases)."""
+    return texto.split()
+
+# La firma de marca se habla fonética ("Soy éi ái uíz Pédro") para que ElevenLabs suene bien;
+# en el subtítulo la queremos escrita. Como es NUESTRO texto, basta un reemplazo directo.
+_FIRMA_RE = re.compile(r"\b[eé]i\s+[aá]i\s+u[ií]z\s+p[eé]dro\b", re.IGNORECASE)
+
+def normalizar_marca_texto(s):
+    """'(Soy) éi ái uíz Pédro' -> '(Soy) aiwithpedro' en el guion (100% fiable)."""
+    return _FIRMA_RE.sub("aiwithpedro", s)
+
+# ------------------------------------------------------------------ Whisper (solo TIEMPO)
+
+def transcribir(audio, texto=None, modelo=None):
+    """Devuelve (palabras, duracion). palabras = [(palabra, inicio, fin)]; ([], 0.0) si no disponible.
+    Flags anti-alucinación: vad_filter, condition_on_previous_text=False, temperature=0."""
+    try:
+        from faster_whisper import WhisperModel
+    except Exception as e:
+        print(f"(faster-whisper no disponible: {e})"); return [], 0.0
+    name = modelo or os.environ.get("WHISPER_MODEL", "small")
+    try:
+        m = WhisperModel(name, device="cpu", compute_type="int8")
+        segs, info = m.transcribe(audio, language="es", word_timestamps=True,
+                                  vad_filter=True, condition_on_previous_text=False,
+                                  temperature=0.0, initial_prompt=(texto or "")[:400] or None)
+        palabras = []
+        for s in segs:
+            for w in (s.words or []):
+                palabras.append((w.word, w.start, w.end))
+        dur = float(getattr(info, "duration", 0.0) or 0.0)
+        return palabras, dur
+    except Exception as e:
+        print(f"(transcripción falló con '{name}': {e})"); return [], 0.0
+
+def similitud(palabras_whisper, texto_real):
+    """Ratio 0..1 de coincidencia entre lo que oyó Whisper y nuestro guion (validación)."""
+    wn = [n for n in (_norm(w) for w, _, _ in palabras_whisper) if n]
+    tn = [n for n in (_norm(t) for t in _tokens(texto_real)) if n]
+    if not wn or not tn:
+        return 0.0
+    return difflib.SequenceMatcher(None, tn, wn).ratio()
+
+def transcribir_validado(audio, texto, umbral=0.55):
+    """Transcribe y VALIDA contra el guion; reintenta escalando el modelo si no coincide.
+    Devuelve (palabras, duracion, confiable)."""
+    intentos = [os.environ.get("WHISPER_MODEL", "small"), "medium"]
+    mejor = ([], 0.0, 0.0)   # palabras, dur, ratio
+    for name in intentos:
+        palabras, dur = transcribir(audio, texto, modelo=name)
+        if not palabras:
+            continue
+        r = similitud(palabras, texto)
+        print(f"  Whisper '{name}': {len(palabras)} palabras, similitud con el guion = {r:.2f}")
+        if r > mejor[2]:
+            mejor = (palabras, dur, r)
+        if r >= umbral:
+            return palabras, dur, True
+    palabras, dur, r = mejor
+    return palabras, dur, (r >= umbral)
+
+# ------------------------------------------------------------------ alineación / reparto
+
+def alinear(texto_real, palabras_whisper, dur):
+    """Asigna a CADA palabra del guion un tiempo: ancla en las palabras que Whisper acertó
+    (difflib) e interpola linealmente los huecos. Devuelve [(palabra, inicio, fin)]."""
+    toks = _tokens(normalizar_marca_texto(texto_real))
+    if not toks:
+        return []
+    tn = [_norm(t) for t in toks]
+    wn = [_norm(w) for w, _, _ in palabras_whisper]
+    wt = [(a, b) for _, a, b in palabras_whisper]
+    N = len(toks)
+    ini = [None] * N
+    for i, j, n in difflib.SequenceMatcher(None, tn, wn).get_matching_blocks():
+        for k in range(n):
+            if i + k < N and j + k < len(wt):
+                ini[i + k] = wt[j + k][0]
+    # anclas conocidas + bordes virtuales (0 al inicio, dur al final) para interpolar
+    known = [(i, ini[i]) for i in range(N) if ini[i] is not None]
+    fin_dur = max(dur, (known[-1][1] if known else 0.0) + 0.5)
+    pts = [(-1, 0.0)] + known + [(N, fin_dur)]
+    ts = [0.0] * N
+    for idx in range(N):
+        left = max((p for p in pts if p[0] <= idx), key=lambda p: p[0])
+        right = min((p for p in pts if p[0] > idx), key=lambda p: p[0])
+        ts[idx] = left[1] if right[0] == left[0] else \
+            left[1] + (idx - left[0]) / (right[0] - left[0]) * (right[1] - left[1])
+    for idx in range(1, N):            # forzar monotonía
+        if ts[idx] < ts[idx - 1]:
+            ts[idx] = ts[idx - 1]
+    palabras = []
+    for i, tok in enumerate(toks):
+        a = ts[i]
+        b = ts[i + 1] if i + 1 < N else min(fin_dur, a + 0.6)
+        if b <= a:
+            b = a + 0.3
+        palabras.append((tok, a, b))
+    return palabras
+
+def srt_proporcional(texto_real, dur):
+    """Fallback: reparte el guion por la duración (proporcional a los caracteres). Cobertura completa."""
+    toks = _tokens(normalizar_marca_texto(texto_real))
+    if not toks:
+        return ""
+    if dur <= 0:
+        dur = max(2.0, 0.4 * len(toks))
+    pesos = [max(1, len(t)) for t in toks]
+    total = sum(pesos)
+    palabras, t = [], 0.0
+    for tok, p in zip(toks, pesos):
+        d = dur * p / total
+        palabras.append((tok, t, t + d))
+        t += d
+    return construir_srt(palabras)
+
+# ------------------------------------------------------------------ respaldo whisper-crudo (sin guion)
+
 _LETRAS_FONEMA = set("aeiouywhzstg")
 
 def _es_fonema_marca(w):
-    """¿El token parece una sílaba de la marca hablada (éi, ái, uíz, with, eiu, ais...)?
-    Token corto formado solo por letras de esa pronunciación; nunca 'soy' (es la firma, se conserva)."""
+    """¿El token parece una sílaba de la marca hablada (éi, ái, uíz, with, eiu...)? (solo respaldo)."""
     n = _norm(w)
     return bool(n) and 1 <= len(n) <= 5 and n != "soy" and all(c in _LETRAS_FONEMA for c in n)
 
 def fusionar_marca(palabras):
-    """Colapsa la pronunciación fonética de la marca en un único token 'aiwithpedro',
-    conservando los tiempos. Whisper transcribe la VOZ (fonética, para que ElevenLabs suene
-    bien: 'éi ái uíz Pédro'); en el subtítulo queremos la marca escrita.
-
-    Robusto ante cómo Whisper fusione las sílabas: ancla en CUALQUIER palabra que CONTENGA
-    'pedro' (Pédro, Ispedro, withpedro, espedro...) y absorbe las sílabas fonéticas previas
-    (EIU, éi, ái, uíz, with...). Dispara si: hay ≥1 sílaba fonética antes, o la propia palabra
-    trae prefijo/sufijo pegado (len>5: 'ispedro'), o viene justo después de 'Soy' (la firma).
-    No toca un 'Pedro' normal aislado, ni se traga 'Soy' ni palabras corrientes."""
+    """Colapsa la pronunciación fonética de la marca en 'aiwithpedro' (solo para el respaldo
+    whisper-crudo, cuando NO hay guion). Ancla en cualquier palabra que contenga 'pedro'."""
     out = []
     for w, a, b in palabras:
         n = _norm(w)
@@ -73,13 +189,14 @@ def fusionar_marca(palabras):
         out.append((w, a, b))
     return out
 
-def construir_srt(palabras, max_palabras=4, gap=0.6):
-    """palabras: lista de (texto, inicio, fin). Agrupa frase por frase (3-4 palabras / pausas / puntuación)."""
+# ------------------------------------------------------------------ armado / quemado
+
+def construir_srt(palabras, max_palabras=4):
+    """palabras: lista de (texto, inicio, fin). Agrupa frase por frase (≤4 palabras o puntuación)."""
     cues, buf, t0, t1 = [], [], None, None
     for w, a, b in palabras:
         if t0 is None: t0 = a
         buf.append(w); t1 = b
-        # cortar la frase al llegar al máximo de palabras o al terminar en puntuación
         if len(buf) >= max_palabras or w.strip().endswith((".", "?", "!", ",", ":", ";")):
             cues.append((t0, t1, " ".join(buf).strip())); buf, t0, t1 = [], None, None
     if buf:
@@ -87,28 +204,25 @@ def construir_srt(palabras, max_palabras=4, gap=0.6):
     out = []
     for i, (a, b, txt) in enumerate(cues, 1):
         if not txt: continue
-        b = max(b, a + 0.4)  # mínimo legible
+        b = max(b, a + 0.4)   # mínimo legible
         out.append(f"{i}\n{_segundos_a_srt(a)} --> {_segundos_a_srt(b)}\n{txt}\n")
     return "\n".join(out)
 
-def transcribir(audio, texto=None, modelo=None):
-    """Devuelve lista de (palabra, inicio, fin) con faster-whisper. [] si no está disponible."""
+def duracion_audio(ruta):
+    """Segundos del medio, parseando 'Duration:' del ffmpeg portátil. 0.0 si falla."""
+    if not ruta or not os.path.exists(ruta):
+        return 0.0
     try:
-        from faster_whisper import WhisperModel
-    except Exception as e:
-        print(f"(faster-whisper no disponible: {e}); video sin subtítulos."); return []
-    name = modelo or os.environ.get("WHISPER_MODEL", "base")
-    try:
-        m = WhisperModel(name, device="cpu", compute_type="int8")
-        segs, _ = m.transcribe(audio, language="es", word_timestamps=True,
-                               initial_prompt=(texto or "")[:600] or None)
-        palabras = []
-        for s in segs:
-            for w in (s.words or []):
-                palabras.append((w.word, w.start, w.end))
-        return palabras
-    except Exception as e:
-        print(f"(transcripción falló: {e}); video sin subtítulos."); return []
+        import imageio_ffmpeg
+        ff = imageio_ffmpeg.get_ffmpeg_exe()
+    except Exception:
+        ff = shutil.which("ffmpeg") or "ffmpeg"
+    r = subprocess.run([ff, "-i", ruta], capture_output=True, text=True)
+    m = re.search(r"Duration:\s*(\d+):(\d+):(\d+\.?\d*)", r.stderr or "")
+    if not m:
+        return 0.0
+    h, mi, s = m.groups()
+    return int(h) * 3600 + int(mi) * 60 + float(s)
 
 def extraer_audio(video):
     wav = tempfile.mktemp(suffix=".wav")
@@ -118,7 +232,6 @@ def extraer_audio(video):
 
 def quemar(video, srt_path, out):
     ff = _ffmpeg(con_subs=True)
-    # estilo Shorts: grande, negrita, blanco con borde negro, centrado en el tercio inferior
     # Blanco clásico pro: blanco negrita, borde negro grueso, sombra suave; centrado en el tercio inferior.
     estilo = ("Fontname=Arial,Bold=1,Fontsize=16,PrimaryColour=&H00FFFFFF,OutlineColour=&H00000000,"
               "BackColour=&H80000000,BorderStyle=1,Outline=4,Shadow=2,Alignment=2,MarginV=60")
@@ -147,20 +260,33 @@ def main():
 
     quitar = None
     if not (audio and os.path.exists(audio)):
-        audio = extraer_audio(video)
-        quitar = audio
+        audio = extraer_audio(video); quitar = audio
         if not audio:
             print("No se pudo extraer el audio; video sin subtítulos."); sys.exit(0)
 
-    palabras = transcribir(audio, text)
+    srt = ""
+    if text:
+        # CAMINO PRINCIPAL: el guion manda el texto; Whisper solo aporta el tiempo.
+        palabras, dur, confiable = transcribir_validado(audio, text)
+        if dur <= 0:
+            dur = duracion_audio(audio) or duracion_audio(video)
+        if confiable and palabras:
+            print("  Tiempos de Whisper confiables → alineo el guion a esos tiempos.")
+            srt = construir_srt(alinear(text, palabras, dur))
+        else:
+            print(f"  Tiempos NO confiables → reparto el guion por la duración ({dur:.1f}s).")
+            srt = srt_proporcional(text, dur)
+    else:
+        # SIN guion (no ocurre en producción): respaldo whisper-crudo.
+        palabras, _ = transcribir(audio, text)
+        if palabras:
+            srt = construir_srt(fusionar_marca(palabras))
+
     if quitar:
         try: os.remove(quitar)
         except Exception: pass
-    if not palabras:
-        sys.exit(0)   # sin subtítulos, pero no es un error
-
-    palabras = fusionar_marca(palabras)   # "éi ái uíz Pédro" (voz) -> "aiwithpedro" (subtítulo)
-    srt = construir_srt(palabras)
+    if not srt.strip():
+        print("(sin subtítulos)"); sys.exit(0)
     srt_path = os.path.splitext(out)[0] + ".srt"
     open(srt_path, "w", encoding="utf-8").write(srt)
     if quemar(video, srt_path, out):
