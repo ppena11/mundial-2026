@@ -48,6 +48,7 @@ jobs:
           python make_script.py
           python make_voice.py
           python make_reel.py
+          python subtitulos.py --video matchday.mp4 --audio voice.mp3 --text voiceover.txt || true
 
       - name: 5b) Cierre de anoche (resultados vs pronóstico) — opcional
         continue-on-error: true

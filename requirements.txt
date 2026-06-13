@@ -3,3 +3,4 @@ scipy
 matplotlib
 requests
 imageio-ffmpeg
+faster-whisper

@@ -25,4 +25,5 @@ if __name__ == "__main__":
     if not run(["make_voice.py", "--in", "recap_voiceover.txt", "--out", "recap_voice.mp3"], critical=False):
         print("⚠️  Sin audio del cierre (revisa ElevenLabs). Queda la tarjeta y el digest."); sys.exit(0)
     run(["make_reel.py", "--img", "recap.png", "--audio", "recap_voice.mp3", "--out", "recap.mp4"])
+    run(["subtitulos.py", "--video", "recap.mp4", "--audio", "recap_voice.mp3", "--text", "recap_voiceover.txt"], critical=False)
     print("✓ Listo: recap.mp4 + recap.png + recap_digest.html + recap_caption.txt.")
