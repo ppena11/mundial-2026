@@ -1,9 +1,10 @@
-name: Contenido diario (6 AM ET)
+name: Contenido diario (2:10 AM ET + respaldo 4:10)
 
 on:
   schedule:
-    - cron: "10 10 * * *"    # 10:10 UTC = 6:10 AM ET (EDT, UTC-4). El minuto 10 evita la congestión de la hora en punto (menos retrasos/saltos)
-  workflow_dispatch: {}        # también se puede correr a mano con un botón
+    - cron: "10 6 * * *"     #  6:10 UTC = 2:10 AM ET (EDT, UTC-4) — corrida principal
+    - cron: "10 8 * * *"     #  8:10 UTC = 4:10 AM ET (EDT, UTC-4) — RESPALDO (solo trabaja si la principal no terminó)
+  workflow_dispatch: {}        # también se puede correr a mano con un botón (siempre genera)
 
 permissions:
   contents: write
@@ -23,26 +24,49 @@ jobs:
       ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
     steps:
       - uses: actions/checkout@v4
+
+      # Respaldo idempotente: si el contenido de HOY (hora del este) ya se generó, esta corrida no hace nada.
+      # Así la corrida de las 4:10 solo trabaja si la de las 2:10 se retrasó/falló (no duplica gasto de ElevenLabs).
+      - name: ¿Ya se generó el contenido de hoy?
+        id: guard
+        run: |
+          TODAY=$(TZ=America/New_York date +%F)
+          STAMP=$(cat .last_success 2>/dev/null || echo "")
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "run=true" >> "$GITHUB_OUTPUT"; echo "Corrida manual: genero siempre."
+          elif [ "$STAMP" = "$TODAY" ]; then
+            echo "run=false" >> "$GITHUB_OUTPUT"; echo "El contenido de $TODAY ya está hecho; este respaldo no hace nada."
+          else
+            echo "run=true" >> "$GITHUB_OUTPUT"; echo "Generando el contenido de $TODAY."
+          fi
+
       - uses: actions/setup-python@v5
+        if: steps.guard.outputs.run == 'true'
         with:
           python-version: "3.11"
           cache: pip
       - name: Instalar dependencias
+        if: steps.guard.outputs.run == 'true'
         run: pip install -r requirements.txt
 
       - name: 1) Datos + simulación del modelo
+        if: steps.guard.outputs.run == 'true'
         run: python run_all.py
 
       - name: 2) Historial de aciertos (califica + registra)
+        if: steps.guard.outputs.run == 'true'
         run: python track_record.py
 
       - name: 3) Infografía del día
+        if: steps.guard.outputs.run == 'true'
         run: python make_matchday.py
 
       - name: 4) Digest diario (para Substack)
+        if: steps.guard.outputs.run == 'true'
         run: python daily_digest.py
 
       - name: 5) Reel con tu voz (ElevenLabs) — opcional
+        if: steps.guard.outputs.run == 'true'
         continue-on-error: true
         run: |
           python make_script.py
@@ -51,19 +75,24 @@ jobs:
           python subtitulos.py --video matchday.mp4 --audio voice.mp3 --text voiceover.txt || true
 
       - name: 5b) Cierre de anoche (resultados vs pronóstico) — opcional
+        if: steps.guard.outputs.run == 'true'
         continue-on-error: true
         run: python auto_recap.py
 
       - name: 6) Resumen semanal (solo los lunes)
+        if: steps.guard.outputs.run == 'true'
         run: |
           if [ "$(date -u +%u)" = "1" ]; then python make_weekly.py; else echo "hoy no es lunes, sin resumen semanal"; fi
 
       - name: Guardar estado en el repo (histórico, modelo, aciertos)
+        if: steps.guard.outputs.run == 'true'
         run: |
+          TODAY=$(TZ=America/New_York date +%F)
+          echo "$TODAY" > .last_success          # marca de éxito: el respaldo de las 4:10 la lee para saltarse
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add -A
-          git commit -m "Contenido del día $(date -u +%Y-%m-%d)" || echo "sin cambios"
+          git commit -m "Contenido del día $TODAY" || echo "sin cambios"
           for i in 1 2 3; do
             git fetch origin main
             git merge -X ours --no-edit origin/main || true   # lo recién generado gana en conflicto
@@ -71,7 +100,7 @@ jobs:
           done
 
       - name: Subir el contenido del día (descargable)
-        if: always()
+        if: always() && steps.guard.outputs.run == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: contenido-del-dia
