@@ -81,7 +81,8 @@ AI_SYSTEM = (
     "que la fecha del día sea exactamente el 11 de junio (mírala en los datos). "
     "Con los datos del día del Mundial 2026, genera el contenido de un video de TikTok y devuelve EXCLUSIVAMENTE "
     "un objeto JSON válido (sin ``` ni texto extra) con EXACTAMENTE estas claves:\n"
-    '"voiceover": el guion HABLADO. Gancho fuerte en la primera frase; luego haz un REPASO de TODOS los partidos de '
+    '"voiceover": el guion HABLADO. Gancho fuerte en la primera frase, dejando CLARO que estos son LOS PRONÓSTICOS '
+    "del Mundial PARA HOY (di algo como 'aquí están los pronósticos del día'); luego haz un REPASO de TODOS los partidos de "
     "hoy diciendo el favorito y su MARCADOR PREVISTO (ej.: 'España golea dos a cero a Cabo Verde'); MENCIONA CADA "
     "PARTIDO con su marcador, no solo el más importante (puedes resaltar el más jugoso, pero no omitas ninguno). "
     "Sé ágil: la duración se adapta al número de partidos (~30 s con 2-3, hasta ~60 s con 6). "
@@ -219,7 +220,7 @@ def build(target):
     if not played:
         S.append("Hoy no hay partidos del Mundial, pero mi inteligencia artificial ya está lista para cuando ruede el balón.")
     else:
-        S.append("Quién gana hoy en el Mundial. Mi inteligencia artificial corrió veinte mil simulaciones, y estos son los marcadores que proyecta.")
+        S.append("Aquí están los pronósticos del Mundial para hoy. Mi inteligencia artificial corrió veinte mil simulaciones, y estos son los marcadores que proyecta.")
         S.append(". ".join(f"{dd.acc(d['a'])} {d['sx']} a {d['sy']} {dd.acc(d['b'])}" for d in played) + ".")
         if pick:
             d,(team,mpb,mkp,edge)=pick; riv=d["b"] if team==d["a"] else d["a"]
