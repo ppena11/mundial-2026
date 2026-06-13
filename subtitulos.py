@@ -9,7 +9,7 @@ deja el video TAL CUAL (no rompe nada).
 USO:
   python subtitulos.py --video matchday.mp4 [--audio voice.mp3] [--text voiceover.txt] [--out matchday.mp4]
 """
-import os, sys, shutil, subprocess, tempfile
+import os, sys, shutil, subprocess, tempfile, re, unicodedata
 
 def arg(flag, default=None):
     return sys.argv[sys.argv.index(flag)+1] if flag in sys.argv else default
@@ -29,6 +29,37 @@ def _ffmpeg(con_subs=False):
 def _segundos_a_srt(t):
     h = int(t // 3600); m = int((t % 3600) // 60); s = int(t % 60); ms = int((t - int(t)) * 1000)
     return f"{h:02d}:{m:02d}:{s:02d},{ms:03d}"
+
+def _norm(s):
+    """minúsculas, sin acentos, solo letras (para comparar fonemas)."""
+    s = unicodedata.normalize("NFD", s)
+    s = "".join(c for c in s if unicodedata.category(c) != "Mn")
+    return re.sub(r"[^a-z]", "", s.lower())
+
+# Sílabas que Whisper puede transcribir de la marca hablada "éi ái uíz Pédro" (= @aiwithpedro).
+_FONEMAS_MARCA = {"ei", "ai", "ay", "a", "e", "i", "hey", "eye",
+                  "uiz", "uis", "uith", "with", "wiz", "wis", "guis", "ui", "is"}
+
+def fusionar_marca(palabras):
+    """Colapsa la pronunciación fonética de la marca (p.ej. 'éi ái uíz Pédro') en un
+    único token 'aiwithpedro', conservando los tiempos. Whisper transcribe la VOZ
+    (fonética, para que ElevenLabs suene bien); en el subtítulo queremos la marca escrita.
+    Funciona aunque la frase quede partida en varias palabras/cues."""
+    out = []
+    for w, a, b in palabras:
+        if _norm(w) == "pedro":
+            # ¿cuántos fonemas de la marca preceden inmediatamente a "Pedro"?
+            k = 0
+            while k < 4 and len(out) - 1 - k >= 0 and _norm(out[-1 - k][0]) in _FONEMAS_MARCA:
+                k += 1
+            if k >= 1:
+                start = out[-k][1]
+                del out[-k:]
+                tail = re.search(r"[.,!?;:]+$", w.strip())
+                out.append(("aiwithpedro" + (tail.group(0) if tail else ""), start, b))
+                continue
+        out.append((w, a, b))
+    return out
 
 def construir_srt(palabras, max_palabras=4, gap=0.6):
     """palabras: lista de (texto, inicio, fin). Agrupa frase por frase (3-4 palabras / pausas / puntuación)."""
@@ -116,6 +147,7 @@ def main():
     if not palabras:
         sys.exit(0)   # sin subtítulos, pero no es un error
 
+    palabras = fusionar_marca(palabras)   # "éi ái uíz Pédro" (voz) -> "aiwithpedro" (subtítulo)
     srt = construir_srt(palabras)
     srt_path = os.path.splitext(out)[0] + ".srt"
     open(srt_path, "w", encoding="utf-8").write(srt)
