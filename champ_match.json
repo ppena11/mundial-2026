@@ -1,19 +1,15 @@
 {
-  "local": "Espana",
-  "visitante": "Francia",
-  "p1": 43.7,
-  "pX": 28.6,
-  "p2": 27.7,
-  "xg_local": 1.35,
-  "xg_visitante": 1.02,
+  "local": "Estados Unidos",
+  "visitante": "Paraguay",
+  "p1": 36.7,
+  "pX": 29.8,
+  "p2": 33.6,
+  "xg_local": 1.17,
+  "xg_visitante": 1.11,
   "marcador": "1-1",
   "bajas_local": [
-    "Fermín López",
-    "Lamine Yamal",
-    "Mikel Merino"
+    "Patrick Agyemang",
+    "Johnny Cardoso"
   ],
-  "bajas_visitante": [
-    "Hugo Ekitiké",
-    "William Saliba"
-  ]
+  "bajas_visitante": []
 }

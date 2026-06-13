@@ -1,5 +1,3 @@
 {
-  "_INSTRUCCIONES": "~1h antes de un partido clave: mira el XI confirmado (TV / X / app FIFA) y, por cada selección, escribe AQUÍ los jugadores CLAVE que NO salen de titulares (lesionados de última hora, descansos, suplentes sorpresa). El modelo los trata como ausentes. Borra los ejemplos y deja {} si no quieres ajustar nada. El nombre debe escribirse igual que en injuries.json / STAR_WEIGHTS para que tome su peso; si no, usa el peso por defecto.",
-  "_EJEMPLO_Espana": ["Lamine Yamal"],
-  "_EJEMPLO_Francia": ["Kylian Mbappé"]
+  "_fuente": "ESPN evento 760417 (XI confirmado)"
 }
