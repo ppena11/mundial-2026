@@ -350,6 +350,12 @@ ok("srt_proporcional usa el guion (sin galimatías) + marca", "Bogchia" not in s
 pal = sub.alinear(guion_sub, bueno, 30.0)
 ok("alinear da tiempos monótonos y crecientes", pal and all(pal[i][1] >= pal[i-1][1] for i in range(1, len(pal))), "no monótono")
 ok("alinear muestra nuestro texto (marca al final = aiwithpedro)", pal and pal[-1][0].startswith("aiwithpedro"), pal[-1][0] if pal else "vacío")
+# timing_sano: el patrón ROTO de la corrida real (frases de ~4.5s + racimo amontonado) debe rechazarse
+roto = [("a", 1.1, 1.5), ("b", 5.6, 6.0), ("c", 10.0, 10.4), ("d", 14.5, 14.9)] + \
+       [(f"w{i}", 21.2 + i*0.03, 21.2 + i*0.03 + 0.3) for i in range(15)]
+sano = [(f"w{i}", i*0.6, i*0.6 + 0.5) for i in range(20)]
+ok("timing_sano RECHAZA el patrón roto de hoy (estirado+amontonado)", not sub.timing_sano(roto, 42.0), "no lo detectó")
+ok("timing_sano ACEPTA un timing parejo", sub.timing_sano(sano, 12.0), "rechazó uno bueno")
 
 # ============================================================
 print(f"\n========== RESULTADO: {PASS} PASS / {FAIL} FAIL ==========")

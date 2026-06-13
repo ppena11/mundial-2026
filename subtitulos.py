@@ -58,7 +58,8 @@ def normalizar_marca_texto(s):
 
 def transcribir(audio, texto=None, modelo=None):
     """Devuelve (palabras, duracion). palabras = [(palabra, inicio, fin)]; ([], 0.0) si no disponible.
-    Flags anti-alucinación: vad_filter, condition_on_previous_text=False, temperature=0."""
+    Sin vad_filter (distorsiona los timestamps de palabra); condition_on_previous_text=False evita
+    espirales de alucinación que también corrompen los tiempos."""
     try:
         from faster_whisper import WhisperModel
     except Exception as e:
@@ -67,7 +68,7 @@ def transcribir(audio, texto=None, modelo=None):
     try:
         m = WhisperModel(name, device="cpu", compute_type="int8")
         segs, info = m.transcribe(audio, language="es", word_timestamps=True,
-                                  vad_filter=True, condition_on_previous_text=False,
+                                  condition_on_previous_text=False,
                                   temperature=0.0, initial_prompt=(texto or "")[:400] or None)
         palabras = []
         for s in segs:
@@ -142,6 +143,22 @@ def alinear(texto_real, palabras_whisper, dur):
             b = a + 0.3
         palabras.append((tok, a, b))
     return palabras
+
+def timing_sano(palabras, dur):
+    """¿Los tiempos alineados son razonables? Rechaza el caso de hoy: frases estiradas (~4.5s)
+    o racimos amontonados (muchas palabras en <0.12s). Si no, mejor el reparto proporcional."""
+    if len(palabras) < 3 or dur <= 0:
+        return False
+    starts = [a for _, a, _ in palabras]
+    gaps = [starts[i + 1] - starts[i] for i in range(len(starts) - 1)]
+    if not gaps:
+        return False
+    avg = dur / len(palabras)
+    if max(gaps) > max(2.5, 6 * avg):                       # una palabra se estira demasiado
+        return False
+    if sum(1 for g in gaps if g < 0.12) > 0.20 * len(gaps):  # demasiadas amontonadas
+        return False
+    return True
 
 def srt_proporcional(texto_real, dur):
     """Fallback: reparte el guion por la duración (proporcional a los caracteres). Cobertura completa."""
@@ -270,11 +287,13 @@ def main():
         palabras, dur, confiable = transcribir_validado(audio, text)
         if dur <= 0:
             dur = duracion_audio(audio) or duracion_audio(video)
-        if confiable and palabras:
-            print("  Tiempos de Whisper confiables → alineo el guion a esos tiempos.")
-            srt = construir_srt(alinear(text, palabras, dur))
+        pal_alineado = alinear(text, palabras, dur) if (confiable and palabras) else []
+        if pal_alineado and timing_sano(pal_alineado, dur):
+            print("  Tiempos de Whisper confiables y sanos → alineo el guion a esos tiempos.")
+            srt = construir_srt(pal_alineado)
         else:
-            print(f"  Tiempos NO confiables → reparto el guion por la duración ({dur:.1f}s).")
+            motivo = "no confiables" if not pal_alineado else "distorsionados (estirados/amontonados)"
+            print(f"  Tiempos {motivo} → reparto proporcional del guion ({dur:.1f}s).")
             srt = srt_proporcional(text, dur)
     else:
         # SIN guion (no ocurre en producción): respaldo whisper-crudo.
