@@ -1,87 +1,123 @@
 1
-00:00:00,180 --> 00:00:01,459
-Anoche el modelo acertó
+00:00:00,155 --> 00:00:00,620
+Anoche fue complicado:
 
 2
-00:00:01,459 --> 00:00:02,779
-una de dos.
+00:00:00,620 --> 00:00:01,240
+solo acertamos 1 de
 
 3
-00:00:02,779 --> 00:00:04,099
-Fallamos con Canadá uno
+00:00:01,240 --> 00:00:03,339
+3.
 
 4
-00:00:04,099 --> 00:00:04,879
-a uno,
+00:00:03,339 --> 00:00:05,240
+Escocia ganó contra Haití
 
 5
-00:00:04,879 --> 00:00:05,740
-pero clavamos a Estados
+00:00:05,240 --> 00:00:06,459
+como dijimos,
 
 6
-00:00:05,740 --> 00:00:07,019
-Unidos con solo 37
+00:00:06,459 --> 00:00:07,580
+pero Suiza sorprendió a
 
 7
-00:00:07,019 --> 00:00:08,919
-por ciento de probabilidad,
+00:00:07,580 --> 00:00:09,539
+Catar con el empate,
 
 8
-00:00:08,919 --> 00:00:10,460
-y lo hicieron goleada:
+00:00:09,539 --> 00:00:10,580
+y Brasil tampoco pudo
 
 9
-00:00:10,460 --> 00:00:11,560
-cuatro a uno contra
+00:00:10,580 --> 00:00:12,179
+vencer a Marruecos.
 
 10
-00:00:11,560 --> 00:00:12,660
-Paraguay.
+00:00:12,179 --> 00:00:12,859
+Eso nos deja en
 
 11
-00:00:12,660 --> 00:00:13,740
-Vamos tres aciertos de
+00:00:12,859 --> 00:00:13,580
+4 de 8,
 
 12
-00:00:13,740 --> 00:00:14,599
-cuatro partidos,
+00:00:13,580 --> 00:00:15,560
+exactamente al 50 por
 
 13
-00:00:14,599 --> 00:00:16,379
-75 por ciento.
+00:00:15,560 --> 00:00:16,399
+ciento.
 
 14
-00:00:16,379 --> 00:00:17,460
-Hoy Brasil enfrenta a
+00:00:16,399 --> 00:00:17,219
+El torneo nos está
 
 15
-00:00:17,460 --> 00:00:18,219
-Marruecos en lo que
+00:00:17,219 --> 00:00:18,399
+enseñando que los favoritos
 
 16
-00:00:18,219 --> 00:00:20,079
-promete ser otra batalla.
+00:00:18,399 --> 00:00:19,800
+no siempre ganan:
 
 17
-00:00:20,079 --> 00:00:21,079
-Descubre cómo nos fue
+00:00:19,800 --> 00:00:20,780
+mira al Canadá contra
 
 18
-00:00:21,079 --> 00:00:21,780
-y qué viene en
+00:00:20,780 --> 00:00:21,739
+Bosnia,
 
 19
-00:00:21,780 --> 00:00:22,780
-el análisis completo en
+00:00:21,739 --> 00:00:23,039
+o ese increíble 4-1
 
 20
-00:00:22,780 --> 00:00:23,379
-el link de mi
+00:00:23,039 --> 00:00:24,460
+de Estados Unidos cuando
 
 21
-00:00:23,379 --> 00:00:24,179
-bio.
+00:00:24,460 --> 00:00:25,593
+le dábamos solo 37
 
 22
-00:00:24,179 --> 00:00:25,623
+00:00:25,593 --> 00:00:26,460
+por ciento.
+
+23
+00:00:26,460 --> 00:00:28,339
+Hoy llega Alemania contra
+
+24
+00:00:28,339 --> 00:00:28,899
+Curazao,
+
+25
+00:00:28,899 --> 00:00:30,273
+favorito al 93 por
+
+26
+00:00:30,273 --> 00:00:30,679
+ciento.
+
+27
+00:00:30,679 --> 00:00:32,679
+Esto se pone emocionante.
+
+28
+00:00:32,679 --> 00:00:33,759
+Sigue el análisis completo
+
+29
+00:00:33,759 --> 00:00:34,399
+en el link de
+
+30
+00:00:34,399 --> 00:00:35,079
+mi bio.
+
+31
+00:00:35,079 --> 00:00:36,623
 Soy aiwithpedro.
