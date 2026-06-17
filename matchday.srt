@@ -1,139 +1,155 @@
 1
-00:00:00,336 --> 00:00:01,684
-¡Aquí están los pronósticos
+00:00:00,406 --> 00:00:00,813
+¡Atención!
 
 2
-00:00:01,684 --> 00:00:03,031
-del día 6 del
+00:00:00,813 --> 00:00:02,439
+Aquí están los pronósticos
 
 3
-00:00:03,031 --> 00:00:03,705
-Mundial 2026!
+00:00:02,439 --> 00:00:04,066
+del día 7 del
 
 4
-00:00:03,705 --> 00:00:04,105
-Ojo:
+00:00:04,066 --> 00:00:04,879
+Mundial 2026.
 
 5
-00:00:04,042 --> 00:00:05,389
-España era favorita y
+00:00:04,879 --> 00:00:06,506
+Después de sorpresas como
 
 6
-00:00:05,389 --> 00:00:06,667
-empató sin goles contra
+00:00:06,506 --> 00:00:08,133
+España empatando cero a
 
 7
-00:00:06,667 --> 00:00:07,202
-Cabo Verde;
+00:00:08,133 --> 00:00:09,759
+cero contra Cabo Verde,
 
 8
-00:00:07,202 --> 00:00:08,271
-hoy toca recuperarse con
+00:00:09,759 --> 00:00:11,386
+hoy llega una jornada
 
 9
-00:00:08,271 --> 00:00:09,073
-tres partidos clave.
+00:00:11,386 --> 00:00:13,013
+decisiva con cinco partidos
 
 10
-00:00:09,073 --> 00:00:10,143
-Francia se mide ante
+00:00:13,013 --> 00:00:14,639
+que definirán el rumbo
 
 11
-00:00:10,143 --> 00:00:11,212
-Senegal y nosotros vemos
+00:00:14,639 --> 00:00:15,859
+de los grupos.
 
 12
-00:00:11,212 --> 00:00:15,880
-a los franceses ganando
+00:00:15,859 --> 00:00:16,673
+Empezamos fuerte:
 
 13
-00:00:15,880 --> 00:00:17,280
-uno a cero.
+00:00:16,673 --> 00:00:18,300
+Austria golea dos a
 
 14
-00:00:17,280 --> 00:00:17,839
-Luego,
+00:00:18,300 --> 00:00:19,519
+cero a Jordania.
 
 15
-00:00:17,839 --> 00:00:19,760
-Irak recibe a Noruega,
+00:00:19,519 --> 00:00:21,146
+Portugal vence uno a
 
 16
-00:00:19,760 --> 00:00:20,219
-y esta es la
+00:00:21,146 --> 00:00:22,773
+cero a República Democrática
 
 17
-00:00:20,219 --> 00:00:21,620
-más clara del día:
+00:00:22,773 --> 00:00:23,586
+del Congo.
 
 18
-00:00:21,620 --> 00:00:23,239
-Noruega arrasaría dos a
+00:00:23,586 --> 00:00:25,213
+Inglaterra se lleva un
 
 19
-00:00:23,239 --> 00:00:24,559
-cero con un 71
+00:00:25,213 --> 00:00:26,839
+ajustado uno a cero
 
 20
-00:00:24,559 --> 00:00:26,320
-por ciento de probabilidad.
+00:00:26,839 --> 00:00:27,653
+contra Croacia.
 
 21
-00:00:26,320 --> 00:00:27,640
-Y el plato fuerte:
+00:00:27,653 --> 00:00:29,100
+Ghana y Panamá se
 
 22
-00:00:27,640 --> 00:00:29,760
-Argentina contra Argelia,
+00:00:29,100 --> 00:00:30,120
+reparten los puntos en
 
 23
-00:00:29,760 --> 00:00:30,980
-donde los albicelestes se
+00:00:30,120 --> 00:00:31,259
+un empate uno a
 
 24
-00:00:30,980 --> 00:00:32,100
-llevan el triunfo uno
+00:00:31,259 --> 00:00:31,659
+uno.
 
 25
-00:00:32,100 --> 00:00:33,060
-a cero.
+00:00:31,500 --> 00:00:32,880
+Y para cerrar,
 
 26
-00:00:33,060 --> 00:00:34,240
-Nuestro modelo lleva 6
+00:00:32,880 --> 00:00:34,200
+Colombia derrota uno a
 
 27
-00:00:34,240 --> 00:00:35,380
-de 16 aciertos en
+00:00:34,200 --> 00:00:35,880
+cero a Uzbekistán.
 
 28
-00:00:35,380 --> 00:00:36,380
-el torneo,
+00:00:35,880 --> 00:00:36,760
+Con un récord de
 
 29
-00:00:36,380 --> 00:00:38,259
-así que seguimos ajustando.
+00:00:36,760 --> 00:00:38,420
+nueve aciertos de diecinueve
 
 30
-00:00:38,259 --> 00:00:39,320
-Para el análisis completo
+00:00:38,420 --> 00:00:39,500
+hasta ahora,
 
 31
-00:00:39,320 --> 00:00:40,780
-con probabilidades y detalles
+00:00:39,500 --> 00:00:40,420
+vamos a ver si
 
 32
-00:00:40,780 --> 00:00:42,219
-partido a partido,
+00:00:40,420 --> 00:00:42,359
+la inteligencia artificial sigue
 
 33
-00:00:42,219 --> 00:00:42,960
-el link está en
+00:00:42,359 --> 00:00:43,259
+entonada.
 
 34
-00:00:42,960 --> 00:00:43,859
-mi bio.
+00:00:43,259 --> 00:00:44,859
+El análisis completo y
 
 35
-00:00:43,859 --> 00:00:45,471
+00:00:44,859 --> 00:00:46,320
+mucho más detalle sobre
+
+36
+00:00:46,320 --> 00:00:48,119
+cada pronóstico lo encuentras
+
+37
+00:00:48,119 --> 00:00:48,880
+gratis en el link
+
+38
+00:00:48,880 --> 00:00:49,600
+de mi bio.
+
+39
+00:00:49,600 --> 00:00:50,965
 Soy aiwithpedro.
