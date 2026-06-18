@@ -1,155 +1,131 @@
 1
-00:00:00,406 --> 00:00:00,813
-¡Atención!
+00:00:01,544 --> 00:00:06,464
+Aquí vienen los pronósticos
 
 2
-00:00:00,813 --> 00:00:02,439
-Aquí están los pronósticos
+00:00:06,464 --> 00:00:07,604
+del día ocho del
 
 3
-00:00:02,439 --> 00:00:04,066
-del día 7 del
+00:00:07,604 --> 00:00:08,004
+Mundial.
 
 4
-00:00:04,066 --> 00:00:04,879
-Mundial 2026.
+00:00:07,889 --> 00:00:09,029
+Portugal sorprendió empatando contra
 
 5
-00:00:04,879 --> 00:00:06,506
-Después de sorpresas como
+00:00:09,029 --> 00:00:09,599
+República Dominicana,
 
 6
-00:00:06,506 --> 00:00:08,133
-España empatando cero a
+00:00:09,599 --> 00:00:10,000
+pero hoy la IA
 
 7
-00:00:08,133 --> 00:00:09,759
-cero contra Cabo Verde,
+00:00:09,859 --> 00:00:10,259
+está lista para recuperarse.
 
 8
-00:00:09,759 --> 00:00:11,386
-hoy llega una jornada
+00:00:10,140 --> 00:00:12,000
+Chequia domina a Sudáfrica
 
 9
-00:00:11,386 --> 00:00:13,013
-decisiva con cinco partidos
+00:00:12,000 --> 00:00:13,099
+con un uno a
 
 10
-00:00:13,013 --> 00:00:14,639
-que definirán el rumbo
+00:00:13,099 --> 00:00:13,820
+cero;
 
 11
-00:00:14,639 --> 00:00:15,859
-de los grupos.
+00:00:13,820 --> 00:00:14,580
+Suiza,
 
 12
-00:00:15,859 --> 00:00:16,673
-Empezamos fuerte:
+00:00:14,580 --> 00:00:15,320
+con el setenta y
 
 13
-00:00:16,673 --> 00:00:18,300
-Austria golea dos a
+00:00:15,320 --> 00:00:16,100
+uno por ciento de
 
 14
-00:00:18,300 --> 00:00:19,519
-cero a Jordania.
+00:00:16,100 --> 00:00:17,239
+probabilidad,
 
 15
-00:00:19,519 --> 00:00:21,146
-Portugal vence uno a
+00:00:17,239 --> 00:00:17,859
+gana dos a cero
 
 16
-00:00:21,146 --> 00:00:22,773
-cero a República Democrática
+00:00:17,859 --> 00:00:19,000
+ante Bosnia;
 
 17
-00:00:22,773 --> 00:00:23,586
-del Congo.
+00:00:19,000 --> 00:00:20,059
+Canadá arrasa a Catar
 
 18
-00:00:23,586 --> 00:00:25,213
-Inglaterra se lleva un
+00:00:20,059 --> 00:00:20,839
+dos a cero,
 
 19
-00:00:25,213 --> 00:00:26,839
-ajustado uno a cero
+00:00:20,839 --> 00:00:21,800
+el resultado más seguro
 
 20
-00:00:26,839 --> 00:00:27,653
-contra Croacia.
+00:00:21,800 --> 00:00:22,980
+del día;
 
 21
-00:00:27,653 --> 00:00:29,100
-Ghana y Panamá se
+00:00:22,980 --> 00:00:23,780
+y México y Corea
 
 22
-00:00:29,100 --> 00:00:30,120
-reparten los puntos en
+00:00:23,780 --> 00:00:24,739
+del Sur abren el
 
 23
-00:00:30,120 --> 00:00:31,259
-un empate uno a
+00:00:24,739 --> 00:00:26,120
+marcador empatados uno a
 
 24
-00:00:31,259 --> 00:00:31,659
+00:00:26,120 --> 00:00:26,519
 uno.
 
 25
-00:00:31,500 --> 00:00:32,880
-Y para cerrar,
+00:00:26,440 --> 00:00:28,280
+Cuatro partidos,
 
 26
-00:00:32,880 --> 00:00:34,200
-Colombia derrota uno a
+00:00:28,280 --> 00:00:29,480
+cuatro pronósticos listos para
 
 27
-00:00:34,200 --> 00:00:35,880
-cero a Uzbekistán.
+00:00:29,480 --> 00:00:30,280
+analizar.
 
 28
-00:00:35,880 --> 00:00:36,760
-Con un récord de
+00:00:30,280 --> 00:00:31,460
+El análisis completo,
 
 29
-00:00:36,760 --> 00:00:38,420
-nueve aciertos de diecinueve
+00:00:31,460 --> 00:00:33,119
+con detalles y estrategias,
 
 30
-00:00:38,420 --> 00:00:39,500
-hasta ahora,
+00:00:33,119 --> 00:00:34,060
+lo tienes gratis en
 
 31
-00:00:39,500 --> 00:00:40,420
-vamos a ver si
+00:00:34,060 --> 00:00:34,759
+el enlace de mi
 
 32
-00:00:40,420 --> 00:00:42,359
-la inteligencia artificial sigue
+00:00:34,759 --> 00:00:35,679
+bio.
 
 33
-00:00:42,359 --> 00:00:43,259
-entonada.
-
-34
-00:00:43,259 --> 00:00:44,859
-El análisis completo y
-
-35
-00:00:44,859 --> 00:00:46,320
-mucho más detalle sobre
-
-36
-00:00:46,320 --> 00:00:48,119
-cada pronóstico lo encuentras
-
-37
-00:00:48,119 --> 00:00:48,880
-gratis en el link
-
-38
-00:00:48,880 --> 00:00:49,600
-de mi bio.
-
-39
-00:00:49,600 --> 00:00:50,965
+00:00:35,679 --> 00:00:37,178
 Soy aiwithpedro.
