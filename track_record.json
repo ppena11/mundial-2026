@@ -1,8 +1,8 @@
 {
-  "n": 24,
-  "aciertos_1x2": 13,
-  "tasa_1x2": 54.2,
+  "n": 28,
+  "aciertos_1x2": 16,
+  "tasa_1x2": 57.1,
   "aciertos_exactos": 0,
   "tasa_exacta": 0.0,
-  "brier": 0.614
+  "brier": 0.577
 }
