@@ -169,7 +169,7 @@ def build(target):
     try:
         td = date.fromisoformat(target_iso)
         if td > KICKOFF:
-            sm.insert(1, f"Anoche fue el día {(td - KICKOFF).days + 1} del torneo (el Mundial arrancó el 11 de junio).")
+            sm.insert(1, "El Mundial 2026 ya está en marcha (arrancó el 11 de junio). NO menciones 'el día N del torneo'.")
     except Exception:
         pass
     try:
