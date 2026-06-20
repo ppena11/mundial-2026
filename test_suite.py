@@ -365,10 +365,16 @@ ok("weekday_es correcto en fechas del torneo",
    dd.weekday_es("20260613") == "sábado" and dd.weekday_es("20260611") == "jueves"
    and dd.weekday_es("20260618") == "jueves" and dd.weekday_es("20260620") == "sábado",
    f'13->{dd.weekday_es("20260613")}, 11->{dd.weekday_es("20260611")}')
-# el resumen que recibe Claude trae el día YA resuelto
+ok("fecha_larga (fecha hablada) correcta",
+   dd.fecha_larga("20260618") == "jueves 18 de junio" and dd.fecha_larga("20260613") == "sábado 13 de junio",
+   f'18->{dd.fecha_larga("20260618")}')
+# el resumen que recibe Claude trae la fecha hablada YA resuelta, SIN "día N del torneo"
 played_x = [{"a": "Brasil", "b": "Marruecos", "fav": "Brasil", "fp": 0.5, "sx": 1, "sy": 0}]
-ok("_summary le pasa a Claude el día correcto (sábado para 13/06/2026)",
-   "Hoy es sábado" in msx._summary("13/06/2026", played_x, None, None, {"n": 0}), "no aparece el día")
+sm_x = msx._summary("13/06/2026", played_x, None, None, {"n": 0})
+ok("_summary abre con la fecha hablada (sábado 13 de junio)", "Hoy es sábado 13 de junio" in sm_x, sm_x.splitlines()[0])
+ok("_summary ya NO mete 'el día N del torneo'", "hoy es el día" not in sm_x.lower(), "quedó el día N")
+ok("AI_SYSTEM abre con la fecha y prohíbe 'día N del torneo'",
+   "Aquí está el pronóstico de hoy" in msx.AI_SYSTEM and 'NO digas "el día N del torneo"' in msx.AI_SYSTEM, "falta la regla")
 ok("el prompt prohíbe que Claude deduzca el día", "NUNCA lo deduzcas" in msx.AI_SYSTEM, "falta la regla")
 # (2) título de YouTube del pronóstico con formato fijo de marca
 msx.write_youtube("youtube_test.txt", played_x, "18/06/2026", None)

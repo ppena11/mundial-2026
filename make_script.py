@@ -31,8 +31,8 @@ def _tag(team): return "#" + _TAG.get(team, team.replace(" ", ""))
 
 def _summary(fh, played, pick, clearest, tr):
     """Resumen de datos del día que se le pasa a Claude para que redacte el guion."""
-    dia = dd.weekday_es(f"{fh[6:10]}{fh[3:5]}{fh[0:2]}")   # día calculado en Python (Claude no lo deduce)
-    L = [f"Hoy es {dia}, {fh}." if dia else f"Fecha: {fh}."]
+    flarga = dd.fecha_larga(f"{fh[6:10]}{fh[3:5]}{fh[0:2]}")   # 'jueves 18 de junio', calculada en Python
+    L = [f"Hoy es {flarga} de 2026." if flarga else f"Fecha: {fh}."]
     # anclaje temporal: evita que Claude diga "el Mundial comienza/comenzó hoy" en día equivocado
     try:
         td = date(int(fh[6:10]), int(fh[3:5]), int(fh[0:2]))
@@ -41,8 +41,8 @@ def _summary(fh, played, pick, clearest, tr):
         elif td == KICKOFF:
             L.append("HOY, 11 de junio, ARRANCA el Mundial 2026 (día inaugural).")
         else:
-            L.append(f"El Mundial 2026 YA ESTÁ EN MARCHA (arrancó el 11 de junio); hoy es el día {(td-KICKOFF).days+1} "
-                     "del torneo. NO digas que el Mundial 'comienza' ni 'comenzó hoy'.")
+            L.append("El Mundial 2026 YA ESTÁ EN MARCHA (arrancó el 11 de junio). NO digas que el Mundial "
+                     "'comienza' ni 'comenzó hoy', y NO menciones 'el día N del torneo'.")
     except Exception:
         pass
     # contexto de lo que ha pasado en el torneo (resultados, sorpresas, récord, titular) — datos reales
@@ -84,8 +84,9 @@ AI_SYSTEM = (
     "usa EXACTAMENTE ese; NUNCA lo deduzcas tú de la fecha. "
     "Con los datos del día del Mundial 2026, genera el contenido de un video de YouTube Shorts y devuelve EXCLUSIVAMENTE "
     "un objeto JSON válido (sin ``` ni texto extra) con EXACTAMENTE estas claves:\n"
-    '"voiceover": el guion HABLADO. Gancho fuerte en la primera frase, dejando CLARO que estos son LOS PRONÓSTICOS '
-    "del Mundial PARA HOY (di algo como 'aquí están los pronósticos del día'); luego haz un REPASO de TODOS los partidos de "
+    '"voiceover": el guion HABLADO. ABRE diciendo la fecha de hoy con ESTE formato: "Aquí está el pronóstico de hoy, '
+    '<día de la semana> <número> de <mes>" (usa EXACTAMENTE el día y la fecha de los datos, p. ej. "Aquí está el '
+    'pronóstico de hoy, jueves 18 de junio"); NO digas "el día N del torneo". Luego haz un REPASO de TODOS los partidos de '
     "hoy diciendo el favorito y su MARCADOR PREVISTO (ej.: 'España golea dos a cero a Cabo Verde'); MENCIONA CADA "
     "PARTIDO con su marcador, no solo el más importante (puedes resaltar el más jugoso, pero no omitas ninguno). "
     "Sé ágil: la duración se adapta al número de partidos (~30 s con 2-3, hasta ~60 s con 6). "
@@ -218,7 +219,7 @@ def build(target):
     if not played:
         S.append("Hoy no hay partidos del Mundial, pero mi inteligencia artificial ya está lista para cuando ruede el balón.")
     else:
-        S.append("Aquí están los pronósticos del Mundial para hoy. Mi inteligencia artificial corrió veinte mil simulaciones, y estos son los marcadores que proyecta.")
+        S.append(f"Aquí está el pronóstico de hoy, {dd.fecha_larga(target)}. Mi inteligencia artificial corrió veinte mil simulaciones, y estos son los marcadores que proyecta.")
         S.append(". ".join(f"{dd.acc(d['a'])} {d['sx']} a {d['sy']} {dd.acc(d['b'])}" for d in played) + ".")
         if pick:
             d,(team,mpb,mkp,edge)=pick; riv=d["b"] if team==d["a"] else d["a"]

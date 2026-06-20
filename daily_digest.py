@@ -125,11 +125,21 @@ def et_date(dt_utc):
         return dt_utc[:10]
 
 _DIAS_ES = ["lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"]
+_MESES_ES = ["enero", "febrero", "marzo", "abril", "mayo", "junio",
+             "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"]
 def weekday_es(target):
     """Nombre del día de la semana en español para un 'YYYYMMDD'. Lo calcula Python (no Claude,
     que se equivoca al deducir qué día cae una fecha)."""
     try:
         return _DIAS_ES[date(int(target[:4]), int(target[4:6]), int(target[6:8])).weekday()]
+    except Exception:
+        return ""
+
+def fecha_larga(target):
+    """Fecha hablada: 'jueves 18 de junio' a partir de 'YYYYMMDD' (calculada en Python, no por Claude)."""
+    try:
+        d = date(int(target[:4]), int(target[4:6]), int(target[6:8]))
+        return f"{_DIAS_ES[d.weekday()]} {d.day} de {_MESES_ES[d.month-1]}"
     except Exception:
         return ""
 
