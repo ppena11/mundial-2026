@@ -49,21 +49,27 @@ AI_RECAP_SYS = (
     "EXACTAMENTE estas claves:\n"
     '"titulo": título viral para el post (máx ~70 caracteres, con gancho, máximo 1 emoji).\n'
     '"gancho": 1 o 2 frases para el digest; engancha con cómo nos fue (acierto destacado o sorpresa).\n'
-    '"voz": guion HABLADO de 45 a 70 palabras (~20 s). Empieza fuerte (cómo nos fue anoche), nombra el acierto más '
-    "jugoso, reconoce con humildad un fallo si lo hubo, da el récord acumulado, y cierra con un teaser de lo que "
-    "viene + invitación a SUSCRIBIRSE a mi canal de YouTube y a ver el cierre en el link de mi bio (NO nombres 'Substack' en la voz) "
-    "y firma la voz diciendo EXACTAMENTE: "
+    '"voz": guion HABLADO MUY BREVE: TOPE DURO ~90 palabras (la brevedad es PRIORIDAD; es un cierre rápido, no un '
+    "resumen largo). Menciona EXACTAMENTE 2 partidos de anoche —el mejor ACIERTO y el peor FALLO—, NINGUNO más, y "
+    "NO metas resultados de OTROS días. Tono de narrador con PERSONALIDAD. Estructura ágil: "
+    "(1) GANCHO de UNA frase yendo DIRECTO al resultado más bomba de anoche (NO frases vagas tipo 'noche de luces "
+    "y sombras'); (2) el acierto más jugoso y, con HUMILDAD, el fallo + UNA opinión corta; (3) récord NATURAL ('vamos 18 de 32 aciertos', SIN "
+    "decimales, SIN 'por ciento', SIN palabras inventadas como 'predecidos'); (4) teaser BREVE de mañana; (5) una "
+    "frase MEMORABLE con chispa de tu marca de IA (algo ORIGINAL, al estilo de 'el fútbol sorprende; mi modelo "
+    "aprende' —NO copies ese ejemplo). CIERRE OBLIGATORIO (NUNCA lo omitas, aunque tengas que recortar lo demás): "
+    "invita a SUSCRIBIRSE a mi canal de YouTube y a ver el cierre en el link de mi bio (NO nombres 'Substack' en la "
+    "voz) y firma la voz diciendo EXACTAMENTE: "
     "Soy éi ái uíz Pédro (así se pronuncia @aiwithpedro). SIN emojis ni símbolos "
-    "(lo lee un sintetizador de voz); números con dígitos y 'por ciento'.\n"
+    "(lo lee un sintetizador de voz); números con dígitos y marcadores como '3 a 0' (NUNCA '3-0').\n"
     '"caption": 1 o 2 líneas para YouTube Shorts, con gancho; puede llevar 1 o 2 emojis; NO incluyas hashtags aquí.\n'
     '"hashtags": lista de EXACTAMENTE 5 hashtags virales; incluye #Mundial2026, #IA y #parati.\n'
     '"youtube_titulo": título SEO para YouTube Shorts; pon al inicio "Resultados Mundial 2026", el día y "IA"; máx ~90 caracteres.\n'
     '"youtube_descripcion": 2 o 3 frases con palabras clave (resultados Mundial 2026, aciertos del modelo, los equipos), con CTA al análisis (link en la bio). NO incluyas hashtags.\n'
     '"youtube_hashtags": lista de EXACTAMENTE 5 hashtags buscables para YouTube; incluye #Mundial2026 y #Shorts.\n'
     "Tono honesto y cercano (mostrar fallos suma credibilidad), apto para todo público, nada de apuestas. "
-    "Si hay CONTEXTO del torneo (resultados de jornadas previas, un titular o el récord), téjelo en 1 frase para "
-    "que el cierre suene al día. Si hay un DATO CURIOSO, ciérralo mencionándolo (engancha). "
+    "NO metas resultados de contexto (otros días) en la VOZ: la brevedad manda; ese contexto va en el digest/caption, no en la voz. "
     "Usa SOLO los datos dados; NUNCA inventes números ni marcadores. "
+    "CUIDA LA GRAMÁTICA y la CONCORDANCIA sujeto-verbo (revisa cada frase); frases bien construidas, sin errores. "
     "ESCRIBE EN ESPAÑOL CON TODAS LAS TILDES Y SIGNOS CORRECTOS (á, é, í, ó, ú, ñ, ¿, ¡): la voz la lee un "
     "sintetizador y la acentuación es OBLIGATORIA.")
 
@@ -165,7 +171,11 @@ def build(target):
         sm.append(f"Récord acumulado: {record['aciertos_1x2']} de {record['n']} ({record['tasa_1x2']} por ciento).")
     if prox:
         sm.append(f"Lo que viene: {dd.acc(prox['a'])} contra {dd.acc(prox['b'])}, favorito {dd.acc(prox['fav'])} {round(100*prox['fp'])} por ciento.")
-    # marco temporal + contexto del torneo (resultados previos + titular real), igual que el pronóstico
+    # Para que la VOZ sea breve: señala explícitamente los 2 partidos a destacar (acierto + fallo).
+    if best and miss:
+        sm.append(f"PARA LA VOZ destaca SOLO 2 partidos: el acierto {dd.acc(best['a'])} contra {dd.acc(best['b'])} "
+                  f"y el fallo {dd.acc(miss['a'])} contra {dd.acc(miss['b'])}. NO menciones los demás en la voz.")
+    # marco temporal (sin resultados de otros días, para no alargar la voz)
     try:
         td = date.fromisoformat(target_iso)
         if td > KICKOFF:
@@ -174,10 +184,8 @@ def build(target):
         pass
     try:
         import contexto
-        ctx = contexto.resumen_torneo(target)
-        if ctx: sm.append(ctx)
         dc = contexto.dato_curioso(target)
-        if dc: sm.append("DATO CURIOSO del torneo (úsalo para cerrar con un gancho): " + dc)
+        if dc: sm.append("DATO CURIOSO (OPCIONAL, solo para el título/caption; NO lo metas en la voz): " + dc)
     except Exception:
         pass
     ai = ai_recap("\n".join(sm))
