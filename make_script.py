@@ -69,7 +69,7 @@ def _summary(fh, played, pick, clearest, tr):
         pass
     feat = max(range(len(played)), key=lambda i: max(champ.get(played[i]["a"], 0), champ.get(played[i]["b"], 0)))
     for i, d in enumerate(played):
-        hora = dd.hora_et(d["utc"]) if d.get("utc") else ""
+        hora = dd.hora_hablada(d["utc"]) if d.get("utc") else ""
         base = (f"PRONÓSTICO {dd.acc(d['a'])} contra {dd.acc(d['b'])}: favorito {dd.acc(d['fav'])} con "
                 f"{round(100*d['fp'])} por ciento; marcador previsto {dd.acc(d['a'])} {d['sx']} - {d['sy']} {dd.acc(d['b'])}.")
         if i == feat:

@@ -130,6 +130,26 @@ def hora_et(dt_utc):
     except Exception:
         return "—"
 
+def hora_hablada(dt_utc):
+    """Hora en formato HABLADO para el voiceover: '4 de la tarde, hora del este' (no '16:00 ET')."""
+    try:
+        t = _et(dt_utc)
+    except Exception:
+        return ""
+    h, m = t.hour, t.minute
+    h12 = h % 12 or 12
+    if h == 0:            franja = "de la medianoche"
+    elif 1 <= h <= 5:     franja = "de la madrugada"
+    elif 6 <= h <= 11:    franja = "de la mañana"
+    elif h == 12:         franja = "del mediodía"
+    elif 13 <= h <= 18:   franja = "de la tarde"
+    else:                 franja = "de la noche"
+    if m == 0:    hh = f"{h12}"
+    elif m == 15: hh = f"{h12} y cuarto"
+    elif m == 30: hh = f"{h12} y media"
+    else:         hh = f"{h12} y {m}"
+    return f"{hh} {franja}, hora del este"
+
 def et_date(dt_utc):
     """Fecha del partido en hora del Este (ET), como 'YYYY-MM-DD'."""
     try:
