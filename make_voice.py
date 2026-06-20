@@ -49,11 +49,15 @@ def foneticizar(text):
     return text
 
 def suavizar_tts(text):
-    """Quita lo que ElevenLabs lee como PAUSAS raras: rayas largas, puntos suspensivos, espacios/saltos
-    múltiples. Mejora el ritmo y evita cortes bruscos. Solo para el audio (no toca voiceover.txt)."""
+    """Quita lo que ElevenLabs lee como PAUSAS raras: rayas largas, puntos suspensivos, punto y coma y dos
+    puntos (pausas pesadas), espacios/saltos múltiples. Mejora el ritmo. Solo para el audio (no toca el .txt)."""
     text = text.replace("—", ", ").replace("–", ", ").replace("…", ". ")   # rayas/elipsis -> coma/punto
-    text = re.sub(r"\s+([,.;:!?])", r"\1", re.sub(r"\s+", " ", text)).strip()  # espacios dobles y antes de signos
-    return text
+    text = text.replace(";", ",").replace(":", ",")                        # ; y : -> coma (pausa más suave)
+    text = re.sub(r"\s+", " ", text)
+    text = re.sub(r"\s+([,.!?])", r"\1", text)                             # sin espacio antes del signo
+    text = re.sub(r",\s*(?=[,.])", "", text)                               # comas pegadas a otro signo
+    text = re.sub(r"\.\s*\.+", ". ", text)                                 # puntos repetidos
+    return text.strip()
 
 def quitar_tags(text):
     """Quita las etiquetas de emoción [excited], [confident]... (las entiende eleven_v3; otros modelos
@@ -69,8 +73,8 @@ def _voice_settings(v3):
     #  - stability baja = rango emocional (no robótica); v3 usa modo "Natural" ~0.5, v2 ~0.40.
     #  - style 0.0: subirlo causa artefactos/pausas raras -> la emoción sale de la stability, no del style.
     #  - similarity 0.80: 0.75–0.85 es el punto dulce; al 100% sobre-enuncia ("locutor de noticias").
-    vs = {"stability": _f("ELEVENLABS_STABILITY", 0.5 if v3 else 0.40),
-          "similarity_boost": _f("ELEVENLABS_SIMILARITY", 0.80),
+    vs = {"stability": _f("ELEVENLABS_STABILITY", 0.5 if v3 else 0.45),
+          "similarity_boost": _f("ELEVENLABS_SIMILARITY", 0.88),
           "style": _f("ELEVENLABS_STYLE", 0.0),
           "use_speaker_boost": os.environ.get("ELEVENLABS_SPEAKER_BOOST", "1") not in ("0", "false", "False")}
     spd = os.environ.get("ELEVENLABS_SPEED", "").strip()   # 0.7–1.2; opcional
@@ -82,7 +86,7 @@ def _voice_settings(v3):
 def synth(text, out="voice.mp3"):
     key = os.environ.get("ELEVENLABS_API_KEY", "").strip()
     voice = os.environ.get("ELEVENLABS_VOICE_ID", "").strip()
-    model = os.environ.get("ELEVENLABS_MODEL", "eleven_v3").strip()   # v3 = el más humano/expresivo
+    model = os.environ.get("ELEVENLABS_MODEL", "eleven_multilingual_v2").strip()   # v2 = MÁS FIEL a tu voz clonada (v3 cambia el acento)
     if not key or not voice:
         print("⚠️  Faltan ELEVENLABS_API_KEY / ELEVENLABS_VOICE_ID (ponlos en .env o Secrets)."); return False
     fmt = os.environ.get("ELEVENLABS_FORMAT", "").strip()   # p.ej. mp3_44100_192 (Creator+); vacío = default

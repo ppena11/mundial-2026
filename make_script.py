@@ -113,6 +113,8 @@ AI_SYSTEM = (
     "un objeto JSON válido (sin ``` ni texto extra) con EXACTAMENTE estas claves:\n"
     '"voiceover": el guion HABLADO, con TONO DE NARRADOR DEPORTIVO PROFESIONAL y PERSONALIDAD de creador: claro, '
     "enérgico, con autoridad y punto de vista; frases limpias, sin relleno ni muletillas. "
+    "Escribe frases que FLUYAN con ritmo continuo de narrador; evita el staccato de muchas frases cortísimas "
+    "seguidas y las comas innecesarias (esas causan pausas robóticas al leerlas la voz). "
     "ARRANCA CON UN GANCHO FUERTE de UNA SOLA frase corta y CONTUNDENTE que frene el scroll: el dato MÁS BOMBA del "
     "día (una sorpresa o goleada reciente, o el pronóstico más jugoso). Que sea un GOLPE SECO: NO metas el récord "
     "ni acumules varias ideas en el gancho. "
