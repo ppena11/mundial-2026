@@ -55,10 +55,17 @@ def _summary(fh, played, pick, clearest, tr):
     if not played:
         L.append("Hoy no hay partidos del Mundial (el torneo arranca el 11 de junio).")
         return "\n".join(L)
-    L.append(f"Partidos de hoy ({len(played)}). MENCIÓNALOS TODOS con su marcador previsto:")
+    L.append(f"Partidos de hoy ({len(played)}). Para CADA uno di EL PRONÓSTICO (marcador) y teje su ángulo más viral:")
+    try:
+        import contexto
+    except Exception:
+        contexto = None
     for d in played:
-        L.append(f"- {dd.acc(d['a'])} contra {dd.acc(d['b'])}: favorito {dd.acc(d['fav'])} con {round(100*d['fp'])} "
+        L.append(f"- PRONÓSTICO {dd.acc(d['a'])} contra {dd.acc(d['b'])}: favorito {dd.acc(d['fav'])} con {round(100*d['fp'])} "
                  f"por ciento; marcador previsto {dd.acc(d['a'])} {d['sx']} - {d['sy']} {dd.acc(d['b'])}.")
+        n = contexto.noticia_partido(dd.acc(d['a']), dd.acc(d['b'])) if contexto else None
+        if n:
+            L.append(f"  Noticia REAL de este partido (fuente {n['source']}): {n['title']}")
     if pick:
         t, mpb, mkp, edge = pick[1]
         L.append(f"Jugada de valor del día: {dd.acc(t)} (el modelo le da {round(100*mpb)} por ciento y el mercado solo {round(100*mkp)} por ciento; está infravalorada).")
@@ -86,10 +93,14 @@ AI_SYSTEM = (
     "un objeto JSON válido (sin ``` ni texto extra) con EXACTAMENTE estas claves:\n"
     '"voiceover": el guion HABLADO. ABRE diciendo la fecha de hoy con ESTE formato: "Aquí está el pronóstico de hoy, '
     '<día de la semana> <número> de <mes>" (usa EXACTAMENTE el día y la fecha de los datos, p. ej. "Aquí está el '
-    'pronóstico de hoy, jueves 18 de junio"); NO digas "el día N del torneo". Luego haz un REPASO de TODOS los partidos de '
-    "hoy diciendo el favorito y su MARCADOR PREVISTO (ej.: 'España golea dos a cero a Cabo Verde'); MENCIONA CADA "
-    "PARTIDO con su marcador, no solo el más importante (puedes resaltar el más jugoso, pero no omitas ninguno). "
-    "Sé ágil: la duración se adapta al número de partidos (~30 s con 2-3, hasta ~60 s con 6). "
+    'pronóstico de hoy, jueves 18 de junio"); NO digas "el día N del torneo". Luego, PARA CADA PARTIDO, deja CLARO '
+    "que estás dando EL PRONÓSTICO de ese partido (di 'el pronóstico de A contra B') con su MARCADOR PREVISTO "
+    "(ej.: 'el pronóstico de España contra Cabo Verde: gana España dos a cero'), y AÑADE en UNA frase corta el "
+    "ÁNGULO MÁS VIRAL de ese juego: si en los datos hay una 'Noticia REAL de este partido', úsala y MENCIONA la "
+    "fuente; si no la hay, usa el dato o la historia del modelo (la estrella, la sorpresa, lo que está en juego). "
+    "NUNCA inventes noticias, lesiones, fichajes ni declaraciones: si no hay noticia real en los datos, NO te la inventes. "
+    "MENCIONA CADA PARTIDO con su marcador, no solo el más importante (puedes resaltar el más jugoso, pero no omitas ninguno). "
+    "Sé ágil pero cabe la noticia: ~40 s con 2-3 partidos, hasta ~75 s con 6 (una frase de pronóstico + una de ángulo por partido). "
     "Cierra invitando a SUSCRIBIRSE a mi canal de YouTube y a ver el análisis completo en el link "
     "de mi bio (NO nombres 'Substack' en la voz) "
     "y firma la voz diciendo EXACTAMENTE: Soy éi ái uíz Pédro (así se pronuncia @aiwithpedro). SIN otros emojis ni "

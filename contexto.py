@@ -61,6 +61,52 @@ def noticia_mundial():
         pass
     return None
 
+def noticia_partido(a, b):
+    """Titular REAL más relevante del partido A vs B (Google News RSS en español). None si no hay.
+    Se usa para el ángulo viral de cada pronóstico; NUNCA se inventa nada."""
+    if requests is None:
+        return None
+    import xml.etree.ElementTree as ET
+    q = f'"{a}" "{b}" (Mundial OR "Copa del Mundo" OR FIFA)'
+    url = NEWS_RSS.format(q=urllib.parse.quote(q))
+    raw = None
+    for u in (url, PROXY + urllib.parse.quote(url, safe="")):
+        try:
+            r = requests.get(u, headers=HEAD, timeout=12)
+            if r.status_code == 200 and "<item" in r.text:
+                raw = r.text; break
+        except Exception:
+            pass
+    if not raw:
+        return None
+    import unicodedata
+    def _strip(s):
+        s = unicodedata.normalize("NFD", (s or "").lower())
+        return "".join(c for c in s if unicodedata.category(c) != "Mn")
+    na, nb = _strip(a), _strip(b)
+    # fuera otros torneos/categorías que ensucian la búsqueda
+    BAD = ("sub 17", "sub-17", "sub17", "sub 20", "sub-20", "sub 19", "sub 23",
+           "femenin", "femenil", "amistoso", "videojuego", "ea sports", "playstation", "fc 26", "fifa 26")
+    try:
+        root = ET.fromstring(raw)
+        for item in root.iter("item"):
+            title = (item.findtext("title") or "").strip()
+            src = item.find("source")
+            source = (src.text.strip() if src is not None and src.text else "Google News")
+            if " - " in title:
+                title, source = title.rsplit(" - ", 1)
+            low = _strip(title)
+            if not title or "http" in low or "www." in low:   # fuera titulares con enlaces crudos
+                continue
+            if any(x in low for x in BAD):                     # fuera otras categorías/torneos
+                continue
+            if na not in low and nb not in low:                # debe mencionar al menos un equipo del partido
+                continue
+            return {"title": title.strip(), "source": source.strip()}
+    except Exception:
+        pass
+    return None
+
 def resumen_torneo(target, con_noticia=True):
     """String compacto con lo que ha pasado en el torneo hasta `target` (exclusive)."""
     import daily_digest as dd

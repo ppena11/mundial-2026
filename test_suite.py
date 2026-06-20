@@ -48,6 +48,7 @@ curio.web_news = lambda: None                  # offline + determinista: fuerza 
 if os.path.exists(curio.CURIO_FILE): os.remove(curio.CURIO_FILE)
 import contexto
 contexto.noticia_mundial = lambda: None        # offline: sin red en las pruebas
+contexto.noticia_partido = lambda a, b: None   # offline: sin red en las pruebas (noticia por partido)
 # CRÍTICO: env_loader re-inyecta la clave al importar curio/contexto -> forzar VACÍA para que las pruebas
 # nunca llamen a Claude (deterministas y SIN gastar créditos).
 os.environ["ANTHROPIC_API_KEY"] = ""
@@ -376,6 +377,10 @@ ok("_summary ya NO mete 'el día N del torneo'", "hoy es el día" not in sm_x.lo
 ok("AI_SYSTEM abre con la fecha y prohíbe 'día N del torneo'",
    "Aquí está el pronóstico de hoy" in msx.AI_SYSTEM and 'NO digas "el día N del torneo"' in msx.AI_SYSTEM, "falta la regla")
 ok("el prompt prohíbe que Claude deduzca el día", "NUNCA lo deduzcas" in msx.AI_SYSTEM, "falta la regla")
+# (1b) pronóstico CLARO por partido + ángulo viral con noticia real o dato del modelo (sin inventar)
+ok("_summary marca el PRONÓSTICO de cada partido", "PRONÓSTICO Brasil contra Marruecos" in sm_x, sm_x)
+ok("AI_SYSTEM pide 'el pronóstico de A contra B' por partido", "el pronóstico de A contra B" in msx.AI_SYSTEM, "falta la regla")
+ok("AI_SYSTEM prohíbe inventar noticias", "NUNCA inventes noticias" in msx.AI_SYSTEM, "falta el guardarraíl")
 # (2) título de YouTube del pronóstico con formato fijo de marca
 msx.write_youtube("youtube_test.txt", played_x, "18/06/2026", None)
 yt_l1 = open("youtube_test.txt", encoding="utf-8").read().splitlines()[0]
