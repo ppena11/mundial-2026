@@ -138,16 +138,18 @@ def hora_hablada(dt_utc):
         return ""
     h, m = t.hour, t.minute
     h12 = h % 12 or 12
+    HORAS = ["", "una", "dos", "tres", "cuatro", "cinco", "seis", "siete", "ocho", "nueve", "diez", "once", "doce"]
+    hp = HORAS[h12]   # en palabras y con género correcto ("una", no "1"/"uno") -> ElevenLabs no mete pausas
     if h == 0:            franja = "de la medianoche"
     elif 1 <= h <= 5:     franja = "de la madrugada"
     elif 6 <= h <= 11:    franja = "de la mañana"
     elif h == 12:         franja = "del mediodía"
     elif 13 <= h <= 18:   franja = "de la tarde"
     else:                 franja = "de la noche"
-    if m == 0:    hh = f"{h12}"
-    elif m == 15: hh = f"{h12} y cuarto"
-    elif m == 30: hh = f"{h12} y media"
-    else:         hh = f"{h12} y {m}"
+    if m == 0:    hh = hp
+    elif m == 15: hh = f"{hp} y cuarto"
+    elif m == 30: hh = f"{hp} y media"
+    else:         hh = f"{hp} y {m}"
     return f"{hh} {franja}, hora del este"
 
 def et_date(dt_utc):

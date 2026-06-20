@@ -64,6 +64,21 @@ def quitar_tags(text):
     las leerían en voz alta). Se usa para el fallback a v2 y como respaldo."""
     return re.sub(r"\s+", " ", re.sub(r"\[[^\]]*\]", "", text)).strip()
 
+_NUM_U = ["cero", "uno", "dos", "tres", "cuatro", "cinco", "seis", "siete", "ocho", "nueve", "diez",
+          "once", "doce", "trece", "catorce", "quince", "dieciséis", "diecisiete", "dieciocho", "diecinueve"]
+_NUM_D = ["", "", "veinte", "treinta", "cuarenta", "cincuenta", "sesenta", "setenta", "ochenta", "noventa"]
+def _num_es(n):
+    n = int(n)
+    if n < 20: return _NUM_U[n]
+    if n < 30: return "veinte" if n == 20 else "veinti" + _NUM_U[n - 20]
+    d, u = divmod(n, 10)
+    return _NUM_D[d] + (" y " + _NUM_U[u] if u else "")
+
+def numeros_a_palabras(text):
+    """Escribe los números de 0 a 99 en palabras SOLO para el audio (ElevenLabs mete micro-pausas alrededor
+    de las cifras; en palabras fluyen). Deja años y números grandes (3+ dígitos) tal cual."""
+    return re.sub(r"\b\d{1,2}\b", lambda m: _num_es(m.group()), text)
+
 def _f(env, d):
     try: return float(os.environ.get(env, d))
     except Exception: return d
@@ -178,6 +193,6 @@ if __name__ == "__main__":
     if not os.path.exists(src):
         print(f"No encuentro {src}. Corre make_script.py primero."); sys.exit(1)
     text = open(src, encoding="utf-8").read().strip()
-    text = suavizar_tts(foneticizar(text))   # fonética + limpieza de pausas; SOLO para el audio (el .txt no cambia)
+    text = suavizar_tts(numeros_a_palabras(foneticizar(text)))   # fonética + números en palabras + limpieza (SOLO audio)
     ok = synth(text, out)
     sys.exit(0 if ok else 1)

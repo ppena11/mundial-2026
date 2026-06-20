@@ -375,13 +375,13 @@ played_x = [{"a": "Brasil", "b": "Marruecos", "fav": "Brasil", "fp": 0.5, "sx": 
              "utc": "2026-06-13T19:00Z", "estadio": "Estadio Azteca", "ciudad": "Ciudad de México", "pais": "México"}]
 sm_x = msx._summary("13/06/2026", played_x, None, None, {"n": 0})
 ok("_summary abre con la fecha hablada (sábado 13 de junio)", "Hoy es sábado 13 de junio" in sm_x, sm_x.splitlines()[0])
-ok("hora_hablada en formato natural (sin ET ni 24h)",
-   dd.hora_hablada("2026-06-13T20:00Z") == "4 de la tarde, hora del este"
-   and dd.hora_hablada("2026-06-13T17:00Z") == "1 de la tarde, hora del este"
-   and dd.hora_hablada("2026-06-14T00:00Z") == "8 de la noche, hora del este",
+ok("hora_hablada en palabras (sin ET ni cifras; 'una' correcto)",
+   dd.hora_hablada("2026-06-13T20:00Z") == "cuatro de la tarde, hora del este"
+   and dd.hora_hablada("2026-06-13T17:00Z") == "una de la tarde, hora del este"
+   and dd.hora_hablada("2026-06-14T00:00Z") == "ocho de la noche, hora del este",
    dd.hora_hablada("2026-06-13T20:00Z"))
 ok("_summary incluye hora HABLADA y sede del partido (sin inventar)",
-   "Hora: 3 de la tarde, hora del este" in sm_x and "Sede: Estadio Azteca, Ciudad de México, México" in sm_x, sm_x)
+   "Hora: tres de la tarde, hora del este" in sm_x and "Sede: Estadio Azteca, Ciudad de México, México" in sm_x, sm_x)
 ok("AI_SYSTEM pide hora+sede (estadio/ciudad/país) y NO citar el medio",
    all(s in msx.AI_SYSTEM for s in ("estadio", "ciudad", "PAÍS", "SIN citar el medio")), "falta la regla")
 ok("_summary ya NO mete 'el día N del torneo'", "hoy es el día" not in sm_x.lower(), "quedó el día N")
@@ -427,6 +427,10 @@ ok("quitar_tags: elimina [excited] para el audio (fallback v2)",
 ok("subtítulos NO muestran las etiquetas de emoción",
    "[" not in sub.normalizar_marca_texto("[excited] Canadá goleó") and
    "Canadá goleó" in sub.normalizar_marca_texto("[excited] Canadá goleó"), "quedó la etiqueta en el subtítulo")
+ok("numeros_a_palabras: cifras 0-99 a palabras (audio), años intactos",
+   mvz.numeros_a_palabras("60 por ciento, 2 a 1, 18 de 32, Mundial 2026")
+   == "sesenta por ciento, dos a uno, dieciocho de treinta y dos, Mundial 2026",
+   mvz.numeros_a_palabras("60 por ciento, 2 a 1, 18 de 32, Mundial 2026"))
 ok("stitching: parte el guion en frases y agrupa en bloques",
    len(mvz._frases("Uno. Dos! Tres?")) == 3 and len(mvz._bloques("Frase larga de prueba número. " * 30)) >= 2,
    f'frases={len(mvz._frases("Uno. Dos! Tres?"))}, bloques={len(mvz._bloques("Frase larga de prueba número. " * 30))}')
