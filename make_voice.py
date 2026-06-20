@@ -9,7 +9,7 @@ CONFIG (en .env o GitHub Secrets):
 
 USO: python make_voice.py [--in voiceover.txt] [--out voice.mp3]
 """
-import os, sys
+import os, sys, re
 try:
     import requests
 except ImportError:
@@ -26,17 +26,17 @@ def arg(flag, default):
 # ElevenLabs los pronuncie bien. Se aplica al texto que va al TTS; voiceover.txt conserva el nombre real
 # (así los subtítulos muestran "Houston"/"NRG Stadium", no la fonética).
 _FONETICO = {
-    # estadios
-    "AT&T Stadium": "estadio éi-ti-an-ti", "Arrowhead Stadium": "estadio árrou-jéd",
-    "Mercedes-Benz Stadium": "estadio mercédes-béns", "Lincoln Financial Field": "campo línkon-fainánshal",
-    "Hard Rock Stadium": "estadio járd-rok", "Gillette Stadium": "estadio yilét",
+    # estadios (sílabas separadas por ESPACIOS, no guiones: el guion provoca microcortes en ElevenLabs)
+    "AT&T Stadium": "estadio ei ti an ti", "Arrowhead Stadium": "estadio árrou jed",
+    "Mercedes-Benz Stadium": "estadio mercédes bens", "Lincoln Financial Field": "campo línkon fainánshal",
+    "Hard Rock Stadium": "estadio jard rok", "Gillette Stadium": "estadio yilét",
     "Levi's Stadium": "estadio lívais", "MetLife Stadium": "estadio métlaif",
-    "NRG Stadium": "estadio éne-erre-ge", "SoFi Stadium": "estadio soufái",
-    "Lumen Field": "campo lúmen", "BMO Field": "campo bi-em-ó", "BC Place": "bi-sí pléis",
-    "Estadio BBVA": "estadio be-be-úve-á",
+    "NRG Stadium": "estadio ene erre ge", "SoFi Stadium": "estadio soufái",
+    "Lumen Field": "campo lúmen", "BMO Field": "campo bi em o", "BC Place": "bi si pleis",
+    "Estadio BBVA": "estadio be be uve a",
     # ciudades / estados de EE.UU. y Canadá (México y nombres ya españoles se dejan igual)
-    "East Rutherford": "íst-rázerford", "New Jersey": "niú-yérsi", "Kansas City": "kánsas-síti",
-    "Mexico City": "Ciudad de México", "Miami Gardens": "maiámi-gárdens", "Houston": "jiúston",
+    "East Rutherford": "íst rázerford", "New Jersey": "niú yérsi", "Kansas City": "kánsas síti",
+    "Mexico City": "Ciudad de México", "Miami Gardens": "maiámi gárdens", "Houston": "jiúston",
     "Arlington": "árlinton", "Atlanta": "atlánta", "Foxborough": "fóxboro",
     "Massachusetts": "másachúsets", "Inglewood": "íngluud", "Missouri": "misúri", "Miami": "maiámi",
     "Philadelphia": "filadélfia", "Pennsylvania": "pensilvánia", "Seattle": "siátel",
@@ -48,6 +48,13 @@ def foneticizar(text):
         text = text.replace(real, _FONETICO[real])
     return text
 
+def suavizar_tts(text):
+    """Quita lo que ElevenLabs lee como PAUSAS raras: rayas largas, puntos suspensivos, espacios/saltos
+    múltiples. Mejora el ritmo y evita cortes bruscos. Solo para el audio (no toca voiceover.txt)."""
+    text = text.replace("—", ", ").replace("–", ", ").replace("…", ". ")   # rayas/elipsis -> coma/punto
+    text = re.sub(r"\s+([,.;:!?])", r"\1", re.sub(r"\s+", " ", text)).strip()  # espacios dobles y antes de signos
+    return text
+
 def synth(text, out="voice.mp3"):
     key = os.environ.get("ELEVENLABS_API_KEY", "").strip()
     voice = os.environ.get("ELEVENLABS_VOICE_ID", "").strip()
@@ -55,8 +62,20 @@ def synth(text, out="voice.mp3"):
     if not key or not voice:
         print("⚠️  Faltan ELEVENLABS_API_KEY / ELEVENLABS_VOICE_ID (ponlos en .env o Secrets)."); return False
     url = f"https://api.elevenlabs.io/v1/text-to-speech/{voice}"
-    body = {"text": text, "model_id": model,
-            "voice_settings": {"stability": 0.5, "similarity_boost": 0.8, "style": 0.0, "use_speaker_boost": True}}
+    def _f(env, d):
+        try: return float(os.environ.get(env, d))
+        except Exception: return d
+    # Ajustes para voz NATURAL y con EMOCIÓN (según la doc de ElevenLabs): stability baja = más rango
+    # emocional (no robótica); style > 0 = más expresiva. Todo configurable por env para afinar.
+    vs = {"stability": _f("ELEVENLABS_STABILITY", 0.40),
+          "similarity_boost": _f("ELEVENLABS_SIMILARITY", 0.80),
+          "style": _f("ELEVENLABS_STYLE", 0.35),
+          "use_speaker_boost": os.environ.get("ELEVENLABS_SPEAKER_BOOST", "1") not in ("0", "false", "False")}
+    spd = os.environ.get("ELEVENLABS_SPEED", "").strip()   # 0.7–1.2; opcional (solo si se define)
+    if spd:
+        try: vs["speed"] = float(spd)
+        except Exception: pass
+    body = {"text": text, "model_id": model, "voice_settings": vs}
     r = requests.post(url, headers={"xi-api-key": key, "Content-Type": "application/json",
                                     "Accept": "audio/mpeg"}, json=body, timeout=60)
     if r.status_code != 200:
@@ -71,6 +90,6 @@ if __name__ == "__main__":
     if not os.path.exists(src):
         print(f"No encuentro {src}. Corre make_script.py primero."); sys.exit(1)
     text = open(src, encoding="utf-8").read().strip()
-    text = foneticizar(text)   # estadios/ciudades en fonética SOLO para el audio (el .txt queda con nombres reales)
+    text = suavizar_tts(foneticizar(text))   # fonética + limpieza de pausas; SOLO para el audio (el .txt no cambia)
     ok = synth(text, out)
     sys.exit(0 if ok else 1)
