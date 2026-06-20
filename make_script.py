@@ -68,17 +68,21 @@ def _summary(fh, played, pick, clearest, tr):
     except Exception:
         pass
     feat = max(range(len(played)), key=lambda i: max(champ.get(played[i]["a"], 0), champ.get(played[i]["b"], 0)))
+    # Desde el 28-jun-2026 (Dieciseisavos) la fase de grupos terminó: TODOS los partidos van en detalle.
+    # En fase de grupos, solo el más importante (el destacado).
+    eliminatorias = target >= "20260628"
     for i, d in enumerate(played):
         hora = dd.hora_hablada(d["utc"]) if d.get("utc") else ""
         base = (f"PRONÓSTICO {dd.acc(d['a'])} contra {dd.acc(d['b'])}: favorito {dd.acc(d['fav'])} con "
                 f"{round(100*d['fp'])} por ciento; marcador previsto {dd.acc(d['a'])} {d['sx']} - {d['sy']} {dd.acc(d['b'])}.")
-        if i == feat:
+        detallado = eliminatorias or d.get("is_ko") or (i == feat)
+        if detallado:
             sede = ", ".join(x for x in (d.get("estadio"), d.get("ciudad"), d.get("pais")) if x)
             det = (f" Hora: {hora}." if hora else "") + (f" Sede: {sede}." if sede else "")
-            L.append("- [PARTIDO DESTACADO DEL DÍA] " + base + det)
+            L.append("- [DETALLE] " + base + det)
             n = contexto.noticia_partido(dd.acc(d['a']), dd.acc(d['b']), target) if contexto else None
             if n:
-                L.append(f"  Ángulo noticioso del día para el partido destacado (intégralo con naturalidad, "
+                L.append(f"  Ángulo noticioso del día para este partido (intégralo con naturalidad, "
                          f"SIN citar el medio ni decir 'según'): {n['title']}")
         else:
             L.append(f"- {base}" + (f" Hora: {hora}." if hora else ""))
@@ -113,10 +117,11 @@ AI_SYSTEM = (
     'de <mes>" (usa EXACTAMENTE el día y la fecha de los datos, p. ej. "Aquí está el pronóstico de hoy, jueves 18 '
     'de junio"); NO digas "el día N del torneo". '
     "Presenta CADA partido como 'el pronóstico de A contra B' con su MARCADOR PREVISTO, sin omitir ninguno. "
-    "El partido marcado como [PARTIDO DESTACADO DEL DÍA] es el MÁS IMPORTANTE: dale el trato de narrador COMPLETO "
-    "—además del pronóstico, di DÓNDE se juega EN DETALLE (estadio, ciudad y país) y la hora, e integra con "
-    "naturalidad LA NOTICIA del día como parte del comentario (SIN citar el medio ni decir 'según'). "
-    "Para LOS DEMÁS partidos di SOLO el pronóstico (marcador y favorito) y la HORA; NO menciones su sede ni noticia. "
+    "Los partidos marcados con [DETALLE] reciben el trato de narrador COMPLETO: además del pronóstico, di DÓNDE "
+    "se juega EN DETALLE (estadio, ciudad y país) y la hora, e integra con naturalidad LA NOTICIA del día como "
+    "parte del comentario (SIN citar el medio ni decir 'según'). En fase de grupos suele venir marcado UNO (el "
+    "más importante); en eliminatorias vienen marcados TODOS. "
+    "Para LOS DEMÁS partidos (sin [DETALLE]) di SOLO el pronóstico (marcador y favorito) y la HORA; NO menciones su sede ni noticia. "
     "Usa SOLO los datos dados; NUNCA inventes nada —ni la hora, ni la sede, ni noticias, ni lesiones—: si un dato "
     "no está, NO lo menciones. "
     "Ritmo de narrador: ágil y limpio, ~40 a 60 segundos en total. "
@@ -231,7 +236,7 @@ def build(target):
         fav,fp=(a,pw) if pw>=pl else (b,pl)
         played.append({"a":a,"b":b,"fav":fav,"fp":fp,"vc":vc,"sx":sx,"sy":sy,"pdr":pdr,
                        "utc":m.get("utc",""),"estadio":m.get("estadio",""),
-                       "ciudad":m.get("ciudad",""),"pais":m.get("pais","")})
+                       "ciudad":m.get("ciudad",""),"pais":m.get("pais",""),"is_ko":m.get("is_ko",False)})
     if not played:                                   # día sin partidos -> dato curioso (voz + caption)
         import curio
         cu = curio.ensure(target)

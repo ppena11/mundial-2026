@@ -401,10 +401,13 @@ played2 = [
      "utc": "2026-06-13T22:00Z", "estadio": "Lumen Field", "ciudad": "Seattle", "pais": "Estados Unidos"},
 ]
 sm2 = msx._summary("13/06/2026", played2, None, None, {"n": 0})
-ok("solo UN partido es el destacado (con sede); los demás solo la hora",
-   sm2.count("[PARTIDO DESTACADO DEL DÍA]") == 1 and sm2.count("Sede:") == 1 and sm2.count("Hora:") == 2, sm2)
-ok("AI_SYSTEM: destacado=detalle, los demás=solo hora",
-   "[PARTIDO DESTACADO DEL DÍA]" in msx.AI_SYSTEM and "SOLO el pronóstico" in msx.AI_SYSTEM, "falta la regla")
+ok("fase de grupos: solo el destacado va en detalle; los demás solo la hora",
+   sm2.count("[DETALLE]") == 1 and sm2.count("Sede:") == 1 and sm2.count("Hora:") == 2, sm2)
+sm_ko = msx._summary("28/06/2026", played2, None, None, {"n": 0})
+ok("eliminatorias (desde 28-jun): TODOS los partidos van en detalle",
+   sm_ko.count("[DETALLE]") == 2 and sm_ko.count("Sede:") == 2, sm_ko)
+ok("AI_SYSTEM: [DETALLE]=completo, los demás=solo hora",
+   "[DETALLE]" in msx.AI_SYSTEM and "SOLO el pronóstico" in msx.AI_SYSTEM, "falta la regla")
 # noticia_partido: relevante al juego + contexto Mundial 2026 + publicada el día o el anterior
 import contexto as _ctx
 _orig_req = _ctx.requests
