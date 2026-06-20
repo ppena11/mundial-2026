@@ -119,7 +119,8 @@ AI_SYSTEM = (
     'Justo después deja claro que son los pronósticos de hoy con la fecha así: "Aquí está el pronóstico de hoy, '
     '<día de la semana> <número> de <mes>" (usa EXACTAMENTE el día y la fecha de los datos, p. ej. "Aquí está el '
     'pronóstico de hoy, jueves 18 de junio"); NO digas "el día N del torneo". '
-    "En UNA frase presume la INTELIGENCIA ARTIFICIAL: que tu modelo corrió VEINTE MIL simulaciones (es real). "
+    "En UNA frase BREVE presume la INTELIGENCIA ARTIFICIAL —que tu modelo corrió VEINTE MIL simulaciones (es real)— "
+    "integrada con naturalidad, sin relleno tipo 'y está listo para el análisis'. "
     "Presenta CADA partido como 'el pronóstico de A contra B' con su MARCADOR PREVISTO, sin omitir ninguno, pero "
     "VARÍA cómo introduces cada uno (NO repitas la misma plantilla): alterna giros como 'parte como favorito', "
     "'ojo con', 'el modelo se inclina por', 'duelo parejo'. NOMBRA al equipo (no digas 'el equipo favorito'). "
@@ -137,7 +138,9 @@ AI_SYSTEM = (
     "Menciona el récord del modelo de forma NATURAL y CERCA DEL CIERRE (p. ej. 'vamos 18 de 32'), nunca en el "
     "gancho ni con decimales raros. "
     "Ritmo de narrador: ágil y con energía, ~40 a 60 segundos en total. "
-    "CIERRA con una frase CORTA, confiada y con chispa (ACTITUD/personalidad, no solo el CTA), y luego invita a SUSCRIBIRSE a mi canal de YouTube y a ver el análisis completo en el link "
+    "CIERRA con una frase MEMORABLE, corta y con chispa que mezcle ACTITUD + tu marca de IA (algo ORIGINAL al "
+    "estilo de 'el fútbol no tiene libreto, pero mi inteligencia artificial ya lo leyó' o 'los datos no mienten, "
+    "casi nunca' —NO copies esos ejemplos, inventa el tuyo). Luego invita a SUSCRIBIRSE a mi canal de YouTube y a ver el análisis completo en el link "
     "de mi bio (NO nombres 'Substack' en la voz) "
     "y firma la voz diciendo EXACTAMENTE: Soy éi ái uíz Pédro (así se pronuncia @aiwithpedro). SIN otros emojis ni "
     "símbolos (lo lee un sintetizador de voz); números con dígitos y "
@@ -153,6 +156,8 @@ AI_SYSTEM = (
     '"youtube_hashtags": lista de EXACTAMENTE 5 hashtags buscables para YouTube; incluye #Mundial2026, los equipos clave '
     "del día y #Shorts.\n"
     "Español neutro, cercano y enérgico. Apto para todo público, nada de apuestas. "
+    "CUIDA LA GRAMÁTICA y la CONCORDANCIA sujeto-verbo (revisa cada frase: 'los germanos se inclinaN', no 'se inclina'); "
+    "frases bien construidas, sin errores. "
     "ESCRIBE EN ESPAÑOL CON TODAS LAS TILDES Y SIGNOS CORRECTOS (á, é, í, ó, ú, ñ, ¿, ¡): el guion lo lee un "
     "sintetizador de voz y la acentuación es OBLIGATORIA.")
 
