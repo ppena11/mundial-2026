@@ -64,3 +64,9 @@ Thumbs.db
 
 # === Post tecnico (se regenera de POST_TECNICO.md) ===
 tech_post.html
+
+# afinador de voz (artefactos locales)
+cand_*.mp3
+cand_*.srt
+ref_voz.mp3
+voice_v3.mp3

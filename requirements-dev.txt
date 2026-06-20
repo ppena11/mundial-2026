@@ -1,0 +1,7 @@
+faster-whisper
+torch
+resemblyzer
+webrtcvad-wheels
+librosa
+scipy
+Unidecode
