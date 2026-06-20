@@ -427,6 +427,9 @@ ok("quitar_tags: elimina [excited] para el audio (fallback v2)",
 ok("subtítulos NO muestran las etiquetas de emoción",
    "[" not in sub.normalizar_marca_texto("[excited] Canadá goleó") and
    "Canadá goleó" in sub.normalizar_marca_texto("[excited] Canadá goleó"), "quedó la etiqueta en el subtítulo")
+ok("stitching: parte el guion en frases y agrupa en bloques",
+   len(mvz._frases("Uno. Dos! Tres?")) == 3 and len(mvz._bloques("Frase larga de prueba número. " * 30)) >= 2,
+   f'frases={len(mvz._frases("Uno. Dos! Tres?"))}, bloques={len(mvz._bloques("Frase larga de prueba número. " * 30))}')
 # noticia_partido: relevante al juego + contexto Mundial 2026 + publicada el día o el anterior
 import contexto as _ctx
 _orig_req = _ctx.requests

@@ -83,32 +83,97 @@ def _voice_settings(v3):
         except Exception: pass
     return vs
 
+def _frases(text):
+    """Parte en frases por . ! ? (conservando el signo)."""
+    return [p.strip() for p in re.split(r"(?<=[.!?])\s+", text.strip()) if p.strip()]
+
+def _bloques(text, maxlen=240):
+    """Agrupa frases en bloques de ~maxlen caracteres (ni muy cortos ni muy largos)."""
+    bloques, cur = [], ""
+    for f in _frases(text):
+        if cur and len(cur) + 1 + len(f) > maxlen:
+            bloques.append(cur); cur = f
+        else:
+            cur = (cur + " " + f).strip() if cur else f
+    if cur:
+        bloques.append(cur)
+    return bloques or [text]
+
+def _concat_mp3(segs):
+    """Une varios mp3 en uno con ffmpeg (-c copy, sin recomprimir). Fallback: concatenación cruda de bytes."""
+    import tempfile, subprocess
+    try:
+        import imageio_ffmpeg; ff = imageio_ffmpeg.get_ffmpeg_exe()
+    except Exception:
+        ff = "ffmpeg"
+    d = tempfile.mkdtemp(); files = []
+    try:
+        for i, b in enumerate(segs):
+            p = os.path.join(d, f"s{i}.mp3"); open(p, "wb").write(b); files.append(p)
+        lst = os.path.join(d, "l.txt")
+        with open(lst, "w", encoding="utf-8") as f:
+            for p in files: f.write("file '%s'\n" % p.replace("\\", "/"))
+        outp = os.path.join(d, "o.mp3")
+        r = subprocess.run([ff, "-y", "-f", "concat", "-safe", "0", "-i", lst, "-c", "copy", outp],
+                           capture_output=True)
+        data = open(outp, "rb").read() if r.returncode == 0 and os.path.exists(outp) else b"".join(segs)
+    except Exception:
+        data = b"".join(segs)
+    finally:
+        try:
+            for p in files: os.remove(p)
+            for p in ("l.txt", "o.mp3"):
+                fp = os.path.join(d, p)
+                if os.path.exists(fp): os.remove(fp)
+            os.rmdir(d)
+        except Exception:
+            pass
+    return data
+
 def synth(text, out="voice.mp3"):
     key = os.environ.get("ELEVENLABS_API_KEY", "").strip()
     voice = os.environ.get("ELEVENLABS_VOICE_ID", "").strip()
-    model = os.environ.get("ELEVENLABS_MODEL", "eleven_multilingual_v2").strip()   # v2 = MÁS FIEL a tu voz clonada (v3 cambia el acento)
+    model = os.environ.get("ELEVENLABS_MODEL", "eleven_multilingual_v2").strip()   # v2 = MÁS FIEL a tu voz clonada
     if not key or not voice:
         print("⚠️  Faltan ELEVENLABS_API_KEY / ELEVENLABS_VOICE_ID (ponlos en .env o Secrets)."); return False
-    fmt = os.environ.get("ELEVENLABS_FORMAT", "").strip()   # p.ej. mp3_44100_192 (Creator+); vacío = default
+    fmt = os.environ.get("ELEVENLABS_FORMAT", "").strip()
     url = f"https://api.elevenlabs.io/v1/text-to-speech/{voice}" + (f"?output_format={fmt}" if fmt else "")
     hdr = {"xi-api-key": key, "Content-Type": "application/json", "Accept": "audio/mpeg"}
 
-    def _call(model_id):
+    def _attempt(model_id):
+        """Devuelve (audio_bytes|None, ultima_respuesta). Hace STITCHING frase a frase con previous/next_text
+        para prosodia continua; si solo hay 1 bloque, una sola llamada."""
         v3 = model_id.startswith("eleven_v3")
-        txt = text if v3 else quitar_tags(text)   # las etiquetas [..] solo las entiende v3; v2 las leería
-        body = {"text": txt, "model_id": model_id, "voice_settings": _voice_settings(v3)}
-        return requests.post(url, headers=hdr, json=body, timeout=90)
+        speak = text if v3 else quitar_tags(text)   # las etiquetas [..] solo las entiende v3
+        vs = _voice_settings(v3)
+        bloques = _bloques(speak)
+        if len(bloques) <= 1:
+            r = requests.post(url, headers=hdr, json={"text": speak, "model_id": model_id, "voice_settings": vs}, timeout=90)
+            return (r.content if r.status_code == 200 else None), r
+        segs, prev_ids, last = [], [], None
+        for i, ch in enumerate(bloques):
+            body = {"text": ch, "model_id": model_id, "voice_settings": vs,
+                    "previous_text": (" ".join(bloques[:i])[-600:] or None),     # contexto previo (no se factura)
+                    "next_text": (" ".join(bloques[i+1:])[:600] or None)}        # contexto siguiente
+            if prev_ids:
+                body["previous_request_ids"] = prev_ids[-3:]                     # stitching de prosodia
+            r = requests.post(url, headers=hdr, json=body, timeout=90); last = r
+            if r.status_code != 200:
+                return None, r
+            segs.append(r.content)
+            rid = r.headers.get("request-id") or r.headers.get("x-request-id")
+            if rid: prev_ids.append(rid)
+        return _concat_mp3(segs), last
 
-    r = _call(model)
-    if r.status_code != 200 and model.startswith("eleven_v3"):   # RED DE SEGURIDAD: si v3 falla, usa v2
-        print(f"(eleven_v3 no disponible: {r.status_code} {r.text[:120]}; uso eleven_multilingual_v2)")
-        model = "eleven_multilingual_v2"
-        r = _call(model)
-    if r.status_code != 200:
-        print(f"⚠️  ElevenLabs respondió {r.status_code}: {r.text[:300]}"); return False
+    audio, r = _attempt(model)
+    if audio is None and model.startswith("eleven_v3"):   # RED DE SEGURIDAD: si v3 falla, usa v2
+        print(f"(eleven_v3 no disponible: {getattr(r,'status_code','?')}; uso eleven_multilingual_v2)")
+        model = "eleven_multilingual_v2"; audio, r = _attempt(model)
+    if audio is None:
+        print(f"⚠️  ElevenLabs respondió {getattr(r,'status_code','?')}: {(r.text[:300] if r is not None else '')}"); return False
     with open(out, "wb") as f:
-        f.write(r.content)
-    print(f"→ {out} generado con tu voz ({model}, {len(r.content)/1000:.0f} KB)")
+        f.write(audio)
+    print(f"→ {out} generado con tu voz ({model}, {len(audio)/1000:.0f} KB, {len(_bloques(quitar_tags(text)))} frases unidas)")
     return True
 
 if __name__ == "__main__":
