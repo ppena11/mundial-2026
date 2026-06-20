@@ -124,6 +124,15 @@ def et_date(dt_utc):
     except Exception:
         return dt_utc[:10]
 
+_DIAS_ES = ["lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"]
+def weekday_es(target):
+    """Nombre del día de la semana en español para un 'YYYYMMDD'. Lo calcula Python (no Claude,
+    que se equivoca al deducir qué día cae una fecha)."""
+    try:
+        return _DIAS_ES[date(int(target[:4]), int(target[4:6]), int(target[6:8])).weekday()]
+    except Exception:
+        return ""
+
 def matches_on(yyyymmdd):
     iso = f"{yyyymmdd[0:4]}-{yyyymmdd[4:6]}-{yyyymmdd[6:8]}"
     return [m for m in fetch_all() if et_date(m["utc"]) == iso]   # día en ET, no UTC
@@ -159,11 +168,13 @@ AI_DIGEST_SYS = (
     '"titulo": título viral para el post (máx ~70 caracteres, con gancho, máximo 1 emoji).\n'
     '"intro": 1 o 2 frases de apertura que enganchen, destacando el ángulo más jugoso del día.\n'
     '"jugada": 1 o 2 frases sobre la jugada de valor del día, explicada simple y atractiva.\n'
+    "DÍA DE LA SEMANA: el día correcto está en los datos ('Hoy es …'); si lo nombras, usa EXACTAMENTE ese, NUNCA lo deduzcas. "
     "Español, cercano y enérgico, apto para todo público, nada de apuestas. Usa SOLO los datos dados; NO inventes números. "
     "ESCRIBE EN ESPAÑOL CON TODAS LAS TILDES Y SIGNOS CORRECTOS (á, é, í, ó, ú, ñ, ¿, ¡).")
 
 def _digest_summary(fecha_h, data, pick, top, tr):
-    L = [f"Fecha: {fecha_h}."]
+    dia = weekday_es(f"{fecha_h[6:10]}{fecha_h[3:5]}{fecha_h[0:2]}")   # día calculado en Python (Claude no lo deduce)
+    L = [f"Hoy es {dia}, {fecha_h}." if dia else f"Fecha: {fecha_h}."]
     played = [d for d in data if not d.get("skip")]
     if not played:
         L.append("Hoy no hay partidos del Mundial."); return "\n".join(L)
@@ -333,7 +344,7 @@ def build_digest(target):
 
     # --- cierre / CTA ---
     md.append("---")
-    md.append(f"🎬 Mira el **video del análisis de hoy** en mi TikTok **@{BRAND}**  ·  🙌 Compártelo con un amigo futbolero.")
+    md.append(f"🎬 Mira el **video del análisis de hoy** en mi **canal de YouTube @{BRAND}**  ·  🙌 Compártelo con un amigo futbolero.")
     md.append("📩 Cada semana mando un resumen por correo — suscríbete para no perdértelo.")
     md.append(f"_{DISCLAIMER}_")
     text = "\n".join(md)

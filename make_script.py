@@ -1,10 +1,10 @@
 """
-make_script.py — GUION HABLADO del día para ElevenLabs (tu voz) + caption para TikTok.
+make_script.py — GUION HABLADO del día para ElevenLabs (tu voz) + caption para YouTube Shorts.
 Texto natural en español (sin símbolos ni emojis, para que ElevenLabs lo lea limpio):
   hook + lo más importante de la infografía + CTA.
 
 USO: python make_script.py [--date YYYYMMDD]
-Genera: voiceover.txt (para pegar en ElevenLabs) y caption.txt (descripción + hashtags TikTok).
+Genera: voiceover.txt (para pegar en ElevenLabs) y caption.txt (descripción + hashtags YouTube Shorts).
 Flujo: voiceover.txt -> ElevenLabs (tu voz) -> voice.mp3 -> make_reel.py -> matchday.mp4
 """
 import sys, os, json
@@ -31,7 +31,8 @@ def _tag(team): return "#" + _TAG.get(team, team.replace(" ", ""))
 
 def _summary(fh, played, pick, clearest, tr):
     """Resumen de datos del día que se le pasa a Claude para que redacte el guion."""
-    L = [f"Fecha: {fh}."]
+    dia = dd.weekday_es(f"{fh[6:10]}{fh[3:5]}{fh[0:2]}")   # día calculado en Python (Claude no lo deduce)
+    L = [f"Hoy es {dia}, {fh}." if dia else f"Fecha: {fh}."]
     # anclaje temporal: evita que Claude diga "el Mundial comienza/comenzó hoy" en día equivocado
     try:
         td = date(int(fh[6:10]), int(fh[3:5]), int(fh[0:2]))
@@ -79,26 +80,25 @@ AI_SYSTEM = (
     "Eres el guionista y community manager de @aiwithpedro, un creador que enseña inteligencia artificial. "
     "DATO FIJO: el Mundial 2026 ARRANCÓ el 11 de junio de 2026; NO afirmes que 'comienza' ni 'comenzó hoy' salvo "
     "que la fecha del día sea exactamente el 11 de junio (mírala en los datos). "
-    "Con los datos del día del Mundial 2026, genera el contenido de un video de TikTok y devuelve EXCLUSIVAMENTE "
+    "DÍA DE LA SEMANA: el día correcto está en los datos ('Hoy es …'). Si nombras el día (hoy, mañana, 'el sábado'), "
+    "usa EXACTAMENTE ese; NUNCA lo deduzcas tú de la fecha. "
+    "Con los datos del día del Mundial 2026, genera el contenido de un video de YouTube Shorts y devuelve EXCLUSIVAMENTE "
     "un objeto JSON válido (sin ``` ni texto extra) con EXACTAMENTE estas claves:\n"
     '"voiceover": el guion HABLADO. Gancho fuerte en la primera frase, dejando CLARO que estos son LOS PRONÓSTICOS '
     "del Mundial PARA HOY (di algo como 'aquí están los pronósticos del día'); luego haz un REPASO de TODOS los partidos de "
     "hoy diciendo el favorito y su MARCADOR PREVISTO (ej.: 'España golea dos a cero a Cabo Verde'); MENCIONA CADA "
     "PARTIDO con su marcador, no solo el más importante (puedes resaltar el más jugoso, pero no omitas ninguno). "
     "Sé ágil: la duración se adapta al número de partidos (~30 s con 2-3, hasta ~60 s con 6). "
-    "Cierra invitando a ver el análisis completo en el link "
+    "Cierra invitando a SUSCRIBIRSE a mi canal de YouTube y a ver el análisis completo en el link "
     "de mi bio (NO nombres 'Substack' en la voz) "
     "y firma la voz diciendo EXACTAMENTE: Soy éi ái uíz Pédro (así se pronuncia @aiwithpedro). SIN otros emojis ni "
     "símbolos (lo lee un sintetizador de voz); números con dígitos y "
     "'por ciento'; 'contra' en vez de 'vs'; varía el arranque para no repetir. Si en los datos hay CONTEXTO del "
     "torneo (resultados recientes, una sorpresa, el récord o un titular), téjelo en 1 frase para que suene al día.\n"
-    '"caption": 1 o 2 líneas cortas para la descripción de TikTok, con gancho; puede llevar 1 o 2 emojis; menciona '
+    '"caption": 1 o 2 líneas cortas para la descripción de YouTube Shorts, con gancho; puede llevar 1 o 2 emojis; menciona '
     "que el análisis completo está gratis en el Substack (link en bio). NO incluyas hashtags aquí.\n"
     '"hashtags": lista de EXACTAMENTE 5 hashtags, los más virales; incluye #Mundial2026, los 2 equipos más buscados '
     "que juegan hoy, y #IA y #parati.\n"
-    '"youtube_titulo": título para YouTube Shorts OPTIMIZADO PARA BÚSQUEDA (SEO). Pon AL INICIO las palabras que la '
-    "gente busca: los equipos de hoy, 'Mundial 2026' y 'pronóstico' o 'predicción'. Máx ~90 caracteres, máximo 1 emoji. "
-    "Ej.: 'Brasil vs Marruecos HOY: pronóstico y marcador | Mundial 2026 con IA'.\n"
     '"youtube_descripcion": 2 o 3 frases para la descripción de YouTube, RICAS EN PALABRAS CLAVE (los equipos del día, '
     "Mundial 2026, predicción con inteligencia artificial, marcador, probabilidades), con un CTA al análisis completo "
     "(link en la bio). NO incluyas hashtags aquí.\n"
@@ -169,9 +169,7 @@ def write_youtube(path, played, fh, yt_ai):
     """Escribe título + descripción + 5 hashtags optimizados para SEO de YouTube. yt_ai=(t,d,h) de Claude o None."""
     yt_t, yt_d, yt_h = (yt_ai or ("", "", []))
     nombres = " · ".join(f"{dd.acc(d['a'])} vs {dd.acc(d['b'])}" for d in played[:2]) if played else ""
-    if not yt_t:
-        yt_t = (f"{nombres}: pronóstico y marcador | Mundial 2026 con IA" if nombres
-                else "Mundial 2026: pronóstico del día con IA")[:95]
+    yt_t = f"{fh} - Pronósticos Mundial 2026 @aiwithpedro"   # formato fijo de marca (no el de Claude)
     if not yt_d:
         yt_d = (f"Predicción del Mundial 2026 con inteligencia artificial para hoy ({fh}): marcadores y probabilidades "
                 f"de cada partido según el modelo. {nombres}. Análisis completo gratis, link en la bio.")
@@ -232,6 +230,7 @@ def build(target):
         if tr.get("n",0)>0:
             S.append(f"Y para que confíes en el modelo: llevamos {tr['aciertos_1x2']} aciertos de {tr['n']} partidos.")
     S.append(f"El análisis completo de todos los partidos lo tienes en el link de mi bio. "
+             f"Suscríbete a mi canal de YouTube. "
              f"Soy {BRAND_VOZ}, esto es inteligencia artificial aplicada al fútbol. Nos vemos mañana.")
     voiceover=" ".join(S)   # guion de respaldo (plantilla)
     # caption de respaldo (plantilla)
@@ -265,7 +264,7 @@ if __name__=="__main__":
     open("caption.txt","w",encoding="utf-8").write(cap)
     print("===== VOICEOVER (pégalo en ElevenLabs) =====\n")
     print(vo)
-    print("\n===== CAPTION TikTok =====\n")
+    print("\n===== CAPTION YouTube Shorts =====\n")
     print(cap)
     print("\n===== YOUTUBE (título · descripción · 5 hashtags) =====\n")
     try: print(open("youtube.txt", encoding="utf-8").read())

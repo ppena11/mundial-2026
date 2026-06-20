@@ -358,6 +358,33 @@ ok("timing_sano RECHAZA el patrón roto de hoy (estirado+amontonado)", not sub.t
 ok("timing_sano ACEPTA un timing parejo", sub.timing_sano(sano, 12.0), "rechazó uno bueno")
 
 # ============================================================
+section("15) DÍA DE LA SEMANA + TÍTULO YOUTUBE + FIRMA (YouTube, sin TikTok)")
+import make_script as msx
+# (1) día de la semana calculado en Python (no por Claude)
+ok("weekday_es correcto en fechas del torneo",
+   dd.weekday_es("20260613") == "sábado" and dd.weekday_es("20260611") == "jueves"
+   and dd.weekday_es("20260618") == "jueves" and dd.weekday_es("20260620") == "sábado",
+   f'13->{dd.weekday_es("20260613")}, 11->{dd.weekday_es("20260611")}')
+# el resumen que recibe Claude trae el día YA resuelto
+played_x = [{"a": "Brasil", "b": "Marruecos", "fav": "Brasil", "fp": 0.5, "sx": 1, "sy": 0}]
+ok("_summary le pasa a Claude el día correcto (sábado para 13/06/2026)",
+   "Hoy es sábado" in msx._summary("13/06/2026", played_x, None, None, {"n": 0}), "no aparece el día")
+ok("el prompt prohíbe que Claude deduzca el día", "NUNCA lo deduzcas" in msx.AI_SYSTEM, "falta la regla")
+# (2) título de YouTube del pronóstico con formato fijo de marca
+msx.write_youtube("youtube_test.txt", played_x, "18/06/2026", None)
+yt_l1 = open("youtube_test.txt", encoding="utf-8").read().splitlines()[0]
+ok("título YouTube del pronóstico con formato de marca",
+   yt_l1 == "18/06/2026 - Pronósticos Mundial 2026 @aiwithpedro", yt_l1)
+if os.path.exists("youtube_test.txt"): os.remove("youtube_test.txt")
+# (3) firma menciona YouTube; sin TikTok en los prompts de contenido
+import curio as cux
+ok("la firma invita a suscribirse a YouTube (pronóstico, curio, recap)",
+   all("canal de YouTube" in p for p in (msx.AI_SYSTEM, cux.CURIO_SYS, recap.AI_RECAP_SYS)), "falta YouTube en alguna")
+ok("ningún prompt de contenido menciona TikTok",
+   not any("tiktok" in p.lower() for p in (msx.AI_SYSTEM, cux.CURIO_SYS, recap.AI_RECAP_SYS, dd.AI_DIGEST_SYS)),
+   "quedó TikTok en un prompt")
+
+# ============================================================
 print(f"\n========== RESULTADO: {PASS} PASS / {FAIL} FAIL ==========")
 if FAILS:
     print("Fallos:")

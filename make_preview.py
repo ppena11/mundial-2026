@@ -54,7 +54,7 @@ AI_PREVIEW_SYS = (
     "forma y localía, mercado).\n"
     '"grupos": un objeto con una clave por grupo ("A".."L"); cada valor es 1 o 2 frases sobre ese grupo (quién '
     "avanza según el modelo y el duelo clave), educativo y usando los números dados.\n"
-    '"cierre": 1 o 2 frases que inviten a seguir el pronóstico diario en TikTok @aiwithpedro y el Substack.\n'
+    '"cierre": 1 o 2 frases que inviten a seguir el pronóstico diario en el canal de YouTube @aiwithpedro y el Substack.\n'
     "Español cercano y educativo, apto para todo público, nada de apuestas. Usa SOLO los datos dados; NO inventes "
     "números. ESCRIBE EN ESPAÑOL CON TODAS LAS TILDES Y SIGNOS CORRECTOS (á, é, í, ó, ú, ñ, ¿, ¡).")
 
@@ -226,7 +226,7 @@ def render():
         md.append("---")
         md.append(ai["cierre"].strip())
     md.append("---")
-    md.append(f"🎬 Pronóstico **diario** en mi TikTok **@{BRAND}** · 📩 resumen semanal por correo.")
+    md.append(f"🎬 Pronóstico **diario** en mi **canal de YouTube @{BRAND}** · 📩 resumen semanal por correo.")
     md.append(f"_{DISCLAIMER}_")
     text = "\n".join(md)
 

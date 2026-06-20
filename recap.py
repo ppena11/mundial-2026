@@ -41,7 +41,9 @@ def _iso(yyyymmdd): return f"{yyyymmdd[0:4]}-{yyyymmdd[4:6]}-{yyyymmdd[6:8]}"
 # ---------- Claude (gancho viral) ----------
 AI_RECAP_SYS = (
     "Eres el guionista y editor de @aiwithpedro, un creador que enseña inteligencia artificial. "
-    "DATO FIJO: el Mundial 2026 arrancó el 11 de junio de 2026; respeta esa cronología. Es el CIERRE DEL DÍA "
+    "DATO FIJO: el Mundial 2026 arrancó el 11 de junio de 2026; respeta esa cronología. "
+    "DÍA DE LA SEMANA: el día correcto está en los datos ('Anoche fue …'); si nombras el día, usa EXACTAMENTE ese, NUNCA lo deduzcas. "
+    "Es el CIERRE DEL DÍA "
     "del Mundial 2026: confrontamos el pronóstico de la mañana con lo que de verdad pasó. Te doy los datos EXACTOS "
     "(aciertos, fallos, marcadores, récord). Devuelve EXCLUSIVAMENTE un objeto JSON (sin ``` ni texto extra) con "
     "EXACTAMENTE estas claves:\n"
@@ -49,10 +51,11 @@ AI_RECAP_SYS = (
     '"gancho": 1 o 2 frases para el digest; engancha con cómo nos fue (acierto destacado o sorpresa).\n'
     '"voz": guion HABLADO de 45 a 70 palabras (~20 s). Empieza fuerte (cómo nos fue anoche), nombra el acierto más '
     "jugoso, reconoce con humildad un fallo si lo hubo, da el récord acumulado, y cierra con un teaser de lo que "
-    "viene + invitación a ver el cierre en el link de mi bio (NO nombres 'Substack' en la voz) y firma la voz diciendo EXACTAMENTE: "
+    "viene + invitación a SUSCRIBIRSE a mi canal de YouTube y a ver el cierre en el link de mi bio (NO nombres 'Substack' en la voz) "
+    "y firma la voz diciendo EXACTAMENTE: "
     "Soy éi ái uíz Pédro (así se pronuncia @aiwithpedro). SIN emojis ni símbolos "
     "(lo lee un sintetizador de voz); números con dígitos y 'por ciento'.\n"
-    '"caption": 1 o 2 líneas para TikTok, con gancho; puede llevar 1 o 2 emojis; NO incluyas hashtags aquí.\n'
+    '"caption": 1 o 2 líneas para YouTube Shorts, con gancho; puede llevar 1 o 2 emojis; NO incluyas hashtags aquí.\n'
     '"hashtags": lista de EXACTAMENTE 5 hashtags virales; incluye #Mundial2026, #IA y #parati.\n'
     '"youtube_titulo": título SEO para YouTube Shorts; pon al inicio "Resultados Mundial 2026", el día y "IA"; máx ~90 caracteres.\n'
     '"youtube_descripcion": 2 o 3 frases con palabras clave (resultados Mundial 2026, aciertos del modelo, los equipos), con CTA al análisis (link en la bio). NO incluyas hashtags.\n'
@@ -150,7 +153,9 @@ def build(target):
     best = max((x for x in matches if x["ok1x2"]), key=lambda x: x["ppick"], default=None)
     miss = next((x for x in matches if not x["ok1x2"]), None)
     surprise = min((x for x in matches if x["ok1x2"]), key=lambda x: x["ppick"], default=None)
-    sm = [f"Cierre del {fecha_h}. El modelo acertó {hits} de {n} partidos."]
+    dia = dd.weekday_es(target)   # día calculado en Python (Claude no lo deduce)
+    sm = [f"Anoche fue {dia}, {fecha_h}. El modelo acertó {hits} de {n} partidos." if dia
+          else f"Cierre del {fecha_h}. El modelo acertó {hits} de {n} partidos."]
     for x in matches:
         sm.append(f"- {dd.acc(x['a'])} {x['marcador_real']} {dd.acc(x['b'])}: dijimos {dd.acc(x['pick_team'])} "
                   f"({round(100*x['ppick'])} por ciento), {'ACERTAMOS' if x['ok1x2'] else 'FALLAMOS'}.")
@@ -189,7 +194,7 @@ def build(target):
         + (f"Lo más claro fue {dd.acc(best['a'])} contra {dd.acc(best['b'])}. " if best else "")
         + (f"Se nos escapó {dd.acc(miss['a'])} contra {dd.acc(miss['b'])}, así es el fútbol. " if miss else "")
         + f"En total llevamos {rec_txt}.{prox_txt} El análisis completo está en el link de mi bio. "
-          f"Soy {BRAND_VOZ}, nos vemos mañana.")
+          f"Suscríbete a mi canal de YouTube. Soy {BRAND_VOZ}, nos vemos mañana.")
     caption = re.sub(r"\s*#\S+", "", (ai.get("caption") or "").strip()).strip() or (
         f"Así nos fue anoche: {hits}/{n} aciertos 🎯 Mostramos aciertos y fallos. Análisis gratis en mi Substack (link en bio).")
     tags = _five(ai.get("hashtags") or [], [matches[0]["a"], matches[0]["b"]])
@@ -245,7 +250,7 @@ def build_digest(cu):
         md.append(f"- **{p['fecha_h']} · {p['hora']}** · {p['a']} vs {p['b']} — favorita **{p['fav']} ({p['fp']:.0%})**")
         md.append("")
     md.append("---")
-    md.append(f"🎬 Mira el cierre en video en mi TikTok **@{BRAND}**  ·  🙌 Compártelo.")
+    md.append(f"🎬 Mira el cierre en video en mi **canal de YouTube @{BRAND}**  ·  🙌 Compártelo.")
     md.append(f"_{DISCLAIMER}_")
     text = "\n".join(md)
     def b(s): return re.sub(r"\*\*(.+?)\*\*", r"<b>\1</b>", s).replace("_", "")

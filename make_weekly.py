@@ -28,7 +28,7 @@ AI_WEEKLY_SYS = (
     "del Mundial 2026, devuelve EXCLUSIVAMENTE un objeto JSON (sin ``` ni texto extra) con estas claves:\n"
     '"titulo": título viral para el resumen semanal (máx ~70 caracteres, con gancho, máximo 1 emoji).\n'
     '"intro": 1 o 2 frases de apertura que resuman la semana y enganchen (cómo le fue al modelo, el dato más jugoso).\n'
-    '"cierre": 1 frase motivadora que invite a seguir el pronóstico diario en TikTok @aiwithpedro y el Substack.\n'
+    '"cierre": 1 frase motivadora que invite a seguir el pronóstico diario en el canal de YouTube @aiwithpedro y el Substack.\n'
     "Español, cercano y enérgico, apto para todo público, nada de apuestas. Usa SOLO los datos dados; NO inventes números. "
     "ESCRIBE EN ESPAÑOL CON TODAS LAS TILDES Y SIGNOS CORRECTOS (á, é, í, ó, ú, ñ, ¿, ¡).")
 
@@ -137,7 +137,7 @@ def build(today_str):
     if aw.get("cierre"):
         md.append(f"_{aw['cierre'].strip()}_")
     else:
-        md.append(f"_Sigue el pronóstico **diario** en mi TikTok **@{BRAND}** y en el archivo del Substack._")
+        md.append(f"_Sigue el pronóstico **diario** en mi **canal de YouTube @{BRAND}** y en el archivo del Substack._")
     md.append(f"_Contenido informativo y de entretenimiento. Predicciones de un modelo, no certezas._")
     text = "\n".join(md)
 

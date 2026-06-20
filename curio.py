@@ -101,6 +101,7 @@ def web_news():
 CURIO_SYS = (
     "Eres el guionista y editor de @aiwithpedro, un creador que enseña inteligencia artificial. "
     "DATO FIJO: el Mundial 2026 arrancó el 11 de junio de 2026; respeta esa cronología (no digas que 'comienza hoy'). "
+    "DÍA DE LA SEMANA: el día correcto está en el material ('Hoy es …'); si lo nombras, usa EXACTAMENTE ese, NUNCA lo deduzcas. "
     "HOY NO HAY PARTIDOS del Mundial 2026: tu trabajo es mantener a la audiencia enganchada, dejando claro que hoy "
     "no rueda el balon. Te indico el ESTADO del torneo y te doy material REAL (una noticia con su fuente y/o un dato "
     "EXACTO de mis simulaciones). Devuelve EXCLUSIVAMENTE un objeto JSON (sin ``` ni texto extra) con EXACTAMENTE "
@@ -108,11 +109,11 @@ CURIO_SYS = (
     '"titulo": titulo viral para el post (max ~70 caracteres, gancho, max 1 emoji).\n'
     '"gancho": 1 o 2 frases para el digest; engancha y deja claro que hoy no hay partidos.\n'
     '"voz": guion HABLADO de 45 a 70 palabras (~20 s). Gancho fuerte al inicio; SIN emojis ni simbolos (lo lee un '
-    "sintetizador de voz); numeros con digitos y 'por ciento'; invita a ver mas en el link de mi bio (NO nombres 'Substack' en la voz) y "
+    "sintetizador de voz); numeros con digitos y 'por ciento'; invita a SUSCRIBIRSE a mi canal de YouTube y a ver mas en el link de mi bio (NO nombres 'Substack' en la voz) y "
     "firma la voz diciendo EXACTAMENTE: Soy éi ái uíz Pédro (así se pronuncia @aiwithpedro).\n"
     '"card": resumen MUY corto y potente para una imagen (max 8 palabras, sin emojis, sin cortar a media palabra). '
     "Si hay noticia, es el titular resumido de forma viral.\n"
-    '"caption": 1 o 2 lineas para TikTok, con gancho; puede llevar 1 o 2 emojis; NO incluyas hashtags aqui.\n'
+    '"caption": 1 o 2 lineas para YouTube Shorts, con gancho; puede llevar 1 o 2 emojis; NO incluyas hashtags aqui.\n'
     '"hashtags": lista de EXACTAMENTE 5 hashtags virales; incluye #Mundial2026, #IA y #parati.\n'
     '"youtube_titulo": título SEO para YouTube Shorts (al inicio "Mundial 2026" y el tema del día); máx ~90 caracteres.\n'
     '"youtube_descripcion": 2 o 3 frases con palabras clave (Mundial 2026, predicción con IA), con CTA (link en la bio). NO incluyas hashtags.\n'
@@ -128,6 +129,8 @@ CURIO_SYS = (
 def _material(p):
     import daily_digest as dd
     L = []
+    dia = dd.weekday_es(p.get("target", ""))   # día calculado en Python (Claude no lo deduce)
+    if dia: L.append(f"Hoy es {dia}.")
     if p["days"] > 0:
         dtxt = "Falta un día" if p["days"] == 1 else f"Faltan {p['days']} días"
         L.append(f"ESTADO: PRE-TORNEO. {dtxt} para el inicio del Mundial 2026 (11 de junio). "
@@ -198,7 +201,7 @@ def build(target):
         "Hoy no hay partidos del Mundial, pero te dejo algo. "
         + (f"{news['title']}, según {news['source']}. " if news else f"{mf} ")
         + f"{cd} El análisis completo está en el link de mi bio. "
-          f"Soy {BRAND_VOZ}, nos vemos pronto.")
+          f"Suscríbete a mi canal de YouTube. Soy {BRAND_VOZ}, nos vemos pronto.")
     card = (ai.get("card") or "").strip() or ((news["title"][:60]) if news else mf[:60])
     caption = re.sub(r"\s*#\S+", "", (ai.get("caption") or "").strip()).strip() or (
         "Hoy sin partidos, pero el Mundial no para 👀 Analisis gratis en mi Substack (link en bio).")
