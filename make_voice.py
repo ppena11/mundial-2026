@@ -40,7 +40,7 @@ _FONETICO = {
     "Arlington": "árlinton", "Atlanta": "atlánta", "Foxborough": "fóxboro",
     "Massachusetts": "másachúsets", "Inglewood": "íngluud", "Missouri": "misúri", "Miami": "maiámi",
     "Philadelphia": "filadélfia", "Pennsylvania": "pensilvánia", "Seattle": "siátel",
-    "Washington": "wáshinton", "Vancouver": "vankúver", "Texas": "téxas",
+    "Washington": "wáshinton", "Vancouver": "vankúver", "Texas": "téksas",
 }
 def foneticizar(text):
     """Reemplaza estadios/ciudades por su fonética en español (solo para el audio de ElevenLabs)."""
@@ -111,8 +111,9 @@ def _bloques(text, maxlen=240):
         bloques.append(cur)
     return bloques or [text]
 
-def _concat_mp3(segs):
-    """Une varios mp3 en uno con ffmpeg (-c copy, sin recomprimir). Fallback: concatenación cruda de bytes."""
+def _concat_mp3(segs, gap=0.25):
+    """Une varios mp3 en uno, intercalando un SILENCIO corto (~gap s) entre frases para recuperar la pausa
+    natural que el stitching elimina (si no, las frases se pegan y suena confuso). Fallback: bytes crudos."""
     import tempfile, subprocess
     try:
         import imageio_ffmpeg; ff = imageio_ffmpeg.get_ffmpeg_exe()
@@ -122,21 +123,28 @@ def _concat_mp3(segs):
     try:
         for i, b in enumerate(segs):
             p = os.path.join(d, f"s{i}.mp3"); open(p, "wb").write(b); files.append(p)
+        sil = os.path.join(d, "sil.mp3")   # silencio breve entre frases
+        rs = subprocess.run([ff, "-y", "-f", "lavfi", "-i", "anullsrc=r=44100:cl=mono", "-t", str(gap),
+                             "-c:a", "libmp3lame", "-q:a", "4", sil], capture_output=True)
+        usar_sil = rs.returncode == 0 and os.path.exists(sil)
+        seq = []
+        for i, p in enumerate(files):
+            if i > 0 and usar_sil: seq.append(sil)
+            seq.append(p)
         lst = os.path.join(d, "l.txt")
         with open(lst, "w", encoding="utf-8") as f:
-            for p in files: f.write("file '%s'\n" % p.replace("\\", "/"))
+            for p in seq: f.write("file '%s'\n" % p.replace("\\", "/"))
         outp = os.path.join(d, "o.mp3")
-        r = subprocess.run([ff, "-y", "-f", "concat", "-safe", "0", "-i", lst, "-c", "copy", outp],
+        # re-encode (no -c copy) para unificar segmentos + silencio en un solo flujo limpio
+        r = subprocess.run([ff, "-y", "-f", "concat", "-safe", "0", "-i", lst, "-c:a", "libmp3lame", "-q:a", "2", outp],
                            capture_output=True)
         data = open(outp, "rb").read() if r.returncode == 0 and os.path.exists(outp) else b"".join(segs)
     except Exception:
         data = b"".join(segs)
     finally:
         try:
-            for p in files: os.remove(p)
-            for p in ("l.txt", "o.mp3"):
-                fp = os.path.join(d, p)
-                if os.path.exists(fp): os.remove(fp)
+            for p in files + [os.path.join(d, x) for x in ("sil.mp3", "l.txt", "o.mp3")]:
+                if os.path.exists(p): os.remove(p)
             os.rmdir(d)
         except Exception:
             pass
