@@ -62,11 +62,15 @@ def _summary(fh, played, pick, clearest, tr):
     except Exception:
         contexto = None
     for d in played:
+        hora = dd.hora_et(d["utc"]) if d.get("utc") else ""
+        sede = ", ".join(x for x in (d.get("estadio"), d.get("ciudad"), d.get("pais")) if x)
+        det = (f" Hora: {hora}." if hora else "") + (f" Sede: {sede}." if sede else "")
         L.append(f"- PRONÓSTICO {dd.acc(d['a'])} contra {dd.acc(d['b'])}: favorito {dd.acc(d['fav'])} con {round(100*d['fp'])} "
-                 f"por ciento; marcador previsto {dd.acc(d['a'])} {d['sx']} - {d['sy']} {dd.acc(d['b'])}.")
+                 f"por ciento; marcador previsto {dd.acc(d['a'])} {d['sx']} - {d['sy']} {dd.acc(d['b'])}.{det}")
         n = contexto.noticia_partido(dd.acc(d['a']), dd.acc(d['b']), target) if contexto else None
         if n:
-            L.append(f"  Noticia REAL de este partido, del Mundial 2026 y del día (fuente {n['source']}): {n['title']}")
+            L.append(f"  Ángulo noticioso del día para este partido (intégralo al comentario con naturalidad, "
+                     f"SIN citar el medio ni decir 'según'): {n['title']}")
     if pick:
         t, mpb, mkp, edge = pick[1]
         L.append(f"Jugada de valor del día: {dd.acc(t)} (el modelo le da {round(100*mpb)} por ciento y el mercado solo {round(100*mkp)} por ciento; está infravalorada).")
@@ -92,16 +96,19 @@ AI_SYSTEM = (
     "usa EXACTAMENTE ese; NUNCA lo deduzcas tú de la fecha. "
     "Con los datos del día del Mundial 2026, genera el contenido de un video de YouTube Shorts y devuelve EXCLUSIVAMENTE "
     "un objeto JSON válido (sin ``` ni texto extra) con EXACTAMENTE estas claves:\n"
-    '"voiceover": el guion HABLADO. ABRE diciendo la fecha de hoy con ESTE formato: "Aquí está el pronóstico de hoy, '
-    '<día de la semana> <número> de <mes>" (usa EXACTAMENTE el día y la fecha de los datos, p. ej. "Aquí está el '
-    'pronóstico de hoy, jueves 18 de junio"); NO digas "el día N del torneo". Luego, PARA CADA PARTIDO, deja CLARO '
-    "que estás dando EL PRONÓSTICO de ese partido (di 'el pronóstico de A contra B') con su MARCADOR PREVISTO "
-    "(ej.: 'el pronóstico de España contra Cabo Verde: gana España dos a cero'), y AÑADE en UNA frase corta el "
-    "ÁNGULO MÁS VIRAL de ese juego: si en los datos hay una 'Noticia REAL de este partido', úsala y MENCIONA la "
-    "fuente; si no la hay, usa el dato o la historia del modelo (la estrella, la sorpresa, lo que está en juego). "
-    "NUNCA inventes noticias, lesiones, fichajes ni declaraciones: si no hay noticia real en los datos, NO te la inventes. "
+    '"voiceover": el guion HABLADO, con TONO DE NARRADOR DEPORTIVO PROFESIONAL: claro, enérgico y con autoridad, '
+    "frases limpias y bien armadas, sin relleno ni muletillas. "
+    'ABRE diciendo la fecha de hoy con ESTE formato: "Aquí está el pronóstico de hoy, <día de la semana> <número> '
+    'de <mes>" (usa EXACTAMENTE el día y la fecha de los datos, p. ej. "Aquí está el pronóstico de hoy, jueves 18 '
+    'de junio"); NO digas "el día N del torneo". Luego, PARA CADA PARTIDO, preséntalo como un profesional: deja '
+    "CLARO que es EL PRONÓSTICO de ese partido (di 'el pronóstico de A contra B') con su MARCADOR PREVISTO; di "
+    "CUÁNDO se juega (la hora) y DÓNDE (estadio, ciudad y país) usando SOLO los datos dados; e integra con "
+    "naturalidad el ángulo noticioso del día si lo hay (SIN citar el medio ni decir 'según', como parte del "
+    "comentario), y si no lo hay usa la historia del modelo (la estrella, la sorpresa, lo que está en juego). "
+    "NUNCA inventes noticias, ni la hora, ni la sede, ni lesiones ni declaraciones: si un dato no está en los "
+    "datos, NO lo menciones. "
     "MENCIONA CADA PARTIDO con su marcador, no solo el más importante (puedes resaltar el más jugoso, pero no omitas ninguno). "
-    "Sé ágil pero cabe la noticia: ~40 s con 2-3 partidos, hasta ~75 s con 6 (una frase de pronóstico + una de ángulo por partido). "
+    "Ritmo de narrador: ~45 s con 2-3 partidos, hasta ~80 s con 6 (pronóstico + cuándo/dónde + ángulo por partido). "
     "Cierra invitando a SUSCRIBIRSE a mi canal de YouTube y a ver el análisis completo en el link "
     "de mi bio (NO nombres 'Substack' en la voz) "
     "y firma la voz diciendo EXACTAMENTE: Soy éi ái uíz Pédro (así se pronuncia @aiwithpedro). SIN otros emojis ni "
@@ -211,7 +218,9 @@ def build(target):
             if ma and pw>=VAL_FLOOR and pw>ma*VAL_MARGIN: vc.append((a,pw,ma,pw/ma))
             if mb and pl>=VAL_FLOOR and pl>mb*VAL_MARGIN: vc.append((b,pl,mb,pl/mb))
         fav,fp=(a,pw) if pw>=pl else (b,pl)
-        played.append({"a":a,"b":b,"fav":fav,"fp":fp,"vc":vc,"sx":sx,"sy":sy,"pdr":pdr})
+        played.append({"a":a,"b":b,"fav":fav,"fp":fp,"vc":vc,"sx":sx,"sy":sy,"pdr":pdr,
+                       "utc":m.get("utc",""),"estadio":m.get("estadio",""),
+                       "ciudad":m.get("ciudad",""),"pais":m.get("pais","")})
     if not played:                                   # día sin partidos -> dato curioso (voz + caption)
         import curio
         cu = curio.ensure(target)

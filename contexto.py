@@ -114,6 +114,10 @@ def noticia_partido(a, b, target=None):
              "record", "historic", "sorpresa", "debut", "regreso", "vuelve", "estrella", "figura", "crack",
              "golazo", "expulsi", "sancion", "insulto", "pelea", "tension", "revancha", "clasico", "duelazo",
              "palabras", "calienta", "provoca", "polemic", "filtr", "bombazo", "fichaje", "renuncia")
+    # medios deportivos confiables (forma ya sin acentos/espacios) -> tienen prioridad en el ranking
+    TRUSTED = ("espn", "marca", "as", "tudn", "mundodeportivo", "sport", "ole", "goal", "foxsports", "tyc",
+               "record", "bbc", "reuters", "afp", "fifa", "uefa", "conmebol", "bein", "univision", "telemundo",
+               "theathletic", "skysports", "nbc", "cbs", "golcaracol", "depor", "futboltotal", "espndeportes")
     cands = []   # (puntaje, idx, {title, source})
     try:
         root = ET.fromstring(raw)
@@ -154,6 +158,8 @@ def noticia_partido(a, b, target=None):
             if na in lt and nb in lt:                    # ambos equipos en el TÍTULO (específica del partido)
                 sc += 3
             sc += 2 * sum(1 for w in VIRAL if w in lt)   # gancho viral en el título
+            if any(t in _strip(source) for t in TRUSTED):   # PRIORIDAD a medios confiables
+                sc += 4
             if d is not None and pd is not None:
                 sc += 2 if pd == d else 1                # del día del partido > del día anterior
             sc += max(0.0, 2.0 - idx * 0.1)              # desempate: el orden de Google (antes = mejor)

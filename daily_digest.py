@@ -64,6 +64,9 @@ def _get(url):
     except Exception:
         return requests.get(PROXY + urllib.parse.quote(url, safe=""), headers=HEAD, timeout=45).json()
 
+_PAIS_SEDE = {"USA": "Estados Unidos", "United States": "Estados Unidos",
+              "Canada": "Canadá", "Mexico": "México"}
+
 def fetch_all():
     """Todos los eventos del torneo con número de ronda asignado por orden de fecha."""
     # la API limita ~100 eventos por respuesta; el Mundial tiene 104 -> bajamos en 2 tramos
@@ -105,7 +108,16 @@ def fetch_all():
             is_ko = True
         else:
             label, is_ko = "Partido", (slug in ROUND_ES)
-        out.append({"a": a, "b": b, "utc": dt_utc, "label": label, "is_ko": is_ko})
+        v = comp.get("venue", {}) or {}
+        addr = v.get("address", {}) or {}
+        estadio = (v.get("fullName") or "").strip()
+        if " at " in estadio:                 # "GEHA Field at Arrowhead Stadium" -> "Arrowhead Stadium" (TTS limpio)
+            estadio = estadio.split(" at ", 1)[1].strip()
+        ciudad = (addr.get("city") or "").strip()
+        pais = (addr.get("country") or "").strip()
+        pais = _PAIS_SEDE.get(pais, pais)
+        out.append({"a": a, "b": b, "utc": dt_utc, "label": label, "is_ko": is_ko,
+                    "estadio": estadio, "ciudad": ciudad, "pais": pais})
     return out
 
 def _et(dt_utc):

@@ -371,9 +371,14 @@ ok("fecha_larga (fecha hablada) correcta",
    dd.fecha_larga("20260618") == "jueves 18 de junio" and dd.fecha_larga("20260613") == "sábado 13 de junio",
    f'18->{dd.fecha_larga("20260618")}')
 # el resumen que recibe Claude trae la fecha hablada YA resuelta, SIN "día N del torneo"
-played_x = [{"a": "Brasil", "b": "Marruecos", "fav": "Brasil", "fp": 0.5, "sx": 1, "sy": 0}]
+played_x = [{"a": "Brasil", "b": "Marruecos", "fav": "Brasil", "fp": 0.5, "sx": 1, "sy": 0,
+             "utc": "2026-06-13T19:00Z", "estadio": "Estadio Azteca", "ciudad": "Ciudad de México", "pais": "México"}]
 sm_x = msx._summary("13/06/2026", played_x, None, None, {"n": 0})
 ok("_summary abre con la fecha hablada (sábado 13 de junio)", "Hoy es sábado 13 de junio" in sm_x, sm_x.splitlines()[0])
+ok("_summary incluye hora y sede del partido (sin inventar)",
+   "Hora: 15:00 ET" in sm_x and "Sede: Estadio Azteca, Ciudad de México, México" in sm_x, sm_x)
+ok("AI_SYSTEM pide hora+sede y NO citar el medio",
+   "estadio, ciudad y país" in msx.AI_SYSTEM and "SIN citar el medio" in msx.AI_SYSTEM, "falta la regla")
 ok("_summary ya NO mete 'el día N del torneo'", "hoy es el día" not in sm_x.lower(), "quedó el día N")
 ok("AI_SYSTEM abre con la fecha y prohíbe 'día N del torneo'",
    "Aquí está el pronóstico de hoy" in msx.AI_SYSTEM and 'NO digas "el día N del torneo"' in msx.AI_SYSTEM, "falta la regla")
