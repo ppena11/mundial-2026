@@ -394,20 +394,21 @@ def _rss(items):
     body = "".join(f"<item><title>{t}</title><source>{s}</source><description>{d}</description><pubDate>{p}</pubDate></item>"
                    for t, s, d, p in items)
     return f"<rss><channel>{body}</channel></rss>"
+LINK = "ver mas en http://news.google.com/articulo"   # las descripciones REALES traen enlaces (no deben romper)
 _ctx.requests = _FakeReq(_rss([
-    ("Mundial Sub-17: Brasil vs Marruecos", "ESPN", "", "Wed, 17 Jun 2026 10:00:00 GMT"),        # fuera: sub-17
-    ("Brasil vs Marruecos en el Mundial 2026", "Marca", "", "Fri, 12 Jun 2026 10:00:00 GMT"),     # fuera: fecha vieja
-    ("Brasil vs Marruecos: duelazo del Mundial 2026 hoy", "AS", "", "Wed, 17 Jun 2026 09:00:00 GMT"),  # OK (día anterior)
+    ("Mundial Sub-17: Brasil vs Marruecos", "ESPN", LINK, "Wed, 17 Jun 2026 10:00:00 GMT"),            # fuera: sub-17
+    ("Brasil vs Marruecos: dónde ver el partido", "ESPN", LINK, "Wed, 17 Jun 2026 10:00:00 GMT"),      # fuera: logística
+    ("Brasil vs Marruecos: mejores apuestas y cuotas", "AS", LINK, "Wed, 17 Jun 2026 10:00:00 GMT"),   # fuera: apuestas
+    ("Brasil vs Marruecos del Mundial 2022 inolvidable", "AS", LINK, "Wed, 17 Jun 2026 10:00:00 GMT"), # fuera: otra edición
+    ("Brasil vs Marruecos en el Mundial 2026", "Marca", LINK, "Fri, 12 Jun 2026 10:00:00 GMT"),        # fuera: fecha vieja
+    ("Brasil vs Marruecos: previa caliente del Mundial 2026", "AS", LINK, "Wed, 17 Jun 2026 09:00:00 GMT"),  # OK
 ]))
 n_ok = _noticia_partido_real("Brasil", "Marruecos", "20260618")
-ok("noticia_partido: acepta la relevante+reciente y descarta sub-17/fecha vieja",
-   bool(n_ok) and "duelazo" in n_ok["title"], f"{n_ok}")
-_ctx.requests = _FakeReq(_rss([("Brasil brilla en el Mundial 2026", "AS", "", "Wed, 17 Jun 2026 09:00:00 GMT")]))
+ok("noticia_partido: elige la nota con sustancia (salta sub-17/logística/apuestas/2022/vieja; enlace en desc NO rompe)",
+   bool(n_ok) and "previa caliente" in n_ok["title"], f"{n_ok}")
+_ctx.requests = _FakeReq(_rss([("Brasil brilla en el Mundial 2026", "AS", LINK, "Wed, 17 Jun 2026 09:00:00 GMT")]))
 ok("noticia_partido: rechaza si NO menciona a ambos equipos",
    _noticia_partido_real("Brasil", "Marruecos", "20260618") is None, "no debió aceptar")
-_ctx.requests = _FakeReq(_rss([("Brasil vs Marruecos del Mundial 2022 inolvidable", "AS", "", "Wed, 17 Jun 2026 09:00:00 GMT")]))
-ok("noticia_partido: rechaza otra edición (Mundial 2022)",
-   _noticia_partido_real("Brasil", "Marruecos", "20260618") is None, "no debió aceptar 2022")
 _ctx.requests = _orig_req
 # (2) título de YouTube del pronóstico con formato fijo de marca
 msx.write_youtube("youtube_test.txt", played_x, "18/06/2026", None)

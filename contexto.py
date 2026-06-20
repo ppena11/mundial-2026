@@ -97,6 +97,13 @@ def noticia_partido(a, b, target=None):
         return None
     BAD = ("sub 17", "sub-17", "sub17", "sub 20", "sub-20", "sub 19", "sub 23",
            "femenin", "femenil", "amistoso", "videojuego", "ea sports", "playstation", "fc 26", "fifa 26")
+    # notas de pura logística de transmisión: NO son virales, se descartan (mejor el ángulo del modelo)
+    LOGISTICA = ("donde ver", "donde verlo", "en que canal", "que canal", "como ver", "como y cuando",
+                 "como y donde", "donde y cuando", "donde y como", "a que hora", "horario", "horarios",
+                 "canales", "streaming", "transmision", "cuando juega", "en vivo")
+    # apuestas: la marca es informativa/educativa, NADA de apuestas -> descartar
+    APUESTAS = ("apuesta", "apostar", "betting", "bet365", "1xbet", "casa de apuestas", "momios",
+                "mejores apuestas", "promociones del partido", "promociones de")
     WC = ("mundial", "copa del mundo", "world cup", "fifa")          # contexto Copa del Mundo
     WRONG_YEARS = ("2010", "2014", "2018", "2022", "2030")           # otra edición que NO es 2026
     try:
@@ -107,10 +114,15 @@ def noticia_partido(a, b, target=None):
             source = (src.text.strip() if src is not None and src.text else "Google News")
             if " - " in title:
                 title, source = title.rsplit(" - ", 1)
-            ctx = _strip(title) + " | " + _strip(item.findtext("description") or "")
-            if not title or "http" in ctx or "www." in ctx:        # fuera enlaces crudos
+            lt = _strip(title)
+            ctx = lt + " | " + _strip(item.findtext("description") or "")   # desc da más contexto (equipos/WC)
+            if not title or "http" in lt or "www." in lt:          # fuera enlaces crudos SOLO en el título
                 continue
             if any(x in ctx for x in BAD):                          # fuera otras categorías/torneos
+                continue
+            if any(x in lt for x in LOGISTICA):                     # fuera notas de "dónde/cómo ver" (no virales)
+                continue
+            if any(x in ctx for x in APUESTAS):                     # fuera apuestas (la marca no las toca)
                 continue
             if na not in ctx or nb not in ctx:                      # (1) AMBOS equipos
                 continue
