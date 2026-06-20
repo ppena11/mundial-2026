@@ -411,6 +411,14 @@ ok("AI_SYSTEM: [DETALLE]=completo, los demás=solo hora",
 ok("AI_SYSTEM: gancho + factor IA + variación + opinión + cierre con actitud",
    all(s in msx.AI_SYSTEM for s in ("GANCHO FUERTE", "VEINTE MIL simulaciones",
        "VARÍA cómo introduces", "opinión corta", "ACTITUD")), "falta alguna mejora de estilo")
+# fonética de estadios/ciudades SOLO para el audio (ElevenLabs); el texto queda real para subtítulos
+import make_voice as mvz
+ph = mvz.foneticizar("Se juega en el NRG Stadium de Houston, Texas. También Mexico City y el BMO Field.")
+ok("foneticizar: estadios/ciudades EE.UU./Canadá a fonética española",
+   "estadio éne-erre-ge" in ph and "jiúston" in ph and "téxas" in ph
+   and "Ciudad de México" in ph and "campo bi-em-ó" in ph, ph)
+ok("foneticizar: NO altera el texto normal del guion",
+   mvz.foneticizar("El pronóstico de hoy es muy claro") == "El pronóstico de hoy es muy claro", "tocó texto normal")
 # noticia_partido: relevante al juego + contexto Mundial 2026 + publicada el día o el anterior
 import contexto as _ctx
 _orig_req = _ctx.requests
