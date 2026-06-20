@@ -76,13 +76,13 @@ def noticia_partido(a, b, target=None):
         return "".join(c for c in s if unicodedata.category(c) != "Mn")
     na, nb = _strip(a), _strip(b)
     # ventana de fechas permitida: día del partido y el anterior
-    allow = None
+    allow, d = None, None
     if target and len(str(target)) == 8:
         try:
             d = date(int(target[:4]), int(target[4:6]), int(target[6:8]))
             allow = {d, d - timedelta(days=1)}
         except Exception:
-            allow = None
+            allow, d = None, None
     q = f'"{a}" "{b}" "Mundial 2026"'
     url = NEWS_RSS.format(q=urllib.parse.quote(q))
     raw = None
@@ -106,9 +106,15 @@ def noticia_partido(a, b, target=None):
                 "mejores apuestas", "promociones del partido", "promociones de")
     WC = ("mundial", "copa del mundo", "world cup", "fifa")          # contexto Copa del Mundo
     WRONG_YEARS = ("2010", "2014", "2018", "2022", "2030")           # otra edición que NO es 2026
+    # señales de "lo más viral" para PUNTUAR (en el título, ya sin acentos)
+    VIRAL = ("lesion", "baja", "polemica", "escandalo", "declaracion", "advertencia", "amenaza", "reto",
+             "record", "historic", "sorpresa", "debut", "regreso", "vuelve", "estrella", "figura", "crack",
+             "golazo", "expulsi", "sancion", "insulto", "pelea", "tension", "revancha", "clasico", "duelazo",
+             "palabras", "calienta", "provoca", "polemic", "filtr", "bombazo", "fichaje", "renuncia")
+    cands = []   # (puntaje, idx, {title, source})
     try:
         root = ET.fromstring(raw)
-        for item in root.iter("item"):
+        for idx, item in enumerate(root.iter("item")):
             title = (item.findtext("title") or "").strip()
             src = item.find("source")
             source = (src.text.strip() if src is not None and src.text else "Google News")
@@ -130,16 +136,29 @@ def noticia_partido(a, b, target=None):
                 continue
             if any(y in ctx for y in WRONG_YEARS) and "2026" not in ctx:   # (2b) que NO sea otra edición
                 continue
+            pd = None
             if allow is not None:                                   # (3) publicada el día del partido o el anterior
                 try:
-                    if parsedate_to_datetime(item.findtext("pubDate")).date() not in allow:
-                        continue
+                    pd = parsedate_to_datetime(item.findtext("pubDate")).date()
                 except Exception:
-                    continue                                        # sin fecha fiable -> se descarta
-            return {"title": title.strip(), "source": source.strip()}
+                    pd = None
+                if pd not in allow:
+                    continue
+            # PUNTAJE de relevancia/viralidad (mayor = más relevante)
+            sc = 0.0
+            if na in lt and nb in lt:                    # ambos equipos en el TÍTULO (específica del partido)
+                sc += 3
+            sc += 2 * sum(1 for w in VIRAL if w in lt)   # gancho viral en el título
+            if d is not None and pd is not None:
+                sc += 2 if pd == d else 1                # del día del partido > del día anterior
+            sc += max(0.0, 2.0 - idx * 0.1)              # desempate: el orden de Google (antes = mejor)
+            cands.append((sc, idx, {"title": title.strip(), "source": source.strip()}))
     except Exception:
         pass
-    return None
+    if not cands:
+        return None
+    cands.sort(key=lambda x: (-x[0], x[1]))             # mayor puntaje; empata el orden de Google
+    return cands[0][2]
 
 def resumen_torneo(target, con_noticia=True):
     """String compacto con lo que ha pasado en el torneo hasta `target` (exclusive)."""

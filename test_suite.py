@@ -409,6 +409,13 @@ ok("noticia_partido: elige la nota con sustancia (salta sub-17/logística/apuest
 _ctx.requests = _FakeReq(_rss([("Brasil brilla en el Mundial 2026", "AS", LINK, "Wed, 17 Jun 2026 09:00:00 GMT")]))
 ok("noticia_partido: rechaza si NO menciona a ambos equipos",
    _noticia_partido_real("Brasil", "Marruecos", "20260618") is None, "no debió aceptar")
+# ranking: entre varias válidas, elige la MÁS viral (no solo la primera de Google)
+_ctx.requests = _FakeReq(_rss([
+    ("Brasil vs Marruecos: previa del Mundial 2026", "AS", LINK, "Wed, 17 Jun 2026 09:00:00 GMT"),                 # genérica, va primero
+    ("Brasil lanza advertencia a Marruecos en el Mundial 2026", "TUDN", LINK, "Thu, 18 Jun 2026 08:00:00 GMT"),   # viral + del día -> debe ganar
+]))
+ok("noticia_partido: prioriza la MÁS viral, no la primera",
+   "advertencia" in (_noticia_partido_real("Brasil", "Marruecos", "20260618") or {}).get("title", ""), "no priorizó la viral")
 _ctx.requests = _orig_req
 # (2) título de YouTube del pronóstico con formato fijo de marca
 msx.write_youtube("youtube_test.txt", played_x, "18/06/2026", None)
