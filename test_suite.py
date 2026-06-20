@@ -444,6 +444,12 @@ ok("pausas: punto > coma > sin-signo, y varía con frase larga",
    pz._objetivo("hoy.", 1) >= pz.PUNTO_BASE and pz._objetivo("hoy.", 10) > pz._objetivo("hoy.", 1)
    and pz._objetivo("hoy,", 3) < pz._objetivo("hoy.", 3) and pz._objetivo("palabra", 5) == pz.SIN_SIGNO,
    f'punto1={pz._objetivo("hoy.",1)}, punto10={pz._objetivo("hoy.",10)}, coma={pz._objetivo("hoy,",3)}')
+# CRÍTICO: los segmentos del audio NUNCA se solapan (mensajes no se montan uno sobre otro), ni con ops adversarios
+_segx = pz._segmentos([("cut", 1.0, 2.0), ("ins", 1.5, 0.3), ("cut", 3.0, 3.4), ("ins", 4.0, 0.2), ("cut", 2.5, 5.0)], 6.0)
+_aud = [s for s in (_segx or []) if s[0] == "a"]
+ok("pausas: los segmentos van en orden y SIN solaparse (mensajes no se solapan)",
+   _segx is not None and all(_aud[i][2] <= _aud[i + 1][1] + 1e-6 for i in range(len(_aud) - 1))
+   and all(s[2] > s[1] for s in _aud), str(_segx))
 # noticia_partido: relevante al juego + contexto Mundial 2026 + publicada el día o el anterior
 import contexto as _ctx
 _orig_req = _ctx.requests

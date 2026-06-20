@@ -29,7 +29,7 @@ _FONETICO = {
     # estadios (sílabas separadas por ESPACIOS, no guiones: el guion provoca microcortes en ElevenLabs)
     "AT&T Stadium": "estadio ei ti and ti", "Arrowhead Stadium": "estadio árrou jed",
     "Mercedes-Benz Stadium": "estadio mercédes bens", "Lincoln Financial Field": "campo línkon fainánchal",
-    "Hard Rock Stadium": "estadio jard rok", "Gillette Stadium": "estadio yilét",
+    "Hard Rock Stadium": "estadio Hard Rock", "Gillette Stadium": "estadio yilét",
     "Levi's Stadium": "estadio lívais", "MetLife Stadium": "estadio métlaif",
     "NRG Stadium": "estadio ene erre ye", "SoFi Stadium": "estadio soufái",
     "Lumen Field": "campo lúmen", "BMO Field": "campo bi em ou", "BC Place": "bi si pléis",

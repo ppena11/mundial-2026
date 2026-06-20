@@ -74,6 +74,35 @@ def _clause_lens(toks):
         if re.search(r"[.,;:!?]$", t): c = 0
     return out
 
+def _segmentos(ops, total):
+    """Convierte los ajustes (cortes/inserciones) en una lista ORDENADA de tramos a unir, SIN solapes:
+    ('a', inicio, fin) = audio a conservar; ('s', dur) = silencio insertado. Devuelve None si quedaría un
+    solape (entonces no se toca el audio). Nunca deja que el cursor retroceda -> nunca se solapan los mensajes."""
+    segs, cur = [], 0.0
+    for op in sorted(ops, key=lambda o: o[1]):
+        if op[0] == "cut":
+            a, b = max(op[1], cur), op[2]       # nunca retroceder
+            if b <= a:                           # corte inválido o ya cubierto -> ignorar
+                continue
+            if a > cur: segs.append(("a", cur, a))
+            cur = b
+        else:                                    # ins
+            p, d = op[1], op[2]
+            if p < cur - 0.001:                  # inserción que retrocedería (solaparía) -> ignorar
+                continue
+            if p > cur: segs.append(("a", cur, p))
+            segs.append(("s", d)); cur = max(cur, p)
+    if cur < total: segs.append(("a", cur, total))
+    if not segs:
+        segs = [("a", 0.0, total)]
+    prev = -1.0                                  # verificación final: audio en orden y sin solapes
+    for seg in segs:
+        if seg[0] == "a":
+            if seg[1] < prev - 0.001 or seg[2] <= seg[1]:
+                return None
+            prev = seg[2]
+    return segs
+
 def normalizar_pausas(audio_in, texto, audio_out=None, modelo=None):
     """Ajusta las pausas a la puntuación del `texto` y pule el audio (loudness/high-pass). True si reescribió."""
     audio_out = audio_out or audio_in
@@ -118,20 +147,10 @@ def normalizar_pausas(audio_in, texto, audio_out=None, modelo=None):
     if not ops and not pulir:
         return False
 
-    # construir la secuencia de segmentos (audio a conservar + silencios insertados)
-    segs, cur = [], 0.0
-    for op in sorted(ops, key=lambda o: o[1]):
-        if op[0] == "cut":
-            a, b = op[1], op[2]
-            if a > cur: segs.append(("a", cur, a))
-            cur = max(cur, b)
-        else:
-            p, d = op[1], op[2]
-            if p > cur: segs.append(("a", cur, p))
-            segs.append(("s", d)); cur = p
-    if cur < total: segs.append(("a", cur, total))
-    if not segs:
-        segs = [("a", 0.0, total)]
+    segs = _segmentos(ops, total)
+    if segs is None:                            # se detectó solape -> no tocar el audio (seguridad)
+        print("(pausas: se detectó posible solape -> audio sin cambios)")
+        return False
 
     AF = "aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=mono"
     parts, labels = [], []
