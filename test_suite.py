@@ -421,6 +421,12 @@ ok("foneticizar: NO altera el texto normal del guion",
    mvz.foneticizar("El pronóstico de hoy es muy claro") == "El pronóstico de hoy es muy claro", "tocó texto normal")
 ok("suavizar_tts: quita rayas/elipsis y espacios dobles (pausas raras)",
    mvz.suavizar_tts("Hola—mundo…  ya") == "Hola, mundo. ya", mvz.suavizar_tts("Hola—mundo…  ya"))
+# etiquetas de emoción de eleven_v3: se quedan SOLO en el audio v3; fuera del v2 y del subtítulo
+ok("quitar_tags: elimina [excited] para el audio (fallback v2)",
+   mvz.quitar_tags("[excited] Hola [confident] mundo") == "Hola mundo", mvz.quitar_tags("[excited] Hola [confident] mundo"))
+ok("subtítulos NO muestran las etiquetas de emoción",
+   "[" not in sub.normalizar_marca_texto("[excited] Canadá goleó") and
+   "Canadá goleó" in sub.normalizar_marca_texto("[excited] Canadá goleó"), "quedó la etiqueta en el subtítulo")
 # noticia_partido: relevante al juego + contexto Mundial 2026 + publicada el día o el anterior
 import contexto as _ctx
 _orig_req = _ctx.requests

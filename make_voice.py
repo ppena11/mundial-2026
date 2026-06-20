@@ -55,38 +55,56 @@ def suavizar_tts(text):
     text = re.sub(r"\s+([,.;:!?])", r"\1", re.sub(r"\s+", " ", text)).strip()  # espacios dobles y antes de signos
     return text
 
-def synth(text, out="voice.mp3"):
-    key = os.environ.get("ELEVENLABS_API_KEY", "").strip()
-    voice = os.environ.get("ELEVENLABS_VOICE_ID", "").strip()
-    model = os.environ.get("ELEVENLABS_MODEL", "eleven_multilingual_v2").strip()
-    if not key or not voice:
-        print("⚠️  Faltan ELEVENLABS_API_KEY / ELEVENLABS_VOICE_ID (ponlos en .env o Secrets)."); return False
-    fmt = os.environ.get("ELEVENLABS_FORMAT", "").strip()   # p.ej. mp3_44100_192 (Creator+); vacío = default del API
-    url = f"https://api.elevenlabs.io/v1/text-to-speech/{voice}" + (f"?output_format={fmt}" if fmt else "")
-    def _f(env, d):
-        try: return float(os.environ.get(env, d))
-        except Exception: return d
-    # Ajustes VERIFICADOS (doc + foros) para que suene HUMANA y NO sintética:
-    #  - stability ~0.40: rango emocional natural sin caer en inestabilidad (no bajar de 0.30).
-    #  - style 0.0: subirlo amplifica emoción PERO causa artefactos y pausas raras -> se deja en 0 (la emoción
-    #    sale de la stability baja). Configurable por si se quiere experimentar.
+def quitar_tags(text):
+    """Quita las etiquetas de emoción [excited], [confident]... (las entiende eleven_v3; otros modelos
+    las leerían en voz alta). Se usa para el fallback a v2 y como respaldo."""
+    return re.sub(r"\s+", " ", re.sub(r"\[[^\]]*\]", "", text)).strip()
+
+def _f(env, d):
+    try: return float(os.environ.get(env, d))
+    except Exception: return d
+
+def _voice_settings(v3):
+    # Ajustes VERIFICADOS (doc + foros) para sonar HUMANA y NO sintética:
+    #  - stability baja = rango emocional (no robótica); v3 usa modo "Natural" ~0.5, v2 ~0.40.
+    #  - style 0.0: subirlo causa artefactos/pausas raras -> la emoción sale de la stability, no del style.
     #  - similarity 0.80: 0.75–0.85 es el punto dulce; al 100% sobre-enuncia ("locutor de noticias").
-    vs = {"stability": _f("ELEVENLABS_STABILITY", 0.40),
+    vs = {"stability": _f("ELEVENLABS_STABILITY", 0.5 if v3 else 0.40),
           "similarity_boost": _f("ELEVENLABS_SIMILARITY", 0.80),
           "style": _f("ELEVENLABS_STYLE", 0.0),
           "use_speaker_boost": os.environ.get("ELEVENLABS_SPEAKER_BOOST", "1") not in ("0", "false", "False")}
-    spd = os.environ.get("ELEVENLABS_SPEED", "").strip()   # 0.7–1.2; opcional (solo si se define)
+    spd = os.environ.get("ELEVENLABS_SPEED", "").strip()   # 0.7–1.2; opcional
     if spd:
         try: vs["speed"] = float(spd)
         except Exception: pass
-    body = {"text": text, "model_id": model, "voice_settings": vs}
-    r = requests.post(url, headers={"xi-api-key": key, "Content-Type": "application/json",
-                                    "Accept": "audio/mpeg"}, json=body, timeout=60)
+    return vs
+
+def synth(text, out="voice.mp3"):
+    key = os.environ.get("ELEVENLABS_API_KEY", "").strip()
+    voice = os.environ.get("ELEVENLABS_VOICE_ID", "").strip()
+    model = os.environ.get("ELEVENLABS_MODEL", "eleven_v3").strip()   # v3 = el más humano/expresivo
+    if not key or not voice:
+        print("⚠️  Faltan ELEVENLABS_API_KEY / ELEVENLABS_VOICE_ID (ponlos en .env o Secrets)."); return False
+    fmt = os.environ.get("ELEVENLABS_FORMAT", "").strip()   # p.ej. mp3_44100_192 (Creator+); vacío = default
+    url = f"https://api.elevenlabs.io/v1/text-to-speech/{voice}" + (f"?output_format={fmt}" if fmt else "")
+    hdr = {"xi-api-key": key, "Content-Type": "application/json", "Accept": "audio/mpeg"}
+
+    def _call(model_id):
+        v3 = model_id.startswith("eleven_v3")
+        txt = text if v3 else quitar_tags(text)   # las etiquetas [..] solo las entiende v3; v2 las leería
+        body = {"text": txt, "model_id": model_id, "voice_settings": _voice_settings(v3)}
+        return requests.post(url, headers=hdr, json=body, timeout=90)
+
+    r = _call(model)
+    if r.status_code != 200 and model.startswith("eleven_v3"):   # RED DE SEGURIDAD: si v3 falla, usa v2
+        print(f"(eleven_v3 no disponible: {r.status_code} {r.text[:120]}; uso eleven_multilingual_v2)")
+        model = "eleven_multilingual_v2"
+        r = _call(model)
     if r.status_code != 200:
         print(f"⚠️  ElevenLabs respondió {r.status_code}: {r.text[:300]}"); return False
     with open(out, "wb") as f:
         f.write(r.content)
-    print(f"→ {out} generado con tu voz ({len(r.content)/1000:.0f} KB)")
+    print(f"→ {out} generado con tu voz ({model}, {len(r.content)/1000:.0f} KB)")
     return True
 
 if __name__ == "__main__":

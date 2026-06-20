@@ -51,8 +51,9 @@ def _tokens(texto):
 _FIRMA_RE = re.compile(r"\b[eé]i\s+[aá]i\s+u[ií]z\s+p[eé]dro\b", re.IGNORECASE)
 
 def normalizar_marca_texto(s):
-    """'(Soy) éi ái uíz Pédro' -> '(Soy) aiwithpedro' en el guion (100% fiable)."""
-    return _FIRMA_RE.sub("aiwithpedro", s)
+    """'(Soy) éi ái uíz Pédro' -> '(Soy) aiwithpedro' y quita etiquetas de emoción [excited] del subtítulo."""
+    s = re.sub(r"\[[^\]]*\]", "", s)                    # fuera etiquetas de emoción de eleven_v3
+    return re.sub(r"\s+", " ", _FIRMA_RE.sub("aiwithpedro", s)).strip()
 
 # ------------------------------------------------------------------ Whisper (solo TIEMPO)
 
@@ -273,6 +274,7 @@ def main():
     tpath = arg("--text")
     if tpath and os.path.exists(tpath):
         text = open(tpath, encoding="utf-8").read().strip()
+        text = re.sub(r"\s+", " ", re.sub(r"\[[^\]]*\]", "", text)).strip()   # quita etiquetas [excited] del subtítulo
     out = arg("--out", video)
 
     quitar = None

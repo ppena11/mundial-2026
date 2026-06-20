@@ -149,7 +149,9 @@ AI_SYSTEM = (
     "casi nunca' —NO copies esos ejemplos, inventa el tuyo). Luego invita a SUSCRIBIRSE a mi canal de YouTube y a ver el análisis completo en el link "
     "de mi bio (NO nombres 'Substack' en la voz) "
     "y firma la voz diciendo EXACTAMENTE: Soy éi ái uíz Pédro (así se pronuncia @aiwithpedro). SIN otros emojis ni "
-    "símbolos (lo lee un sintetizador de voz); números con dígitos y "
+    "símbolos (lo lee un sintetizador de voz). ÚNICA excepción: AÑADE 1 o 2 ETIQUETAS DE EMOCIÓN de "
+    "eleven_v3 entre corchetes (p. ej. [excited], [confident], [serious]) en momentos clave —el gancho o una "
+    "sorpresa— para dar energía; con moderación y NUNCA una etiqueta en la firma. Números con dígitos y "
     "'por ciento'; 'contra' en vez de 'vs'; varía el arranque para no repetir. Si en los datos hay CONTEXTO del "
     "torneo (resultados recientes, una sorpresa, el récord o un titular), téjelo en 1 frase para que suene al día.\n"
     '"caption": 1 o 2 líneas cortas para la descripción de YouTube Shorts, con gancho; puede llevar 1 o 2 emojis; menciona '
