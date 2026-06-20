@@ -88,11 +88,13 @@ def _voice_settings(v3):
     #  - stability baja = rango emocional (no robótica); v3 usa modo "Natural" ~0.5, v2 ~0.40.
     #  - style 0.0: subirlo causa artefactos/pausas raras -> la emoción sale de la stability, no del style.
     #  - similarity 0.80: 0.75–0.85 es el punto dulce; al 100% sobre-enuncia ("locutor de noticias").
-    vs = {"stability": _f("ELEVENLABS_STABILITY", 0.5 if v3 else 0.45),
-          "similarity_boost": _f("ELEVENLABS_SIMILARITY", 0.88),
+    # v3: modo ROBUST (stability 1.0) = el más FIEL a la voz clonada (la doc lo describe "similar a v2");
+    # v2: 0.45 (ya suena idéntica). Similarity alta para pegarse a tu voz (0.75–0.90; 100% sobre-enuncia).
+    vs = {"stability": _f("ELEVENLABS_STABILITY", 1.0 if v3 else 0.45),
+          "similarity_boost": _f("ELEVENLABS_SIMILARITY", 0.90 if v3 else 0.88),
           "style": _f("ELEVENLABS_STYLE", 0.0),
           "use_speaker_boost": os.environ.get("ELEVENLABS_SPEAKER_BOOST", "1") not in ("0", "false", "False")}
-    vs["speed"] = _f("ELEVENLABS_SPEED", 1.07)   # un pelín más ágil que 1.0 (rango 0.7–1.2); configurable
+    vs["speed"] = _f("ELEVENLABS_SPEED", 1.10)   # un poco más ágil que 1.0 (rango 0.7–1.2); configurable
     return vs
 
 def _frases(text):
