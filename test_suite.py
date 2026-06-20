@@ -48,7 +48,8 @@ curio.web_news = lambda: None                  # offline + determinista: fuerza 
 if os.path.exists(curio.CURIO_FILE): os.remove(curio.CURIO_FILE)
 import contexto
 contexto.noticia_mundial = lambda: None        # offline: sin red en las pruebas
-contexto.noticia_partido = lambda a, b: None   # offline: sin red en las pruebas (noticia por partido)
+_noticia_partido_real = contexto.noticia_partido            # guardar la real para probar sus filtros abajo
+contexto.noticia_partido = lambda a, b, target=None: None   # offline: sin red en las pruebas (noticia por partido)
 # CRÍTICO: env_loader re-inyecta la clave al importar curio/contexto -> forzar VACÍA para que las pruebas
 # nunca llamen a Claude (deterministas y SIN gastar créditos).
 os.environ["ANTHROPIC_API_KEY"] = ""
@@ -381,6 +382,33 @@ ok("el prompt prohíbe que Claude deduzca el día", "NUNCA lo deduzcas" in msx.A
 ok("_summary marca el PRONÓSTICO de cada partido", "PRONÓSTICO Brasil contra Marruecos" in sm_x, sm_x)
 ok("AI_SYSTEM pide 'el pronóstico de A contra B' por partido", "el pronóstico de A contra B" in msx.AI_SYSTEM, "falta la regla")
 ok("AI_SYSTEM prohíbe inventar noticias", "NUNCA inventes noticias" in msx.AI_SYSTEM, "falta el guardarraíl")
+# noticia_partido: relevante al juego + contexto Mundial 2026 + publicada el día o el anterior
+import contexto as _ctx
+_orig_req = _ctx.requests
+class _FakeReq:
+    def __init__(s, text): s._t = text
+    def get(s, *a, **k):
+        class _R: pass
+        r = _R(); r.status_code = 200; r.text = s._t; return r
+def _rss(items):
+    body = "".join(f"<item><title>{t}</title><source>{s}</source><description>{d}</description><pubDate>{p}</pubDate></item>"
+                   for t, s, d, p in items)
+    return f"<rss><channel>{body}</channel></rss>"
+_ctx.requests = _FakeReq(_rss([
+    ("Mundial Sub-17: Brasil vs Marruecos", "ESPN", "", "Wed, 17 Jun 2026 10:00:00 GMT"),        # fuera: sub-17
+    ("Brasil vs Marruecos en el Mundial 2026", "Marca", "", "Fri, 12 Jun 2026 10:00:00 GMT"),     # fuera: fecha vieja
+    ("Brasil vs Marruecos: duelazo del Mundial 2026 hoy", "AS", "", "Wed, 17 Jun 2026 09:00:00 GMT"),  # OK (día anterior)
+]))
+n_ok = _noticia_partido_real("Brasil", "Marruecos", "20260618")
+ok("noticia_partido: acepta la relevante+reciente y descarta sub-17/fecha vieja",
+   bool(n_ok) and "duelazo" in n_ok["title"], f"{n_ok}")
+_ctx.requests = _FakeReq(_rss([("Brasil brilla en el Mundial 2026", "AS", "", "Wed, 17 Jun 2026 09:00:00 GMT")]))
+ok("noticia_partido: rechaza si NO menciona a ambos equipos",
+   _noticia_partido_real("Brasil", "Marruecos", "20260618") is None, "no debió aceptar")
+_ctx.requests = _FakeReq(_rss([("Brasil vs Marruecos del Mundial 2022 inolvidable", "AS", "", "Wed, 17 Jun 2026 09:00:00 GMT")]))
+ok("noticia_partido: rechaza otra edición (Mundial 2022)",
+   _noticia_partido_real("Brasil", "Marruecos", "20260618") is None, "no debió aceptar 2022")
+_ctx.requests = _orig_req
 # (2) título de YouTube del pronóstico con formato fijo de marca
 msx.write_youtube("youtube_test.txt", played_x, "18/06/2026", None)
 yt_l1 = open("youtube_test.txt", encoding="utf-8").read().splitlines()[0]

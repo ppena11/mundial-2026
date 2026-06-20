@@ -61,13 +61,29 @@ def noticia_mundial():
         pass
     return None
 
-def noticia_partido(a, b):
-    """Titular REAL más relevante del partido A vs B (Google News RSS en español). None si no hay.
-    Se usa para el ángulo viral de cada pronóstico; NUNCA se inventa nada."""
+def noticia_partido(a, b, target=None):
+    """Titular REAL del partido A vs B en el contexto del Mundial 2026 (Google News RSS, español).
+    EXIGE: (1) menciona a AMBOS equipos, (2) contexto Mundial 2026 (excluye otros años/torneos),
+    (3) publicada el día del partido o el día anterior (target = 'YYYYMMDD'). None si nada cumple.
+    NUNCA se inventa nada; si no hay noticia que cumpla, el guion usa el ángulo del modelo."""
     if requests is None:
         return None
-    import xml.etree.ElementTree as ET
-    q = f'"{a}" "{b}" (Mundial OR "Copa del Mundo" OR FIFA)'
+    import xml.etree.ElementTree as ET, unicodedata
+    from datetime import date, timedelta
+    from email.utils import parsedate_to_datetime
+    def _strip(s):
+        s = unicodedata.normalize("NFD", (s or "").lower())
+        return "".join(c for c in s if unicodedata.category(c) != "Mn")
+    na, nb = _strip(a), _strip(b)
+    # ventana de fechas permitida: día del partido y el anterior
+    allow = None
+    if target and len(str(target)) == 8:
+        try:
+            d = date(int(target[:4]), int(target[4:6]), int(target[6:8]))
+            allow = {d, d - timedelta(days=1)}
+        except Exception:
+            allow = None
+    q = f'"{a}" "{b}" "Mundial 2026"'
     url = NEWS_RSS.format(q=urllib.parse.quote(q))
     raw = None
     for u in (url, PROXY + urllib.parse.quote(url, safe="")):
@@ -79,14 +95,10 @@ def noticia_partido(a, b):
             pass
     if not raw:
         return None
-    import unicodedata
-    def _strip(s):
-        s = unicodedata.normalize("NFD", (s or "").lower())
-        return "".join(c for c in s if unicodedata.category(c) != "Mn")
-    na, nb = _strip(a), _strip(b)
-    # fuera otros torneos/categorías que ensucian la búsqueda
     BAD = ("sub 17", "sub-17", "sub17", "sub 20", "sub-20", "sub 19", "sub 23",
            "femenin", "femenil", "amistoso", "videojuego", "ea sports", "playstation", "fc 26", "fifa 26")
+    WC = ("mundial", "copa del mundo", "world cup", "fifa")          # contexto Copa del Mundo
+    WRONG_YEARS = ("2010", "2014", "2018", "2022", "2030")           # otra edición que NO es 2026
     try:
         root = ET.fromstring(raw)
         for item in root.iter("item"):
@@ -95,13 +107,23 @@ def noticia_partido(a, b):
             source = (src.text.strip() if src is not None and src.text else "Google News")
             if " - " in title:
                 title, source = title.rsplit(" - ", 1)
-            low = _strip(title)
-            if not title or "http" in low or "www." in low:   # fuera titulares con enlaces crudos
+            ctx = _strip(title) + " | " + _strip(item.findtext("description") or "")
+            if not title or "http" in ctx or "www." in ctx:        # fuera enlaces crudos
                 continue
-            if any(x in low for x in BAD):                     # fuera otras categorías/torneos
+            if any(x in ctx for x in BAD):                          # fuera otras categorías/torneos
                 continue
-            if na not in low and nb not in low:                # debe mencionar al menos un equipo del partido
+            if na not in ctx or nb not in ctx:                      # (1) AMBOS equipos
                 continue
+            if not any(w in ctx for w in WC):                       # (2a) contexto Copa del Mundo
+                continue
+            if any(y in ctx for y in WRONG_YEARS) and "2026" not in ctx:   # (2b) que NO sea otra edición
+                continue
+            if allow is not None:                                   # (3) publicada el día del partido o el anterior
+                try:
+                    if parsedate_to_datetime(item.findtext("pubDate")).date() not in allow:
+                        continue
+                except Exception:
+                    continue                                        # sin fecha fiable -> se descarta
             return {"title": title.strip(), "source": source.strip()}
     except Exception:
         pass

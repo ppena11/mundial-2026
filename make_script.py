@@ -56,6 +56,7 @@ def _summary(fh, played, pick, clearest, tr):
         L.append("Hoy no hay partidos del Mundial (el torneo arranca el 11 de junio).")
         return "\n".join(L)
     L.append(f"Partidos de hoy ({len(played)}). Para CADA uno di EL PRONÓSTICO (marcador) y teje su ángulo más viral:")
+    target = f"{fh[6:10]}{fh[3:5]}{fh[0:2]}"
     try:
         import contexto
     except Exception:
@@ -63,9 +64,9 @@ def _summary(fh, played, pick, clearest, tr):
     for d in played:
         L.append(f"- PRONÓSTICO {dd.acc(d['a'])} contra {dd.acc(d['b'])}: favorito {dd.acc(d['fav'])} con {round(100*d['fp'])} "
                  f"por ciento; marcador previsto {dd.acc(d['a'])} {d['sx']} - {d['sy']} {dd.acc(d['b'])}.")
-        n = contexto.noticia_partido(dd.acc(d['a']), dd.acc(d['b'])) if contexto else None
+        n = contexto.noticia_partido(dd.acc(d['a']), dd.acc(d['b']), target) if contexto else None
         if n:
-            L.append(f"  Noticia REAL de este partido (fuente {n['source']}): {n['title']}")
+            L.append(f"  Noticia REAL de este partido, del Mundial 2026 y del día (fuente {n['source']}): {n['title']}")
     if pick:
         t, mpb, mkp, edge = pick[1]
         L.append(f"Jugada de valor del día: {dd.acc(t)} (el modelo le da {round(100*mpb)} por ciento y el mercado solo {round(100*mkp)} por ciento; está infravalorada).")
