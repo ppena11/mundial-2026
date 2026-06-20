@@ -416,9 +416,16 @@ ok("AI_SYSTEM: la opinión del destacado va JUSTO DESPUÉS de ese partido (no al
 # fonética de estadios/ciudades SOLO para el audio (ElevenLabs); el texto queda real para subtítulos
 import make_voice as mvz
 ph = mvz.foneticizar("Se juega en el NRG Stadium de Houston, Texas. También Mexico City y el BMO Field.")
-ok("foneticizar: estadios/ciudades EE.UU./Canadá a fonética española",
-   "estadio ene erre ye" in ph and "jiúston" in ph and "téksas" in ph
-   and "Ciudad de México" in ph and "campo bi em ou" in ph, ph)
+ok("foneticizar: ciudades a fonética española, pero estadios COMERCIALES en su nombre original",
+   "estadio NRG" in ph and "campo BMO" in ph and "jiúston" in ph and "téksas" in ph
+   and "Ciudad de México" in ph, ph)
+# CRÍTICO: ningún nombre COMERCIAL de estadio se deja en "modo fonético" (como pasó con 'jard rok')
+ok("foneticizar: marcas de estadio NO foneticizadas (Hard Rock, Gillette, Levi's, MetLife, SoFi, Mercedes-Benz)",
+   all(marca in mvz.foneticizar(orig) for orig, marca in [
+       ("Hard Rock Stadium", "Hard Rock"), ("Gillette Stadium", "Gillette"), ("Levi's Stadium", "Levi's"),
+       ("MetLife Stadium", "MetLife"), ("SoFi Stadium", "SoFi"), ("Mercedes-Benz Stadium", "Mercedes-Benz"),
+       ("Lincoln Financial Field", "Lincoln Financial"), ("Arrowhead Stadium", "Arrowhead")]),
+   "alguna marca quedó foneticizada")
 ok("foneticizar: NO altera el texto normal del guion",
    mvz.foneticizar("El pronóstico de hoy es muy claro") == "El pronóstico de hoy es muy claro", "tocó texto normal")
 ok("foneticizar: Haití -> aití (H muda; el TTS no debe decir 'jaiti')",

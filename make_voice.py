@@ -26,14 +26,15 @@ def arg(flag, default):
 # ElevenLabs los pronuncie bien. Se aplica al texto que va al TTS; voiceover.txt conserva el nombre real
 # (así los subtítulos muestran "Houston"/"NRG Stadium", no la fonética).
 _FONETICO = {
-    # estadios (sílabas separadas por ESPACIOS, no guiones: el guion provoca microcortes en ElevenLabs)
-    "AT&T Stadium": "estadio ei ti and ti", "Arrowhead Stadium": "estadio árrou jed",
-    "Mercedes-Benz Stadium": "estadio mercédes bens", "Lincoln Financial Field": "campo línkon fainánchal",
-    "Hard Rock Stadium": "estadio Hard Rock", "Gillette Stadium": "estadio yilét",
-    "Levi's Stadium": "estadio lívais", "MetLife Stadium": "estadio métlaif",
-    "NRG Stadium": "estadio ene erre ye", "SoFi Stadium": "estadio soufái",
-    "Lumen Field": "campo lúmen", "BMO Field": "campo bi em ou", "BC Place": "bi si pléis",
-    "Estadio BBVA": "estadio be be uve a",
+    # ESTADIOS: NO se foneticizan los nombres COMERCIALES/propios (ElevenLabs los pronuncia bien, como "Hard
+    # Rock"); el respelling los arruina. Solo traducimos el genérico Stadium->estadio y Field->campo.
+    "AT&T Stadium": "estadio AT&T", "Arrowhead Stadium": "estadio Arrowhead",
+    "Mercedes-Benz Stadium": "estadio Mercedes-Benz", "Lincoln Financial Field": "campo Lincoln Financial",
+    "Hard Rock Stadium": "estadio Hard Rock", "Gillette Stadium": "estadio Gillette",
+    "Levi's Stadium": "estadio Levi's", "MetLife Stadium": "estadio MetLife",
+    "NRG Stadium": "estadio NRG", "SoFi Stadium": "estadio SoFi",
+    "Lumen Field": "campo Lumen", "BMO Field": "campo BMO",
+    # (BC Place y Estadio BBVA se dejan tal cual: ya se leen bien)
     # ciudades / estados de EE.UU. y Canadá (México y nombres ya españoles se dejan igual)
     "East Rutherford": "íst ráderford", "New Jersey": "niú yérsi", "Kansas City": "kánsas síti",
     "Mexico City": "Ciudad de México", "Miami Gardens": "maiámi gárdens", "Houston": "jiúston",
