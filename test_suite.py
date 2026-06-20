@@ -386,7 +386,20 @@ ok("el prompt prohíbe que Claude deduzca el día", "NUNCA lo deduzcas" in msx.A
 # (1b) pronóstico CLARO por partido + ángulo viral con noticia real o dato del modelo (sin inventar)
 ok("_summary marca el PRONÓSTICO de cada partido", "PRONÓSTICO Brasil contra Marruecos" in sm_x, sm_x)
 ok("AI_SYSTEM pide 'el pronóstico de A contra B' por partido", "el pronóstico de A contra B" in msx.AI_SYSTEM, "falta la regla")
-ok("AI_SYSTEM prohíbe inventar noticias", "NUNCA inventes noticias" in msx.AI_SYSTEM, "falta el guardarraíl")
+ok("AI_SYSTEM prohíbe inventar (noticias/hora/sede)",
+   "NUNCA inventes" in msx.AI_SYSTEM and "noticias" in msx.AI_SYSTEM, "falta el guardarraíl")
+# el partido MÁS importante lleva sede+noticia; los demás solo la hora
+played2 = [
+    {"a": "Brasil", "b": "Marruecos", "fav": "Brasil", "fp": 0.6, "sx": 2, "sy": 0,
+     "utc": "2026-06-13T19:00Z", "estadio": "Azteca", "ciudad": "CDMX", "pais": "México"},
+    {"a": "Catar", "b": "Suiza", "fav": "Suiza", "fp": 0.7, "sx": 0, "sy": 2,
+     "utc": "2026-06-13T22:00Z", "estadio": "Lumen Field", "ciudad": "Seattle", "pais": "Estados Unidos"},
+]
+sm2 = msx._summary("13/06/2026", played2, None, None, {"n": 0})
+ok("solo UN partido es el destacado (con sede); los demás solo la hora",
+   sm2.count("[PARTIDO DESTACADO DEL DÍA]") == 1 and sm2.count("Sede:") == 1 and sm2.count("Hora:") == 2, sm2)
+ok("AI_SYSTEM: destacado=detalle, los demás=solo hora",
+   "[PARTIDO DESTACADO DEL DÍA]" in msx.AI_SYSTEM and "SOLO el pronóstico" in msx.AI_SYSTEM, "falta la regla")
 # noticia_partido: relevante al juego + contexto Mundial 2026 + publicada el día o el anterior
 import contexto as _ctx
 _orig_req = _ctx.requests

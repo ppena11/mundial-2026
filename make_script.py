@@ -55,22 +55,33 @@ def _summary(fh, played, pick, clearest, tr):
     if not played:
         L.append("Hoy no hay partidos del Mundial (el torneo arranca el 11 de junio).")
         return "\n".join(L)
-    L.append(f"Partidos de hoy ({len(played)}). Para CADA uno di EL PRONÓSTICO (marcador) y teje su ángulo más viral:")
+    L.append(f"Partidos de hoy ({len(played)}). Di EL PRONÓSTICO (marcador) de TODOS:")
     target = f"{fh[6:10]}{fh[3:5]}{fh[0:2]}"
     try:
         import contexto
     except Exception:
         contexto = None
-    for d in played:
+    # partido MÁS IMPORTANTE del día = el del equipo con mayor probabilidad de ser campeón
+    champ = {}
+    try:
+        champ = dict(json.load(open("champ_today.json", encoding="utf-8"))["campeon"])
+    except Exception:
+        pass
+    feat = max(range(len(played)), key=lambda i: max(champ.get(played[i]["a"], 0), champ.get(played[i]["b"], 0)))
+    for i, d in enumerate(played):
         hora = dd.hora_et(d["utc"]) if d.get("utc") else ""
-        sede = ", ".join(x for x in (d.get("estadio"), d.get("ciudad"), d.get("pais")) if x)
-        det = (f" Hora: {hora}." if hora else "") + (f" Sede: {sede}." if sede else "")
-        L.append(f"- PRONÓSTICO {dd.acc(d['a'])} contra {dd.acc(d['b'])}: favorito {dd.acc(d['fav'])} con {round(100*d['fp'])} "
-                 f"por ciento; marcador previsto {dd.acc(d['a'])} {d['sx']} - {d['sy']} {dd.acc(d['b'])}.{det}")
-        n = contexto.noticia_partido(dd.acc(d['a']), dd.acc(d['b']), target) if contexto else None
-        if n:
-            L.append(f"  Ángulo noticioso del día para este partido (intégralo al comentario con naturalidad, "
-                     f"SIN citar el medio ni decir 'según'): {n['title']}")
+        base = (f"PRONÓSTICO {dd.acc(d['a'])} contra {dd.acc(d['b'])}: favorito {dd.acc(d['fav'])} con "
+                f"{round(100*d['fp'])} por ciento; marcador previsto {dd.acc(d['a'])} {d['sx']} - {d['sy']} {dd.acc(d['b'])}.")
+        if i == feat:
+            sede = ", ".join(x for x in (d.get("estadio"), d.get("ciudad"), d.get("pais")) if x)
+            det = (f" Hora: {hora}." if hora else "") + (f" Sede: {sede}." if sede else "")
+            L.append("- [PARTIDO DESTACADO DEL DÍA] " + base + det)
+            n = contexto.noticia_partido(dd.acc(d['a']), dd.acc(d['b']), target) if contexto else None
+            if n:
+                L.append(f"  Ángulo noticioso del día para el partido destacado (intégralo con naturalidad, "
+                         f"SIN citar el medio ni decir 'según'): {n['title']}")
+        else:
+            L.append(f"- {base}" + (f" Hora: {hora}." if hora else ""))
     if pick:
         t, mpb, mkp, edge = pick[1]
         L.append(f"Jugada de valor del día: {dd.acc(t)} (el modelo le da {round(100*mpb)} por ciento y el mercado solo {round(100*mkp)} por ciento; está infravalorada).")
@@ -100,15 +111,15 @@ AI_SYSTEM = (
     "frases limpias y bien armadas, sin relleno ni muletillas. "
     'ABRE diciendo la fecha de hoy con ESTE formato: "Aquí está el pronóstico de hoy, <día de la semana> <número> '
     'de <mes>" (usa EXACTAMENTE el día y la fecha de los datos, p. ej. "Aquí está el pronóstico de hoy, jueves 18 '
-    'de junio"); NO digas "el día N del torneo". Luego, PARA CADA PARTIDO, preséntalo como un profesional: deja '
-    "CLARO que es EL PRONÓSTICO de ese partido (di 'el pronóstico de A contra B') con su MARCADOR PREVISTO; di "
-    "CUÁNDO se juega (la hora) y DÓNDE (estadio, ciudad y país) usando SOLO los datos dados; e integra con "
-    "naturalidad el ángulo noticioso del día si lo hay (SIN citar el medio ni decir 'según', como parte del "
-    "comentario), y si no lo hay usa la historia del modelo (la estrella, la sorpresa, lo que está en juego). "
-    "NUNCA inventes noticias, ni la hora, ni la sede, ni lesiones ni declaraciones: si un dato no está en los "
-    "datos, NO lo menciones. "
-    "MENCIONA CADA PARTIDO con su marcador, no solo el más importante (puedes resaltar el más jugoso, pero no omitas ninguno). "
-    "Ritmo de narrador: ~45 s con 2-3 partidos, hasta ~80 s con 6 (pronóstico + cuándo/dónde + ángulo por partido). "
+    'de junio"); NO digas "el día N del torneo". '
+    "Presenta CADA partido como 'el pronóstico de A contra B' con su MARCADOR PREVISTO, sin omitir ninguno. "
+    "El partido marcado como [PARTIDO DESTACADO DEL DÍA] es el MÁS IMPORTANTE: dale el trato de narrador COMPLETO "
+    "—además del pronóstico, di DÓNDE se juega EN DETALLE (estadio, ciudad y país) y la hora, e integra con "
+    "naturalidad LA NOTICIA del día como parte del comentario (SIN citar el medio ni decir 'según'). "
+    "Para LOS DEMÁS partidos di SOLO el pronóstico (marcador y favorito) y la HORA; NO menciones su sede ni noticia. "
+    "Usa SOLO los datos dados; NUNCA inventes nada —ni la hora, ni la sede, ni noticias, ni lesiones—: si un dato "
+    "no está, NO lo menciones. "
+    "Ritmo de narrador: ágil y limpio, ~40 a 60 segundos en total. "
     "Cierra invitando a SUSCRIBIRSE a mi canal de YouTube y a ver el análisis completo en el link "
     "de mi bio (NO nombres 'Substack' en la voz) "
     "y firma la voz diciendo EXACTAMENTE: Soy éi ái uíz Pédro (así se pronuncia @aiwithpedro). SIN otros emojis ni "
