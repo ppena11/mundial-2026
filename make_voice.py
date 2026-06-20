@@ -94,7 +94,7 @@ def _voice_settings(v3):
           "similarity_boost": _f("ELEVENLABS_SIMILARITY", 0.90 if v3 else 0.88),
           "style": _f("ELEVENLABS_STYLE", 0.0),
           "use_speaker_boost": os.environ.get("ELEVENLABS_SPEAKER_BOOST", "1") not in ("0", "false", "False")}
-    vs["speed"] = _f("ELEVENLABS_SPEED", 1.10)   # un poco más ágil que 1.0 (rango 0.7–1.2); configurable
+    vs["speed"] = _f("ELEVENLABS_SPEED", 1.05)   # 1.05 = ágil pero mantiene la fidelidad (1.10 baja a 0.88); configurable
     return vs
 
 def _frases(text):
@@ -205,4 +205,10 @@ if __name__ == "__main__":
     text = open(src, encoding="utf-8").read().strip()
     text = suavizar_tts(numeros_a_palabras(foneticizar(text)))   # fonética + números en palabras + limpieza (SOLO audio)
     ok = synth(text, out)
+    if ok:   # control de calidad: normaliza las pausas del audio según la puntuación del guion
+        try:
+            import pausas
+            pausas.normalizar_pausas(out, quitar_tags(text), out)
+        except Exception as e:
+            print(f"(pausas: omitido, audio sin cambios: {e})")
     sys.exit(0 if ok else 1)
