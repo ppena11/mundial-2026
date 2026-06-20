@@ -28,7 +28,7 @@ def arg(flag, default):
 _FONETICO = {
     # ESTADIOS: NO se foneticizan los nombres COMERCIALES/propios (ElevenLabs los pronuncia bien, como "Hard
     # Rock"); el respelling los arruina. Solo traducimos el genérico Stadium->estadio y Field->campo.
-    "AT&T Stadium": "estadio AT&T", "Arrowhead Stadium": "estadio Arrowhead",
+    "AT&T Stadium": "estadio ei ti and ti", "Arrowhead Stadium": "estadio Arrowhead",  # AT&T deletreado (si no, dice "Ati")
     "Mercedes-Benz Stadium": "estadio Mercedes-Benz", "Lincoln Financial Field": "campo Lincoln Financial",
     "Hard Rock Stadium": "estadio Hard Rock", "Gillette Stadium": "estadio Gillette",
     "Levi's Stadium": "estadio Levi's", "MetLife Stadium": "estadio MetLife",
