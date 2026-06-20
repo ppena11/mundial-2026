@@ -408,6 +408,9 @@ ok("eliminatorias (desde 28-jun): TODOS los partidos van en detalle",
    sm_ko.count("[DETALLE]") == 2 and sm_ko.count("Sede:") == 2, sm_ko)
 ok("AI_SYSTEM: [DETALLE]=completo, los demás=solo hora",
    "[DETALLE]" in msx.AI_SYSTEM and "SOLO el pronóstico" in msx.AI_SYSTEM, "falta la regla")
+ok("AI_SYSTEM: gancho + factor IA + variación + opinión + cierre con actitud",
+   all(s in msx.AI_SYSTEM for s in ("GANCHO FUERTE", "VEINTE MIL simulaciones",
+       "VARÍA cómo introduces", "opinión corta", "ACTITUD")), "falta alguna mejora de estilo")
 # noticia_partido: relevante al juego + contexto Mundial 2026 + publicada el día o el anterior
 import contexto as _ctx
 _orig_req = _ctx.requests
