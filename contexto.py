@@ -97,10 +97,11 @@ def noticia_partido(a, b, target=None):
         return None
     BAD = ("sub 17", "sub-17", "sub17", "sub 20", "sub-20", "sub 19", "sub 23",
            "femenin", "femenil", "amistoso", "videojuego", "ea sports", "playstation", "fc 26", "fifa 26")
-    # notas de pura logística de transmisión: NO son virales, se descartan (mejor el ángulo del modelo)
+    # notas de pura logística/rutina: NO son virales, se descartan (mejor el ángulo del modelo)
     LOGISTICA = ("donde ver", "donde verlo", "en que canal", "que canal", "como ver", "como y cuando",
                  "como y donde", "donde y cuando", "donde y como", "a que hora", "horario", "horarios",
-                 "canales", "streaming", "transmision", "cuando juega", "en vivo")
+                 "canales", "streaming", "transmision", "cuando juega", "en vivo",
+                 "alineacion", "alineaciones", "once inicial", "11 inicial", "onceno", "posible once", "11 probable")
     # apuestas: la marca es informativa/educativa, NADA de apuestas -> descartar
     APUESTAS = ("apuesta", "apostar", "betting", "bet365", "1xbet", "casa de apuestas", "momios",
                 "mejores apuestas", "promociones del partido", "promociones de")
