@@ -41,6 +41,8 @@ _FONETICO = {
     "Massachusetts": "masachúsets", "Inglewood": "ínguelud", "Missouri": "misúri", "Miami": "maiámi",
     "Philadelphia": "filadélfia", "Pennsylvania": "pensilvánia", "Seattle": "siátel",
     "Washington": "guáchinton", "Vancouver": "vankúver", "Texas": "téksas",
+    # equipos que el TTS angliciza mal (la H de "Haití" debe ser MUDA, no "jaiti")
+    "Haití": "aití", "Haiti": "aití",
 }
 def foneticizar(text):
     """Reemplaza estadios/ciudades por su fonética en español (solo para el audio de ElevenLabs)."""
