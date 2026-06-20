@@ -104,6 +104,8 @@ def noticia_partido(a, b, target=None):
     # apuestas: la marca es informativa/educativa, NADA de apuestas -> descartar
     APUESTAS = ("apuesta", "apostar", "betting", "bet365", "1xbet", "casa de apuestas", "momios",
                 "mejores apuestas", "promociones del partido", "promociones de")
+    # pronósticos/predicciones de OTROS medios: compiten con lo nuestro y no son noticia -> descartar
+    PREDICCION = ("pronostico", "prediccion", "predicciones", "predice", "vaticin")
     WC = ("mundial", "copa del mundo", "world cup", "fifa")          # contexto Copa del Mundo
     WRONG_YEARS = ("2010", "2014", "2018", "2022", "2030")           # otra edición que NO es 2026
     # señales de "lo más viral" para PUNTUAR (en el título, ya sin acentos)
@@ -129,6 +131,8 @@ def noticia_partido(a, b, target=None):
             if any(x in lt for x in LOGISTICA):                     # fuera notas de "dónde/cómo ver" (no virales)
                 continue
             if any(x in ctx for x in APUESTAS):                     # fuera apuestas (la marca no las toca)
+                continue
+            if any(x in lt for x in PREDICCION):                    # fuera pronósticos/predicciones de otros medios
                 continue
             if na not in ctx or nb not in ctx:                      # (1) AMBOS equipos
                 continue

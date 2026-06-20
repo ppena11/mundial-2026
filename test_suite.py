@@ -416,6 +416,9 @@ _ctx.requests = _FakeReq(_rss([
 ]))
 ok("noticia_partido: prioriza la MÁS viral, no la primera",
    "advertencia" in (_noticia_partido_real("Brasil", "Marruecos", "20260618") or {}).get("title", ""), "no priorizó la viral")
+_ctx.requests = _FakeReq(_rss([("Pronóstico Brasil vs Marruecos: predicciones del Mundial 2026", "AS", LINK, "Thu, 18 Jun 2026 08:00:00 GMT")]))
+ok("noticia_partido: descarta pronósticos/predicciones de otros medios",
+   _noticia_partido_real("Brasil", "Marruecos", "20260618") is None, "no debió aceptar un pronóstico ajeno")
 _ctx.requests = _orig_req
 # (2) título de YouTube del pronóstico con formato fijo de marca
 msx.write_youtube("youtube_test.txt", played_x, "18/06/2026", None)
