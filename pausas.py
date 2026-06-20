@@ -75,36 +75,46 @@ def normalizar_pausas(audio_in, texto, audio_out=None, modelo=None):
     total = _dur(audio_in)
     if total <= 0:
         return False
-    # calcular intervalos de SILENCIO a recortar (el exceso de cada hueco)
-    cortes = []
+    # Ajustar CADA hueco a su pausa objetivo según la puntuación: recortar si sobra, INSERTAR si falta.
+    # ops: ("cut", a, b) elimina el silencio sobrante [a,b]; ("ins", p, d) inserta d s de silencio en p.
+    ops, recortado, insertado = [], 0.0, 0.0
     for i in range(len(pals) - 1):
         fin, ini_sig = pals[i][2], pals[i + 1][1]
         hueco = ini_sig - fin
-        if hueco <= 0:
-            continue
         tj = w2t.get(i)
         destino = _signo_destino(toks[tj]) if (tj is not None and tj < len(toks)) else SIN_SIGNO
-        if hueco > destino + 0.06:                      # sobra silencio -> recortar el exceso
-            cortes.append((fin + destino, ini_sig - MARGEN))
-    cortes = [(a, b) for a, b in cortes if b - a > 0.05]
-    if not cortes:
+        if hueco > destino + 0.06:                        # sobra silencio -> recortar
+            a, b = fin + destino, ini_sig - MARGEN
+            if b - a > 0.05:
+                ops.append(("cut", a, b)); recortado += (b - a)
+        elif destino > SIN_SIGNO and hueco < destino - 0.06:   # FALTA pausa donde hay signo -> insertar
+            ops.append(("ins", fin + max(hueco, 0.02), destino - hueco)); insertado += (destino - hueco)
+    if not ops:
         return False
-    # construir los tramos a CONSERVAR (complemento de los cortes) y concatenarlos
-    keep, cur = [], 0.0
-    for cs, ce in sorted(cortes):
-        cs = max(cs, cur)
-        if cs > cur:
-            keep.append((cur, cs))
-        cur = max(cur, ce)
-    if cur < total:
-        keep.append((cur, total))
-    if len(keep) < 2:
+    # Construir la secuencia de segmentos (audio a conservar + silencios insertados), en orden.
+    segs, cur = [], 0.0
+    for op in sorted(ops, key=lambda o: o[1]):
+        if op[0] == "cut":
+            a, b = op[1], op[2]
+            if a > cur: segs.append(("a", cur, a))
+            cur = max(cur, b)
+        else:  # ins
+            p, d = op[1], op[2]
+            if p > cur: segs.append(("a", cur, p))
+            segs.append(("s", d)); cur = p
+    if cur < total: segs.append(("a", cur, total))
+    if len(segs) < 2:
         return False
+    AF = "aformat=sample_fmts=fltp:sample_rates=44100:channel_layouts=mono"
+    parts, labels = [], []
+    for i, seg in enumerate(segs):
+        if seg[0] == "a":
+            parts.append(f"[0:a]atrim=start={seg[1]:.3f}:end={seg[2]:.3f},asetpts=PTS-STARTPTS,{AF}[s{i}]")
+        else:
+            parts.append(f"aevalsrc=0:d={seg[1]:.3f}:s=44100,{AF}[s{i}]")   # silencio generado
+        labels.append(f"[s{i}]")
+    fc = ";".join(parts) + ";" + "".join(labels) + f"concat=n={len(segs)}:v=0:a=1[out]"
     ff = _ff()
-    parts = "".join(f"[0:a]atrim=start={a:.3f}:end={b:.3f},asetpts=PTS-STARTPTS[s{i}];"
-                    for i, (a, b) in enumerate(keep))
-    cc = "".join(f"[s{i}]" for i in range(len(keep)))
-    fc = f"{parts}{cc}concat=n={len(keep)}:v=0:a=1[out]"
     tmp = audio_out + ".pn.mp3"
     r = subprocess.run([ff, "-y", "-i", audio_in, "-filter_complex", fc, "-map", "[out]",
                         "-c:a", "libmp3lame", "-q:a", "2", tmp], capture_output=True)
@@ -113,8 +123,9 @@ def normalizar_pausas(audio_in, texto, audio_out=None, modelo=None):
         return False
     import shutil
     shutil.move(tmp, audio_out)
-    quitados = sum(b - a for a, b in cortes)
-    print(f"  · pausas normalizadas: {len(cortes)} huecos ajustados a la puntuación (−{quitados:.1f}s de silencio)")
+    ncut = sum(1 for o in ops if o[0] == "cut"); nins = len(ops) - ncut
+    print(f"  · pausas normalizadas a la puntuación: {ncut} recortadas (−{recortado:.1f}s), "
+          f"{nins} insertadas donde faltaban (+{insertado:.1f}s)")
     return True
 
 if __name__ == "__main__":
