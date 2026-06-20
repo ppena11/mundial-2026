@@ -434,6 +434,14 @@ ok("numeros_a_palabras: cifras 0-99 a palabras (audio), años intactos",
 ok("stitching: parte el guion en frases y agrupa en bloques",
    len(mvz._frases("Uno. Dos! Tres?")) == 3 and len(mvz._bloques("Frase larga de prueba número. " * 30)) >= 2,
    f'frases={len(mvz._frases("Uno. Dos! Tres?"))}, bloques={len(mvz._bloques("Frase larga de prueba número. " * 30))}')
+# QC de pausas: objetivos según puntuación + variación natural por largo de frase
+import pausas as pz
+ok("pausas: clause_lens reinicia en cada signo",
+   pz._clause_lens(["Hola", "mundo.", "Otra", "frase."]) == [1, 2, 1, 2], str(pz._clause_lens(["Hola", "mundo.", "Otra", "frase."])))
+ok("pausas: punto > coma > sin-signo, y varía con frase larga",
+   pz._objetivo("hoy.", 1) >= pz.PUNTO_BASE and pz._objetivo("hoy.", 10) > pz._objetivo("hoy.", 1)
+   and pz._objetivo("hoy,", 3) < pz._objetivo("hoy.", 3) and pz._objetivo("palabra", 5) == pz.SIN_SIGNO,
+   f'punto1={pz._objetivo("hoy.",1)}, punto10={pz._objetivo("hoy.",10)}, coma={pz._objetivo("hoy,",3)}')
 # noticia_partido: relevante al juego + contexto Mundial 2026 + publicada el día o el anterior
 import contexto as _ctx
 _orig_req = _ctx.requests
