@@ -415,8 +415,8 @@ ok("AI_SYSTEM: gancho + factor IA + variación + opinión + cierre con actitud",
 import make_voice as mvz
 ph = mvz.foneticizar("Se juega en el NRG Stadium de Houston, Texas. También Mexico City y el BMO Field.")
 ok("foneticizar: estadios/ciudades EE.UU./Canadá a fonética española",
-   "estadio ene erre ge" in ph and "jiúston" in ph and "téksas" in ph
-   and "Ciudad de México" in ph and "campo bi em o" in ph, ph)
+   "estadio ene erre ye" in ph and "jiúston" in ph and "téksas" in ph
+   and "Ciudad de México" in ph and "campo bi em ou" in ph, ph)
 ok("foneticizar: NO altera el texto normal del guion",
    mvz.foneticizar("El pronóstico de hoy es muy claro") == "El pronóstico de hoy es muy claro", "tocó texto normal")
 ok("suavizar_tts: quita rayas/elipsis y espacios dobles (pausas raras)",

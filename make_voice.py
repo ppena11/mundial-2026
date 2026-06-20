@@ -27,20 +27,20 @@ def arg(flag, default):
 # (así los subtítulos muestran "Houston"/"NRG Stadium", no la fonética).
 _FONETICO = {
     # estadios (sílabas separadas por ESPACIOS, no guiones: el guion provoca microcortes en ElevenLabs)
-    "AT&T Stadium": "estadio ei ti an ti", "Arrowhead Stadium": "estadio árrou jed",
-    "Mercedes-Benz Stadium": "estadio mercédes bens", "Lincoln Financial Field": "campo línkon fainánshal",
+    "AT&T Stadium": "estadio ei ti and ti", "Arrowhead Stadium": "estadio árrou jed",
+    "Mercedes-Benz Stadium": "estadio mercédes bens", "Lincoln Financial Field": "campo línkon fainánchal",
     "Hard Rock Stadium": "estadio jard rok", "Gillette Stadium": "estadio yilét",
     "Levi's Stadium": "estadio lívais", "MetLife Stadium": "estadio métlaif",
-    "NRG Stadium": "estadio ene erre ge", "SoFi Stadium": "estadio soufái",
-    "Lumen Field": "campo lúmen", "BMO Field": "campo bi em o", "BC Place": "bi si pleis",
+    "NRG Stadium": "estadio ene erre ye", "SoFi Stadium": "estadio soufái",
+    "Lumen Field": "campo lúmen", "BMO Field": "campo bi em ou", "BC Place": "bi si pléis",
     "Estadio BBVA": "estadio be be uve a",
     # ciudades / estados de EE.UU. y Canadá (México y nombres ya españoles se dejan igual)
-    "East Rutherford": "íst rázerford", "New Jersey": "niú yérsi", "Kansas City": "kánsas síti",
+    "East Rutherford": "íst ráderford", "New Jersey": "niú yérsi", "Kansas City": "kánsas síti",
     "Mexico City": "Ciudad de México", "Miami Gardens": "maiámi gárdens", "Houston": "jiúston",
-    "Arlington": "árlinton", "Atlanta": "atlánta", "Foxborough": "fóxboro",
-    "Massachusetts": "másachúsets", "Inglewood": "íngluud", "Missouri": "misúri", "Miami": "maiámi",
+    "Arlington": "árlinton", "Atlanta": "atlánta", "Foxborough": "fóksboro",
+    "Massachusetts": "masachúsets", "Inglewood": "ínguelud", "Missouri": "misúri", "Miami": "maiámi",
     "Philadelphia": "filadélfia", "Pennsylvania": "pensilvánia", "Seattle": "siátel",
-    "Washington": "wáshinton", "Vancouver": "vankúver", "Texas": "téksas",
+    "Washington": "guáchinton", "Vancouver": "vankúver", "Texas": "téksas",
 }
 def foneticizar(text):
     """Reemplaza estadios/ciudades por su fonética en español (solo para el audio de ElevenLabs)."""
