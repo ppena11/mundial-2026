@@ -71,6 +71,15 @@ def _summary(fh, played, pick, clearest, tr):
     # Desde el 28-jun-2026 (Dieciseisavos) la fase de grupos terminó: TODOS los partidos van en detalle.
     # En fase de grupos, solo el más importante (el destacado).
     eliminatorias = target >= "20260628"
+    # nº de partido de cada equipo en el torneo (contado del calendario real, para que Claude NO lo invente)
+    try:
+        _todos = dd.fetch_all()
+    except Exception:
+        _todos = []
+    _tgt = f"{target[:4]}-{target[4:6]}-{target[6:8]}"
+    def _num_partido(team):
+        fechas = sorted(m.get("utc", "")[:10] for m in _todos if team in (m.get("a"), m.get("b")))
+        return sum(1 for f in fechas if f and f <= _tgt)
     for i, d in enumerate(played):
         hora = dd.hora_hablada(d["utc"]) if d.get("utc") else ""
         base = (f"PRONÓSTICO {dd.acc(d['a'])} contra {dd.acc(d['b'])}: favorito {dd.acc(d['fav'])} con "
@@ -80,6 +89,10 @@ def _summary(fh, played, pick, clearest, tr):
             sede = ", ".join(x for x in (d.get("estadio"), d.get("ciudad"), d.get("pais")) if x)
             det = (f" Hora: {hora}." if hora else "") + (f" Sede: {sede}." if sede else "")
             L.append("- [DETALLE] " + base + det)
+            na, nb = _num_partido(d['a']), _num_partido(d['b'])
+            if na and nb:
+                L.append(f"  Número de partido en el torneo (úsalo EXACTO si lo mencionas, NO lo inventes): "
+                         f"es el partido {na} de {dd.acc(d['a'])} y el partido {nb} de {dd.acc(d['b'])}.")
             n = contexto.noticia_partido(dd.acc(d['a']), dd.acc(d['b']), target) if contexto else None
             if n:
                 L.append(f"  Ángulo noticioso del día para este partido (intégralo con naturalidad, "
@@ -142,6 +155,8 @@ AI_SYSTEM = (
     "Para LOS DEMÁS partidos (sin [DETALLE]) di SOLO el pronóstico (marcador y favorito) y la HORA; NO menciones su sede ni noticia. "
     "Usa SOLO los datos dados; NUNCA inventes nada —ni la hora, ni la sede, ni noticias, ni lesiones—: si un dato "
     "no está, NO lo menciones. "
+    "Si dices qué número de partido lleva un equipo ('su segundo/tercer partido'), usa EXACTAMENTE el número que "
+    "viene en los datos ('Número de partido en el torneo'); NUNCA lo deduzcas ni lo inventes. "
     "Menciona el récord del modelo de forma NATURAL y CERCA DEL CIERRE (p. ej. 'vamos 18 de 32'), nunca en el "
     "gancho ni con decimales raros. "
     "Ritmo de narrador: ágil y CONCISO, MÁXIMO ~175 palabras (~70 s). Frases cortas, CERO relleno (fuera 'listo "
