@@ -61,15 +61,19 @@ def synth(text, out="voice.mp3"):
     model = os.environ.get("ELEVENLABS_MODEL", "eleven_multilingual_v2").strip()
     if not key or not voice:
         print("⚠️  Faltan ELEVENLABS_API_KEY / ELEVENLABS_VOICE_ID (ponlos en .env o Secrets)."); return False
-    url = f"https://api.elevenlabs.io/v1/text-to-speech/{voice}"
+    fmt = os.environ.get("ELEVENLABS_FORMAT", "").strip()   # p.ej. mp3_44100_192 (Creator+); vacío = default del API
+    url = f"https://api.elevenlabs.io/v1/text-to-speech/{voice}" + (f"?output_format={fmt}" if fmt else "")
     def _f(env, d):
         try: return float(os.environ.get(env, d))
         except Exception: return d
-    # Ajustes para voz NATURAL y con EMOCIÓN (según la doc de ElevenLabs): stability baja = más rango
-    # emocional (no robótica); style > 0 = más expresiva. Todo configurable por env para afinar.
+    # Ajustes VERIFICADOS (doc + foros) para que suene HUMANA y NO sintética:
+    #  - stability ~0.40: rango emocional natural sin caer en inestabilidad (no bajar de 0.30).
+    #  - style 0.0: subirlo amplifica emoción PERO causa artefactos y pausas raras -> se deja en 0 (la emoción
+    #    sale de la stability baja). Configurable por si se quiere experimentar.
+    #  - similarity 0.80: 0.75–0.85 es el punto dulce; al 100% sobre-enuncia ("locutor de noticias").
     vs = {"stability": _f("ELEVENLABS_STABILITY", 0.40),
           "similarity_boost": _f("ELEVENLABS_SIMILARITY", 0.80),
-          "style": _f("ELEVENLABS_STYLE", 0.35),
+          "style": _f("ELEVENLABS_STYLE", 0.0),
           "use_speaker_boost": os.environ.get("ELEVENLABS_SPEAKER_BOOST", "1") not in ("0", "false", "False")}
     spd = os.environ.get("ELEVENLABS_SPEED", "").strip()   # 0.7–1.2; opcional (solo si se define)
     if spd:
