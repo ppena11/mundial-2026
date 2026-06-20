@@ -77,10 +77,7 @@ def _voice_settings(v3):
           "similarity_boost": _f("ELEVENLABS_SIMILARITY", 0.88),
           "style": _f("ELEVENLABS_STYLE", 0.0),
           "use_speaker_boost": os.environ.get("ELEVENLABS_SPEAKER_BOOST", "1") not in ("0", "false", "False")}
-    spd = os.environ.get("ELEVENLABS_SPEED", "").strip()   # 0.7–1.2; opcional
-    if spd:
-        try: vs["speed"] = float(spd)
-        except Exception: pass
+    vs["speed"] = _f("ELEVENLABS_SPEED", 1.07)   # un pelín más ágil que 1.0 (rango 0.7–1.2); configurable
     return vs
 
 def _frases(text):
