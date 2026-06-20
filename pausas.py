@@ -42,6 +42,17 @@ def _dur(audio):
     if not m: return 0.0
     h, mi, s = m.groups(); return int(h) * 3600 + int(mi) * 60 + float(s)
 
+def _es_silencio(audio, a, b, umbral=-40.0):
+    """¿La región [a, b] del audio es SILENCIO real? (para distinguir una pausa indeseada de ElevenLabs
+    de un hueco donde Whisper se saltó habla). Mide el pico de volumen; si no se puede medir, devuelve
+    False (ante la duda, NO cortar). Umbral -40 dB: por debajo de eso no hay voz."""
+    if b - a < 0.06:
+        return True
+    r = subprocess.run([_ff(), "-ss", f"{a:.3f}", "-i", audio, "-t", f"{b - a:.3f}",
+                        "-af", "volumedetect", "-f", "null", "-"], capture_output=True, text=True)
+    m = re.search(r"max_volume:\s*(-?\d+\.?\d*)", r.stderr or "")
+    return (float(m.group(1)) < umbral) if m else False
+
 def _palabras(audio, texto, modelo=None):
     try:
         from faster_whisper import WhisperModel
@@ -123,26 +134,38 @@ def normalizar_pausas(audio_in, texto, audio_out=None, modelo=None):
         for i, j, n in difflib.SequenceMatcher(None, wn, tn).get_matching_blocks():
             for k in range(n):
                 w2t[i + k] = j + k
-        # recortar silencio de ENTRADA y SALIDA (solo si es plausible; si es enorme, Whisper falló -> no tocar)
-        if PREROLL + 0.05 < pals[0][1] < MAX_HUECO:
-            ops.append(("cut", 0.0, pals[0][1] - PREROLL)); recortado += pals[0][1] - PREROLL
+        dbg = os.environ.get("PAUSAS_DEBUG") not in (None, "0", "", "false", "False")
+        # recortar silencio de ENTRADA y SALIDA (si el hueco es enorme, solo si de verdad es silencio)
+        lead = pals[0][1]
+        if lead > PREROLL + 0.05 and (lead < MAX_HUECO or _es_silencio(audio_in, 0.0, lead)):
+            ops.append(("cut", 0.0, lead - PREROLL)); recortado += lead - PREROLL
         cola = total - pals[-1][2]
-        if POSTROLL + 0.05 < cola < MAX_HUECO:
+        if cola > POSTROLL + 0.05 and (cola < MAX_HUECO or _es_silencio(audio_in, pals[-1][2], total)):
             ops.append(("cut", pals[-1][2] + POSTROLL, total)); recortado += cola - POSTROLL
-        # ajustar cada hueco a su objetivo (solo huecos plausibles)
+        # ajustar cada hueco a su objetivo
         for i in range(len(pals) - 1):
             fin, ini_sig = pals[i][2], pals[i + 1][1]
             hueco = ini_sig - fin
-            if hueco >= MAX_HUECO:                                   # "hueco" sospechoso = Whisper se saltó habla
-                continue                                            # -> NO tocar (seguridad ante todo)
             tj = w2t.get(i)
             dest = _objetivo(toks[tj], clen[tj]) if (tj is not None and tj < len(toks)) else SIN_SIGNO
-            if hueco > dest + 0.06:                                  # sobra -> recortar el exceso
+            if hueco > dest + 0.06:                                  # sobra silencio -> recortar el exceso
+                # huecos enormes: cortar SOLO si la región es silencio real (si hay voz, Whisper se saltó habla)
+                if hueco >= MAX_HUECO and not _es_silencio(audio_in, fin, ini_sig):
+                    if dbg: print(f"    (skip hueco {hueco:.2f}s tras '{pals[i][0].strip()}': hay voz, no silencio)")
+                    continue
                 a, b = fin + dest, ini_sig - MARGEN
                 if b - a > 0.05:
                     ops.append(("cut", a, b)); recortado += (b - a)
-            elif dest > SIN_SIGNO and hueco < dest - 0.06:           # falta -> insertar pausa
+                    if dbg and hueco >= 0.7: print(f"    cortar {b-a:.2f}s tras '{pals[i][0].strip()}' (hueco {hueco:.2f}s -> {dest:.2f}s)")
+            elif dest > SIN_SIGNO and hueco < dest - 0.06:           # falta pausa -> insertar
+                # SOLO insertar en FIN DE ORACIÓN (. ! ?); en comas/mitad de frase se respeta el flujo
+                # natural de ElevenLabs (forzar pausas ahí suena mecánico = "pausas indeseadas")
+                fin_oracion = bool(tj is not None and tj < len(toks) and re.search(r"[.!?]+$", toks[tj].strip()))
+                if not fin_oracion:
+                    if dbg: print(f"    (no inserto tras '{pals[i][0].strip()}': no es fin de oración, dejo el flujo)")
+                    continue
                 ops.append(("ins", fin + max(hueco, 0.02), dest - hueco)); insertado += (dest - hueco)
+                if dbg: print(f"    insertar {dest-hueco:.2f}s tras '{pals[i][0].strip()}' (hueco {hueco:.2f}s -> {dest:.2f}s)")
 
     if not ops and not pulir:
         return False
