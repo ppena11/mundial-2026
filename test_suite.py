@@ -410,9 +410,9 @@ ok("AI_SYSTEM: [DETALLE]=completo, los demás=solo hora",
    "[DETALLE]" in msx.AI_SYSTEM and "SOLO el pronóstico" in msx.AI_SYSTEM, "falta la regla")
 ok("AI_SYSTEM: gancho + factor IA + variación + opinión + cierre con actitud",
    all(s in msx.AI_SYSTEM for s in ("GANCHO FUERTE", "VEINTE MIL simulaciones",
-       "VARÍA cómo introduces", "OPINIÓN corta", "ACTITUD")), "falta alguna mejora de estilo")
-ok("AI_SYSTEM: la opinión del destacado va JUSTO DESPUÉS de ese partido (no al final)",
-   "JUSTO DESPUÉS de presentarlo" in msx.AI_SYSTEM and "NUNCA la dejes para el final" in msx.AI_SYSTEM, "falta la regla de posición")
+       "VARÍA cómo introduces", "OPINIÓN PROPIA", "ACTITUD")), "falta alguna mejora de estilo")
+ok("AI_SYSTEM: la opinión del destacado va JUSTO DESPUÉS de ese partido (no al final, no sobre otro)",
+   "JUSTO DESPUÉS de su pronóstico" in msx.AI_SYSTEM and "SOLO para el destacado" in msx.AI_SYSTEM, "falta la regla de posición")
 # fonética de estadios/ciudades SOLO para el audio (ElevenLabs); el texto queda real para subtítulos
 import make_voice as mvz
 ph = mvz.foneticizar("Se juega en el NRG Stadium de Houston, Texas. También Mexico City y el BMO Field.")
@@ -435,6 +435,9 @@ ok("suavizar_tts: quita rayas/elipsis y espacios dobles (pausas raras)",
 # etiquetas de emoción de eleven_v3: se quedan SOLO en el audio v3; fuera del v2 y del subtítulo
 ok("quitar_tags: elimina [excited] para el audio (fallback v2)",
    mvz.quitar_tags("[excited] Hola [confident] mundo") == "Hola mundo", mvz.quitar_tags("[excited] Hola [confident] mundo"))
+ok("quitar_tags: BLINDAJE — un corchete con contenido real NO se borra (conserva el texto, quita 'LABEL:')",
+   mvz.quitar_tags("[DETALLE: Escocia recibe a Brasil hoy.]") == "Escocia recibe a Brasil hoy."
+   and mvz.quitar_tags("Gol [confident]. Sigue.") == "Gol. Sigue.", mvz.quitar_tags("[DETALLE: Escocia recibe a Brasil hoy.]"))
 ok("subtítulos NO muestran las etiquetas de emoción",
    "[" not in sub.normalizar_marca_texto("[excited] Canadá goleó") and
    "Canadá goleó" in sub.normalizar_marca_texto("[excited] Canadá goleó"), "quedó la etiqueta en el subtítulo")

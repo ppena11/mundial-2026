@@ -64,8 +64,17 @@ def suavizar_tts(text):
 
 def quitar_tags(text):
     """Quita las etiquetas de emoción [excited], [confident]... (las entiende eleven_v3; otros modelos
-    las leerían en voz alta). Se usa para el fallback a v2 y como respaldo."""
-    return re.sub(r"\s+", " ", re.sub(r"\[[^\]]*\]", "", text)).strip()
+    las leerían en voz alta). BLINDAJE: si por error llega un corchete con CONTENIDO real (p. ej.
+    '[DETALLE: Escocia recibe a Brasil...]'), NO se borra el contenido —solo los corchetes y la etiqueta—
+    para no perder parte del guion (antes se eliminaba el partido destacado entero)."""
+    def _rep(m):
+        inner = m.group(1).strip()
+        if len(inner) <= 20 and ":" not in inner and not re.search(r"[.;]", inner):
+            return ""                                              # etiqueta de emoción corta -> fuera
+        return re.sub(r"^[A-ZÁÉÍÓÚÑ][\wÁÉÍÓÚÑáéíóúñ]*\s*:\s*", "", inner)   # contenido -> conservar (sin 'LABEL:')
+    out = re.sub(r"\[([^\]]*)\]", _rep, text)
+    out = re.sub(r"\s+([.,;:!?])", r"\1", out)                    # sin espacio antes de puntuación
+    return re.sub(r"\s+", " ", out).strip()
 
 _NUM_U = ["cero", "uno", "dos", "tres", "cuatro", "cinco", "seis", "siete", "ocho", "nueve", "diez",
           "once", "doce", "trece", "catorce", "quince", "dieciséis", "diecisiete", "dieciocho", "diecinueve"]
