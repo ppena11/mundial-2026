@@ -172,8 +172,12 @@ VIRAL_TITULO = (
     "(2) CURIOSIDAD/loop ('Nadie esperaba este marcador'); (3) NÚMERO ('Los 3 pronósticos más claros de hoy'); "
     "(4) VERSUS ('España vs Arabia: lo que dice la IA'); (5) PREGUNTA ('¿Gana España hoy?'); (6) CONTRADICCIÓN + "
     "PROMESA ('El favorito tropieza hoy, y la IA lo explica'). Incluye 'Mundial 2026' y 1 o 2 emojis (⚽🔥🎯🤯). "
-    "Palabra-poder con MAYÚSCULA puntual y moderada (NADIE, SORPRESA, LOCURA, BRUTAL, CLARO, DESTROZA). HONESTO: solo "
-    "lo que digan los datos, sin exagerar; NADA de apuestas; SIN comillas internas; apto para todo público.\n"
+    "Palabra-poder con MAYÚSCULA puntual y moderada (NADIE, SORPRESA, LOCURA, BRUTAL, CLARO). HONESTO: solo lo que "
+    "digan los datos, sin exagerar; NADA de apuestas; SIN comillas internas; apto para todo público. "
+    "FIDELIDAD AL MARCADOR: palabras de paliza (GOLEADA, APLASTA, DESTROZA, MASACRA, ARRASA, VAPULEA, HUMILLA) SOLO "
+    "si el marcador previsto tiene 3 o más goles de diferencia; para un favorito claro con marcador AJUSTADO (2-0) usa "
+    "DOMINIO honestas (MANDA, favorita CLARA, NO FALLA, gana con autoridad). NUNCA escribas '<Equipo> goleada' "
+    "(eso significa que ese equipo PIERDE): di '<Equipo> golea' o 'goleada de <Equipo>'.\n"
 )
 VIRAL_DESC = (
     '"youtube_descripcion": estilo viral. La PRIMERA frase es un GANCHO que se lea sin tocar "...más" (p. ej. "El '
