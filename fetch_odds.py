@@ -26,6 +26,9 @@ except Exception:
     pass
 
 KEY=os.environ.get("ODDS_API_KEY","PEGA_TU_KEY_AQUI")
+# 1 sola región por defecto: The Odds API cobra 1 crédito POR REGIÓN por llamada. Con 'eu' (libros europeos,
+# buena cobertura de fútbol) y snapshot cada 6h, el consumo cabe en el plan gratis (500/mes). Configurable.
+REGIONS=os.environ.get("ODDS_REGIONS","eu")
 BASE="https://api.the-odds-api.com/v4"
 # Slugs verificados en /sports (jun 2026):
 SPORT_MATCHES="soccer_fifa_world_cup"          # partidos 1X2 (h2h)
@@ -49,7 +52,7 @@ def devig_multiplicative(odds_dict):
 
 def outrights():
     """Cuotas de campeón del Mundial, promediadas entre casas, ya de-vigueadas."""
-    data=get(f"sports/{SPORT_WINNER}/odds",regions="us,uk,eu",markets="outrights",oddsFormat="decimal")
+    data=get(f"sports/{SPORT_WINNER}/odds",regions=REGIONS,markets="outrights",oddsFormat="decimal")
     # promedia la mejor cuota por equipo entre casas
     best={}
     for ev in data:
@@ -64,7 +67,7 @@ def outrights():
 
 def h2h():
     """Cuotas 1X2 de los próximos partidos, de-vigueadas por partido."""
-    data=get(f"sports/{SPORT}/odds",regions="us,uk,eu",markets="h2h",oddsFormat="decimal")
+    data=get(f"sports/{SPORT}/odds",regions=REGIONS,markets="h2h",oddsFormat="decimal")
     out=[]
     for ev in data:
         home=ev.get("home_team");away=ev.get("away_team")

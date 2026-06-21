@@ -2,7 +2,7 @@ name: Snapshot de cuotas (sharp money)
 
 on:
   schedule:
-    - cron: "30 */2 * * *"   # cada 2 horas en el minuto 30 (UTC); fuera de la hora en punto para evitar retrasos/saltos y no chocar con el diario (10:10)
+    - cron: "30 */6 * * *"   # cada 6 horas (UTC), 1 región -> ~120 req/mes (cabe en el plan gratis de 500); fuera de la hora en punto para no chocar con el diario (10:10)
   workflow_dispatch: {}
 
 permissions:

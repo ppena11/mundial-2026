@@ -527,6 +527,8 @@ ok("modelo de TÍTULO VIRAL (estilo Shorts) aplicado a pronóstico, recap y dato
 ok("pronóstico: integra modelo vs mercado con 'por qué' real y PROHÍBE lenguaje de apuestas",
    "Modelo vs mercado" in msx.AI_SYSTEM and "PROHIBIDO el lenguaje de apuestas" in msx.AI_SYSTEM
    and "NUNCA inventes la razón" in msx.AI_SYSTEM, "falta la regla modelo-vs-mercado/no-apuestas")
+import fetch_odds as fox
+ok("cuotas: 1 sola región por defecto (no agotar el plan gratis de 500/mes)", "," not in fox.REGIONS, fox.REGIONS)
 ok("ningún prompt de contenido menciona TikTok",
    not any("tiktok" in p.lower() for p in (msx.AI_SYSTEM, cux.CURIO_SYS, recap.AI_RECAP_SYS, dd.AI_DIGEST_SYS)),
    "quedó TikTok en un prompt")
