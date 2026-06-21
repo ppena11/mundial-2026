@@ -503,11 +503,12 @@ _ctx.requests = _FakeReq(_rss([("Brasil vs Marruecos: posible alineación en el 
 ok("noticia_partido: descarta notas de alineaciones",
    _noticia_partido_real("Brasil", "Marruecos", "20260618") is None, "no debió aceptar una alineación")
 _ctx.requests = _orig_req
-# (2) título de YouTube del pronóstico con formato fijo de marca
+# (2) título de YouTube del pronóstico: VIRAL y diario (no el formato fijo viejo)
 msx.write_youtube("youtube_test.txt", played_x, "18/06/2026", None)
 yt_l1 = open("youtube_test.txt", encoding="utf-8").read().splitlines()[0]
-ok("título YouTube del pronóstico con formato de marca",
-   yt_l1 == "18/06/2026 - Pronósticos Mundial 2026 @aiwithpedro", yt_l1)
+ok("título YouTube del pronóstico es VIRAL (menciona Mundial + favorito, no el formato fijo)",
+   "Mundial 2026" in yt_l1 and "Brasil" in yt_l1 and "- Pronósticos Mundial 2026 @aiwithpedro" not in yt_l1
+   and len(yt_l1) <= 100, yt_l1)
 if os.path.exists("youtube_test.txt"): os.remove("youtube_test.txt")
 # (3) firma menciona YouTube; sin TikTok en los prompts de contenido
 import curio as cux

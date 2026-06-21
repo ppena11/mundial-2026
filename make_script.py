@@ -186,9 +186,15 @@ AI_SYSTEM = (
     "que el análisis completo está gratis en el Substack (link en bio). NO incluyas hashtags aquí.\n"
     '"hashtags": lista de EXACTAMENTE 5 hashtags, los más virales; incluye #Mundial2026, los 2 equipos más buscados '
     "que juegan hoy, y #IA y #parati.\n"
-    '"youtube_descripcion": 2 o 3 frases para la descripción de YouTube, RICAS EN PALABRAS CLAVE (los equipos del día, '
-    "Mundial 2026, predicción con inteligencia artificial, marcador, probabilidades), con un CTA al análisis completo "
-    "(link en la bio). NO incluyas hashtags aquí.\n"
+    '"youtube_titulo": un título SÚPER VIRAL para YouTube (máx ~90 caracteres) que invite al CLIC: engancha con '
+    "curiosidad o el dato MÁS FUERTE del día (el pronóstico más claro o una sorpresa), menciona 'Mundial 2026' y "
+    "que es de HOY, con 1 o 2 emojis. HONESTO: nada que los datos no digan; SIN comillas internas. Ejemplos de "
+    "ESTILO (NO los copies): '¿Ecuador golea hoy? Pronósticos del Mundial 2026', 'Mundial 2026 HOY: los pronósticos "
+    "más CLAROS con IA'.\n"
+    '"youtube_descripcion": 2 o 3 frases que ENGANCHEN: arranca con un gancho tipo "El Mundial 2026 en 60 segundos al '
+    'día", nombra los pronósticos de hoy (equipos y marcadores) y cierra con un CTA a SUSCRIBIRSE para el detalle '
+    "diario. Rica en palabras clave (equipos del día, Mundial 2026, predicción con inteligencia artificial, "
+    "probabilidades). NO incluyas hashtags aquí.\n"
     '"youtube_hashtags": lista de EXACTAMENTE 5 hashtags buscables para YouTube; incluye #Mundial2026, los equipos clave '
     "del día y #Shorts.\n"
     "Español neutro, cercano y enérgico. Apto para todo público, nada de apuestas. "
@@ -258,10 +264,16 @@ def write_youtube(path, played, fh, yt_ai):
     """Escribe título + descripción + 5 hashtags optimizados para SEO de YouTube. yt_ai=(t,d,h) de Claude o None."""
     yt_t, yt_d, yt_h = (yt_ai or ("", "", []))
     nombres = " · ".join(f"{dd.acc(d['a'])} vs {dd.acc(d['b'])}" for d in played[:2]) if played else ""
-    yt_t = f"{fh} - Pronósticos Mundial 2026 @aiwithpedro"   # formato fijo de marca (no el de Claude)
+    clear = max(played, key=lambda d: d["fp"], default=None) if played else None
+    if not yt_t:                                     # título VIRAL de respaldo (si la IA no lo dio)
+        if clear:
+            yt_t = f"🔥 Mundial 2026 HOY: {dd.acc(clear['fav'])} {clear['sx']}-{clear['sy']} y los pronósticos más claros con IA ⚽"
+        else:
+            yt_t = f"🔥 Mundial 2026: los pronósticos del día con IA ⚽ ({fh})"
+    yt_t = yt_t[:100]                                # YouTube recorta títulos muy largos
     if not yt_d:
-        yt_d = (f"Predicción del Mundial 2026 con inteligencia artificial para hoy ({fh}): marcadores y probabilidades "
-                f"de cada partido según el modelo. {nombres}. Análisis completo gratis, link en la bio.")
+        yt_d = (f"El Mundial 2026 en 60 segundos al día ⚽ Pronósticos de hoy ({fh}) con inteligencia artificial: "
+                f"{nombres}. Marcadores y probabilidades de cada partido. Suscríbete para el detalle diario, link en la bio.")
     yt_h = _yt_tags(yt_h, played)
     open(path, "w", encoding="utf-8").write(f"{yt_t}\n\n{yt_d}\n\n{' '.join(yt_h[:5])}")
 
