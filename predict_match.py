@@ -69,6 +69,51 @@ def one_x_two(a, b, atk, dfn, c, g, rho, local_anfitrion=False):
     top = max(grid, key=grid.get)
     return pw/s, pd/s, pl/s, lh, la, top
 
+def _grid_probs(lh, la, rho, K=11):
+    """1X2 + grilla de marcadores para unos goles esperados (mismo cálculo Dixon-Coles que one_x_two)."""
+    ph = [math.exp(-lh)*lh**k/math.factorial(k) for k in range(K)]
+    pa = [math.exp(-la)*la**k/math.factorial(k) for k in range(K)]
+    pw = pd = pl = 0.0; grid = {}
+    for x in range(K):
+        for y in range(K):
+            p = ph[x]*pa[y]
+            if x <= 1 and y <= 1:
+                if   x == 0 and y == 0: p *= (1 - lh*la*rho)
+                elif x == 0 and y == 1: p *= (1 + lh*rho)
+                elif x == 1 and y == 0: p *= (1 + la*rho)
+                else:                   p *= (1 - rho)
+            p = max(p, 0.0); grid[(x, y)] = p
+            if x > y: pw += p
+            elif x == y: pd += p
+            else: pl += p
+    s = pw+pd+pl or 1.0
+    return pw/s, pd/s, pl/s, {k: v/s for k, v in grid.items()}
+
+def ensamble_marcador(lh, la, rho, m_w, m_d, m_l, w_modelo=0.6):
+    """Mezcla MODELO + MERCADO y devuelve el marcador y probabilidades AJUSTADOS, usando TODOS los datos.
+    m_w/m_d/m_l = probabilidad del mercado de que gane el local / empate / gane el visitante (de-vigueadas).
+    Mantiene los goles esperados totales (lh*la) y desplaza la 'supremacía' hacia el consenso modelo+mercado.
+    Devuelve (sx, sy, pw, pd, pl, lh', la'). Si el mercado no es válido, no cambia nada."""
+    pw, pd, pl, _ = _grid_probs(lh, la, rho)
+    if not (m_w and m_l) or (m_w + (m_d or 0) + m_l) <= 0:
+        g = _grid_probs(lh, la, rho)[3]; top = max(g, key=g.get)
+        return top[0], top[1], pw, pd, pl, lh, la
+    s = m_w + (m_d or 0) + m_l; m_w, m_d, m_l = m_w/s, (m_d or 0)/s, m_l/s
+    bw = w_modelo*pw + (1-w_modelo)*m_w
+    bl = w_modelo*pl + (1-w_modelo)*m_l
+    objetivo = bw - bl                         # supremacía local objetivo (blend modelo+mercado)
+    lo, hi = -1.6, 1.6                          # δ: lh·e^δ, la·e^-δ (preserva lh·la); supremacía crece con δ
+    for _ in range(44):
+        mid = (lo + hi) / 2
+        pw2, _, pl2, _ = _grid_probs(lh*math.exp(mid), la*math.exp(-mid), rho)
+        if (pw2 - pl2) < objetivo: lo = mid
+        else: hi = mid
+    d = (lo + hi) / 2
+    lh2, la2 = lh*math.exp(d), la*math.exp(-d)
+    pw2, pd2, pl2, grid = _grid_probs(lh2, la2, rho)
+    top = max(grid, key=grid.get)
+    return top[0], top[1], pw2, pd2, pl2, lh2, la2
+
 def make_match_png(res, path="champ_match.png"):
     """Gráfico vertical 9:16 del partido (1X2 + goles + bajas), estilo TikTok."""
     import matplotlib

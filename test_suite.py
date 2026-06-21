@@ -529,6 +529,12 @@ ok("pronóstico: integra modelo vs mercado con 'por qué' real y PROHÍBE lengua
    and "NUNCA inventes la razón" in msx.AI_SYSTEM, "falta la regla modelo-vs-mercado/no-apuestas")
 import fetch_odds as fox
 ok("cuotas: 1 sola región por defecto (no agotar el plan gratis de 500/mes)", "," not in fox.REGIONS, fox.REGIONS)
+import predict_match as pmx
+_eh = pmx.ensamble_marcador(1.3, 1.3, 0.0, 0.85, 0.10, 0.05)   # mercado favorece LOCAL
+_ea = pmx.ensamble_marcador(1.3, 1.3, 0.0, 0.05, 0.10, 0.85)   # mercado favorece VISITA
+ok("ensamble modelo+mercado: el mercado inclina el marcador (local fuerte->gana local; visita fuerte->gana visita)",
+   _eh[2] > _eh[4] and _eh[0] >= _eh[1] and _ea[4] > _ea[2] and _ea[1] >= _ea[0],
+   f"local={_eh[0]}-{_eh[1]} pw={_eh[2]:.2f} | visita={_ea[0]}-{_ea[1]} pl={_ea[4]:.2f}")
 ok("ningún prompt de contenido menciona TikTok",
    not any("tiktok" in p.lower() for p in (msx.AI_SYSTEM, cux.CURIO_SYS, recap.AI_RECAP_SYS, dd.AI_DIGEST_SYS)),
    "quedó TikTok en un prompt")

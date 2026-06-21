@@ -325,6 +325,10 @@ def build(target):
             ma,mb=mp.get(a),mp.get(b)
             if ma and pw>=VAL_FLOOR and pw>ma*VAL_MARGIN: vc.append((a,pw,ma,pw/ma))
             if mb and pl>=VAL_FLOOR and pl>mb*VAL_MARGIN: vc.append((b,pl,mb,pl/mb))
+        if mp:                                  # ENSAMBLE: el marcador usa MODELO + MERCADO (todos los datos)
+            m_w, m_l, m_d = mp.get(a), mp.get(b), mp.get("Draw")
+            if m_w and m_l:
+                sx, sy, pw, pdr, pl, _, _ = pm.ensamble_marcador(lh, la, rho, m_w, m_d, m_l)
         fav,fp=(a,pw) if pw>=pl else (b,pl)
         mfav=mp.get(fav) if mp else None        # probabilidad implícita del MERCADO para el favorito (o None)
         played.append({"a":a,"b":b,"fav":fav,"fp":fp,"m_fav":mfav,"vc":vc,"sx":sx,"sy":sy,"pdr":pdr,
