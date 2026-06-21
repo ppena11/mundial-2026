@@ -512,6 +512,10 @@ ok("título YouTube del pronóstico es VIRAL (menciona Mundial + favorito, no el
 ok("limpiar_voz: corrige 'un a cero'->'uno a cero' y la tilde de 'Suscríbete'",
    msx._limpiar_voz("Uruguay gana un a cero hoy. Suscribete a mi canal.") == "Uruguay gana uno a cero hoy. Suscríbete a mi canal."
    and msx._limpiar_voz("un punto, una jugada") == "un punto, una jugada", msx._limpiar_voz("gana un a cero. Suscribete."))
+ok("limpiar_voz: elimina duplicaciones ('Bélgica y Bélgica'->'Bélgica', 'la la'->'la'), sin tocar equipos distintos",
+   msx._limpiar_voz("Bélgica y Bélgica contra Irán") == "Bélgica contra Irán"
+   and msx._limpiar_voz("es la la mejor") == "es la mejor"
+   and msx._limpiar_voz("España y Japón juegan") == "España y Japón juegan", msx._limpiar_voz("Bélgica y Bélgica contra Irán"))
 if os.path.exists("youtube_test.txt"): os.remove("youtube_test.txt")
 # (3) firma menciona YouTube; sin TikTok en los prompts de contenido
 import curio as cux
