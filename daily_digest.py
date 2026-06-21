@@ -185,6 +185,20 @@ VIRAL_DESC = (
     "o resultados, Mundial 2026, predicción con inteligencia artificial) y cierra con un CTA a SUSCRIBIRSE para el "
     "detalle diario (link en la bio). Tildes correctas (Suscríbete, no 'Suscribete'). NO incluyas hashtags aquí.\n"
 )
+
+def campeon_probs():
+    """Probabilidades de campeón (en %), PREFIRIENDO el ENSEMBLE modelo+mercado (champ_ensemble.json).
+    Si el ensemble no existe (1ª corrida o sin cuotas), cae al modelo solo (champ_today.json).
+    Así el 'campeón' usa el mercado de forma CONSISTENTE en todo el contenido, no solo en el gráfico de TikTok."""
+    import json
+    for fname, key in (("champ_ensemble.json", "ensemble"), ("champ_today.json", "campeon")):
+        try:
+            d = json.load(open(fname, encoding="utf-8")).get(key)
+            if d:
+                return d
+        except Exception:
+            pass
+    return {}
 def weekday_es(target):
     """Nombre del día de la semana en español para un 'YYYYMMDD'. Lo calcula Python (no Claude,
     que se equivoca al deducir qué día cae una fecha)."""
@@ -207,7 +221,7 @@ def matches_on(yyyymmdd):
 
 def champion_top(n=5):
     try:
-        d = json.load(open("champ_today.json", encoding="utf-8"))["campeon"]
+        d = campeon_probs()   # ENSEMBLE modelo+mercado (cae al modelo si no hay)
         return list(d.items())[:n]
     except Exception:
         return []

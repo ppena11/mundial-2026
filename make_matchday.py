@@ -69,7 +69,7 @@ def main(target):
     rows, pick = collect(target)
     if not any(not r.get("skip") for r in rows):       # día sin partidos jugables -> tarjeta de dato curioso
         import make_curio_card; make_curio_card.render(target); return
-    try: champ=list(json.load(open("champ_today.json",encoding="utf-8"))["campeon"].items())[:5]
+    try: champ=list(dd.campeon_probs().items())[:5]   # ENSEMBLE modelo+mercado (cae al modelo si no hay)
     except Exception: champ=[]
     try: tr=json.load(open("track_record.json",encoding="utf-8"))
     except Exception: tr={"n":0}

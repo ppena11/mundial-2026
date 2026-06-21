@@ -101,7 +101,7 @@ def _five(tags, teams):
 def proximo_partido(after_iso, atk, dfn, c, g, rho):
     """Partido clave del primer día con partidos posterior a `after_iso`."""
     try:
-        champ = {t for t, _ in list(json.load(open("champ_today.json", encoding="utf-8"))["campeon"].items())[:8]}
+        champ = {t for t, _ in list(dd.campeon_probs().items())[:8]}   # ENSEMBLE modelo+mercado
     except Exception:
         champ = set()
     fut = [m for m in dd.fetch_all()

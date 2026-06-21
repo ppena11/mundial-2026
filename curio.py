@@ -42,7 +42,7 @@ def days_to_kickoff(target):
 
 def _champ():
     try:
-        return list(json.load(open("champ_today.json", encoding="utf-8"))["campeon"].items())
+        return list(dd.campeon_probs().items())   # ENSEMBLE modelo+mercado
     except Exception:
         return []
 

@@ -64,7 +64,7 @@ def _summary(fh, played, pick, clearest, tr):
     # partido MÁS IMPORTANTE del día = el del equipo con mayor probabilidad de ser campeón
     champ = {}
     try:
-        champ = dict(json.load(open("champ_today.json", encoding="utf-8"))["campeon"])
+        champ = dict(dd.campeon_probs())   # ENSEMBLE modelo+mercado (cae al modelo si no hay)
     except Exception:
         pass
     feat = max(range(len(played)), key=lambda i: max(champ.get(played[i]["a"], 0), champ.get(played[i]["b"], 0)))
@@ -116,7 +116,7 @@ def _summary(fh, played, pick, clearest, tr):
     if tr.get("n", 0) > 0:
         L.append(f"Historial del modelo: {tr['aciertos_1x2']} aciertos de {tr['n']} ({tr['tasa_1x2']} por ciento).")
     try:
-        champ = json.load(open("champ_today.json", encoding="utf-8"))["campeon"]
+        champ = dd.campeon_probs()   # ENSEMBLE modelo+mercado (cae al modelo si no hay)
         playing = {d["a"] for d in played} | {d["b"] for d in played}
         stars = [dd.acc(t) for t in champ if t in playing][:2]
         if stars:
@@ -244,7 +244,7 @@ def day_hashtags(played):
     """Exactamente 5 hashtags virales, 2 según los equipos estrella del día."""
     teams = []
     try:
-        champ = json.load(open("champ_today.json", encoding="utf-8"))["campeon"]  # ordenado por prob desc
+        champ = dd.campeon_probs()  # ENSEMBLE modelo+mercado, ordenado por prob desc
         playing = {d["a"] for d in played} | {d["b"] for d in played}
         teams = [t for t in champ if t in playing][:2]   # los 2 más "buscados" que juegan hoy
     except Exception:
@@ -262,7 +262,7 @@ def _yt_tags(tags, played):
     """5 hashtags buscables para YouTube (#Mundial2026 + equipos del día + #Shorts/#Pronosticos)."""
     teams = []
     try:
-        champ = json.load(open("champ_today.json", encoding="utf-8"))["campeon"]
+        champ = dd.campeon_probs()   # ENSEMBLE modelo+mercado (cae al modelo si no hay)
         playing = {d["a"] for d in played} | {d["b"] for d in played}
         teams = [t for t in champ if t in playing][:2]
     except Exception:

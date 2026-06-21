@@ -535,6 +535,13 @@ _ea = pmx.ensamble_marcador(1.3, 1.3, 0.0, 0.05, 0.10, 0.85)   # mercado favorec
 ok("ensamble modelo+mercado: el mercado inclina el marcador (local fuerte->gana local; visita fuerte->gana visita)",
    _eh[2] > _eh[4] and _eh[0] >= _eh[1] and _ea[4] > _ea[2] and _ea[1] >= _ea[0],
    f"local={_eh[0]}-{_eh[1]} pw={_eh[2]:.2f} | visita={_ea[0]}-{_ea[1]} pl={_ea[4]:.2f}")
+import os as _os, json as _json
+_cp = dd.campeon_probs()
+_pref_ok = True
+if _os.path.exists("champ_ensemble.json"):
+    _pref_ok = (_cp == _json.load(open("champ_ensemble.json", encoding="utf-8")).get("ensemble", {}))
+ok("campeon_probs: prefiere el ENSEMBLE modelo+mercado (campeón usa el mercado, no solo el modelo)",
+   isinstance(_cp, dict) and len(_cp) > 0 and _pref_ok, "campeon_probs no prefirió el ensemble")
 ok("ningún prompt de contenido menciona TikTok",
    not any("tiktok" in p.lower() for p in (msx.AI_SYSTEM, cux.CURIO_SYS, recap.AI_RECAP_SYS, dd.AI_DIGEST_SYS)),
    "quedó TikTok en un prompt")
