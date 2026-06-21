@@ -93,6 +93,12 @@ def _summary(fh, played, pick, clearest, tr):
             if na and nb:
                 L.append(f"  Número de partido en el torneo (úsalo EXACTO si lo mencionas, NO lo inventes): "
                          f"es el partido {na} de {dd.acc(d['a'])} y el partido {nb} de {dd.acc(d['b'])}.")
+            if d.get("m_fav") is not None:           # contraste con el MERCADO (para el 'por qué' del destacado)
+                dirc = ("el mercado lo subestima" if d["fp"] > d["m_fav"] + 0.04 else
+                        ("el mercado lo ve aún más favorito" if d["m_fav"] > d["fp"] + 0.04 else "modelo y mercado casi coinciden"))
+                L.append(f"  Modelo vs mercado: el modelo da {round(100*d['fp'])} por ciento al favorito y el "
+                         f"consenso del mercado {round(100*d['m_fav'])} por ciento ({dirc}). Si hay contraste, "
+                         f"explícalo en 1 frase como ANÁLISIS (NUNCA como apuesta).")
             n = contexto.noticia_partido(dd.acc(d['a']), dd.acc(d['b']), target) if contexto else None
             if n:
                 L.append(f"  Ángulo noticioso del día para este partido (intégralo con naturalidad, "
@@ -100,8 +106,11 @@ def _summary(fh, played, pick, clearest, tr):
         else:
             L.append(f"- {base}" + (f" Hora: {hora}." if hora else ""))
     if pick:
-        t, mpb, mkp, edge = pick[1]
-        L.append(f"Jugada de valor del día: {dd.acc(t)} (el modelo le da {round(100*mpb)} por ciento y el mercado solo {round(100*mkp)} por ciento; está infravalorada).")
+        dpick = pick[0]; t, mpb, mkp, edge = pick[1]
+        rival = dpick["b"] if t == dpick["a"] else dpick["a"]
+        L.append(f"DONDE EL MODELO MÁS DISCREPA DEL CONSENSO: {dd.acc(t)} contra {dd.acc(rival)} — el modelo le da "
+                 f"{round(100*mpb)} por ciento y el consenso del mercado solo {round(100*mkp)} por ciento; el mercado "
+                 f"parece subestimarlo. Explica ESTE contraste en 1 frase como ANÁLISIS (jamás como apuesta ni cuota).")
     if clearest:
         L.append(f"Resultado más claro: {dd.acc(clearest['fav'])} con {round(100*clearest['fp'])} por ciento en {dd.acc(clearest['a'])} contra {dd.acc(clearest['b'])}.")
     if tr.get("n", 0) > 0:
@@ -154,6 +163,12 @@ AI_SYSTEM = (
     "su defensa no ha encajado'). Esa opinión personal es SOLO para el destacado: NO la pongas sobre otro partido "
     "ni la dejes para el cierre. (El 'resultado más claro del día' es un DATO aparte; puedes mencionarlo, pero NO "
     "sustituye la opinión del destacado.) "
+    "POR QUÉ (modelo + mercado + razón): si el destacado trae 'Modelo vs mercado', INTEGRA ese contraste en tu "
+    "opinión como ANÁLISIS (p. ej. 'el mercado lo ve más parejo, pero mi modelo le da 85 por ciento, y tiene "
+    "sentido: <razón real de la noticia o la forma dada>'). Y si viene 'DONDE EL MODELO MÁS DISCREPA DEL CONSENSO', "
+    "menciónalo en 1 frase explicando el PORQUÉ. El 'porqué' DEBE salir de los datos dados (modelo, mercado, "
+    "noticia, forma): NUNCA inventes la razón. PROHIBIDO el lenguaje de apuestas (apuesta, apostar, cuota, momio, "
+    "'infravalorada' como tip): habla de 'el mercado/el consenso' y 'mi modelo discrepa', SIEMPRE como análisis. "
     "El marcador [DETALLE] es SOLO una etiqueta interna de los datos: NUNCA lo escribas en tu respuesta NI "
     "envuelvas ningún texto entre corchetes [ ] (los corchetes solo se permiten para etiquetas de emoción "
     "sueltas como [excited]); ese partido se narra como prosa normal y fluida, sin corchetes. "
@@ -311,7 +326,8 @@ def build(target):
             if ma and pw>=VAL_FLOOR and pw>ma*VAL_MARGIN: vc.append((a,pw,ma,pw/ma))
             if mb and pl>=VAL_FLOOR and pl>mb*VAL_MARGIN: vc.append((b,pl,mb,pl/mb))
         fav,fp=(a,pw) if pw>=pl else (b,pl)
-        played.append({"a":a,"b":b,"fav":fav,"fp":fp,"vc":vc,"sx":sx,"sy":sy,"pdr":pdr,
+        mfav=mp.get(fav) if mp else None        # probabilidad implícita del MERCADO para el favorito (o None)
+        played.append({"a":a,"b":b,"fav":fav,"fp":fp,"m_fav":mfav,"vc":vc,"sx":sx,"sy":sy,"pdr":pdr,
                        "utc":m.get("utc",""),"estadio":m.get("estadio",""),
                        "ciudad":m.get("ciudad",""),"pais":m.get("pais",""),"is_ko":m.get("is_ko",False)})
     if not played:                                   # día sin partidos -> dato curioso (voz + caption)
