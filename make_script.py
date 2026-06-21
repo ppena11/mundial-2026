@@ -179,8 +179,9 @@ AI_SYSTEM = (
     "y firma la voz diciendo EXACTAMENTE: Soy éi ái uíz Pédro (así se pronuncia @aiwithpedro). SIN otros emojis ni "
     "símbolos (lo lee un sintetizador de voz). ÚNICA excepción: AÑADE 1 o 2 ETIQUETAS DE EMOCIÓN de "
     "eleven_v3 entre corchetes (p. ej. [excited], [confident], [serious]) en momentos clave —el gancho o una "
-    "sorpresa— para dar energía; con moderación y NUNCA una etiqueta en la firma. Números con dígitos y "
-    "'por ciento'; 'contra' en vez de 'vs'; varía el arranque para no repetir. Si en los datos hay CONTEXTO del "
+    "sorpresa— para dar energía; con moderación y NUNCA una etiqueta en la firma. MARCADORES y números SIEMPRE con "
+    "DÍGITOS ('1 a 0', '2 a 1', '53 por ciento'), NUNCA en palabras (nada de 'un a cero' ni 'dos a cero'); "
+    "'contra' en vez de 'vs'; varía el arranque para no repetir. Si en los datos hay CONTEXTO del "
     "torneo (resultados recientes, una sorpresa, el récord o un titular), téjelo en 1 frase para que suene al día.\n"
     '"caption": 1 o 2 líneas cortas para la descripción de YouTube Shorts, con gancho; puede llevar 1 o 2 emojis; menciona '
     "que el análisis completo está gratis en el Substack (link en bio). NO incluyas hashtags aquí.\n"
@@ -277,6 +278,17 @@ def write_youtube(path, played, fh, yt_ai):
     yt_h = _yt_tags(yt_h, played)
     open(path, "w", encoding="utf-8").write(f"{yt_t}\n\n{yt_d}\n\n{' '.join(yt_h[:5])}")
 
+def _limpiar_voz(text):
+    """Corrige deslices frecuentes de Claude ANTES de la voz/subtítulos (determinista, garantizado):
+    marcadores con 'un a X' -> 'uno a X', y tildes que el modelo a veces omite (Suscríbete)."""
+    import re
+    nums = r"\d|cero|uno|dos|tres|cuatro|cinco|seis|siete|ocho|nueve"
+    text = re.sub(rf"\bUn a (?={nums})", "Uno a ", text)
+    text = re.sub(rf"\bun a (?={nums})", "uno a ", text)
+    text = re.sub(r"\bSuscribete\b", "Suscríbete", text)
+    text = re.sub(r"\bsuscribete\b", "suscríbete", text)
+    return re.sub(r"\s{2,}", " ", text).strip()
+
 def build(target):
     games = dd.matches_on(target)
     atk,dfn,c,g,rho = pm.fit_model(); pm.apply_adjustments(atk,dfn)
@@ -358,7 +370,7 @@ def build(target):
                 if t not in tags: tags.append(t)
             caption = cap_ai.rstrip() + " " + " ".join(tags[:5])
     write_youtube("youtube.txt", played, fh, yt_ai)     # título + descripción + 5 hashtags SEO de YouTube
-    return voiceover, caption, len(played)
+    return _limpiar_voz(voiceover), caption, len(played)
 
 if __name__=="__main__":
     target = sys.argv[sys.argv.index("--date")+1] if "--date" in sys.argv else date.today().strftime("%Y%m%d")

@@ -509,6 +509,9 @@ yt_l1 = open("youtube_test.txt", encoding="utf-8").read().splitlines()[0]
 ok("título YouTube del pronóstico es VIRAL (menciona Mundial + favorito, no el formato fijo)",
    "Mundial 2026" in yt_l1 and "Brasil" in yt_l1 and "- Pronósticos Mundial 2026 @aiwithpedro" not in yt_l1
    and len(yt_l1) <= 100, yt_l1)
+ok("limpiar_voz: corrige 'un a cero'->'uno a cero' y la tilde de 'Suscríbete'",
+   msx._limpiar_voz("Uruguay gana un a cero hoy. Suscribete a mi canal.") == "Uruguay gana uno a cero hoy. Suscríbete a mi canal."
+   and msx._limpiar_voz("un punto, una jugada") == "un punto, una jugada", msx._limpiar_voz("gana un a cero. Suscribete."))
 if os.path.exists("youtube_test.txt"): os.remove("youtube_test.txt")
 # (3) firma menciona YouTube; sin TikTok en los prompts de contenido
 import curio as cux
