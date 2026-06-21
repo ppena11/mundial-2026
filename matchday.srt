@@ -1,243 +1,227 @@
 1
-00:00:00,000 --> 00:00:01,527
-Ecuador no ganó siendo
+00:00:00,580 --> 00:00:01,700
+España no falla hoy.
 
 2
-00:00:01,527 --> 00:00:02,975
-favorito y hoy España
-
-3
-00:00:02,975 --> 00:00:04,101
-no puede fallar.
-
-4
-00:00:04,101 --> 00:00:05,709
+00:00:01,700 --> 00:00:02,799
 Aquí está el pronóstico
 
-5
-00:00:05,709 --> 00:00:06,191
+3
+00:00:02,799 --> 00:00:03,259
 de hoy,
 
-6
-00:00:06,191 --> 00:00:07,558
+4
+00:00:03,259 --> 00:00:05,339
 domingo 21 de junio.
 
+5
+00:00:05,339 --> 00:00:06,759
+Mi inteligencia artificial corrió
+
+6
+00:00:06,759 --> 00:00:08,140
+veinte mil simulaciones y
+
 7
-00:00:07,558 --> 00:00:09,649
-Mi inteligencia artificial ya
+00:00:08,140 --> 00:00:09,779
+tiene claro el panorama:
 
 8
-00:00:09,649 --> 00:00:11,820
-corrió veinte mil simulaciones
+00:00:09,779 --> 00:00:11,019
+Japón parte como favorito
 
 9
-00:00:11,820 --> 00:00:12,946
-y el modelo marca
+00:00:11,019 --> 00:00:12,460
+leve contra Túnez a
 
 10
-00:00:12,946 --> 00:00:14,715
-tendencias claras en esta
+00:00:12,460 --> 00:00:13,119
+las doce de la
 
 11
-00:00:14,715 --> 00:00:15,922
-segunda jornada.
+00:00:13,119 --> 00:00:13,880
+medianoche,
 
 12
-00:00:15,922 --> 00:00:17,128
-Japón se mide ante
+00:00:13,880 --> 00:00:16,019
+marcador uno a cero.
 
 13
-00:00:17,128 --> 00:00:18,414
-Túnez con ventaja:
+00:00:16,019 --> 00:00:17,000
+España se impone con
 
 14
-00:00:18,414 --> 00:00:19,138
-uno a cero a
+00:00:17,000 --> 00:00:18,519
+autoridad ante Arabia Saudí
 
 15
-00:00:19,138 --> 00:00:20,505
-favor de los nipones
-
-16
-00:00:20,505 --> 00:00:21,631
-a la medianoche.
-
-17
-00:00:21,631 --> 00:00:22,918
-Pero ojo con España
-
-18
-00:00:22,918 --> 00:00:24,365
-contra Arabia Saudí,
-
-19
-00:00:24,365 --> 00:00:25,250
+00:00:18,519 --> 00:00:19,199
 a las doce del
 
-20
-00:00:25,250 --> 00:00:27,260
+16
+00:00:19,199 --> 00:00:20,995
 mediodía en el Mercedes-Benz
 
-21
-00:00:27,260 --> 00:00:28,627
+17
+00:00:20,995 --> 00:00:22,160
 Stadium de Atlanta,
 
+18
+00:00:22,160 --> 00:00:22,936
+Estados Unidos,
+
+19
+00:00:22,936 --> 00:00:24,260
+con un dos a
+
+20
+00:00:24,260 --> 00:00:25,940
+cero contundente.
+
+21
+00:00:25,940 --> 00:00:26,620
+Este es su segundo
+
 22
-00:00:28,627 --> 00:00:29,753
-Estados Unidos.
+00:00:26,620 --> 00:00:27,579
+partido en el torneo,
 
 23
-00:00:29,753 --> 00:00:31,522
-Los españoles parten como
+00:00:27,579 --> 00:00:29,059
+y la defensa española
 
 24
-00:00:31,522 --> 00:00:33,532
-aplastantes favoritos con un
+00:00:29,059 --> 00:00:30,920
+simplemente no ha encajado;
 
 25
-00:00:33,532 --> 00:00:34,899
-dos a cero previsto,
+00:00:30,920 --> 00:00:31,839
+el mercado lo ve
 
 26
-00:00:34,899 --> 00:00:35,382
-y mira,
+00:00:31,839 --> 00:00:33,039
+aún más inclinado hacia
 
 27
-00:00:35,382 --> 00:00:36,910
-ese marcador me parece
+00:00:33,039 --> 00:00:33,820
+los ibéricos,
 
 28
-00:00:36,910 --> 00:00:37,875
-contundente:
+00:00:33,820 --> 00:00:35,039
+pero mi modelo le
 
 29
-00:00:37,875 --> 00:00:39,402
-la defensa saudí lleva
+00:00:35,039 --> 00:00:36,299
+da 89 por ciento
 
 30
-00:00:39,402 --> 00:00:40,609
-dos partidos en el
+00:00:36,299 --> 00:00:37,409
+y ese dos a
 
 31
-00:00:40,609 --> 00:00:42,860
-torneo sin encontrar soluciones
+00:00:37,409 --> 00:00:38,240
+cero tiene toda la
 
 32
-00:00:42,860 --> 00:00:43,745
-defensivas.
+00:00:38,240 --> 00:00:39,359
+lógica.
 
 33
-00:00:43,745 --> 00:00:44,549
-A las tres de
+00:00:39,359 --> 00:00:40,380
+Bélgica manda frente a
 
 34
-00:00:44,549 --> 00:00:45,192
-la tarde,
+00:00:40,380 --> 00:00:41,399
+Irán a las tres
 
 35
-00:00:45,192 --> 00:00:46,640
-Bélgica se iguala con
+00:00:41,399 --> 00:00:41,980
+de la tarde,
 
 36
-00:00:46,640 --> 00:00:47,524
-Irán en un uno
+00:00:41,980 --> 00:00:42,840
+uno a cero.
 
 37
-00:00:47,524 --> 00:00:48,248
-a uno que el
+00:00:42,840 --> 00:00:43,820
+Uruguay se impone contra
 
 38
-00:00:48,248 --> 00:00:49,856
-modelo ve equilibrado.
+00:00:43,820 --> 00:00:44,609
+Cabo Verde a las
 
 39
-00:00:49,856 --> 00:00:51,625
-Uruguay es favorito sobre
+00:00:44,609 --> 00:00:45,369
+seis de la tarde,
 
 40
-00:00:51,625 --> 00:00:52,751
-Cabo Verde con un
+00:00:45,369 --> 00:00:46,159
+uno a cero.
 
 41
-00:00:52,751 --> 00:00:53,475
-uno a cero a
+00:00:46,159 --> 00:00:47,000
+Y ojo con Nueva
 
 42
-00:00:53,475 --> 00:00:54,359
-las seis de la
+00:00:47,000 --> 00:00:48,039
+Zelanda contra Egipto a
 
 43
-00:00:54,359 --> 00:00:54,842
-noche.
-
-44
-00:00:54,842 --> 00:00:56,209
-Y cerramos con Nueva
-
-45
-00:00:56,209 --> 00:00:57,656
-Zelanda ante Egipto a
-
-46
-00:00:57,656 --> 00:00:58,621
+00:00:48,039 --> 00:00:48,679
 las nueve de la
 
-47
-00:00:58,621 --> 00:00:59,104
+44
+00:00:48,679 --> 00:00:49,280
 noche:
 
+45
+00:00:49,280 --> 00:00:50,700
+mi modelo discrepa aquí,
+
+46
+00:00:50,700 --> 00:00:51,666
+le da 48 por
+
+47
+00:00:51,666 --> 00:00:52,979
+ciento a los neozelandeses
+
 48
-00:00:59,104 --> 00:01:00,230
-Egipto gana uno a
+00:00:52,979 --> 00:00:54,039
+mientras el consenso los
 
 49
-00:01:00,230 --> 00:01:00,632
-cero.
+00:00:54,039 --> 00:00:55,159
+subestima,
 
 50
-00:01:00,632 --> 00:01:01,516
-Vamos 20 de 35
+00:00:55,159 --> 00:00:56,079
+pero Egipto gana uno
 
 51
-00:01:01,516 --> 00:01:02,240
-aciertos.
+00:00:56,079 --> 00:00:57,200
+a cero.
 
 52
-00:01:02,240 --> 00:01:03,527
-El fútbol apunta en
+00:00:57,200 --> 00:00:59,200
+Vamos 21 de 36,
 
 53
-00:01:03,527 --> 00:01:04,572
-una dirección,
+00:00:59,200 --> 00:00:59,920
+y el fútbol sigue
 
 54
-00:01:04,572 --> 00:01:06,824
-pero mi inteligencia artificial
+00:00:59,920 --> 00:01:00,740
+sorprendiendo,
 
 55
-00:01:06,824 --> 00:01:07,789
-ya ve dos pasos
+00:01:00,740 --> 00:01:01,920
+pero mi inteligencia artificial
 
 56
-00:01:07,789 --> 00:01:08,512
-adelante.
+00:01:01,920 --> 00:01:02,579
+ya lee lo que
 
 57
-00:01:08,512 --> 00:01:09,960
-Suscríbete a mi canal
-
-58
-00:01:09,960 --> 00:01:11,166
-de YouTube para el
-
-59
-00:01:11,166 --> 00:01:12,774
-análisis completo en el
-
-60
-00:01:12,774 --> 00:01:13,739
-link de mi bio.
-
-61
-00:01:13,739 --> 00:01:14,945
-Soy aiwithpedro.
+00:01:02,579 --> 00:01:03,079
+viene.

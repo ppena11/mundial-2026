@@ -1,123 +1,107 @@
 1
-00:00:00,255 --> 00:00:01,120
-Anoche Países Bajos nos
+00:00:00,000 --> 00:00:01,928
+Países Bajos arrasó anoche
 
 2
-00:00:01,120 --> 00:00:02,580
-dio la razón con
+00:00:01,928 --> 00:00:03,354
+contra Suecia con un
 
 3
-00:00:02,580 --> 00:00:03,240
-un 5 a 1
+00:00:03,354 --> 00:00:03,857
+5 a 1 que
 
 4
-00:00:03,240 --> 00:00:05,139
-que pintamos con confianza.
+00:00:03,857 --> 00:00:04,864
+nos vio venir:
 
 5
-00:00:05,139 --> 00:00:06,580
-Alemania también llegó,
+00:00:04,864 --> 00:00:05,954
+acertamos ese.
 
 6
-00:00:06,580 --> 00:00:07,500
-aunque con menos margen
+00:00:05,954 --> 00:00:07,967
+Alemania también nos sonrió
 
 7
-00:00:07,500 --> 00:00:08,320
-de lo esperado:
+00:00:07,967 --> 00:00:09,812
+con su victoria ajustada.
 
 8
-00:00:08,320 --> 00:00:09,480
-2 a 1 y
+00:00:09,812 --> 00:00:11,825
+Pero Ecuador nos traicionó;
 
 9
-00:00:09,480 --> 00:00:11,240
-sorpresa bien clavada.
+00:00:11,825 --> 00:00:12,831
+aunque la IA le
 
 10
-00:00:11,240 --> 00:00:12,599
-Pero Ecuador nos jugó
+00:00:12,831 --> 00:00:14,089
+daba 82 por ciento
 
 11
-00:00:12,599 --> 00:00:13,900
-sucio:
+00:00:14,089 --> 00:00:14,928
+de chances,
 
 12
-00:00:13,900 --> 00:00:14,900
-0 a 0 contra
+00:00:14,928 --> 00:00:16,605
+empató sin goles contra
 
 13
-00:00:14,900 --> 00:00:16,719
-Curazao cuando dábamos por
+00:00:16,605 --> 00:00:17,276
+Curazao.
 
 14
-00:00:16,719 --> 00:00:17,960
-hecho que ganaban.
+00:00:17,276 --> 00:00:18,031
+Eso duele.
 
 15
-00:00:17,960 --> 00:00:18,559
-Humildad:
+00:00:18,031 --> 00:00:18,953
+Vamos 21 de 36
 
 16
-00:00:18,559 --> 00:00:19,620
-el modelo sigue en
+00:00:18,953 --> 00:00:19,708
+aciertos.
 
 17
-00:00:19,620 --> 00:00:22,059
-21 de 36 aciertos.
+00:00:19,708 --> 00:00:21,469
+Mañana llega el gigante:
 
 18
-00:00:22,059 --> 00:00:23,440
-Hoy llega España contra
+00:00:21,469 --> 00:00:23,398
+España entra como favorita
 
 19
-00:00:23,440 --> 00:00:24,820
-Arabia Saudí y la
+00:00:23,398 --> 00:00:24,488
+clara con 85 por
 
 20
-00:00:24,820 --> 00:00:25,920
-cifra es contundente:
+00:00:24,488 --> 00:00:26,501
+ciento contra Arabia Saudí.
 
 21
-00:00:25,920 --> 00:00:27,579
-85 por ciento para
+00:00:26,501 --> 00:00:27,424
+La IA no falla
 
 22
-00:00:27,579 --> 00:00:28,780
-los españoles.
+00:00:27,424 --> 00:00:28,850
+dos veces seguidas.
 
 23
-00:00:28,780 --> 00:00:30,239
-La inteligencia artificial no
+00:00:28,850 --> 00:00:30,359
+Suscríbete a mi canal
 
 24
-00:00:30,239 --> 00:00:30,960
-es adivina,
+00:00:30,359 --> 00:00:31,617
+de YouTube para el
 
 25
-00:00:30,960 --> 00:00:32,219
-es herramienta que aprende
+00:00:31,617 --> 00:00:32,875
+cierre completo,
 
 26
-00:00:32,219 --> 00:00:33,619
-de cada sorpresa.
+00:00:32,875 --> 00:00:33,882
+link en mi bio.
 
 27
-00:00:33,619 --> 00:00:34,619
-Suscríbete al canal de
-
-28
-00:00:34,619 --> 00:00:35,640
-YouTube y ve el
-
-29
-00:00:35,640 --> 00:00:36,780
-cierre completo en el
-
-30
-00:00:36,780 --> 00:00:37,579
-link de mi bio.
-
-31
-00:00:37,579 --> 00:00:39,164
+00:00:33,882 --> 00:00:35,139
 Soy aiwithpedro.
