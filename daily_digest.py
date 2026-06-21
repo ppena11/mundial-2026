@@ -162,6 +162,25 @@ def et_date(dt_utc):
 _DIAS_ES = ["lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"]
 _MESES_ES = ["enero", "febrero", "marzo", "abril", "mayo", "junio",
              "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"]
+
+# ---- Modelo de TÍTULO + DESCRIPCIÓN estilo Shorts VIRALES (compartido por pronóstico, recap y dato curioso) ----
+# Investigado de Shorts de alto CTR: curiosidad + especificidad + emoción; 40-60 chars; gancho en los primeros 40.
+VIRAL_TITULO = (
+    '"youtube_titulo": un título estilo SHORT VIRAL de ALTO CTR (objetivo ~40-60 caracteres; pon lo MÁS fuerte en los '
+    "primeros ~40 para que NO se trunque). Combina CURIOSIDAD + ESPECIFICIDAD + EMOCIÓN. Usa UNA de estas fórmulas y "
+    "VÁRIALA cada día, adaptándola al TEMA del video: (1) AFIRMACIÓN AUDAZ con palabra-poder ('España DESTROZA hoy'); "
+    "(2) CURIOSIDAD/loop ('Nadie esperaba este marcador'); (3) NÚMERO ('Los 3 pronósticos más claros de hoy'); "
+    "(4) VERSUS ('España vs Arabia: lo que dice la IA'); (5) PREGUNTA ('¿Gana España hoy?'); (6) CONTRADICCIÓN + "
+    "PROMESA ('El favorito tropieza hoy, y la IA lo explica'). Incluye 'Mundial 2026' y 1 o 2 emojis (⚽🔥🎯🤯). "
+    "Palabra-poder con MAYÚSCULA puntual y moderada (NADIE, SORPRESA, LOCURA, BRUTAL, CLARO, DESTROZA). HONESTO: solo "
+    "lo que digan los datos, sin exagerar; NADA de apuestas; SIN comillas internas; apto para todo público.\n"
+)
+VIRAL_DESC = (
+    '"youtube_descripcion": estilo viral. La PRIMERA frase es un GANCHO que se lea sin tocar "...más" (p. ej. "El '
+    'Mundial 2026 en 60 segundos al día"). Luego datos concretos del día RICOS EN PALABRAS CLAVE (equipos, marcadores '
+    "o resultados, Mundial 2026, predicción con inteligencia artificial) y cierra con un CTA a SUSCRIBIRSE para el "
+    "detalle diario (link en la bio). Tildes correctas (Suscríbete, no 'Suscribete'). NO incluyas hashtags aquí.\n"
+)
 def weekday_es(target):
     """Nombre del día de la semana en español para un 'YYYYMMDD'. Lo calcula Python (no Claude,
     que se equivoca al deducir qué día cae una fecha)."""

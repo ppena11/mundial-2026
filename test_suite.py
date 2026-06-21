@@ -517,6 +517,9 @@ if os.path.exists("youtube_test.txt"): os.remove("youtube_test.txt")
 import curio as cux
 ok("la firma invita a suscribirse a YouTube (pronóstico, curio, recap)",
    all("canal de YouTube" in p for p in (msx.AI_SYSTEM, cux.CURIO_SYS, recap.AI_RECAP_SYS)), "falta YouTube en alguna")
+ok("modelo de TÍTULO VIRAL (estilo Shorts) aplicado a pronóstico, recap y dato curioso",
+   all("SHORT VIRAL" in p and "GANCHO que se lea" in p for p in (msx.AI_SYSTEM, cux.CURIO_SYS, recap.AI_RECAP_SYS)),
+   "falta el modelo viral compartido en alguno")
 ok("ningún prompt de contenido menciona TikTok",
    not any("tiktok" in p.lower() for p in (msx.AI_SYSTEM, cux.CURIO_SYS, recap.AI_RECAP_SYS, dd.AI_DIGEST_SYS)),
    "quedó TikTok en un prompt")

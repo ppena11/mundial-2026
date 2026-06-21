@@ -187,15 +187,7 @@ AI_SYSTEM = (
     "que el análisis completo está gratis en el Substack (link en bio). NO incluyas hashtags aquí.\n"
     '"hashtags": lista de EXACTAMENTE 5 hashtags, los más virales; incluye #Mundial2026, los 2 equipos más buscados '
     "que juegan hoy, y #IA y #parati.\n"
-    '"youtube_titulo": un título SÚPER VIRAL para YouTube (máx ~90 caracteres) que invite al CLIC: engancha con '
-    "curiosidad o el dato MÁS FUERTE del día (el pronóstico más claro o una sorpresa), menciona 'Mundial 2026' y "
-    "que es de HOY, con 1 o 2 emojis. HONESTO: nada que los datos no digan; SIN comillas internas. Ejemplos de "
-    "ESTILO (NO los copies): '¿Ecuador golea hoy? Pronósticos del Mundial 2026', 'Mundial 2026 HOY: los pronósticos "
-    "más CLAROS con IA'.\n"
-    '"youtube_descripcion": 2 o 3 frases que ENGANCHEN: arranca con un gancho tipo "El Mundial 2026 en 60 segundos al '
-    'día", nombra los pronósticos de hoy (equipos y marcadores) y cierra con un CTA a SUSCRIBIRSE para el detalle '
-    "diario. Rica en palabras clave (equipos del día, Mundial 2026, predicción con inteligencia artificial, "
-    "probabilidades). NO incluyas hashtags aquí.\n"
+    + dd.VIRAL_TITULO + dd.VIRAL_DESC +
     '"youtube_hashtags": lista de EXACTAMENTE 5 hashtags buscables para YouTube; incluye #Mundial2026, los equipos clave '
     "del día y #Shorts.\n"
     "Español neutro, cercano y enérgico. Apto para todo público, nada de apuestas. "

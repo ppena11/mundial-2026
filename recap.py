@@ -63,8 +63,7 @@ AI_RECAP_SYS = (
     "(lo lee un sintetizador de voz); números con dígitos y marcadores como '3 a 0' (NUNCA '3-0').\n"
     '"caption": 1 o 2 líneas para YouTube Shorts, con gancho; puede llevar 1 o 2 emojis; NO incluyas hashtags aquí.\n'
     '"hashtags": lista de EXACTAMENTE 5 hashtags virales; incluye #Mundial2026, #IA y #parati.\n'
-    '"youtube_titulo": título SEO para YouTube Shorts; pon al inicio "Resultados Mundial 2026", el día y "IA"; máx ~90 caracteres.\n'
-    '"youtube_descripcion": 2 o 3 frases con palabras clave (resultados Mundial 2026, aciertos del modelo, los equipos), con CTA al análisis (link en la bio). NO incluyas hashtags.\n'
+    + dd.VIRAL_TITULO + dd.VIRAL_DESC +
     '"youtube_hashtags": lista de EXACTAMENTE 5 hashtags buscables para YouTube; incluye #Mundial2026 y #Shorts.\n'
     "Tono honesto y cercano (mostrar fallos suma credibilidad), apto para todo público, nada de apuestas. "
     "NO metas resultados de contexto (otros días) en la VOZ: la brevedad manda; ese contexto va en el digest/caption, no en la voz. "
@@ -213,11 +212,11 @@ def build(target):
     json.dump(out, open(RECAP_FILE, "w", encoding="utf-8"), ensure_ascii=False, indent=2)
     open("recap_voiceover.txt", "w", encoding="utf-8").write(voz)
     open("recap_caption.txt", "w", encoding="utf-8").write(caption.rstrip() + " " + " ".join(tags[:5]))
-    # YouTube (SEO): título + descripción + 5 hashtags
-    yt_t = (ai.get("youtube_titulo") or "").strip() or f"Resultados Mundial 2026 ({fecha_h}): el modelo IA acertó {hits} de {n}"
+    # YouTube: título VIRAL + descripción + 5 hashtags
+    yt_t = (ai.get("youtube_titulo") or "").strip() or f"🎯 Acerté {hits} de {n} anoche en el Mundial 2026 ⚽"
     yt_d = (ai.get("youtube_descripcion") or "").strip() or (
-        f"Cierre del Mundial 2026 del {fecha_h}: comparamos el pronóstico de la inteligencia artificial con los "
-        f"resultados reales. Acertamos {hits} de {n}, con aciertos y fallos y total transparencia. Análisis completo, link en la bio.")
+        f"El Mundial 2026 en 60 segundos al día ⚽ Anoche mi IA acertó {hits} de {n}: comparo el pronóstico con los "
+        f"resultados reales, con aciertos y fallos y total transparencia. Suscríbete para el detalle diario, link en la bio.")
     yt_h = [(t if str(t).startswith("#") else "#"+str(t)) for t in (ai.get("youtube_hashtags") or [])]
     for extra in ["#Mundial2026", "#" + matches[0]["a"].replace(" ", "").replace(".", ""), "#Shorts", "#Resultados", "#WorldCup2026"]:
         if len(yt_h) >= 5: break
