@@ -174,13 +174,25 @@ def noticia_partido(a, b, target=None):
 def resumen_torneo(target, con_noticia=True):
     """String compacto con lo que ha pasado en el torneo hasta `target` (exclusive)."""
     import daily_digest as dd
+    from datetime import date, timedelta
     log = [r for r in _log() if r.get("actual") is not None]
     iso = f"{target[0:4]}-{target[4:6]}-{target[6:8]}"
+    try:
+        ayer_iso = (date.fromisoformat(iso) - timedelta(days=1)).isoformat()
+    except Exception:
+        ayer_iso = ""
+    ayer = [r for r in log if r.get("fecha", "") == ayer_iso and r.get("marcador_real")]
     jugados = [r for r in log if r.get("fecha", "") < iso]
     L = []
+    # AYER, clarísimo: el gancho/dato de apertura SOLO puede salir de aquí (partidos del día anterior)
+    if ayer:
+        L.append(f"RESULTADOS DE AYER ({ayer_iso}). Si abres con un DATO o gancho de un resultado reciente, usa SOLO "
+                 "estos partidos de AYER (NUNCA de otro día, NUNCA inventes un resultado que no esté aquí):")
+        L.append("  " + " · ".join(f"{dd.acc(r['a'])} {r.get('marcador_real','')} {dd.acc(r['b'])}" for r in ayer))
+    else:
+        L.append("AYER NO HUBO PARTIDOS: NO abras con un 'resultado de ayer'; abre con el pronóstico estrella de HOY.")
     if jugados:
-        L.append("CONTEXTO DEL TORNEO HASTA HOY (téjelo para que el guion suene al día; menciona algún "
-                 "resultado o sorpresa reciente, SIN inventar nada):")
+        L.append("CONTEXTO DEL TORNEO (solo color de fondo, NO para el gancho de 'ayer'; SIN inventar nada):")
         recientes = sorted(jugados, key=lambda r: r.get("fecha", ""))[-6:]
         L.append("Resultados recientes: " + " · ".join(
             f"{dd.acc(r['a'])} {r.get('marcador_real','')} {dd.acc(r['b'])}" for r in recientes))

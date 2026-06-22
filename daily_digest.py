@@ -150,7 +150,8 @@ def hora_hablada(dt_utc):
     elif m == 15: hh = f"{hp} y cuarto"
     elif m == 30: hh = f"{hp} y media"
     else:         hh = f"{hp} y {m}"
-    return f"{hh} {franja}, hora del este"
+    pref = "a la " if h12 == 1 else "a las "   # "a la una"; "a las dos/.../doce" (la 's' SIEMPRE salvo la una)
+    return f"{pref}{hh} {franja}, hora del este"
 
 def et_date(dt_utc):
     """Fecha del partido en hora del Este (ET), como 'YYYY-MM-DD'."""

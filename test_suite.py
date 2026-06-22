@@ -516,6 +516,12 @@ ok("limpiar_voz: elimina duplicaciones ('Bélgica y Bélgica'->'Bélgica', 'la l
    msx._limpiar_voz("Bélgica y Bélgica contra Irán") == "Bélgica contra Irán"
    and msx._limpiar_voz("es la la mejor") == "es la mejor"
    and msx._limpiar_voz("España y Japón juegan") == "España y Japón juegan", msx._limpiar_voz("Bélgica y Bélgica contra Irán"))
+ok("limpiar_voz: 'a la ocho'->'a las ocho' (la 's' SIEMPRE salvo en 'a la una')",
+   msx._limpiar_voz("juega a la ocho y a la una") == "juega a las ocho y a la una", msx._limpiar_voz("a la ocho, a la una"))
+ok("hora_hablada: 'a las' salvo 'a la una' (la 's' nunca falta)",
+   dd.hora_hablada("2026-06-22T00:00Z").startswith("a las ocho") and dd.hora_hablada("2026-06-21T17:00Z").startswith("a la una")
+   and dd.hora_hablada("2026-06-21T19:00Z").startswith("a las tres"),
+   dd.hora_hablada("2026-06-22T00:00Z") + " | " + dd.hora_hablada("2026-06-21T17:00Z"))
 if os.path.exists("youtube_test.txt"): os.remove("youtube_test.txt")
 # (3) firma menciona YouTube; sin TikTok en los prompts de contenido
 import curio as cux

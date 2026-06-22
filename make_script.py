@@ -137,9 +137,11 @@ AI_SYSTEM = (
     "enérgico, con autoridad y punto de vista; frases limpias, sin relleno ni muletillas. "
     "Escribe frases que FLUYAN con ritmo continuo de narrador; evita el staccato de muchas frases cortísimas "
     "seguidas y las comas innecesarias (esas causan pausas robóticas al leerlas la voz). "
-    "ARRANCA CON UN GANCHO FUERTE de UNA SOLA frase corta y CONTUNDENTE que frene el scroll: el dato MÁS BOMBA del "
-    "día (una sorpresa o goleada reciente, o el pronóstico más jugoso). Que sea un GOLPE SECO: NO metas el récord "
-    "ni acumules varias ideas en el gancho. "
+    "ARRANCA CON UN GANCHO FUERTE de UNA SOLA frase corta y CONTUNDENTE que frene el scroll: el dato MÁS BOMBA "
+    "(el pronóstico estrella de HOY, o —si el gancho usa un resultado reciente— SOLO un partido de "
+    "'RESULTADOS DE AYER' de los datos). PROHIBIDO abrir con un resultado de OTRO día o inventado: si en los datos "
+    "dice 'AYER NO HUBO PARTIDOS', abre con el pronóstico estrella de hoy, NUNCA con un 'resultado de ayer'. "
+    "Que sea un GOLPE SECO: NO metas el récord ni acumules varias ideas en el gancho. "
     'Justo después deja claro que son los pronósticos de hoy con la fecha así: "Aquí está el pronóstico de hoy, '
     '<día de la semana> <número> de <mes>" (usa EXACTAMENTE el día y la fecha de los datos, p. ej. "Aquí está el '
     'pronóstico de hoy, jueves 18 de junio"); NO digas "el día N del torneo". '
@@ -302,6 +304,10 @@ def _limpiar_voz(text):
     # duplicaciones: 'Bélgica y Bélgica' -> 'Bélgica'  y  'Bélgica Bélgica' / 'la la' -> una sola
     text = re.sub(r"\b([A-ZÁÉÍÓÚÑ]\w*)\s+y\s+\1\b", r"\1", text)
     text = re.sub(r"\b(\w+)(?:\s+\1\b)+", r"\1", text, flags=re.IGNORECASE)
+    # horas: "a la ocho" -> "a las ocho" (la 's' SIEMPRE salvo en "a la una")
+    horas = r"(dos|tres|cuatro|cinco|seis|siete|ocho|nueve|diez|once|doce)"
+    text = re.sub(rf"\ba la {horas}\b", r"a las \1", text)
+    text = re.sub(rf"\bA la {horas}\b", r"A las \1", text)
     return re.sub(r"\s{2,}", " ", text).strip()
 
 def build(target):
