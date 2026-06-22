@@ -67,7 +67,7 @@ def _generate(audio_id, audio_url, w=720, h=720):
     body = {"video_inputs": [{
         "character": {"type": "avatar", "avatar_id": AVATAR, "avatar_style": "normal"},
         "voice": voice,
-        "background": {"type": "color", "value": "#008000"}}],   # verde -> chroma-key
+        "background": {"type": "color", "value": "#008000"}}],   # verde -> chroma-key -> recorte limpio
         "dimension": {"width": w, "height": h}}
     r = requests.post(f"{API}/v2/video/generate", headers={**HDR, "Content-Type": "application/json"},
                       json=body, timeout=60)
@@ -91,7 +91,7 @@ def _wait(video_id, timeout=600):
 def _chromakey(mp4_path, out_webm):
     """Quita el verde -> WebM con alfa (VP9 yuva420p) para incrustar."""
     ff = _ff()
-    vf = "chromakey=0x008000:0.12:0.06,format=yuva420p"
+    vf = "chromakey=0x008000:0.20:0.10,despill=type=green,format=yuva420p"
     r = subprocess.run([ff, "-y", "-i", mp4_path, "-vf", vf, "-c:v", "libvpx-vp9", "-pix_fmt", "yuva420p",
                         "-an", "-b:v", "2M", out_webm], capture_output=True)
     return r.returncode == 0 and os.path.exists(out_webm)
