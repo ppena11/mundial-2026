@@ -1,5 +1,5 @@
 import React from 'react';
-import {AbsoluteFill, Audio, Sequence, staticFile, useCurrentFrame, useVideoConfig, interpolate, spring, Easing} from 'remotion';
+import {AbsoluteFill, Audio, Sequence, OffthreadVideo, staticFile, useCurrentFrame, useVideoConfig, interpolate, spring, Easing} from 'remotion';
 import {flagColors} from './flags';
 
 // ---------- paleta MUNDIAL 2026 ----------
@@ -54,8 +54,22 @@ const TopBar: React.FC<{fecha?: string}> = ({fecha}) => {
   );
 };
 
+// ---------- tu CLON (HeyGen) en círculo abajo-centro (mudo: la voz la pone el video) ----------
+const Avatar: React.FC<{src?: string}> = ({src}) => {
+  if (!src) return null;
+  const f = useCurrentFrame();
+  const float = Math.sin(f / 22) * 6;
+  return (
+    <div style={{position: 'absolute', bottom: 44, left: '50%', marginLeft: -180, width: 360, height: 360,
+      borderRadius: '50%', overflow: 'hidden', border: `6px solid ${GOLD}`,
+      boxShadow: `0 0 50px rgba(0,0,0,0.55), 0 0 30px ${GOLD}44`, background: 'rgba(8,8,30,0.35)', transform: `translateY(${float}px)`}}>
+      <OffthreadVideo src={staticFile(src)} muted style={{width: '100%', height: '100%', objectFit: 'cover', transform: 'scale(1.12)'}} />
+    </div>
+  );
+};
+
 // ---------- captions kinéticas sincronizadas a las palabras ----------
-const Captions: React.FC<{words: Word[]}> = ({words}) => {
+const Captions: React.FC<{words: Word[]; bottom?: number}> = ({words, bottom = 250}) => {
   const frame = useCurrentFrame(); const {fps} = useVideoConfig(); const t = frame / fps;
   const lines: {toks: Word[]; start: number; end: number}[] = React.useMemo(() => {
     const out: any[] = []; let cur: Word[] = [];
@@ -72,7 +86,7 @@ const Captions: React.FC<{words: Word[]}> = ({words}) => {
   const lf = frame - Math.round(line.start * fps);
   const lin = spring({frame: lf, fps, config: {damping: 11, mass: 0.5, stiffness: 160}});
   return (
-    <div style={{position: 'absolute', bottom: 250, left: 40, right: 40, textAlign: 'center', transform: `scale(${0.85 + lin * 0.15})`}}>
+    <div style={{position: 'absolute', bottom, left: 40, right: 40, textAlign: 'center', transform: `scale(${0.85 + lin * 0.15})`}}>
       <div style={{display: 'inline-flex', flexWrap: 'wrap', gap: '10px 14px', justifyContent: 'center'}}>
         {line.toks.map((tok, i) => {
           const active = t >= tok.t - 0.03 && t <= tok.e + 0.08;
@@ -140,7 +154,7 @@ const MatchCard: React.FC<{p: any; dur: number}> = ({p, dur}) => {
 };
 
 // ===================== PRONÓSTICO VIRAL =====================
-export const PronosticoViral: React.FC<{words: Word[]; data: any; audio: string}> = ({words = [], data = {}, audio = 'voz.mp3'}) => {
+export const PronosticoViral: React.FC<{words: Word[]; data: any; audio: string; avatar?: string}> = ({words = [], data = {}, audio = 'voz.mp3', avatar = ''}) => {
   const {fps, durationInFrames} = useVideoConfig();
   const partidos = data.partidos || [];
   const champStart = durationInFrames - Math.round(fps * 7);  // carrera al título cerca del final
@@ -183,8 +197,9 @@ export const PronosticoViral: React.FC<{words: Word[]; data: any; audio: string}
       {/* cierre */}
       <Sequence from={brandStart} durationInFrames={durationInFrames - brandStart}><Brand /></Sequence>
 
+      <Avatar src={avatar} />
       <TopBar fecha={data.fecha} />
-      <Captions words={words} />
+      <Captions words={words} bottom={avatar ? 470 : 250} />
     </AbsoluteFill>
   );
 };
@@ -263,7 +278,7 @@ const Brand: React.FC = () => {
 };
 
 // ===================== RECAP VIRAL =====================
-export const RecapViral: React.FC<{words: Word[]; data: any; audio: string}> = ({words = [], data = {}, audio = 'recap_voz.mp3'}) => {
+export const RecapViral: React.FC<{words: Word[]; data: any; audio: string; avatar?: string}> = ({words = [], data = {}, audio = 'recap_voz.mp3', avatar = ''}) => {
   const {fps, durationInFrames} = useVideoConfig();
   const partidos = data.partidos || [];
   const firstCard = Math.round(fps * 2.6);
@@ -282,8 +297,9 @@ export const RecapViral: React.FC<{words: Word[]; data: any; audio: string}> = (
       })}
       <Sequence from={recordStart} durationInFrames={brandStart - recordStart}><RecordScene data={data} /></Sequence>
       <Sequence from={brandStart} durationInFrames={durationInFrames - brandStart}><Brand /></Sequence>
+      <Avatar src={avatar} />
       <TopBar fecha={data.fecha} />
-      <Captions words={words} />
+      <Captions words={words} bottom={avatar ? 470 : 250} />
     </AbsoluteFill>
   );
 };

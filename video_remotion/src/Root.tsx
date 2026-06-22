@@ -18,13 +18,13 @@ export const RemotionRoot: React.FC = () => (
     <Composition
       id="PronosticoViral" component={PronosticoViral as any}
       fps={FPS} width={1080} height={1920} durationInFrames={1800}
-      defaultProps={{words: [] as any, data: {} as any, audio: 'voz.mp3', durationSec: 0}}
+      defaultProps={{words: [] as any, data: {} as any, audio: 'voz.mp3', durationSec: 0, avatar: ''}}
       calculateMetadata={calcDur as any}
     />
     <Composition
       id="RecapViral" component={RecapViral as any}
       fps={FPS} width={1080} height={1920} durationInFrames={1200}
-      defaultProps={{words: [] as any, data: {} as any, audio: 'recap_voz.mp3', durationSec: 0}}
+      defaultProps={{words: [] as any, data: {} as any, audio: 'recap_voz.mp3', durationSec: 0, avatar: ''}}
       calculateMetadata={calcDur as any}
     />
   </>

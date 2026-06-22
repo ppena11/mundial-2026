@@ -78,6 +78,8 @@ voice_words.json
 recap_voice_words.json
 viral_pronostico.json
 viral_recap.json
+voice_avatar.webm
+recap_voice_avatar.webm
 
 # === Remotion: dependencias y artefactos (node_modules NUNCA al repo; el resto se regenera) ===
 video_remotion/node_modules/

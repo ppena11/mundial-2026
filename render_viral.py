@@ -26,16 +26,26 @@ def _dur(path):
     m = re.search(r"Duration:\s*(\d+):(\d+):(\d+\.?\d*)", r.stderr or "")
     return int(m.group(1)) * 3600 + int(m.group(2)) * 60 + float(m.group(3)) if m else 0.0
 
-def render(comp, audio_src, words_file, data_file, pub_audio, props_name, out_name):
+def render(comp, audio_src, words_file, data_file, pub_audio, props_name, out_name, avatar_pub):
     if not (os.path.exists(audio_src) and os.path.exists(words_file)):
         print(f"({comp}: faltan {audio_src} o {words_file}; omito)"); return False
     os.makedirs(PUB, exist_ok=True); os.makedirs(os.path.join(VR, "out"), exist_ok=True)
     shutil.copy(audio_src, os.path.join(PUB, pub_audio))
     mus = os.path.join(ROOT, "musica.mp3")
     if os.path.exists(mus): shutil.copy(mus, os.path.join(PUB, "musica.mp3"))
+    # avatar HeyGen (opcional): genera tu clon hablando con la voz -> webm transparente -> público
+    avatar_name = ""
+    try:
+        import heygen
+        if heygen.KEY and heygen.AVATAR:
+            webm = os.path.splitext(audio_src)[0] + "_avatar.webm"
+            if heygen.generar(audio_src, webm) and os.path.exists(webm):
+                shutil.copy(webm, os.path.join(PUB, avatar_pub)); avatar_name = avatar_pub
+    except Exception as e:
+        print(f"(avatar HeyGen omitido: {e})")
     words = json.load(open(words_file, encoding="utf-8"))
     data = json.load(open(data_file, encoding="utf-8")) if os.path.exists(data_file) else {}
-    props = {"words": words, "data": data, "audio": pub_audio, "durationSec": round(_dur(audio_src), 2)}
+    props = {"words": words, "data": data, "audio": pub_audio, "durationSec": round(_dur(audio_src), 2), "avatar": avatar_name}
     json.dump(props, open(os.path.join(PUB, props_name), "w", encoding="utf-8"), ensure_ascii=False)
     env = dict(os.environ)
     if sys.platform == "win32" and not env.get("TEMP", "").lower().startswith("e:"):
@@ -55,8 +65,8 @@ if __name__ == "__main__":
     ok = True
     if what in ("pronostico", "both"):
         ok = render("PronosticoViral", "voice.mp3", "voice_words.json", "viral_pronostico.json",
-                    "voz.mp3", "pronostico_props.json", "pronostico_viral.mp4") and ok
+                    "voz.mp3", "pronostico_props.json", "pronostico_viral.mp4", "voz_avatar.webm") and ok
     if what in ("recap", "both"):
         ok = render("RecapViral", "recap_voice.mp3", "recap_voice_words.json", "viral_recap.json",
-                    "recap_voz.mp3", "recap_props.json", "recap_viral.mp4") and ok
+                    "recap_voz.mp3", "recap_props.json", "recap_viral.mp4", "recap_avatar.webm") and ok
     sys.exit(0 if ok else 1)
