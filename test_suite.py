@@ -376,12 +376,12 @@ played_x = [{"a": "Brasil", "b": "Marruecos", "fav": "Brasil", "fp": 0.5, "sx": 
 sm_x = msx._summary("13/06/2026", played_x, None, None, {"n": 0})
 ok("_summary abre con la fecha hablada (sábado 13 de junio)", "Hoy es sábado 13 de junio" in sm_x, sm_x.splitlines()[0])
 ok("hora_hablada en palabras (sin ET ni cifras; 'una' correcto)",
-   dd.hora_hablada("2026-06-13T20:00Z") == "cuatro de la tarde, hora del este"
-   and dd.hora_hablada("2026-06-13T17:00Z") == "una de la tarde, hora del este"
-   and dd.hora_hablada("2026-06-14T00:00Z") == "ocho de la noche, hora del este",
+   dd.hora_hablada("2026-06-13T20:00Z") == "a las cuatro de la tarde, hora del este"
+   and dd.hora_hablada("2026-06-13T17:00Z") == "a la una de la tarde, hora del este"
+   and dd.hora_hablada("2026-06-14T00:00Z") == "a las ocho de la noche, hora del este",
    dd.hora_hablada("2026-06-13T20:00Z"))
 ok("_summary incluye hora HABLADA y sede del partido (sin inventar)",
-   "Hora: tres de la tarde, hora del este" in sm_x and "Sede: Estadio Azteca, Ciudad de México, México" in sm_x, sm_x)
+   "Hora: a las tres de la tarde, hora del este" in sm_x and "Sede: Estadio Azteca, Ciudad de México, México" in sm_x, sm_x)
 ok("AI_SYSTEM pide hora+sede (estadio/ciudad/país) y NO citar el medio",
    all(s in msx.AI_SYSTEM for s in ("estadio", "ciudad", "PAÍS", "SIN citar el medio")), "falta la regla")
 ok("_summary ya NO mete 'el día N del torneo'", "hoy es el día" not in sm_x.lower(), "quedó el día N")
