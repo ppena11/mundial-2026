@@ -542,6 +542,15 @@ if _os.path.exists("champ_ensemble.json"):
     _pref_ok = (_cp == _json.load(open("champ_ensemble.json", encoding="utf-8")).get("ensemble", {}))
 ok("campeon_probs: prefiere el ENSEMBLE modelo+mercado (campeón usa el mercado, no solo el modelo)",
    isinstance(_cp, dict) and len(_cp) > 0 and _pref_ok, "campeon_probs no prefirió el ensemble")
+# videos virales: remap de timestamps por pausas + alineación hablado->pantalla
+_rw = pz.remap_words([{"w": "a", "t": 0.5, "e": 0.8}, {"w": "b", "t": 1.5, "e": 1.8}],
+                     [("a", 0.0, 1.0), ("s", 0.5), ("a", 1.2, 2.0)])
+ok("remap_words: remapea los tiempos por cortes/inserciones de pausas (silencio insertado desplaza)",
+   abs(_rw[0]["t"] - 0.5) < 0.01 and abs(_rw[1]["t"] - 1.8) < 0.01, str(_rw))
+_al = mvz.alinear_display([{"w": "España", "t": 0.0, "e": 0.4}, {"w": "gana", "t": 0.5, "e": 0.8}, {"w": "tres", "t": 1.0, "e": 1.3}], "España gana 3")
+ok("alinear_display: palabras de PANTALLA con tiempos (casadas exactas, número interpolado, monótono)",
+   [x["w"] for x in _al] == ["España", "gana", "3"] and abs(_al[0]["t"]) < 0.01 and abs(_al[1]["t"] - 0.5) < 0.01
+   and all(_al[i]["t"] <= _al[i + 1]["t"] + 0.001 for i in range(len(_al) - 1)), str(_al))
 ok("ningún prompt de contenido menciona TikTok",
    not any("tiktok" in p.lower() for p in (msx.AI_SYSTEM, cux.CURIO_SYS, recap.AI_RECAP_SYS, dd.AI_DIGEST_SYS)),
    "quedó TikTok en un prompt")

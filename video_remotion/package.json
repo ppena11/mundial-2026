@@ -1,0 +1,20 @@
+{
+  "name": "video-dia6",
+  "version": "1.0.0",
+  "description": "Video build-in-public dia 6 (@aiwithpedro) con Remotion",
+  "scripts": {
+    "render": "remotion render src/index.ts Dia6 out/video.mp4 --codec h264 --crf 18",
+    "studio": "remotion studio"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.286",
+    "@remotion/media-utils": "4.0.286",
+    "remotion": "4.0.286",
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
+  },
+  "devDependencies": {
+    "@types/react": "18.3.1",
+    "typescript": "5.5.4"
+  }
+}

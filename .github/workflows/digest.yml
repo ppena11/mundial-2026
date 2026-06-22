@@ -79,6 +79,22 @@ jobs:
         continue-on-error: true
         run: python auto_recap.py
 
+      - name: 5c-setup) Node + Remotion (para los videos virales)
+        if: steps.guard.outputs.run == 'true'
+        continue-on-error: true
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: video_remotion/package-lock.json
+
+      - name: 5c) Videos VIRALES (Remotion) — pronóstico + recap — opcional
+        if: steps.guard.outputs.run == 'true'
+        continue-on-error: true
+        run: |
+          cd video_remotion && npm ci && npx remotion browser ensure && cd ..
+          python render_viral.py both
+
       - name: 6) Resumen semanal (solo los lunes)
         if: steps.guard.outputs.run == 'true'
         run: |
@@ -118,5 +134,7 @@ jobs:
             recap_caption.txt
             recap_voiceover.txt
             recap_youtube.txt
+            pronostico_viral.mp4
+            recap_viral.mp4
           if-no-files-found: ignore
           retention-days: 14

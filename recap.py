@@ -158,6 +158,19 @@ def build(target):
     best = max((x for x in matches if x["ok1x2"]), key=lambda x: x["ppick"], default=None)
     miss = next((x for x in matches if not x["ok1x2"]), None)
     surprise = min((x for x in matches if x["ok1x2"]), key=lambda x: x["ppick"], default=None)
+    # export para la INFOGRAFÍA VIRAL del recap (Remotion): los 2 destacados (acierto + fallo)
+    try:
+        def _sc(s):
+            mm = re.match(r"\s*(\d+)\s*-\s*(\d+)", s or "")
+            return (int(mm.group(1)), int(mm.group(2))) if mm else (None, None)
+        destac = [x for x in (best, miss) if x] or matches[:2]
+        vr = {"fecha": fecha_h, "aciertos": hits, "n": n,
+              "partidos": [{"a": dd.acc(x["a"]), "b": dd.acc(x["b"]),
+                            "real_sx": _sc(x["marcador_real"])[0], "real_sy": _sc(x["marcador_real"])[1],
+                            "acierto": bool(x["ok1x2"]), "pred": x.get("marcador_pred", "")} for x in destac]}
+        json.dump(vr, open("viral_recap.json", "w", encoding="utf-8"), ensure_ascii=False, indent=2)
+    except Exception as e:
+        print(f"(viral_recap.json no exportado: {e})")
     dia = dd.weekday_es(target)   # día calculado en Python (Claude no lo deduce)
     sm = [f"Anoche fue {dia}, {fecha_h}. El modelo acertó {hits} de {n} partidos." if dia
           else f"Cierre del {fecha_h}. El modelo acertó {hits} de {n} partidos."]

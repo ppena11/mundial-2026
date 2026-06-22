@@ -70,3 +70,17 @@ cand_*.mp3
 cand_*.srt
 ref_voz.mp3
 voice_v3.mp3
+
+# === Videos VIRALES (Remotion): salidas generadas por día (van como artefactos, no al repo) ===
+pronostico_viral.mp4
+recap_viral.mp4
+voice_words.json
+recap_voice_words.json
+viral_pronostico.json
+viral_recap.json
+
+# === Remotion: dependencias y artefactos (node_modules NUNCA al repo; el resto se regenera) ===
+video_remotion/node_modules/
+video_remotion/out/
+video_remotion/public/
+video_remotion/.remotion/
