@@ -137,7 +137,10 @@ const MatchCard: React.FC<{p: any; dur: number}> = ({p, dur}) => {
   );
   return (
     <Scene dur={dur} shake={sh}>
-      {p.destacado ? <div style={{transform: `scale(${e})`, marginBottom: 22, background: `linear-gradient(90deg,${MAGENTA},${BLUE})`, color: WHITE, fontFamily: FONT, fontSize: 34, fontWeight: 900, letterSpacing: 2, padding: '10px 26px', borderRadius: 999}}>PICK DEL DÍA</div> : null}
+      <div style={{display: 'flex', gap: 12, marginBottom: 22, transform: `scale(${e})`, justifyContent: 'center'}}>
+        {p.destacado ? <div style={{background: `linear-gradient(90deg,${MAGENTA},${BLUE})`, color: WHITE, fontFamily: FONT, fontSize: 32, fontWeight: 900, letterSpacing: 2, padding: '10px 24px', borderRadius: 999}}>PICK DEL DÍA</div> : null}
+        {p.hora_corta ? <div style={{background: 'rgba(255,255,255,0.12)', border: `2px solid ${TEAL}`, color: WHITE, fontFamily: FONT, fontSize: 32, fontWeight: 800, padding: '8px 22px', borderRadius: 999}}>🕐 {p.hora_corta}</div> : null}
+      </div>
       <div style={{transform: `scale(${0.7 + e * 0.3})`, opacity: Math.min(1, e * 1.6), background: 'rgba(10,10,40,0.55)', border: '3px solid rgba(255,255,255,0.18)', borderRadius: 34, padding: '40px 36px', boxShadow: '0 24px 70px rgba(0,0,0,0.5)'}}>
         <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8}}>
           <Team name={p.a} fav={p.fav === p.a} />
@@ -157,8 +160,9 @@ const MatchCard: React.FC<{p: any; dur: number}> = ({p, dur}) => {
 export const PronosticoViral: React.FC<{words: Word[]; data: any; audio: string; avatar?: string}> = ({words = [], data = {}, audio = 'voz.mp3', avatar = ''}) => {
   const {fps, durationInFrames} = useVideoConfig();
   const partidos = data.partidos || [];
-  const champStart = durationInFrames - Math.round(fps * 7);  // carrera al título cerca del final
   const brandStart = durationInFrames - Math.round(fps * 2.2);
+  const champStart = brandStart - Math.round(fps * 4);        // carrera al título (4s)
+  const resumenStart = champStart - Math.round(fps * 4.8);    // tarjeta-resumen capturable (4.8s)
   // anclar cada tarjeta a la voz, SECUENCIAL: tras la anterior y nunca dentro del gancho (mín 8s)
   const hookMin = Math.round(fps * Math.min(9, (durationInFrames / fps) * 0.14));
   const minGap = Math.round(fps * 1.4);
@@ -186,12 +190,14 @@ export const PronosticoViral: React.FC<{words: Word[]; data: any; audio: string;
       {/* tarjetas de partido, ancladas a la voz */}
       {partidos.map((p: any, i: number) => {
         const start = anchors[i] != null ? anchors[i] : (firstCard + i * Math.round(fps * 3));
-        const next = (i + 1 < partidos.length && anchors[i + 1] != null) ? anchors[i + 1] : champStart;
+        const next = (i + 1 < partidos.length && anchors[i + 1] != null) ? anchors[i + 1] : resumenStart;
         const dur = Math.max(Math.round(fps * 1.5), next - start);
-        if (start >= champStart) return null;
-        return <Sequence key={i} from={start} durationInFrames={Math.min(dur, champStart - start)}><MatchCard p={p} dur={dur} /></Sequence>;
+        if (start >= resumenStart) return null;
+        return <Sequence key={i} from={start} durationInFrames={Math.min(dur, resumenStart - start)}><MatchCard p={p} dur={dur} /></Sequence>;
       })}
 
+      {/* tarjeta-resumen capturable (todos los pronósticos) */}
+      <Sequence from={resumenStart} durationInFrames={champStart - resumenStart}><ResumenCard data={data} /></Sequence>
       {/* carrera al título */}
       <Sequence from={champStart} durationInFrames={brandStart - champStart}><ChampRace campeon={data.campeon || []} /></Sequence>
       {/* cierre */}
@@ -219,18 +225,49 @@ const HookPron: React.FC<{data: any}> = ({data}) => {
 
 const IntroPron: React.FC<{data: any}> = ({data}) => {
   const f = useCurrentFrame();
-  const e = usePunch(2, 8); const r = usePunch(26, 9);
-  const n = countUp(f, 4, 26, 20000);
+  const e = usePunch(2, 8); const big = usePunch(22, 8);
   const rec = data.record || {};
+  const hits = countUp(f, 24, 22, rec.aciertos || 0);
+  const intro = (data.intro || 'mi inteligencia artificial ya jugó la jornada');
   return (
     <Scene dur={200}>
-      <div style={{transform: `scale(${0.7 + e * 0.3})`, textAlign: 'center', marginBottom: 30}}>
-        <div style={{fontFamily: FONT, fontSize: 52, fontWeight: 800, color: '#C9D4F0'}}>mi inteligencia artificial corrió</div>
-        <div style={{fontFamily: FONT, fontSize: 150, fontWeight: 900, lineHeight: 1, letterSpacing: -3, background: `linear-gradient(120deg,${TEAL},${BLUE},${MAGENTA})`, WebkitBackgroundClip: 'text', backgroundClip: 'text', color: 'transparent'}}>{n.toLocaleString('es')}</div>
-        <div style={{fontFamily: FONT, fontSize: 60, fontWeight: 900, color: WHITE, letterSpacing: 6}}>SIMULACIONES</div>
+      <div style={{transform: `scale(${0.72 + e * 0.28})`, textAlign: 'center', marginBottom: rec.n ? 40 : 0}}>
+        <div style={{fontFamily: FONT, fontSize: 66, fontWeight: 900, color: WHITE, lineHeight: 1.12, textTransform: 'uppercase', letterSpacing: -1}}>{intro}</div>
       </div>
-      {rec.n ? <div style={{transform: `scale(${r})`, background: `linear-gradient(90deg,${GREEN},${TEAL})`, color: INK, fontFamily: FONT, fontSize: 46, fontWeight: 900, padding: '14px 36px', borderRadius: 999}}>récord {rec.aciertos} de {rec.n} ✓</div> : null}
+      {rec.n ? (
+        <div style={{transform: `scale(${0.6 + big * 0.4})`, textAlign: 'center'}}>
+          <div style={{fontFamily: FONT, fontSize: 48, fontWeight: 700, color: '#9FB3D1'}}>récord del modelo</div>
+          <div style={{fontFamily: FONT, fontSize: 152, fontWeight: 900, lineHeight: 1, background: `linear-gradient(120deg,${TEAL},${GREEN})`, WebkitBackgroundClip: 'text', backgroundClip: 'text', color: 'transparent'}}>{hits}/{rec.n}</div>
+          <div style={{fontFamily: FONT, fontSize: 46, fontWeight: 900, color: WHITE, letterSpacing: 5}}>ACIERTOS</div>
+        </div>
+      ) : null}
     </Scene>
+  );
+};
+
+// tarjeta-resumen CAPTURABLE: todos los pronósticos del día (para screenshot + compartir)
+const ResumenCard: React.FC<{data: any}> = ({data}) => {
+  const e = usePunch(2, 8);
+  const partidos = data.partidos || [];
+  return (
+    <AbsoluteFill style={{justifyContent: 'center', alignItems: 'center', padding: 46}}>
+      <div style={{transform: `scale(${0.86 + e * 0.14})`, width: 960, background: 'rgba(8,8,32,0.78)', border: `4px solid ${GOLD}`, borderRadius: 38, padding: '38px 34px', boxShadow: '0 24px 90px rgba(0,0,0,0.65)'}}>
+        <div style={{textAlign: 'center', marginBottom: 22}}>
+          <div style={{fontFamily: FONT, fontSize: 42, fontWeight: 900, color: GOLD, letterSpacing: 2}}>PRONÓSTICOS DEL DÍA</div>
+          <div style={{fontFamily: FONT, fontSize: 34, fontWeight: 800, color: WHITE}}>Mundial 2026 · {data.fecha}</div>
+        </div>
+        {partidos.map((p: any, i: number) => (
+          <div key={i} style={{display: 'flex', alignItems: 'center', gap: 12, padding: '13px 4px', borderBottom: i < partidos.length - 1 ? '2px solid rgba(255,255,255,0.09)' : 'none'}}>
+            <Flag team={p.a} w={54} />
+            <div style={{flex: 1, textAlign: 'right', fontFamily: FONT, fontSize: 33, fontWeight: 800, color: p.fav === p.a ? GOLD : WHITE, whiteSpace: 'nowrap', overflow: 'hidden'}}>{p.a}</div>
+            <div style={{fontFamily: FONT, fontSize: 46, fontWeight: 900, color: WHITE, minWidth: 118, textAlign: 'center', background: `linear-gradient(180deg,${MAGENTA}33,${BLUE}33)`, borderRadius: 12, padding: '2px 0'}}>{p.sx}<span style={{color: MAGENTA}}>-</span>{p.sy}</div>
+            <div style={{flex: 1, textAlign: 'left', fontFamily: FONT, fontSize: 33, fontWeight: 800, color: p.fav === p.b ? GOLD : WHITE, whiteSpace: 'nowrap', overflow: 'hidden'}}>{p.b}</div>
+            <Flag team={p.b} w={54} />
+          </div>
+        ))}
+        <div style={{textAlign: 'center', marginTop: 22, fontFamily: FONT, fontSize: 32, fontWeight: 800, color: TEAL}}>@aiwithpedro · captura y comparte 📸</div>
+      </div>
+    </AbsoluteFill>
   );
 };
 

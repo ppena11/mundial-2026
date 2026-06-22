@@ -20,6 +20,10 @@ BRAND = "aiwithpedro"
 BRAND_VOZ = "éi ái uíz Pédro"   # cómo se pronuncia @aiwithpedro en la voz (ElevenLabs)
 KICKOFF = date(2026, 6, 11)     # día inaugural del Mundial 2026 (anclaje temporal para Claude)
 VAL_MARGIN, VAL_FLOOR = 1.20, 0.20
+# variantes para NO repetir "veinte mil simulaciones" cada día (rota por fecha); honestas, el modelo es real
+_INTRO_VARIANTS = ["mi inteligencia artificial ya jugó la jornada", "mi modelo lo tiene clarísimo",
+                   "el algoritmo procesó todos los escenarios", "mi IA corrió veinte mil simulaciones",
+                   "miles de escenarios, un solo veredicto", "mi modelo de IA ya tiene los marcadores"]
 
 def pct(x): return f"{round(100*x)} por ciento"
 
@@ -145,8 +149,10 @@ AI_SYSTEM = (
     'Justo después deja claro que son los pronósticos de hoy con la fecha así: "Aquí está el pronóstico de hoy, '
     '<día de la semana> <número> de <mes>" (usa EXACTAMENTE el día y la fecha de los datos, p. ej. "Aquí está el '
     'pronóstico de hoy, jueves 18 de junio"); NO digas "el día N del torneo". '
-    "En UNA frase BREVE presume la INTELIGENCIA ARTIFICIAL —que tu modelo corrió VEINTE MIL simulaciones (es real)— "
-    "integrada con naturalidad, sin relleno tipo 'y está listo para el análisis'. "
+    "En UNA frase BREVE presume tu INTELIGENCIA ARTIFICIAL, pero VARÍA MUCHO cómo la nombras cada día: NO repitas "
+    "siempre 'veinte mil simulaciones'. Alterna giros como 'mi inteligencia artificial', 'mi modelo', 'el algoritmo', "
+    "'miles de escenarios', 'el modelo ya jugó la jornada', y SOLO de vez en cuando 'veinte mil simulaciones' (es "
+    "real). Intégrala con naturalidad, sin relleno tipo 'y está listo para el análisis'. "
     "Presenta CADA partido como 'el pronóstico de A contra B' con su MARCADOR PREVISTO, sin omitir ninguno, pero "
     "VARÍA cómo introduces cada uno (NO repitas la misma plantilla) pero SIEMPRE con frases GRAMATICALES y "
     "naturales: 'ojo con A contra B', 'A se mide ante B', 'A parte como favorito ante B', 'el modelo se inclina "
@@ -360,9 +366,11 @@ def build(target):
         _ch = dd.campeon_probs()
         _feat = max(range(len(played)), key=lambda i: max(_ch.get(played[i]["a"], 0), _ch.get(played[i]["b"], 0))) if played else -1
         viral = {"fecha": _fh, "target": target,
+                 "intro": _INTRO_VARIANTS[int(target) % len(_INTRO_VARIANTS)],
                  "partidos": [{"a": dd.acc(d["a"]), "b": dd.acc(d["b"]), "fav": dd.acc(d["fav"]),
                                "fp": round(100 * d["fp"]), "sx": d["sx"], "sy": d["sy"],
                                "hora": dd.hora_hablada(d["utc"]) if d.get("utc") else "",
+                               "hora_corta": dd.hora_et(d["utc"]) if d.get("utc") else "",
                                "sede": ", ".join(x for x in (d.get("estadio"), d.get("ciudad"), d.get("pais")) if x),
                                "destacado": (i == _feat)} for i, d in enumerate(played)],
                  "campeon": [[dd.acc(t), round(float(p), 1)] for t, p in list(_ch.items())[:6]],
@@ -376,7 +384,8 @@ def build(target):
     if not played:
         S.append("Hoy no hay partidos del Mundial, pero mi inteligencia artificial ya está lista para cuando ruede el balón.")
     else:
-        S.append(f"Aquí está el pronóstico de hoy, {dd.fecha_larga(target)}. Mi inteligencia artificial corrió veinte mil simulaciones, y estos son los marcadores que proyecta.")
+        _iv = _INTRO_VARIANTS[int(target) % len(_INTRO_VARIANTS)]
+        S.append(f"Aquí está el pronóstico de hoy, {dd.fecha_larga(target)}. {_iv[0].upper()}{_iv[1:]}, y estos son los marcadores que proyecta.")
         S.append(". ".join(f"{dd.acc(d['a'])} {d['sx']} a {d['sy']} {dd.acc(d['b'])}" for d in played) + ".")
         if pick:
             d,(team,mpb,mkp,edge)=pick; riv=d["b"] if team==d["a"] else d["a"]

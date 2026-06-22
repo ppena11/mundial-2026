@@ -409,8 +409,10 @@ ok("eliminatorias (desde 28-jun): TODOS los partidos van en detalle",
 ok("AI_SYSTEM: [DETALLE]=completo, los demás=solo hora",
    "[DETALLE]" in msx.AI_SYSTEM and "SOLO el pronóstico" in msx.AI_SYSTEM, "falta la regla")
 ok("AI_SYSTEM: gancho + factor IA + variación + opinión + cierre con actitud",
-   all(s in msx.AI_SYSTEM for s in ("GANCHO FUERTE", "VEINTE MIL simulaciones",
+   all(s in msx.AI_SYSTEM for s in ("GANCHO FUERTE", "VARÍA MUCHO cómo la nombras",
        "VARÍA cómo introduces", "OPINIÓN PROPIA", "ACTITUD")), "falta alguna mejora de estilo")
+ok("AI_SYSTEM: NO fuerza 'veinte mil simulaciones' cada día (variación del factor IA)",
+   "VARÍA MUCHO cómo la nombras" in msx.AI_SYSTEM and "_INTRO_VARIANTS" in dir(msx) and len(msx._INTRO_VARIANTS) >= 5, "falta la variación")
 ok("AI_SYSTEM: la opinión del destacado va JUSTO DESPUÉS de ese partido (no al final, no sobre otro)",
    "JUSTO DESPUÉS de su pronóstico" in msx.AI_SYSTEM and "SOLO para el destacado" in msx.AI_SYSTEM, "falta la regla de posición")
 # fonética de estadios/ciudades SOLO para el audio (ElevenLabs); el texto queda real para subtítulos
