@@ -114,8 +114,29 @@ def _segmentos(ops, total):
             prev = seg[2]
     return segs
 
-def normalizar_pausas(audio_in, texto, audio_out=None, modelo=None):
-    """Ajusta las pausas a la puntuación del `texto` y pule el audio (loudness/high-pass). True si reescribió."""
+def remap_words(words, segs):
+    """Remapea (t,e) de cada palabra de la línea de tiempo ORIGINAL (audio cosido) a la FINAL (post-pausas),
+    según los tramos conservados ('a') e insertados ('s') por la normalización. Mapeo lineal por tramos."""
+    keeps, final_cur = [], 0.0
+    for seg in segs:
+        if seg[0] == "a":
+            keeps.append((seg[1], seg[2], final_cur)); final_cur += (seg[2] - seg[1])
+        else:                                   # 's' = silencio insertado (avanza la línea final)
+            final_cur += seg[1]
+    def _map(t):
+        for oa, ob, fa in keeps:
+            if t < oa:  return fa               # cayó en un corte previo -> inicio del tramo
+            if t <= ob: return fa + (t - oa)
+        return keeps[-1][2] + (keeps[-1][1] - keeps[-1][0]) if keeps else t
+    out = []
+    for w in words:
+        t = _map(w["t"]); e = _map(w["e"])
+        out.append({"w": w["w"], "t": round(t, 3), "e": round(max(e, t), 3)})
+    return out
+
+def normalizar_pausas(audio_in, texto, audio_out=None, modelo=None, words=None):
+    """Ajusta las pausas a la puntuación del `texto` y pule el audio (loudness/high-pass). Si se pasan `words`
+    (lista [{w,t,e}] del audio cosido), devuelve esas palabras REMAPEADAS al audio final; si no, True/False."""
     audio_out = audio_out or audio_in
     total = _dur(audio_in)
     if total <= 0:
@@ -203,7 +224,7 @@ def normalizar_pausas(audio_in, texto, audio_out=None, modelo=None):
     ncut = sum(1 for o in ops if o[0] == "cut"); nins = len(ops) - ncut
     print(f"  · audio pro: {ncut} pausas recortadas (−{recortado:.1f}s), {nins} insertadas (+{insertado:.1f}s)"
           + (f", loudness {lufs} LUFS" if pulir else ""))
-    return True
+    return remap_words(words, segs) if words is not None else True
 
 if __name__ == "__main__":
     import sys

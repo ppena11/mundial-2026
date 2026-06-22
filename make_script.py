@@ -348,6 +348,23 @@ def build(target):
     try: tr=json.load(open("track_record.json",encoding="utf-8"))
     except Exception: tr={"n":0}
 
+    # ---------- export para la INFOGRAFÍA VIRAL (Remotion): partidos (marcador ensamblado) + campeón ----------
+    try:
+        _fh = target[6:8] + "/" + target[4:6] + "/" + target[0:4]
+        _ch = dd.campeon_probs()
+        _feat = max(range(len(played)), key=lambda i: max(_ch.get(played[i]["a"], 0), _ch.get(played[i]["b"], 0))) if played else -1
+        viral = {"fecha": _fh, "target": target,
+                 "partidos": [{"a": dd.acc(d["a"]), "b": dd.acc(d["b"]), "fav": dd.acc(d["fav"]),
+                               "fp": round(100 * d["fp"]), "sx": d["sx"], "sy": d["sy"],
+                               "hora": dd.hora_hablada(d["utc"]) if d.get("utc") else "",
+                               "sede": ", ".join(x for x in (d.get("estadio"), d.get("ciudad"), d.get("pais")) if x),
+                               "destacado": (i == _feat)} for i, d in enumerate(played)],
+                 "campeon": [[dd.acc(t), round(float(p), 1)] for t, p in list(_ch.items())[:6]],
+                 "record": {"aciertos": tr.get("aciertos_1x2", 0), "n": tr.get("n", 0)}}
+        json.dump(viral, open("viral_pronostico.json", "w", encoding="utf-8"), ensure_ascii=False, indent=2)
+    except Exception as e:
+        print(f"(viral_pronostico.json no exportado: {e})")
+
     # ---------- GUION (hablado, sin símbolos) ----------
     S=[]
     if not played:

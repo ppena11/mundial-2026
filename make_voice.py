@@ -9,7 +9,7 @@ CONFIG (en .env o GitHub Secrets):
 
 USO: python make_voice.py [--in voiceover.txt] [--out voice.mp3]
 """
-import os, sys, re
+import os, sys, re, base64, json, unicodedata
 try:
     import requests
 except ImportError:
@@ -164,63 +164,152 @@ def _concat_mp3(segs, gap=0.25):
             pass
     return data
 
+_STITCH_GAP = 0.25   # = gap por defecto de _concat_mp3 (silencio insertado entre bloques cosidos)
+
+def _dur_bytes(b):
+    """Duración (s) de un mp3 en memoria, vía ffmpeg (para acumular offsets exactos del stitching)."""
+    import tempfile, subprocess
+    try:
+        import imageio_ffmpeg; ff = imageio_ffmpeg.get_ffmpeg_exe()
+    except Exception:
+        ff = "ffmpeg"
+    p = tempfile.mktemp(suffix=".mp3")
+    try:
+        open(p, "wb").write(b)
+        r = subprocess.run([ff, "-i", p], capture_output=True, text=True)
+        m = re.search(r"Duration:\s*(\d+):(\d+):(\d+\.?\d*)", r.stderr or "")
+        return (int(m.group(1))*3600 + int(m.group(2))*60 + float(m.group(3))) if m else 0.0
+    finally:
+        try: os.remove(p)
+        except Exception: pass
+
+def _palabras_de_alineacion(al, offset):
+    """Agrega los caracteres de la alineación de ElevenLabs en PALABRAS con (inicio, fin), sumando 'offset'
+    (segundos acumulados de los bloques previos del stitching)."""
+    chars = al.get("characters", []) or []
+    st = al.get("character_start_times_seconds", []) or []
+    en = al.get("character_end_times_seconds", []) or []
+    out, cur, ws, we = [], "", None, None
+    for c, s, e in zip(chars, st, en):
+        if c.isspace():
+            if cur:
+                out.append({"w": cur, "t": round(ws + offset, 3), "e": round(we + offset, 3)}); cur = ""
+        else:
+            if not cur: ws = s
+            cur += c; we = e
+    if cur:
+        out.append({"w": cur, "t": round(ws + offset, 3), "e": round(we + offset, 3)})
+    return out
+
 def synth(text, out="voice.mp3"):
+    """Genera el audio con tu voz y guarda los tiempos de cada palabra. Devuelve la lista de palabras
+    [{w,t,e}] (línea de tiempo del audio COSIDO, antes de pausas.py) o False si falla."""
     key = os.environ.get("ELEVENLABS_API_KEY", "").strip()
     voice = os.environ.get("ELEVENLABS_VOICE_ID", "").strip()
     model = os.environ.get("ELEVENLABS_MODEL", "eleven_multilingual_v2").strip()   # v2 = MÁS FIEL a tu voz clonada
     if not key or not voice:
         print("⚠️  Faltan ELEVENLABS_API_KEY / ELEVENLABS_VOICE_ID (ponlos en .env o Secrets)."); return False
     fmt = os.environ.get("ELEVENLABS_FORMAT", "").strip()
-    url = f"https://api.elevenlabs.io/v1/text-to-speech/{voice}" + (f"?output_format={fmt}" if fmt else "")
-    hdr = {"xi-api-key": key, "Content-Type": "application/json", "Accept": "audio/mpeg"}
+    # endpoint WITH-TIMESTAMPS: mismo audio + alineación por carácter (para sincronizar las infografías virales)
+    url = f"https://api.elevenlabs.io/v1/text-to-speech/{voice}/with-timestamps" + (f"?output_format={fmt}" if fmt else "")
+    hdr = {"xi-api-key": key, "Content-Type": "application/json", "Accept": "application/json"}
 
     def _attempt(model_id):
-        """Devuelve (audio_bytes|None, ultima_respuesta). Hace STITCHING frase a frase con previous/next_text
-        para prosodia continua; si solo hay 1 bloque, una sola llamada."""
+        """Devuelve (audio_bytes|None, palabras|None, ultima_respuesta). STITCHING frase a frase con
+        previous/next_text para prosodia continua; acumula el offset de tiempo de cada bloque."""
         v3 = model_id.startswith("eleven_v3")
         speak = text if v3 else quitar_tags(text)   # las etiquetas [..] solo las entiende v3
         vs = _voice_settings(v3)
         bloques = _bloques(speak)
-        if len(bloques) <= 1:
-            r = requests.post(url, headers=hdr, json={"text": speak, "model_id": model_id, "voice_settings": vs}, timeout=90)
-            return (r.content if r.status_code == 200 else None), r
-        segs, prev_ids, last = [], [], None
+        segs, prev_ids, words, offset, last = [], [], [], 0.0, None
         for i, ch in enumerate(bloques):
-            body = {"text": ch, "model_id": model_id, "voice_settings": vs,
-                    "previous_text": (" ".join(bloques[:i])[-600:] or None),     # contexto previo (no se factura)
-                    "next_text": (" ".join(bloques[i+1:])[:600] or None)}        # contexto siguiente
-            if prev_ids:
-                body["previous_request_ids"] = prev_ids[-3:]                     # stitching de prosodia
+            body = {"text": ch, "model_id": model_id, "voice_settings": vs}
+            if len(bloques) > 1:
+                body["previous_text"] = (" ".join(bloques[:i])[-600:] or None)     # contexto previo (no se factura)
+                body["next_text"] = (" ".join(bloques[i+1:])[:600] or None)        # contexto siguiente
+                if prev_ids:
+                    body["previous_request_ids"] = prev_ids[-3:]                   # stitching de prosodia
             r = requests.post(url, headers=hdr, json=body, timeout=90); last = r
             if r.status_code != 200:
-                return None, r
-            segs.append(r.content)
+                return None, None, r
+            j = r.json()
+            audio_b = base64.b64decode(j["audio_base64"])
+            segs.append(audio_b)
+            words.extend(_palabras_de_alineacion(j.get("alignment") or {}, offset))
+            offset += _dur_bytes(audio_b) + (_STITCH_GAP if i < len(bloques) - 1 else 0.0)
             rid = r.headers.get("request-id") or r.headers.get("x-request-id")
             if rid: prev_ids.append(rid)
-        return _concat_mp3(segs), last
+        audio = _concat_mp3(segs) if len(segs) > 1 else (segs[0] if segs else None)
+        return audio, words, last
 
-    audio, r = _attempt(model)
+    audio, words, r = _attempt(model)
     if audio is None and model.startswith("eleven_v3"):   # RED DE SEGURIDAD: si v3 falla, usa v2
         print(f"(eleven_v3 no disponible: {getattr(r,'status_code','?')}; uso eleven_multilingual_v2)")
-        model = "eleven_multilingual_v2"; audio, r = _attempt(model)
+        model = "eleven_multilingual_v2"; audio, words, r = _attempt(model)
     if audio is None:
         print(f"⚠️  ElevenLabs respondió {getattr(r,'status_code','?')}: {(r.text[:300] if r is not None else '')}"); return False
     with open(out, "wb") as f:
         f.write(audio)
-    print(f"→ {out} generado con tu voz ({model}, {len(audio)/1000:.0f} KB, {len(_bloques(quitar_tags(text)))} frases unidas)")
-    return True
+    print(f"→ {out} generado con tu voz ({model}, {len(audio)/1000:.0f} KB, {len(_bloques(quitar_tags(text)))} frases unidas, {len(words)} palabras con timestamp)")
+    return words
+
+def _norm_tok(s):
+    s = unicodedata.normalize("NFD", (s or "").lower())
+    s = "".join(c for c in s if unicodedata.category(c) != "Mn")
+    return re.sub(r"[^a-z0-9]", "", s)
+
+def _display_text(raw):
+    """Texto de PANTALLA para los subtítulos virales: sin etiquetas [..] y con la firma fonética
+    'éi ái uíz Pédro' mostrada como 'aiwithpedro' (lo que la gente debe LEER, no lo que se pronuncia)."""
+    s = quitar_tags(raw)
+    s = re.sub(r"éi\s+ái\s+u[íi]z\s+p[ée]dro", "aiwithpedro", s, flags=re.IGNORECASE)
+    return s
+
+def alinear_display(words, display_text):
+    """Asigna a cada palabra del texto de PANTALLA el tiempo de la palabra HABLADA correspondiente
+    (alineación difflib hablado<->pantalla; interpola las pocas que no casan: números, firma)."""
+    import difflib
+    disp = display_text.split()
+    if not words or not disp:
+        return [{"w": w, "t": 0.0, "e": 0.0} for w in disp]
+    sn = [_norm_tok(x["w"]) for x in words]
+    dn = [_norm_tok(d) for d in disp]
+    d2s = {}
+    for i, j, n in difflib.SequenceMatcher(None, dn, sn).get_matching_blocks():
+        for k in range(n): d2s[i + k] = j + k
+    out, last = [], 0.0
+    for jx, tok in enumerate(disp):
+        si = d2s.get(jx)
+        if si is not None:
+            t, e = words[si]["t"], words[si]["e"]
+        else:
+            nxt = next((d2s[k] for k in range(jx + 1, len(disp)) if k in d2s), None)
+            t = last; e = (words[nxt]["t"] if nxt is not None else last + 0.3)
+        t = max(t, last); e = max(e, t + 0.05); last = e
+        out.append({"w": tok, "t": round(t, 3), "e": round(e, 3)})
+    return out
 
 if __name__ == "__main__":
     src = arg("--in", "voiceover.txt"); out = arg("--out", "voice.mp3")
+    words_out = arg("--words", os.path.splitext(out)[0] + "_words.json")   # voice_words.json / recap_voice_words.json
     if not os.path.exists(src):
         print(f"No encuentro {src}. Corre make_script.py primero."); sys.exit(1)
-    text = open(src, encoding="utf-8").read().strip()
-    text = suavizar_tts(numeros_a_palabras(foneticizar(text)))   # fonética + números en palabras + limpieza (SOLO audio)
-    ok = synth(text, out)
-    if ok:   # control de calidad: normaliza las pausas del audio según la puntuación del guion
+    raw = open(src, encoding="utf-8").read().strip()
+    text = suavizar_tts(numeros_a_palabras(foneticizar(raw)))   # fonética + números en palabras + limpieza (SOLO audio)
+    words = synth(text, out)                                    # lista de palabras habladas (o False) + voice.mp3
+    ok = words is not False
+    if ok:
         try:
             import pausas
-            pausas.normalizar_pausas(out, quitar_tags(text), out)
+            # pausas re-temporiza el audio; remapea los timestamps de palabra al audio FINAL
+            remap = pausas.normalizar_pausas(out, quitar_tags(text), out, words=words)
+            words = remap if isinstance(remap, list) else words
         except Exception as e:
             print(f"(pausas: omitido, audio sin cambios: {e})")
+        try:   # alinear palabras HABLADAS -> texto de PANTALLA (Haití, 3 a 0, aiwithpedro) y guardar
+            disp = alinear_display(words or [], _display_text(raw))
+            json.dump(disp, open(words_out, "w", encoding="utf-8"), ensure_ascii=False)
+            print(f"  · {len(disp)} palabras con timestamp → {words_out}")
+        except Exception as e:
+            print(f"(timestamps: no guardados: {e})")
     sys.exit(0 if ok else 1)
