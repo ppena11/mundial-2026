@@ -109,6 +109,7 @@ for ds in dd_dates:
         if not text or "Mundial 2026" not in text:
             errores.append(f"{ds}: digest vacío/sin cabecera")
         # guion (plantilla) + caption con EXACTAMENTE 5 hashtags
+        os.environ["MAKESCRIPT_NO_EXPORT"] = "1"   # que el test NO pise viral_pronostico.json real
         vo, cap, ng = ms.build(ds)
         if cap.count("#") != 5:
             errores.append(f"{ds}: caption con {cap.count('#')} hashtags (esperado 5)")

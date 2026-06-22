@@ -375,7 +375,8 @@ def build(target):
                                "destacado": (i == _feat)} for i, d in enumerate(played)],
                  "campeon": [[dd.acc(t), round(float(p), 1)] for t, p in list(_ch.items())[:6]],
                  "record": {"aciertos": tr.get("aciertos_1x2", 0), "n": tr.get("n", 0)}}
-        json.dump(viral, open("viral_pronostico.json", "w", encoding="utf-8"), ensure_ascii=False, indent=2)
+        _vp = os.devnull if os.environ.get("MAKESCRIPT_NO_EXPORT") else "viral_pronostico.json"   # tests no pisan el real
+        json.dump(viral, open(_vp, "w", encoding="utf-8"), ensure_ascii=False, indent=2)
     except Exception as e:
         print(f"(viral_pronostico.json no exportado: {e})")
 
