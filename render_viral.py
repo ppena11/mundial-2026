@@ -43,13 +43,15 @@ def render(comp, audio_src, words_file, data_file, pub_audio, props_name, out_na
             import heygen
             if heygen.KEY and heygen.AVATAR:
                 webm = os.path.splitext(audio_src)[0] + "_avatar.webm"
-                if heygen.generar(audio_src, webm) and os.path.exists(webm):
+                _keepbg = bool(os.environ.get("HEYGEN_KEEP_BG"))   # avatar con fondo (estadio): sin chroma-key
+                if heygen.generar(audio_src, webm, keep_bg=_keepbg) and os.path.exists(webm):
                     shutil.copy(webm, os.path.join(PUB, avatar_pub)); avatar_name = avatar_pub
         except Exception as e:
             print(f"(avatar HeyGen omitido: {e})")
     words = json.load(open(words_file, encoding="utf-8"))
     data = json.load(open(data_file, encoding="utf-8")) if os.path.exists(data_file) else {}
-    props = {"words": words, "data": data, "audio": pub_audio, "durationSec": round(_dur(audio_src), 2), "avatar": avatar_name}
+    props = {"words": words, "data": data, "audio": pub_audio, "durationSec": round(_dur(audio_src), 2),
+             "avatar": avatar_name, "avatarStadium": bool(os.environ.get("HEYGEN_KEEP_BG"))}
     json.dump(props, open(os.path.join(PUB, props_name), "w", encoding="utf-8"), ensure_ascii=False)
     env = dict(os.environ)
     if sys.platform == "win32" and not env.get("TEMP", "").lower().startswith("e:"):

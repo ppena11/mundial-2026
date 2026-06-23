@@ -55,15 +55,19 @@ const TopBar: React.FC<{fecha?: string}> = ({fecha}) => {
 };
 
 // ---------- tu CLON (HeyGen) en círculo abajo-centro (mudo: la voz la pone el video) ----------
-const Avatar: React.FC<{src?: string}> = ({src}) => {
+const Avatar: React.FC<{src?: string; stadium?: boolean}> = ({src, stadium = false}) => {
   if (!src) return null;
   const f = useCurrentFrame();
   const float = Math.sin(f / 22) * 6;
+  // clon transparente: zoom cercano (2.2). Estadio (opaco, ventana al estadio): poco zoom para que se vea el fondo.
+  const vid = stadium
+    ? {objectFit: 'cover' as const, objectPosition: 'center 35%', transform: 'scale(1.9)'}   // recorta el verde de los lados, deja ver el estadio
+    : {objectFit: 'cover' as const, objectPosition: 'center 30%', transform: 'scale(2.2)'};
   return (
     <div style={{position: 'absolute', bottom: 250, left: '50%', marginLeft: -235, width: 470, height: 470,
       borderRadius: '50%', overflow: 'hidden', border: `7px solid ${GOLD}`,
       boxShadow: `0 0 60px rgba(0,0,0,0.55), 0 0 36px ${GOLD}44`, background: 'rgba(8,8,30,0.35)', transform: `translateY(${float}px)`}}>
-      <OffthreadVideo src={staticFile(src)} muted style={{width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 30%', transform: 'scale(2.2)'}} />
+      <OffthreadVideo src={staticFile(src)} muted style={{width: '100%', height: '100%', ...vid}} />
     </div>
   );
 };
@@ -158,7 +162,7 @@ const MatchCard: React.FC<{p: any; dur: number}> = ({p, dur}) => {
 };
 
 // ===================== PRONÓSTICO VIRAL =====================
-export const PronosticoViral: React.FC<{words: Word[]; data: any; audio: string; avatar?: string}> = ({words = [], data = {}, audio = 'voz.mp3', avatar = ''}) => {
+export const PronosticoViral: React.FC<{words: Word[]; data: any; audio: string; avatar?: string; avatarStadium?: boolean}> = ({words = [], data = {}, audio = 'voz.mp3', avatar = '', avatarStadium = false}) => {
   const {fps, durationInFrames} = useVideoConfig();
   const partidos = data.partidos || [];
   const brandStart = durationInFrames - Math.round(fps * 2.2);
@@ -216,7 +220,7 @@ export const PronosticoViral: React.FC<{words: Word[]; data: any; audio: string;
       {/* cierre */}
       <Sequence from={brandStart} durationInFrames={durationInFrames - brandStart}><Brand /></Sequence>
 
-      <Avatar src={avatar} />
+      <Avatar src={avatar} stadium={avatarStadium} />
       <TopBar fecha={data.fecha} />
       <Captions words={words} bottom={avatar ? 760 : 250} />
     </AbsoluteFill>
@@ -329,7 +333,7 @@ const Brand: React.FC = () => {
 };
 
 // ===================== RECAP VIRAL =====================
-export const RecapViral: React.FC<{words: Word[]; data: any; audio: string; avatar?: string}> = ({words = [], data = {}, audio = 'recap_voz.mp3', avatar = ''}) => {
+export const RecapViral: React.FC<{words: Word[]; data: any; audio: string; avatar?: string; avatarStadium?: boolean}> = ({words = [], data = {}, audio = 'recap_voz.mp3', avatar = '', avatarStadium = false}) => {
   const {fps, durationInFrames} = useVideoConfig();
   const partidos = data.partidos || [];
   const brandStart = durationInFrames - Math.round(fps * 2.0);
@@ -374,7 +378,7 @@ export const RecapViral: React.FC<{words: Word[]; data: any; audio: string; avat
       <Sequence from={tableEndStart} durationInFrames={recordStart - tableEndStart}><ResultsTable data={data} /></Sequence>
       <Sequence from={recordStart} durationInFrames={brandStart - recordStart}><RecordScene data={data} /></Sequence>
       <Sequence from={brandStart} durationInFrames={durationInFrames - brandStart}><Brand /></Sequence>
-      <Avatar src={avatar} />
+      <Avatar src={avatar} stadium={avatarStadium} />
       <TopBar fecha={data.fecha} />
       <Captions words={words} bottom={avatar ? 760 : 250} />
     </AbsoluteFill>

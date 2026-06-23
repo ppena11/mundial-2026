@@ -96,7 +96,14 @@ def _chromakey(mp4_path, out_webm):
                         "-an", "-b:v", "2M", out_webm], capture_output=True)
     return r.returncode == 0 and os.path.exists(out_webm)
 
-def generar(audio="voice.mp3", out="voice_avatar.webm"):
+def _passthrough(mp4_path, out_webm):
+    """Convierte el mp4 a WebM OPACO (sin chroma-key): mantiene el fondo del avatar (p. ej. un estadio)."""
+    ff = _ff()
+    r = subprocess.run([ff, "-y", "-i", mp4_path, "-c:v", "libvpx-vp9", "-pix_fmt", "yuv420p",
+                        "-an", "-b:v", "2M", out_webm], capture_output=True)
+    return r.returncode == 0 and os.path.exists(out_webm)
+
+def generar(audio="voice.mp3", out="voice_avatar.webm", keep_bg=False):
     if not KEY or not AVATAR:
         print("(HeyGen: faltan HEYGEN_API_KEY / HEYGEN_AVATAR_ID; sin avatar)"); return False
     if not os.path.exists(audio):
@@ -108,10 +115,10 @@ def generar(audio="voice.mp3", out="voice_avatar.webm"):
         url = _wait(vid)
         tmp = tempfile.mktemp(suffix=".mp4")
         open(tmp, "wb").write(requests.get(url, timeout=180).content)
-        ok = _chromakey(tmp, out)
+        ok = _passthrough(tmp, out) if keep_bg else _chromakey(tmp, out)   # keep_bg: mantiene el fondo (estadio)
         try: os.remove(tmp)
         except Exception: pass
-        print(f"→ {out} listo (clon transparente)" if ok else "(HeyGen: chroma-key falló)")
+        print(f"→ {out} listo ({'con fondo del avatar' if keep_bg else 'clon transparente'})" if ok else "(HeyGen: conversión falló)")
         return ok
     except Exception as e:
         print(f"(HeyGen: {e})"); return False
@@ -122,5 +129,6 @@ if __name__ == "__main__":
         if not KEY: print("Pon HEYGEN_API_KEY en .env primero."); sys.exit(1)
         list_avatars()
     else:
-        ok = generar(arg("--audio", "voice.mp3"), arg("--out", "voice_avatar.webm"))
+        ok = generar(arg("--audio", "voice.mp3"), arg("--out", "voice_avatar.webm"),
+                     keep_bg=("--keep-bg" in sys.argv) or bool(os.environ.get("HEYGEN_KEEP_BG")))
         sys.exit(0 if ok else 1)
