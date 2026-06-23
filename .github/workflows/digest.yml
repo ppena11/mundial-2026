@@ -24,6 +24,7 @@ jobs:
       ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
       HEYGEN_API_KEY: ${{ secrets.HEYGEN_API_KEY }}
       HEYGEN_AVATAR_ID: ${{ secrets.HEYGEN_AVATAR_ID }}
+      HEYGEN_KEEP_BG: "1"   # avatar 'ventana al estadio' (037b5c): mantiene el fondo, sin chroma-key. Quitar para clon transparente.
     steps:
       - uses: actions/checkout@v4
 
