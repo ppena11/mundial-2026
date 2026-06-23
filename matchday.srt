@@ -1,227 +1,235 @@
 1
-00:00:00,319 --> 00:00:01,597
-Ecuador no ganó siendo
+00:00:00,000 --> 00:00:01,100
+Aquí están los pronósticos
 
 2
-00:00:01,597 --> 00:00:01,997
-favorito,
+00:00:01,100 --> 00:00:03,060
+del Mundial 2026 de
 
 3
-00:00:01,916 --> 00:00:03,194
-y hoy la sorpresa
+00:00:03,060 --> 00:00:05,040
+mi inteligencia artificial para
 
 4
-00:00:03,194 --> 00:00:04,472
-sigue rondando el torneo.
+00:00:05,040 --> 00:00:05,440
+hoy,
 
 5
-00:00:04,472 --> 00:00:05,749
-Aquí está el pronóstico
+00:00:05,440 --> 00:00:07,080
+martes 23 de junio.
 
 6
-00:00:05,749 --> 00:00:06,388
-de hoy,
+00:00:07,080 --> 00:00:09,599
+Vamos 27 de 44.
 
 7
-00:00:06,388 --> 00:00:07,666
-lunes 22 de junio.
+00:00:09,599 --> 00:00:11,320
+Portugal parte como favorito
 
 8
-00:00:07,666 --> 00:00:08,944
-Mi inteligencia artificial corrió
+00:00:11,320 --> 00:00:13,199
+claro ante Uzbekistán y
 
 9
-00:00:08,944 --> 00:00:10,221
-veinte mil simulaciones para
+00:00:13,199 --> 00:00:13,900
+se impone 2 a
 
 10
-00:00:10,221 --> 00:00:10,860
-traerte esto.
+00:00:13,900 --> 00:00:14,759
+0 a la una
 
 11
-00:00:10,860 --> 00:00:12,138
-Argentina se mide ante
+00:00:14,759 --> 00:00:15,919
+de la tarde.
 
 12
-00:00:12,138 --> 00:00:13,416
-Austria a la una
+00:00:15,919 --> 00:00:17,239
+Ojo con Inglaterra contra
 
 13
-00:00:13,416 --> 00:00:14,694
-de la tarde en
+00:00:17,239 --> 00:00:18,420
+Ghana a las cuatro
 
 14
-00:00:14,694 --> 00:00:15,971
-el AT&T Stadium de
+00:00:18,420 --> 00:00:19,660
+de la tarde en
 
 15
-00:00:15,971 --> 00:00:16,371
-Arlington,
+00:00:19,660 --> 00:00:21,079
+el Gillette Stadium de
 
 16
-00:00:16,291 --> 00:00:16,691
-Texas,
+00:00:21,079 --> 00:00:21,960
+Foxborough,
 
 17
-00:00:16,610 --> 00:00:17,249
+00:00:21,960 --> 00:00:23,280
 Estados Unidos.
 
 18
-00:00:17,249 --> 00:00:18,527
-Mi modelo le da
+00:00:23,280 --> 00:00:24,199
+El modelo la ve
 
 19
-00:00:18,527 --> 00:00:19,805
-60 por ciento al
+00:00:24,199 --> 00:00:25,660
+ganadora con 78 por
 
 20
-00:00:19,805 --> 00:00:21,082
-favorito con un uno
+00:00:25,660 --> 00:00:26,059
+ciento,
 
 21
-00:00:21,082 --> 00:00:21,721
-a cero,
+00:00:26,019 --> 00:00:27,420
+marcador previsto 2 a
 
 22
-00:00:21,721 --> 00:00:23,339
-aunque el consenso del
+00:00:27,420 --> 00:00:28,120
+0.
 
 23
-00:00:23,339 --> 00:00:26,359
-mercado lo ve aún
+00:00:28,120 --> 00:00:29,500
+Antoine Semenyo nació en
 
 24
-00:00:26,359 --> 00:00:27,899
-más claro en 66
+00:00:29,500 --> 00:00:30,699
+Inglaterra pero eligió jugar
 
 25
-00:00:27,899 --> 00:00:29,039
-por ciento.
+00:00:30,699 --> 00:00:31,500
+para Ghana:
 
 26
-00:00:29,039 --> 00:00:30,219
-La diferencia me dice
+00:00:31,500 --> 00:00:32,320
+es su segundo partido
 
 27
-00:00:30,219 --> 00:00:30,940
-que hay margen de
+00:00:32,320 --> 00:00:33,020
+en el torneo,
 
 28
-00:00:30,940 --> 00:00:31,879
-sorpresa:
+00:00:33,020 --> 00:00:33,979
+y este duelo tiene
 
 29
-00:00:31,879 --> 00:00:32,880
-Austria puede jugar un
+00:00:33,979 --> 00:00:34,799
+toda la tensión de
 
 30
-00:00:32,880 --> 00:00:34,399
-papel más incómodo de
+00:00:34,799 --> 00:00:36,460
+un regreso emocional.
 
 31
-00:00:34,399 --> 00:00:35,020
-lo que la mayoría
+00:00:36,460 --> 00:00:37,500
+El consenso del mercado
 
 32
-00:00:35,020 --> 00:00:36,000
-espera.
+00:00:37,500 --> 00:00:39,340
+coincide casi al milímetro
 
 33
-00:00:36,000 --> 00:00:37,340
-Francia manda con autoridad
+00:00:39,340 --> 00:00:40,359
+con mi modelo,
 
 34
-00:00:37,340 --> 00:00:37,859
-contra Irak,
+00:00:40,359 --> 00:00:41,359
+ambos ven a Inglaterra
 
 35
-00:00:37,859 --> 00:00:38,539
-dos a cero a
+00:00:41,359 --> 00:00:41,960
+con claridad,
 
 36
-00:00:38,539 --> 00:00:39,159
-las cinco de la
+00:00:41,960 --> 00:00:43,039
+y ese acuerdo me
 
 37
-00:00:39,159 --> 00:00:40,119
-tarde.
+00:00:43,039 --> 00:00:43,799
+da confianza.
 
 38
-00:00:40,119 --> 00:00:41,200
-Noruega se mide ante
+00:00:43,799 --> 00:00:46,079
+Croacia domina ante Panamá
 
 39
-00:00:41,200 --> 00:00:42,250
-Senegal con un empate
+00:00:46,079 --> 00:00:46,899
+a las siete de
 
 40
-00:00:42,250 --> 00:00:43,539
-uno a uno a
+00:00:46,899 --> 00:00:47,740
+la noche con un
 
 41
-00:00:43,539 --> 00:00:44,200
-las ocho de la
+00:00:47,740 --> 00:00:49,839
+2 a 0 ajustado.
 
 42
-00:00:44,200 --> 00:00:45,039
-noche.
+00:00:49,839 --> 00:00:51,179
+Y Colombia cierra la
 
 43
-00:00:45,039 --> 00:00:46,420
-Jordania recibe a Argelia
+00:00:51,179 --> 00:00:52,060
+jornada a las diez
 
 44
-00:00:46,420 --> 00:00:47,060
-a las once de
+00:00:52,060 --> 00:00:53,200
+de la noche frente
 
 45
-00:00:47,060 --> 00:00:47,460
-la noche,
+00:00:53,200 --> 00:00:54,619
+a República Democrática del
 
 46
-00:00:47,439 --> 00:00:48,730
-y Argelia se impone
+00:00:54,619 --> 00:00:55,019
+Congo,
 
 47
-00:00:48,730 --> 00:00:49,719
-dos a cero.
+00:00:54,960 --> 00:00:56,600
+ganando 1 a 0
 
 48
-00:00:49,719 --> 00:00:51,280
-Vamos 23 de 40
+00:00:56,600 --> 00:00:57,746
+con un 60 por
 
 49
-00:00:51,280 --> 00:00:53,200
-en nuestro récord.
+00:00:57,746 --> 00:00:59,399
+ciento de confianza.
 
 50
-00:00:53,200 --> 00:00:54,439
-El fútbol sorprende,
+00:00:59,399 --> 00:01:01,340
+El fútbol escribe historias,
 
 51
-00:00:54,439 --> 00:00:56,060
-pero mi inteligencia artificial
+00:01:01,340 --> 00:01:02,799
+mi inteligencia artificial lee
 
 52
-00:00:56,060 --> 00:00:57,759
-sigue leyendo las tramas.
+00:01:02,799 --> 00:01:04,359
+el marcador antes de
 
 53
-00:00:57,759 --> 00:00:58,740
-Suscríbete a mi canal
+00:01:04,359 --> 00:01:05,420
+que suceda.
 
 54
-00:00:58,740 --> 00:00:59,880
-para el análisis completo
+00:01:05,420 --> 00:01:06,500
+Suscríbete a mi canal
 
 55
-00:00:59,880 --> 00:01:00,719
-en el link de
+00:01:06,500 --> 00:01:08,040
+de YouTube y accede
 
 56
-00:01:00,719 --> 00:01:01,280
-mi bio.
+00:01:08,040 --> 00:01:09,200
+al análisis completo en
 
 57
-00:01:01,280 --> 00:01:02,757
+00:01:09,200 --> 00:01:10,030
+el link de mi
+
+58
+00:01:10,030 --> 00:01:10,430
+bio.
+
+59
+00:01:10,299 --> 00:01:11,811
 Soy aiwithpedro.
