@@ -453,6 +453,11 @@ ok("numeros_a_palabras: cifras 0-99 a palabras (audio), años intactos",
    mvz.numeros_a_palabras("60 por ciento, 2 a 1, 18 de 32, Mundial 2026")
    == "sesenta por ciento, dos a uno, dieciocho de treinta y dos, Mundial 2026",
    mvz.numeros_a_palabras("60 por ciento, 2 a 1, 18 de 32, Mundial 2026"))
+ok("_num_es: 20-29 con TILDES correctas (veintidós/veintitrés/veintiséis), resto intacto",
+   [mvz._num_es(str(k)) for k in (20,21,22,23,24,25,26,27,28,29)] ==
+   ["veinte","veintiuno","veintidós","veintitrés","veinticuatro","veinticinco","veintiséis","veintisiete","veintiocho","veintinueve"]
+   and mvz.numeros_a_palabras("22 de junio, vamos 23 de 40") == "veintidós de junio, vamos veintitrés de cuarenta",
+   [mvz._num_es(str(k)) for k in (22,23,26)])
 ok("stitching: parte el guion en frases y agrupa en bloques",
    len(mvz._frases("Uno. Dos! Tres?")) == 3 and len(mvz._bloques("Frase larga de prueba número. " * 30)) >= 2,
    f'frases={len(mvz._frases("Uno. Dos! Tres?"))}, bloques={len(mvz._bloques("Frase larga de prueba número. " * 30))}')

@@ -79,10 +79,13 @@ def quitar_tags(text):
 _NUM_U = ["cero", "uno", "dos", "tres", "cuatro", "cinco", "seis", "siete", "ocho", "nueve", "diez",
           "once", "doce", "trece", "catorce", "quince", "dieciséis", "diecisiete", "dieciocho", "diecinueve"]
 _NUM_D = ["", "", "veinte", "treinta", "cuarenta", "cincuenta", "sesenta", "setenta", "ochenta", "noventa"]
+# 20-29 con sus TILDES correctas (veintidós/veintitrés/veintiséis); concatenar "veinti"+base las perdía
+_NUM_20 = ["veinte", "veintiuno", "veintidós", "veintitrés", "veinticuatro", "veinticinco",
+           "veintiséis", "veintisiete", "veintiocho", "veintinueve"]
 def _num_es(n):
     n = int(n)
     if n < 20: return _NUM_U[n]
-    if n < 30: return "veinte" if n == 20 else "veinti" + _NUM_U[n - 20]
+    if n < 30: return _NUM_20[n - 20]
     d, u = divmod(n, 10)
     return _NUM_D[d] + (" y " + _NUM_U[u] if u else "")
 
