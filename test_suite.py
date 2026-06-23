@@ -209,6 +209,22 @@ s = tr.summary()
 brier_esp = ((0.7-1)**2+0.2**2+0.1**2 + 0.2**2+(0.3-1)**2+0.5**2 + (0.6-1)**2+0.25**2+0.15**2)/3
 ok("aciertos 1X2 = 2/3", s.get("aciertos_1x2")==2 and s.get("n")==3, f"{s}")
 ok("Brier correcto", abs(s.get("brier",9)-round(brier_esp,3))<0.01, f"got {s.get('brier')}, esp {round(brier_esp,3)}")
+# REGLA (recap): el acierto es del 1X2 (quién gana). Empate REAL con pick de GANADOR = FALLO; pick de EMPATE = acierto.
+ctrl_x = [
+ {"key":"x1","fecha":"2026-06-11","a":"A","b":"B","label":"G","p1":0.7,"pX":0.2,"p2":0.1,"pick":"1","marcador_pred":"2-0","actual":None},   # dijimos: gana A
+ {"key":"x2","fecha":"2026-06-11","a":"C","b":"D","label":"G","p1":0.2,"pX":0.5,"p2":0.3,"pick":"X","marcador_pred":"1-1","actual":None},   # dijimos: empate
+]
+tr.save_log(ctrl_x)
+_orig_fr = tr.fetch_results
+tr.fetch_results = lambda: {"x1": {"a":"A","b":"B","ga":1,"gb":1}, "x2": {"a":"C","b":"D","ga":1,"gb":1}}   # ambos EMPATAN 1-1
+try:
+    tr.grade()
+    g = {r["key"]: r for r in tr.load_log()}
+finally:
+    tr.fetch_results = _orig_fr
+ok("empate real + pick de ganador = FALLO; empate real + pick de empate = ACIERTO",
+   g["x1"].get("acierto_1x2") is False and g["x2"].get("acierto_1x2") is True,
+   f"x1(pick 1, real X)={g['x1'].get('acierto_1x2')} | x2(pick X, real X)={g['x2'].get('acierto_1x2')}")
 # restaurar
 for f in (bak_log, bak_tr):
     if os.path.exists(f+".bak"): shutil.move(f+".bak", f)
