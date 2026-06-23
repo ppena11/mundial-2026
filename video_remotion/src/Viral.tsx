@@ -60,10 +60,10 @@ const Avatar: React.FC<{src?: string}> = ({src}) => {
   const f = useCurrentFrame();
   const float = Math.sin(f / 22) * 6;
   return (
-    <div style={{position: 'absolute', bottom: 44, left: '50%', marginLeft: -180, width: 360, height: 360,
-      borderRadius: '50%', overflow: 'hidden', border: `6px solid ${GOLD}`,
-      boxShadow: `0 0 50px rgba(0,0,0,0.55), 0 0 30px ${GOLD}44`, background: 'rgba(8,8,30,0.35)', transform: `translateY(${float}px)`}}>
-      <OffthreadVideo src={staticFile(src)} muted style={{width: '100%', height: '100%', objectFit: 'cover', transform: 'scale(1.12)'}} />
+    <div style={{position: 'absolute', bottom: 250, left: '50%', marginLeft: -235, width: 470, height: 470,
+      borderRadius: '50%', overflow: 'hidden', border: `7px solid ${GOLD}`,
+      boxShadow: `0 0 60px rgba(0,0,0,0.55), 0 0 36px ${GOLD}44`, background: 'rgba(8,8,30,0.35)', transform: `translateY(${float}px)`}}>
+      <OffthreadVideo src={staticFile(src)} muted style={{width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 22%', transform: 'scale(1.05)'}} />
     </div>
   );
 };
@@ -205,7 +205,7 @@ export const PronosticoViral: React.FC<{words: Word[]; data: any; audio: string;
 
       <Avatar src={avatar} />
       <TopBar fecha={data.fecha} />
-      <Captions words={words} bottom={avatar ? 470 : 250} />
+      <Captions words={words} bottom={avatar ? 760 : 250} />
     </AbsoluteFill>
   );
 };
@@ -250,7 +250,7 @@ const ResumenCard: React.FC<{data: any}> = ({data}) => {
   const e = usePunch(2, 8);
   const partidos = data.partidos || [];
   return (
-    <AbsoluteFill style={{justifyContent: 'center', alignItems: 'center', padding: 46}}>
+    <AbsoluteFill style={{justifyContent: 'flex-start', alignItems: 'center', paddingTop: 250, paddingLeft: 46, paddingRight: 46}}>
       <div style={{transform: `scale(${0.86 + e * 0.14})`, width: 960, background: 'rgba(8,8,32,0.78)', border: `4px solid ${GOLD}`, borderRadius: 38, padding: '38px 34px', boxShadow: '0 24px 90px rgba(0,0,0,0.65)'}}>
         <div style={{textAlign: 'center', marginBottom: 22}}>
           <div style={{fontFamily: FONT, fontSize: 42, fontWeight: 900, color: GOLD, letterSpacing: 2}}>PRONÓSTICOS DEL DÍA</div>
@@ -336,7 +336,7 @@ export const RecapViral: React.FC<{words: Word[]; data: any; audio: string; avat
       <Sequence from={brandStart} durationInFrames={durationInFrames - brandStart}><Brand /></Sequence>
       <Avatar src={avatar} />
       <TopBar fecha={data.fecha} />
-      <Captions words={words} bottom={avatar ? 470 : 250} />
+      <Captions words={words} bottom={avatar ? 760 : 250} />
     </AbsoluteFill>
   );
 };
