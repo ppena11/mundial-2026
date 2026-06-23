@@ -163,19 +163,32 @@ export const PronosticoViral: React.FC<{words: Word[]; data: any; audio: string;
   const brandStart = durationInFrames - Math.round(fps * 2.2);
   const champStart = brandStart - Math.round(fps * 4);        // carrera al título (4s)
   const resumenStart = champStart - Math.round(fps * 4.8);    // tarjeta-resumen capturable (4.8s)
-  // anclar cada tarjeta a la voz, SECUENCIAL: tras la anterior y nunca dentro del gancho (mín 8s)
+  // Anclar cada tarjeta a la 1ª MENCIÓN real de su equipo en la voz (independiente), y ORDENAR las tarjetas
+  // por ese tiempo: así aparecen en el ORDEN en que el narrador las nombra y quedan SINCRONIZADAS. (El orden de
+  // 'partidos' va por hora del partido, que NO coincide con el de la narración —el narrador abre por el estrella—
+  // por eso el anclado secuencial anterior desincronizaba y dejaba fuera las últimas tarjetas.)
   const hookMin = Math.round(fps * Math.min(9, (durationInFrames / fps) * 0.14));
   const minGap = Math.round(fps * 1.4);
-  const anchors: number[] = [];
-  let cursor = hookMin;
-  for (const p of partidos) {
-    const aT = anchorOf(words, p.a, cursor / fps) ?? anchorOf(words, p.b, cursor / fps);
-    let s = aT != null ? Math.round(aT * fps) : cursor + minGap;
-    if (s < cursor) s = cursor;
-    anchors.push(s);
-    cursor = s + minGap;
+  const tagged = partidos.map((p: any, i: number) => {
+    const aT = anchorOf(words, p.a, hookMin / fps);
+    const bT = anchorOf(words, p.b, hookMin / fps);
+    const cand = [aT, bT].filter((x): x is number => x != null);
+    return {p, i, t: cand.length ? Math.min(...cand) : null};
+  });
+  const ordered = tagged.slice().sort((x, y) => {
+    if (x.t == null && y.t == null) return x.i - y.i;   // sin mención: al final, orden original
+    if (x.t == null) return 1;
+    if (y.t == null) return -1;
+    return x.t - y.t;
+  });
+  const starts: number[] = [];
+  let prev = hookMin - minGap;
+  for (const it of ordered) {                            // starts monótonos sin solape (respeta minGap)
+    let s = it.t != null ? Math.round(it.t * fps) : prev + minGap;
+    if (s < prev + minGap) s = prev + minGap;
+    starts.push(s); prev = s;
   }
-  const firstCard = anchors.length ? anchors[0] : hookMin;
+  const firstCard = starts.length ? starts[0] : hookMin;
 
   return (
     <AbsoluteFill style={{background: '#0A0A1F'}}>
@@ -187,13 +200,13 @@ export const PronosticoViral: React.FC<{words: Word[]; data: any; audio: string;
       <Sequence from={0} durationInFrames={Math.min(Math.round(fps * 3.2), firstCard)}><HookPron data={data} /></Sequence>
       {firstCard > Math.round(fps * 3.2) ? <Sequence from={Math.round(fps * 3.2)} durationInFrames={firstCard - Math.round(fps * 3.2)}><IntroPron data={data} /></Sequence> : null}
 
-      {/* tarjetas de partido, ancladas a la voz */}
-      {partidos.map((p: any, i: number) => {
-        const start = anchors[i] != null ? anchors[i] : (firstCard + i * Math.round(fps * 3));
-        const next = (i + 1 < partidos.length && anchors[i + 1] != null) ? anchors[i + 1] : resumenStart;
-        const dur = Math.max(Math.round(fps * 1.5), next - start);
+      {/* tarjetas de partido, en ORDEN de narración y ancladas a la voz */}
+      {ordered.map((it: any, k: number) => {
+        const start = starts[k];
+        const next = k + 1 < starts.length ? starts[k + 1] : resumenStart;
+        const cdur = Math.max(Math.round(fps * 1.5), next - start);
         if (start >= resumenStart) return null;
-        return <Sequence key={i} from={start} durationInFrames={Math.min(dur, resumenStart - start)}><MatchCard p={p} dur={dur} /></Sequence>;
+        return <Sequence key={it.i} from={start} durationInFrames={Math.min(cdur, resumenStart - start)}><MatchCard p={it.p} dur={cdur} /></Sequence>;
       })}
 
       {/* tarjeta-resumen capturable (todos los pronósticos) */}
