@@ -43,6 +43,16 @@ def apply_adjustments(atk, dfn):
     except Exception as e:
         print(f"(sin ajuste por lesiones/XI: {e})"); return {}
 
+def _modal_bucket(grid, pw, pd, pl):
+    """Marcador modal DENTRO del resultado 1X2 más probable (argmax de pw/pd/pl). Evita la incoherencia de
+    mostrar un EMPATE (1-1) cuando el pronóstico es VICTORIA (y viceversa): el marcador siempre concuerda con
+    quién decimos que gana."""
+    i = [pw, pd, pl].index(max(pw, pd, pl))
+    if i == 0:   cand = {k: v for k, v in grid.items() if k[0] > k[1]}    # gana local
+    elif i == 2: cand = {k: v for k, v in grid.items() if k[0] < k[1]}    # gana visitante
+    else:        cand = {k: v for k, v in grid.items() if k[0] == k[1]}   # empate
+    return max(cand, key=cand.get) if cand else max(grid, key=grid.get)
+
 def one_x_two(a, b, atk, dfn, c, g, rho, local_anfitrion=False):
     ga_host = g if (a in HOSTS and local_anfitrion) else 0
     gb_host = g if (b in HOSTS and local_anfitrion) else 0
@@ -66,7 +76,7 @@ def one_x_two(a, b, atk, dfn, c, g, rho, local_anfitrion=False):
             elif x==y: pd += p
             else: pl += p
     s = pw+pd+pl
-    top = max(grid, key=grid.get)
+    top = _modal_bucket(grid, pw, pd, pl)   # marcador coherente con el favorito 1X2
     return pw/s, pd/s, pl/s, lh, la, top
 
 def _grid_probs(lh, la, rho, K=11):
@@ -96,7 +106,7 @@ def ensamble_marcador(lh, la, rho, m_w, m_d, m_l, w_modelo=0.6):
     Devuelve (sx, sy, pw, pd, pl, lh', la'). Si el mercado no es válido, no cambia nada."""
     pw, pd, pl, _ = _grid_probs(lh, la, rho)
     if not (m_w and m_l) or (m_w + (m_d or 0) + m_l) <= 0:
-        g = _grid_probs(lh, la, rho)[3]; top = max(g, key=g.get)
+        g = _grid_probs(lh, la, rho)[3]; top = _modal_bucket(g, pw, pd, pl)
         return top[0], top[1], pw, pd, pl, lh, la
     s = m_w + (m_d or 0) + m_l; m_w, m_d, m_l = m_w/s, (m_d or 0)/s, m_l/s
     bw = w_modelo*pw + (1-w_modelo)*m_w
@@ -111,7 +121,7 @@ def ensamble_marcador(lh, la, rho, m_w, m_d, m_l, w_modelo=0.6):
     d = (lo + hi) / 2
     lh2, la2 = lh*math.exp(d), la*math.exp(-d)
     pw2, pd2, pl2, grid = _grid_probs(lh2, la2, rho)
-    top = max(grid, key=grid.get)
+    top = _modal_bucket(grid, pw2, pd2, pl2)   # marcador coherente con el favorito del ensamble
     return top[0], top[1], pw2, pd2, pl2, lh2, la2
 
 def make_match_png(res, path="champ_match.png"):
