@@ -35,14 +35,18 @@ def render(comp, audio_src, words_file, data_file, pub_audio, props_name, out_na
     if os.path.exists(mus): shutil.copy(mus, os.path.join(PUB, "musica.mp3"))
     # avatar HeyGen (opcional): genera tu clon hablando con la voz -> webm transparente -> público
     avatar_name = ""
-    try:
-        import heygen
-        if heygen.KEY and heygen.AVATAR:
-            webm = os.path.splitext(audio_src)[0] + "_avatar.webm"
-            if heygen.generar(audio_src, webm) and os.path.exists(webm):
-                shutil.copy(webm, os.path.join(PUB, avatar_pub)); avatar_name = avatar_pub
-    except Exception as e:
-        print(f"(avatar HeyGen omitido: {e})")
+    keep = ("--keep-avatar" in sys.argv) or os.environ.get("RENDER_KEEP_AVATAR")
+    if keep and os.path.exists(os.path.join(PUB, avatar_pub)):
+        avatar_name = avatar_pub; print(f"(avatar: reuso {avatar_pub}, sin regenerar)")
+    else:
+        try:
+            import heygen
+            if heygen.KEY and heygen.AVATAR:
+                webm = os.path.splitext(audio_src)[0] + "_avatar.webm"
+                if heygen.generar(audio_src, webm) and os.path.exists(webm):
+                    shutil.copy(webm, os.path.join(PUB, avatar_pub)); avatar_name = avatar_pub
+        except Exception as e:
+            print(f"(avatar HeyGen omitido: {e})")
     words = json.load(open(words_file, encoding="utf-8"))
     data = json.load(open(data_file, encoding="utf-8")) if os.path.exists(data_file) else {}
     props = {"words": words, "data": data, "audio": pub_audio, "durationSec": round(_dur(audio_src), 2), "avatar": avatar_name}
@@ -51,8 +55,9 @@ def render(comp, audio_src, words_file, data_file, pub_audio, props_name, out_na
     if sys.platform == "win32" and not env.get("TEMP", "").lower().startswith("e:"):
         tmp = "E:\\remotion_tmp"; os.makedirs(tmp, exist_ok=True)
         env["TEMP"] = env["TMP"] = env["TMPDIR"] = tmp
+    conc = os.environ.get("RENDER_CONCURRENCY", "2")   # 2 en local (disco/CPU justos); en la nube se sube a $(nproc)
     cmd = (f'npx remotion render src/index.ts {comp} out/{out_name} '
-           f'--props=public/{props_name} --codec h264 --crf 18 --concurrency 2')
+           f'--props=public/{props_name} --codec h264 --crf 18 --concurrency {conc}')
     print(f"render {comp} ({props['durationSec']}s)...")
     r = subprocess.run(cmd, cwd=VR, env=env, shell=True)
     if r.returncode != 0 or not os.path.exists(os.path.join(VR, "out", out_name)):

@@ -95,7 +95,7 @@ jobs:
         continue-on-error: true
         run: |
           cd video_remotion && npm ci && npx remotion browser ensure && cd ..
-          python render_viral.py both
+          RENDER_CONCURRENCY=$(nproc) python render_viral.py both   # usa TODOS los núcleos (público = 4 vCPU)
 
       - name: 6) Resumen semanal (solo los lunes)
         if: steps.guard.outputs.run == 'true'
