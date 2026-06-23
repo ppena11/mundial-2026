@@ -92,6 +92,7 @@ def _num_es(n):
 def numeros_a_palabras(text):
     """Escribe los números de 0 a 99 en palabras SOLO para el audio (ElevenLabs mete micro-pausas alrededor
     de las cifras; en palabras fluyen). Deja años y números grandes (3+ dígitos) tal cual."""
+    text = re.sub(r"(\d+)\.(\d+)", r"\1 punto \2", text)   # decimales: 60.5 -> 'sesenta punto cinco' (no 'sesenta cinco')
     return re.sub(r"\b\d{1,2}\b", lambda m: _num_es(m.group()), text)
 
 def _f(env, d):

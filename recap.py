@@ -49,12 +49,13 @@ AI_RECAP_SYS = (
     "EXACTAMENTE estas claves:\n"
     '"titulo": título viral para el post (máx ~70 caracteres, con gancho, máximo 1 emoji).\n'
     '"gancho": 1 o 2 frases para el digest; engancha con cómo nos fue (acierto destacado o sorpresa).\n'
-    '"voz": guion HABLADO MUY BREVE: TOPE DURO ~90 palabras (la brevedad es PRIORIDAD; es un cierre rápido, no un '
-    "resumen largo). Menciona EXACTAMENTE 2 partidos de anoche —el mejor ACIERTO y el peor FALLO—, NINGUNO más, y "
-    "NO metas resultados de OTROS días. Tono de narrador con PERSONALIDAD. Estructura ágil: "
-    "(1) GANCHO de UNA frase yendo DIRECTO al resultado más bomba de anoche (NO frases vagas tipo 'noche de luces "
-    "y sombras'); (2) el acierto más jugoso y, con HUMILDAD, el fallo + UNA opinión corta; (3) récord NATURAL ('vamos 18 de 32 aciertos', SIN "
-    "decimales, SIN 'por ciento', SIN palabras inventadas como 'predecidos'); (4) teaser BREVE de mañana; (5) una "
+    '"voz": guion HABLADO que REPASA TODOS los partidos de anoche, uno por uno, ágil y con ritmo (UNA frase corta '
+    "por partido: el marcador real + si ACERTAMOS o FALLAMOS; NO te alargues en ninguno). NO metas resultados de "
+    "OTROS días. Tono de narrador con PERSONALIDAD. Estructura: "
+    "(1) GANCHO de UNA frase con el récord de anoche ('acertamos X de Y'), directo, sin frases vagas tipo 'noche de "
+    "luces y sombras'; (2) RECORRE CADA partido con su marcador real y si acertamos o fallamos —VARIANDO cómo lo "
+    "dices, con HUMILDAD en los fallos y una pizca de orgullo en los aciertos—, sin omitir ninguno; (3) récord "
+    "acumulado NATURAL ('vamos 18 de 32 aciertos', SIN palabras inventadas como 'predecidos'); (4) teaser BREVE de mañana; (5) una "
     "frase MEMORABLE y FLUIDA con chispa de tu marca de IA (COMPLETA, sin contrastes cortados/elípticos que suenen "
     "a pausa forzada; original, no copies ejemplos). CIERRE OBLIGATORIO (NUNCA lo omitas, aunque tengas que recortar lo demás): "
     "invita a SUSCRIBIRSE a mi canal de YouTube y a ver el cierre en el link de mi bio (NO nombres 'Substack' en la "
@@ -158,16 +159,16 @@ def build(target):
     best = max((x for x in matches if x["ok1x2"]), key=lambda x: x["ppick"], default=None)
     miss = next((x for x in matches if not x["ok1x2"]), None)
     surprise = min((x for x in matches if x["ok1x2"]), key=lambda x: x["ppick"], default=None)
-    # export para la INFOGRAFÍA VIRAL del recap (Remotion): los 2 destacados (acierto + fallo)
+    # export para la INFOGRAFÍA VIRAL del recap (Remotion): TODOS los partidos (tabla + tarjetas)
     try:
         def _sc(s):
             mm = re.match(r"\s*(\d+)\s*-\s*(\d+)", s or "")
             return (int(mm.group(1)), int(mm.group(2))) if mm else (None, None)
-        destac = [x for x in (best, miss) if x] or matches[:2]
         vr = {"fecha": fecha_h, "aciertos": hits, "n": n,
               "partidos": [{"a": dd.acc(x["a"]), "b": dd.acc(x["b"]),
                             "real_sx": _sc(x["marcador_real"])[0], "real_sy": _sc(x["marcador_real"])[1],
-                            "acierto": bool(x["ok1x2"]), "pred": x.get("marcador_pred", "")} for x in destac]}
+                            "pred_sx": _sc(x["marcador_pred"])[0], "pred_sy": _sc(x["marcador_pred"])[1],
+                            "acierto": bool(x["ok1x2"]), "pred": x.get("marcador_pred", "")} for x in matches]}
         json.dump(vr, open("viral_recap.json", "w", encoding="utf-8"), ensure_ascii=False, indent=2)
     except Exception as e:
         print(f"(viral_recap.json no exportado: {e})")
@@ -183,10 +184,9 @@ def build(target):
         sm.append(f"Récord acumulado: {record['aciertos_1x2']} de {record['n']} ({record['tasa_1x2']} por ciento).")
     if prox:
         sm.append(f"Lo que viene: {dd.acc(prox['a'])} contra {dd.acc(prox['b'])}, favorito {dd.acc(prox['fav'])} {round(100*prox['fp'])} por ciento.")
-    # Para que la VOZ sea breve: señala explícitamente los 2 partidos a destacar (acierto + fallo).
-    if best and miss:
-        sm.append(f"PARA LA VOZ destaca SOLO 2 partidos: el acierto {dd.acc(best['a'])} contra {dd.acc(best['b'])} "
-                  f"y el fallo {dd.acc(miss['a'])} contra {dd.acc(miss['b'])}. NO menciones los demás en la voz.")
+    # La VOZ repasa TODOS los partidos (resultado + si acertamos), con ritmo ágil.
+    sm.append("PARA LA VOZ: repasa TODOS los partidos de la lista de arriba, uno por uno, con su marcador real y "
+              "si ACERTAMOS o FALLAMOS. NO te saltes ninguno; una frase corta por partido, variando cómo lo dices.")
     # marco temporal (sin resultados de otros días, para no alargar la voz)
     try:
         td = date.fromisoformat(target_iso)
@@ -211,9 +211,9 @@ def build(target):
         f"Cerramos la jornada: el modelo acertó {hits} de {n}." + (f" Bien clavado: {dd.acc(best['a'])} vs {dd.acc(best['b'])}." if best else ""))
     voz = (ai.get("voz") or "").strip() or (
         f"Veamos cómo nos fue anoche en el Mundial. Mi inteligencia artificial acertó {hits} de {n} partidos. "
-        + (f"Lo más claro fue {dd.acc(best['a'])} contra {dd.acc(best['b'])}. " if best else "")
-        + (f"Se nos escapó {dd.acc(miss['a'])} contra {dd.acc(miss['b'])}, así es el fútbol. " if miss else "")
-        + f"En total llevamos {rec_txt}.{prox_txt} El análisis completo está en el link de mi bio. "
+        + " ".join(f"{dd.acc(x['a'])} {x['marcador_real'].replace('-', ' a ')} {dd.acc(x['b'])}, "
+                   f"{'acertamos' if x['ok1x2'] else 'fallamos'}." for x in matches)
+        + f" En total llevamos {rec_txt}.{prox_txt} El análisis completo está en el link de mi bio. "
           f"Suscríbete a mi canal de YouTube. Soy {BRAND_VOZ}, nos vemos mañana.")
     caption = re.sub(r"\s*#\S+", "", (ai.get("caption") or "").strip()).strip() or (
         f"Así nos fue anoche: {hits}/{n} aciertos 🎯 Mostramos aciertos y fallos. Análisis gratis en mi Substack (link en bio).")

@@ -469,6 +469,9 @@ ok("_num_es: 20-29 con TILDES correctas (veintidós/veintitrés/veintiséis), re
    ["veinte","veintiuno","veintidós","veintitrés","veinticuatro","veinticinco","veintiséis","veintisiete","veintiocho","veintinueve"]
    and mvz.numeros_a_palabras("22 de junio, vamos 23 de 40") == "veintidós de junio, vamos veintitrés de cuarenta",
    [mvz._num_es(str(k)) for k in (22,23,26)])
+ok("numeros_a_palabras: decimales se leen con 'punto' (60.5 -> sesenta punto cinco, no 'sesenta cinco')",
+   mvz.numeros_a_palabras("60.5 por ciento") == "sesenta punto cinco por ciento"
+   and mvz.numeros_a_palabras("57.5") == "cincuenta y siete punto cinco", mvz.numeros_a_palabras("60.5 por ciento"))
 ok("stitching: parte el guion en frases y agrupa en bloques",
    len(mvz._frases("Uno. Dos! Tres?")) == 3 and len(mvz._bloques("Frase larga de prueba número. " * 30)) >= 2,
    f'frases={len(mvz._frases("Uno. Dos! Tres?"))}, bloques={len(mvz._bloques("Frase larga de prueba número. " * 30))}')

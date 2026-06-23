@@ -332,25 +332,81 @@ const Brand: React.FC = () => {
 export const RecapViral: React.FC<{words: Word[]; data: any; audio: string; avatar?: string}> = ({words = [], data = {}, audio = 'recap_voz.mp3', avatar = ''}) => {
   const {fps, durationInFrames} = useVideoConfig();
   const partidos = data.partidos || [];
-  const firstCard = Math.round(fps * 2.6);
-  const recordStart = durationInFrames - Math.round(fps * 6);
   const brandStart = durationInFrames - Math.round(fps * 2.0);
+  const recordStart = brandStart - Math.round(fps * 3.5);       // récord grande (3.5s)
+  const tableEndStart = recordStart - Math.round(fps * 3.8);    // tabla final capturable (3.8s)
+  // anclar cada tarjeta de resultado a la 1ª mención de su equipo en la voz, y ORDENAR (narra TODOS)
+  const hookMin = Math.round(fps * Math.min(5, (durationInFrames / fps) * 0.10));
+  const minGap = Math.round(fps * 1.2);
+  const tagged = partidos.map((p: any, i: number) => {
+    const cand = [anchorOf(words, p.a, hookMin / fps), anchorOf(words, p.b, hookMin / fps)].filter((x): x is number => x != null);
+    return {p, i, t: cand.length ? Math.min(...cand) : null};
+  });
+  const ordered = tagged.slice().sort((x, y) => {
+    if (x.t == null && y.t == null) return x.i - y.i;
+    if (x.t == null) return 1;
+    if (y.t == null) return -1;
+    return x.t - y.t;
+  });
+  const starts: number[] = [];
+  let prev = hookMin - minGap;
+  for (const it of ordered) {
+    let s = it.t != null ? Math.round(it.t * fps) : prev + minGap;
+    if (s < prev + minGap) s = prev + minGap;
+    starts.push(s); prev = s;
+  }
+  const firstCard = starts.length ? starts[0] : hookMin;
   return (
     <AbsoluteFill style={{background: '#0A0A1F'}}>
       <Audio src={staticFile(audio)} />
       <Bg />
-      <Sequence from={0} durationInFrames={firstCard}><HookRecap data={data} /></Sequence>
-      {partidos.slice(0, 2).map((p: any, i: number) => {
-        const span = Math.max(1, recordStart - firstCard);
-        const start = firstCard + Math.round((span / Math.min(2, partidos.length)) * i);
-        const dur = Math.round(span / Math.min(2, partidos.length));
-        return <Sequence key={i} from={start} durationInFrames={dur}><ResultCard p={p} /></Sequence>;
+      {/* INTRO: tabla con TODOS los resultados + aciertos */}
+      <Sequence from={0} durationInFrames={firstCard}><ResultsTable data={data} intro /></Sequence>
+      {/* tarjetas de resultado, en ORDEN de narración y ancladas a la voz (todos los partidos) */}
+      {ordered.map((it: any, k: number) => {
+        const start = starts[k];
+        const next = k + 1 < starts.length ? starts[k + 1] : tableEndStart;
+        const cdur = Math.max(Math.round(fps * 1.4), next - start);
+        if (start >= tableEndStart) return null;
+        return <Sequence key={it.i} from={start} durationInFrames={Math.min(cdur, tableEndStart - start)}><ResultCard p={it.p} /></Sequence>;
       })}
+      {/* tabla final capturable (todos los resultados) */}
+      <Sequence from={tableEndStart} durationInFrames={recordStart - tableEndStart}><ResultsTable data={data} /></Sequence>
       <Sequence from={recordStart} durationInFrames={brandStart - recordStart}><RecordScene data={data} /></Sequence>
       <Sequence from={brandStart} durationInFrames={durationInFrames - brandStart}><Brand /></Sequence>
       <Avatar src={avatar} />
       <TopBar fecha={data.fecha} />
       <Captions words={words} bottom={avatar ? 760 : 250} />
+    </AbsoluteFill>
+  );
+};
+
+const ResultsTable: React.FC<{data: any; intro?: boolean}> = ({data, intro = false}) => {
+  const e = usePunch(2, 8);
+  const partidos = data.partidos || [];
+  const hits = data.aciertos ?? data.hits ?? 0, n = data.n ?? partidos.length;
+  return (
+    <AbsoluteFill style={{justifyContent: 'flex-start', alignItems: 'center', paddingTop: 230, paddingLeft: 40, paddingRight: 40}}>
+      <div style={{transform: `scale(${0.86 + e * 0.14})`, width: 980, background: 'rgba(8,8,32,0.8)', border: `4px solid ${GOLD}`, borderRadius: 38, padding: '34px 28px', boxShadow: '0 24px 90px rgba(0,0,0,0.65)'}}>
+        <div style={{textAlign: 'center', marginBottom: 18}}>
+          <div style={{fontFamily: FONT, fontSize: 40, fontWeight: 900, color: GOLD, letterSpacing: 1}}>RESULTADOS DE ANOCHE</div>
+          <div style={{fontFamily: FONT, fontSize: 32, fontWeight: 800, color: WHITE}}>Mundial 2026 · {data.fecha} · <span style={{color: GREEN}}>{hits}/{n} aciertos</span></div>
+        </div>
+        {partidos.map((p: any, i: number) => {
+          const ok = !!p.acierto;
+          return (
+            <div key={i} style={{display: 'flex', alignItems: 'center', gap: 10, padding: '10px 4px', borderBottom: i < partidos.length - 1 ? '2px solid rgba(255,255,255,0.09)' : 'none'}}>
+              <Flag team={p.a} w={46} />
+              <div style={{flex: 1, textAlign: 'right', fontFamily: FONT, fontSize: 29, fontWeight: 800, color: WHITE, whiteSpace: 'nowrap', overflow: 'hidden'}}>{p.a}</div>
+              <div style={{fontFamily: FONT, fontSize: 40, fontWeight: 900, color: WHITE, minWidth: 92, textAlign: 'center', background: `linear-gradient(180deg,${MAGENTA}33,${BLUE}33)`, borderRadius: 10, padding: '2px 0'}}>{p.real_sx}<span style={{color: MAGENTA}}>-</span>{p.real_sy}</div>
+              <div style={{flex: 1, textAlign: 'left', fontFamily: FONT, fontSize: 29, fontWeight: 800, color: WHITE, whiteSpace: 'nowrap', overflow: 'hidden'}}>{p.b}</div>
+              <Flag team={p.b} w={46} />
+              <div style={{width: 44, textAlign: 'center', fontFamily: FONT, fontSize: 40, fontWeight: 900, color: ok ? GREEN : RED}}>{ok ? '✓' : '✗'}</div>
+            </div>
+          );
+        })}
+        <div style={{textAlign: 'center', marginTop: 18, fontFamily: FONT, fontSize: 30, fontWeight: 800, color: TEAL}}>{intro ? '🤖 aciertos y fallos, sin esconder nada' : '@aiwithpedro · captura y comparte 📸'}</div>
+      </div>
     </AbsoluteFill>
   );
 };
