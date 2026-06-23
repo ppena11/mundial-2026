@@ -143,8 +143,9 @@ AI_SYSTEM = (
     "seguidas y las comas innecesarias (esas causan pausas robóticas al leerlas la voz). "
     "ABRE CORTO Y DIRECTO, SIN gancho largo ni dato de ayer: UNA sola frase que diga que estos son los pronósticos "
     "de tu INTELIGENCIA ARTIFICIAL para HOY con la fecha, y JUSTO DESPUÉS el récord del modelo. Molde (VARÍA las "
-    'palabras, NO lo copies idéntico): "Aquí están los pronósticos de mi inteligencia artificial para hoy, <día de '
-    'la semana> <número> de <mes>. Vamos <aciertos> de <total>." Usa EXACTAMENTE la fecha y el récord de los datos; '
+    'palabras, NO lo copies idéntico): "Aquí están los pronósticos del Mundial 2026 de mi inteligencia artificial '
+    'para hoy, <día de la semana> <número> de <mes>. Vamos <aciertos> de <total>." Usa EXACTAMENTE la fecha y el '
+    "récord de los datos; "
     "NO digas 'el día N del torneo'. PROHIBIDO en el ARRANQUE: gancho o resultado de AYER, presumir "
     "'simulaciones'/'escenarios', cualquier MARCADOR con sede y cualquier OPINIÓN. El récord se dice UNA sola vez "
     "(aquí, al inicio), NO lo repitas al final. INMEDIATAMENTE después del récord empieza DIRECTO con lo que piensa "
@@ -383,7 +384,7 @@ def build(target):
         S.append("Hoy no hay partidos del Mundial, pero mi inteligencia artificial ya está lista para cuando ruede el balón.")
     else:
         _rec = f" Vamos {tr['aciertos_1x2']} de {tr['n']}." if tr.get("n", 0) > 0 else ""
-        S.append(f"Aquí están los pronósticos de mi inteligencia artificial para hoy, {dd.fecha_larga(target)}.{_rec}")
+        S.append(f"Aquí están los pronósticos del Mundial 2026 de mi inteligencia artificial para hoy, {dd.fecha_larga(target)}.{_rec}")
         S.append(". ".join(f"{dd.acc(d['a'])} {d['sx']} a {d['sy']} {dd.acc(d['b'])}" for d in played) + ".")
         if pick:
             d,(team,mpb,mkp,edge)=pick; riv=d["b"] if team==d["a"] else d["a"]

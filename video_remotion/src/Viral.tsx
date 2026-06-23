@@ -196,9 +196,8 @@ export const PronosticoViral: React.FC<{words: Word[]; data: any; audio: string;
       <Audio src={staticFile('musica.mp3')} volume={0.12} loop />
       <Bg />
 
-      {/* Hook corto + escena intro animada (IA / simulaciones) hasta la 1ª tarjeta */}
-      <Sequence from={0} durationInFrames={Math.min(Math.round(fps * 3.2), firstCard)}><HookPron data={data} /></Sequence>
-      {firstCard > Math.round(fps * 3.2) ? <Sequence from={Math.round(fps * 3.2)} durationInFrames={firstCard - Math.round(fps * 3.2)}><IntroPron data={data} /></Sequence> : null}
+      {/* INTRO: la tarjeta con TODOS los pronósticos (fecha + IA) mientras la voz dice la intro, hasta la 1ª tarjeta */}
+      <Sequence from={0} durationInFrames={firstCard}><ResumenCard data={data} intro /></Sequence>
 
       {/* tarjetas de partido, en ORDEN de narración y ancladas a la voz */}
       {ordered.map((it: any, k: number) => {
@@ -259,15 +258,16 @@ const IntroPron: React.FC<{data: any}> = ({data}) => {
 };
 
 // tarjeta-resumen CAPTURABLE: todos los pronósticos del día (para screenshot + compartir)
-const ResumenCard: React.FC<{data: any}> = ({data}) => {
+const ResumenCard: React.FC<{data: any; intro?: boolean}> = ({data, intro = false}) => {
   const e = usePunch(2, 8);
   const partidos = data.partidos || [];
   return (
     <AbsoluteFill style={{justifyContent: 'flex-start', alignItems: 'center', paddingTop: 250, paddingLeft: 46, paddingRight: 46}}>
       <div style={{transform: `scale(${0.86 + e * 0.14})`, width: 960, background: 'rgba(8,8,32,0.78)', border: `4px solid ${GOLD}`, borderRadius: 38, padding: '38px 34px', boxShadow: '0 24px 90px rgba(0,0,0,0.65)'}}>
         <div style={{textAlign: 'center', marginBottom: 22}}>
-          <div style={{fontFamily: FONT, fontSize: 42, fontWeight: 900, color: GOLD, letterSpacing: 2}}>PRONÓSTICOS DEL DÍA</div>
+          <div style={{fontFamily: FONT, fontSize: 42, fontWeight: 900, color: GOLD, letterSpacing: 2}}>PRONÓSTICOS DE HOY</div>
           <div style={{fontFamily: FONT, fontSize: 34, fontWeight: 800, color: WHITE}}>Mundial 2026 · {data.fecha}</div>
+          <div style={{fontFamily: FONT, fontSize: 28, fontWeight: 800, color: TEAL, marginTop: 4}}>🤖 mi inteligencia artificial</div>
         </div>
         {partidos.map((p: any, i: number) => (
           <div key={i} style={{display: 'flex', alignItems: 'center', gap: 12, padding: '13px 4px', borderBottom: i < partidos.length - 1 ? '2px solid rgba(255,255,255,0.09)' : 'none'}}>
@@ -278,7 +278,7 @@ const ResumenCard: React.FC<{data: any}> = ({data}) => {
             <Flag team={p.b} w={54} />
           </div>
         ))}
-        <div style={{textAlign: 'center', marginTop: 22, fontFamily: FONT, fontSize: 32, fontWeight: 800, color: TEAL}}>@aiwithpedro · captura y comparte 📸</div>
+        <div style={{textAlign: 'center', marginTop: 22, fontFamily: FONT, fontSize: 32, fontWeight: 800, color: TEAL}}>{intro ? '@aiwithpedro · el Mundial en 60 segundos' : '@aiwithpedro · captura y comparte 📸'}</div>
       </div>
     </AbsoluteFill>
   );

@@ -387,7 +387,7 @@ ok("AI_SYSTEM pide hora+sede (estadio/ciudad/país) y NO citar el medio",
    all(s in msx.AI_SYSTEM for s in ("estadio", "ciudad", "PAÍS", "SIN citar el medio")), "falta la regla")
 ok("_summary ya NO mete 'el día N del torneo'", "hoy es el día" not in sm_x.lower(), "quedó el día N")
 ok("AI_SYSTEM abre con la fecha y prohíbe 'día N del torneo'",
-   "Aquí están los pronósticos de mi inteligencia artificial para hoy" in msx.AI_SYSTEM and "el día N del torneo" in msx.AI_SYSTEM, "falta la regla")
+   "Aquí están los pronósticos del Mundial 2026 de mi inteligencia artificial" in msx.AI_SYSTEM and "el día N del torneo" in msx.AI_SYSTEM, "falta la regla")
 ok("el prompt prohíbe que Claude deduzca el día", "NUNCA lo deduzcas" in msx.AI_SYSTEM, "falta la regla")
 # (1b) pronóstico CLARO por partido + ángulo viral con noticia real o dato del modelo (sin inventar)
 ok("_summary marca el PRONÓSTICO de cada partido", "PRONÓSTICO Brasil contra Marruecos" in sm_x, sm_x)
