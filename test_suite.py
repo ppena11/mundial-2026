@@ -404,9 +404,16 @@ played2 = [
 sm2 = msx._summary("13/06/2026", played2, None, None, {"n": 0})
 ok("fase de grupos: solo el destacado va en detalle; los demás solo la hora",
    sm2.count("[DETALLE]") == 1 and sm2.count("Sede:") == 1 and sm2.count("Hora:") == 2, sm2)
-sm_ko = msx._summary("28/06/2026", played2, None, None, {"n": 0})
-ok("eliminatorias (desde 28-jun): TODOS los partidos van en detalle",
-   sm_ko.count("[DETALLE]") == 2 and sm_ko.count("Sede:") == 2, sm_ko)
+# eliminatorias = TODAS las rondas desde 28-jun (dieciseisavos, octavos, cuartos, semis, final): TODOS importantes
+for _kod, _ronda in [("28/06/2026", "dieciseisavos"), ("04/07/2026", "octavos"), ("09/07/2026", "cuartos"),
+                     ("14/07/2026", "semifinal"), ("19/07/2026", "final")]:
+    _smk = msx._summary(_kod, played2, None, None, {"n": 0})
+    ok(f"eliminatorias {_ronda} ({_kod}): TODOS los partidos en detalle (todos importantes)",
+       _smk.count("[DETALLE]") == 2 and _smk.count("Sede:") == 2, _smk)
+# el video quita 'PICK DEL DÍA' en TODA la eliminatoria (umbral cubre las 5 rondas; NO el último día de grupos)
+ok("video: 'PICK DEL DÍA' se quita en todas las eliminatorias (umbral 20260628), no en grupos",
+   all(d >= "20260628" for d in ("20260628", "20260704", "20260709", "20260714", "20260719"))
+   and not ("20260627" >= "20260628"), "umbral de eliminatorias mal")
 ok("AI_SYSTEM: [DETALLE]=completo, los demás=solo hora",
    "[DETALLE]" in msx.AI_SYSTEM and "SOLO el pronóstico" in msx.AI_SYSTEM, "falta la regla")
 ok("AI_SYSTEM: arranque CORTO y directo (IA + fecha + RÉCORD al inicio, sin gancho/simulaciones/opinión)",
