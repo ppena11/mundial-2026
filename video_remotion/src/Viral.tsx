@@ -63,7 +63,7 @@ const Avatar: React.FC<{src?: string}> = ({src}) => {
     <div style={{position: 'absolute', bottom: 250, left: '50%', marginLeft: -235, width: 470, height: 470,
       borderRadius: '50%', overflow: 'hidden', border: `7px solid ${GOLD}`,
       boxShadow: `0 0 60px rgba(0,0,0,0.55), 0 0 36px ${GOLD}44`, background: 'rgba(8,8,30,0.35)', transform: `translateY(${float}px)`}}>
-      <OffthreadVideo src={staticFile(src)} muted style={{width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 20%', transform: 'scale(1.38)'}} />
+      <OffthreadVideo src={staticFile(src)} muted style={{width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 18%', transform: 'scale(1.7)'}} />
     </div>
   );
 };
