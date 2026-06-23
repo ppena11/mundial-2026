@@ -416,6 +416,11 @@ ok("AI_SYSTEM: NO fuerza 'veinte mil simulaciones' cada día (variación del fac
    "VARÍA MUCHO cómo la nombras" in msx.AI_SYSTEM and "_INTRO_VARIANTS" in dir(msx) and len(msx._INTRO_VARIANTS) >= 5, "falta la variación")
 ok("AI_SYSTEM: la opinión del destacado va JUSTO DESPUÉS de ese partido (no al final, no sobre otro)",
    "JUSTO DESPUÉS de su pronóstico" in msx.AI_SYSTEM and "SOLO para el destacado" in msx.AI_SYSTEM, "falta la regla de posición")
+ok("AI_SYSTEM: arranque ligero + anti-duplicación + gancho concreto + SIN etiquetas de emoción",
+   all(s in msx.AI_SYSTEM for s in ("EL ARRANQUE", "el gancho insinúa", "MARCADOR exacto",
+       "PROHIBIDAS también las etiquetas de emoción")), "falta alguna regla de intro")
+ok("AI_SYSTEM: ya NO permite [excited] (lo prohíbe)",
+   "[excited]" not in msx.AI_SYSTEM.split("PROHIBIDAS")[0], "aún permite [excited] antes de prohibirlo")
 # fonética de estadios/ciudades SOLO para el audio (ElevenLabs); el texto queda real para subtítulos
 import make_voice as mvz
 ph = mvz.foneticizar("Se juega en el NRG Stadium de Houston, Texas. También Mexico City y el BMO Field.")
