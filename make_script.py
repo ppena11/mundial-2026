@@ -372,6 +372,7 @@ def build(target):
                                "hora": dd.hora_hablada(d["utc"]) if d.get("utc") else "",
                                "hora_corta": dd.hora_et(d["utc"]) if d.get("utc") else "",
                                "sede": ", ".join(x for x in (d.get("estadio"), d.get("ciudad"), d.get("pais")) if x),
+                               "is_ko": bool(d.get("is_ko")) or _elim,   # en KO todos muestran sede (todos importantes)
                                "destacado": (i == _feat) and not _elim} for i, d in enumerate(played)],
                  "campeon": [[dd.acc(t), round(float(p), 1)] for t, p in list(_ch.items())[:6]],
                  "record": {"aciertos": tr.get("aciertos_1x2", 0), "n": tr.get("n", 0)}}

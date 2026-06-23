@@ -151,7 +151,7 @@ const MatchCard: React.FC<{p: any; dur: number}> = ({p, dur}) => {
       <div style={{marginTop: 30, transform: `scale(${score})`, display: 'flex', alignItems: 'center', gap: 16, background: `linear-gradient(90deg,${GREEN},${TEAL})`, color: INK, fontFamily: FONT, fontWeight: 900, padding: '14px 36px', borderRadius: 999, boxShadow: `0 0 50px ${GREEN}55`}}>
         <span style={{fontSize: 84}}>{prob}%</span><span style={{fontSize: 36}}>{p.fav}</span>
       </div>
-      {p.destacado && p.sede ? <div style={{marginTop: 22, opacity: Math.min(1, sedeE * 1.5), fontFamily: FONT, fontSize: 34, fontWeight: 700, color: '#C9D4F0', textAlign: 'center'}}>{p.hora ? p.hora.split(',')[0] : ''} · {p.sede.split(',')[0]}</div> : null}
+      {(p.destacado || p.is_ko) && p.sede ? <div style={{marginTop: 22, opacity: Math.min(1, sedeE * 1.5), fontFamily: FONT, fontSize: 34, fontWeight: 700, color: '#C9D4F0', textAlign: 'center'}}>{p.sede.split(',')[0]}</div> : null}
     </Scene>
   );
 };
