@@ -55,7 +55,7 @@ def render(comp, audio_src, words_file, data_file, pub_audio, props_name, out_na
     if sys.platform == "win32" and not env.get("TEMP", "").lower().startswith("e:"):
         tmp = "E:\\remotion_tmp"; os.makedirs(tmp, exist_ok=True)
         env["TEMP"] = env["TMP"] = env["TMPDIR"] = tmp
-    conc = os.environ.get("RENDER_CONCURRENCY", "2")   # 2 en local (disco/CPU justos); en la nube se sube a $(nproc)
+    conc = os.environ.get("RENDER_CONCURRENCY") or str(os.cpu_count() or 4)   # local: TODOS los núcleos; nube: $(nproc); override por env
     cmd = (f'npx remotion render src/index.ts {comp} out/{out_name} '
            f'--props=public/{props_name} --codec h264 --crf 18 --concurrency {conc}')
     print(f"render {comp} ({props['durationSec']}s)...")
