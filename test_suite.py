@@ -387,7 +387,7 @@ ok("AI_SYSTEM pide hora+sede (estadio/ciudad/país) y NO citar el medio",
    all(s in msx.AI_SYSTEM for s in ("estadio", "ciudad", "PAÍS", "SIN citar el medio")), "falta la regla")
 ok("_summary ya NO mete 'el día N del torneo'", "hoy es el día" not in sm_x.lower(), "quedó el día N")
 ok("AI_SYSTEM abre con la fecha y prohíbe 'día N del torneo'",
-   "Aquí está el pronóstico de hoy" in msx.AI_SYSTEM and 'NO digas "el día N del torneo"' in msx.AI_SYSTEM, "falta la regla")
+   "Aquí están los pronósticos de mi inteligencia artificial para hoy" in msx.AI_SYSTEM and "el día N del torneo" in msx.AI_SYSTEM, "falta la regla")
 ok("el prompt prohíbe que Claude deduzca el día", "NUNCA lo deduzcas" in msx.AI_SYSTEM, "falta la regla")
 # (1b) pronóstico CLARO por partido + ángulo viral con noticia real o dato del modelo (sin inventar)
 ok("_summary marca el PRONÓSTICO de cada partido", "PRONÓSTICO Brasil contra Marruecos" in sm_x, sm_x)
@@ -409,18 +409,17 @@ ok("eliminatorias (desde 28-jun): TODOS los partidos van en detalle",
    sm_ko.count("[DETALLE]") == 2 and sm_ko.count("Sede:") == 2, sm_ko)
 ok("AI_SYSTEM: [DETALLE]=completo, los demás=solo hora",
    "[DETALLE]" in msx.AI_SYSTEM and "SOLO el pronóstico" in msx.AI_SYSTEM, "falta la regla")
-ok("AI_SYSTEM: gancho + factor IA + variación + opinión + cierre con actitud",
-   all(s in msx.AI_SYSTEM for s in ("GANCHO FUERTE", "VARÍA MUCHO cómo la nombras",
-       "VARÍA cómo introduces", "OPINIÓN PROPIA", "ACTITUD")), "falta alguna mejora de estilo")
-ok("AI_SYSTEM: NO fuerza 'veinte mil simulaciones' cada día (variación del factor IA)",
-   "VARÍA MUCHO cómo la nombras" in msx.AI_SYSTEM and "_INTRO_VARIANTS" in dir(msx) and len(msx._INTRO_VARIANTS) >= 5, "falta la variación")
+ok("AI_SYSTEM: arranque CORTO y directo (IA + fecha + RÉCORD al inicio, sin gancho/simulaciones/opinión)",
+   all(s in msx.AI_SYSTEM for s in ("ABRE CORTO Y DIRECTO", "Vamos <aciertos> de <total>",
+       "PROHIBIDO en el ARRANQUE", "empieza DIRECTO con lo que piensa")), "falta alguna regla del arranque corto")
+ok("AI_SYSTEM: el récord se dice UNA vez al inicio (no se repite al final)",
+   "El récord se dice UNA sola vez" in msx.AI_SYSTEM and "_INTRO_VARIANTS" in dir(msx), "falta la regla del récord")
+ok("AI_SYSTEM: variación por partido + opinión del destacado + actitud al cierre",
+   all(s in msx.AI_SYSTEM for s in ("VARÍA cómo introduces", "OPINIÓN PROPIA", "ACTITUD")), "falta alguna mejora de estilo")
 ok("AI_SYSTEM: la opinión del destacado va JUSTO DESPUÉS de ese partido (no al final, no sobre otro)",
    "JUSTO DESPUÉS de su pronóstico" in msx.AI_SYSTEM and "SOLO para el destacado" in msx.AI_SYSTEM, "falta la regla de posición")
-ok("AI_SYSTEM: arranque ligero + anti-duplicación + gancho concreto + SIN etiquetas de emoción",
-   all(s in msx.AI_SYSTEM for s in ("EL ARRANQUE", "el gancho insinúa", "MARCADOR exacto",
-       "PROHIBIDAS también las etiquetas de emoción")), "falta alguna regla de intro")
-ok("AI_SYSTEM: ya NO permite [excited] (lo prohíbe)",
-   "[excited]" not in msx.AI_SYSTEM.split("PROHIBIDAS")[0], "aún permite [excited] antes de prohibirlo")
+ok("AI_SYSTEM: SIN etiquetas de emoción ([excited] prohibido)",
+   "PROHIBIDAS también las etiquetas de emoción" in msx.AI_SYSTEM and "[excited]" not in msx.AI_SYSTEM.split("PROHIBIDAS")[0], "aún permite [excited]")
 # fonética de estadios/ciudades SOLO para el audio (ElevenLabs); el texto queda real para subtítulos
 import make_voice as mvz
 ph = mvz.foneticizar("Se juega en el NRG Stadium de Houston, Texas. También Mexico City y el BMO Field.")

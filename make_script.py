@@ -141,25 +141,14 @@ AI_SYSTEM = (
     "enérgico, con autoridad y punto de vista; frases limpias, sin relleno ni muletillas. "
     "Escribe frases que FLUYAN con ritmo continuo de narrador; evita el staccato de muchas frases cortísimas "
     "seguidas y las comas innecesarias (esas causan pausas robóticas al leerlas la voz). "
-    "ARRANCA CON UN GANCHO FUERTE de UNA SOLA frase corta y CONTUNDENTE que frene el scroll: el dato MÁS BOMBA "
-    "(el pronóstico estrella de HOY, o —si el gancho usa un resultado reciente— SOLO un partido de "
-    "'RESULTADOS DE AYER' de los datos). PROHIBIDO abrir con un resultado de OTRO día o inventado: si en los datos "
-    "dice 'AYER NO HUBO PARTIDOS', abre con el pronóstico estrella de hoy, NUNCA con un 'resultado de ayer'. "
-    "Si el gancho usa un resultado de AYER, dilo CONCRETO con el equipo Y el MARCADOR exacto y en PASADO "
-    "(p. ej. 'España goleó 4-0 a Arabia ayer'), NUNCA vago ('hizo goleada', 'fue brutal') ni en presente. "
-    "Que sea un GOLPE SECO: NO metas el récord ni acumules varias ideas en el gancho. "
-    'Justo después deja claro que son los pronósticos de hoy con la fecha así: "Aquí está el pronóstico de hoy, '
-    '<día de la semana> <número> de <mes>" (usa EXACTAMENTE el día y la fecha de los datos, p. ej. "Aquí está el '
-    'pronóstico de hoy, jueves 18 de junio"); NO digas "el día N del torneo". '
-    "En UNA frase BREVE presume tu INTELIGENCIA ARTIFICIAL, pero VARÍA MUCHO cómo la nombras cada día: NO repitas "
-    "siempre 'veinte mil simulaciones'. Alterna giros como 'mi inteligencia artificial', 'mi modelo', 'el algoritmo', "
-    "'miles de escenarios', 'el modelo ya jugó la jornada', y SOLO de vez en cuando 'veinte mil simulaciones' (es "
-    "real). Intégrala con naturalidad, sin relleno tipo 'y está listo para el análisis'. "
-    "EL ARRANQUE (gancho + fecha + la frase de IA) es LIGERO: NO metas en él ningún MARCADOR con sede ni OPINIÓN "
-    "—los pronósticos con marcador empiezan DESPUÉS— y NO encadenes la frase de IA con el primer pronóstico en una "
-    "sola parrafada (ciérrala como frase propia). Si el gancho insinúa el partido estrella, NO lo vuelvas a "
-    "presentar desde cero al narrarlo: el gancho insinúa, el cuerpo da su marcador UNA sola vez (y la sede COMPLETA "
-    "del destacado va al narrar SU pronóstico, NUNCA en el arranque). "
+    "ABRE CORTO Y DIRECTO, SIN gancho largo ni dato de ayer: UNA sola frase que diga que estos son los pronósticos "
+    "de tu INTELIGENCIA ARTIFICIAL para HOY con la fecha, y JUSTO DESPUÉS el récord del modelo. Molde (VARÍA las "
+    'palabras, NO lo copies idéntico): "Aquí están los pronósticos de mi inteligencia artificial para hoy, <día de '
+    'la semana> <número> de <mes>. Vamos <aciertos> de <total>." Usa EXACTAMENTE la fecha y el récord de los datos; '
+    "NO digas 'el día N del torneo'. PROHIBIDO en el ARRANQUE: gancho o resultado de AYER, presumir "
+    "'simulaciones'/'escenarios', cualquier MARCADOR con sede y cualquier OPINIÓN. El récord se dice UNA sola vez "
+    "(aquí, al inicio), NO lo repitas al final. INMEDIATAMENTE después del récord empieza DIRECTO con lo que piensa "
+    "el modelo: los pronósticos. "
     "Presenta CADA partido como 'el pronóstico de A contra B' con su MARCADOR PREVISTO, sin omitir ninguno, pero "
     "VARÍA cómo introduces cada uno (NO repitas la misma plantilla) pero SIEMPRE con frases GRAMATICALES y "
     "naturales: 'ojo con A contra B', 'A se mide ante B', 'A parte como favorito ante B', 'el modelo se inclina "
@@ -393,8 +382,8 @@ def build(target):
     if not played:
         S.append("Hoy no hay partidos del Mundial, pero mi inteligencia artificial ya está lista para cuando ruede el balón.")
     else:
-        _iv = _INTRO_VARIANTS[int(target) % len(_INTRO_VARIANTS)]
-        S.append(f"Aquí está el pronóstico de hoy, {dd.fecha_larga(target)}. {_iv[0].upper()}{_iv[1:]}, y estos son los marcadores que proyecta.")
+        _rec = f" Vamos {tr['aciertos_1x2']} de {tr['n']}." if tr.get("n", 0) > 0 else ""
+        S.append(f"Aquí están los pronósticos de mi inteligencia artificial para hoy, {dd.fecha_larga(target)}.{_rec}")
         S.append(". ".join(f"{dd.acc(d['a'])} {d['sx']} a {d['sy']} {dd.acc(d['b'])}" for d in played) + ".")
         if pick:
             d,(team,mpb,mkp,edge)=pick; riv=d["b"] if team==d["a"] else d["a"]
@@ -403,8 +392,6 @@ def build(target):
         if clearest:
             S.append(f"El resultado más claro del día: en {dd.acc(clearest['a'])} contra {dd.acc(clearest['b'])}, "
                      f"el favorito es {dd.acc(clearest['fav'])}, con {pct(clearest['fp'])}.")
-        if tr.get("n",0)>0:
-            S.append(f"Y para que confíes en el modelo: llevamos {tr['aciertos_1x2']} aciertos de {tr['n']} partidos.")
     S.append(f"El análisis completo de todos los partidos lo tienes en el link de mi bio. "
              f"Suscríbete a mi canal de YouTube. "
              f"Soy {BRAND_VOZ}, esto es inteligencia artificial aplicada al fútbol. Nos vemos mañana.")

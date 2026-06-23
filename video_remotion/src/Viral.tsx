@@ -167,7 +167,7 @@ export const PronosticoViral: React.FC<{words: Word[]; data: any; audio: string;
   // por ese tiempo: así aparecen en el ORDEN en que el narrador las nombra y quedan SINCRONIZADAS. (El orden de
   // 'partidos' va por hora del partido, que NO coincide con el de la narración —el narrador abre por el estrella—
   // por eso el anclado secuencial anterior desincronizaba y dejaba fuera las últimas tarjetas.)
-  const hookMin = Math.round(fps * Math.min(9, (durationInFrames / fps) * 0.14));
+  const hookMin = Math.round(fps * Math.min(6, (durationInFrames / fps) * 0.10));  // intro CORTA (IA+fecha+récord); las tarjetas entran ~6-7s
   const minGap = Math.round(fps * 1.4);
   const tagged = partidos.map((p: any, i: number) => {
     const aT = anchorOf(words, p.a, hookMin / fps);
