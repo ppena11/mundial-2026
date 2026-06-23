@@ -216,6 +216,17 @@ def fecha_larga(target):
     except Exception:
         return ""
 
+# Calendario eliminatorio FIJO del Mundial 2026 (48 equipos -> arranca en dieciseisavos).
+_RONDAS_KO = [("20260628", "20260703", "DIECISEISAVOS"), ("20260704", "20260707", "OCTAVOS DE FINAL"),
+              ("20260709", "20260711", "CUARTOS DE FINAL"), ("20260714", "20260715", "SEMIFINAL"),
+              ("20260718", "20260718", "TERCER PUESTO"), ("20260719", "20260719", "GRAN FINAL")]
+def ronda_ko(target):
+    """Nombre de la ronda eliminatoria para la fecha 'YYYYMMDD' (calendario fijo del Mundial 2026), o '' en grupos."""
+    for ini, fin, nombre in _RONDAS_KO:
+        if ini <= target <= fin:
+            return nombre
+    return ""
+
 def matches_on(yyyymmdd):
     iso = f"{yyyymmdd[0:4]}-{yyyymmdd[4:6]}-{yyyymmdd[6:8]}"
     return [m for m in fetch_all() if et_date(m["utc"]) == iso]   # día en ET, no UTC

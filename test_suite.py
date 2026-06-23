@@ -414,6 +414,11 @@ for _kod, _ronda in [("28/06/2026", "dieciseisavos"), ("04/07/2026", "octavos"),
 ok("video: 'PICK DEL DÍA' se quita en todas las eliminatorias (umbral 20260628), no en grupos",
    all(d >= "20260628" for d in ("20260628", "20260704", "20260709", "20260714", "20260719"))
    and not ("20260627" >= "20260628"), "umbral de eliminatorias mal")
+ok("ronda_ko: nombra cada fase eliminatoria por fecha; '' en grupos",
+   dd.ronda_ko("20260628") == "DIECISEISAVOS" and dd.ronda_ko("20260705") == "OCTAVOS DE FINAL"
+   and dd.ronda_ko("20260710") == "CUARTOS DE FINAL" and dd.ronda_ko("20260715") == "SEMIFINAL"
+   and dd.ronda_ko("20260718") == "TERCER PUESTO" and dd.ronda_ko("20260719") == "GRAN FINAL"
+   and dd.ronda_ko("20260622") == "", [dd.ronda_ko(d) for d in ("20260628", "20260705", "20260719", "20260622")])
 ok("AI_SYSTEM: [DETALLE]=completo, los demás=solo hora",
    "[DETALLE]" in msx.AI_SYSTEM and "SOLO el pronóstico" in msx.AI_SYSTEM, "falta la regla")
 ok("AI_SYSTEM: arranque CORTO y directo (IA + fecha + RÉCORD al inicio, sin gancho/simulaciones/opinión)",

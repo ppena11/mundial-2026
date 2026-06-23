@@ -139,6 +139,7 @@ const MatchCard: React.FC<{p: any; dur: number}> = ({p, dur}) => {
     <Scene dur={dur} shake={sh}>
       <div style={{display: 'flex', gap: 12, marginBottom: 22, transform: `scale(${e})`, justifyContent: 'center'}}>
         {p.destacado ? <div style={{background: `linear-gradient(90deg,${MAGENTA},${BLUE})`, color: WHITE, fontFamily: FONT, fontSize: 32, fontWeight: 900, letterSpacing: 2, padding: '10px 24px', borderRadius: 999}}>PICK DEL DÍA</div> : null}
+        {p.ronda ? <div style={{background: `linear-gradient(90deg,${GOLD},#F59E0B)`, color: INK, fontFamily: FONT, fontSize: 32, fontWeight: 900, letterSpacing: 2, padding: '10px 24px', borderRadius: 999, boxShadow: `0 0 32px ${GOLD}66`}}>🏆 {p.ronda}</div> : null}
         {p.hora_corta ? <div style={{background: 'rgba(255,255,255,0.12)', border: `2px solid ${TEAL}`, color: WHITE, fontFamily: FONT, fontSize: 32, fontWeight: 800, padding: '8px 22px', borderRadius: 999}}>🕐 {p.hora_corta}</div> : null}
       </div>
       <div style={{transform: `scale(${0.7 + e * 0.3})`, opacity: Math.min(1, e * 1.6), background: 'rgba(10,10,40,0.55)', border: '3px solid rgba(255,255,255,0.18)', borderRadius: 34, padding: '40px 36px', boxShadow: '0 24px 70px rgba(0,0,0,0.5)'}}>

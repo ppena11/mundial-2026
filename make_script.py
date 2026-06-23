@@ -365,6 +365,7 @@ def build(target):
         _feat = max(range(len(played)), key=lambda i: max(_ch.get(played[i]["a"], 0), _ch.get(played[i]["b"], 0))) if played else -1
         # En ELIMINATORIAS todos los partidos son decisivos: no hay "PICK DEL DÍA" (un solo destacado no aplica)
         _elim = target >= "20260628" or any(d.get("is_ko") for d in played)
+        _ronda = dd.ronda_ko(target) or ("ELIMINATORIA" if _elim else "")   # badge de fase en eliminatorias
         viral = {"fecha": _fh, "target": target,
                  "intro": _INTRO_VARIANTS[int(target) % len(_INTRO_VARIANTS)],
                  "partidos": [{"a": dd.acc(d["a"]), "b": dd.acc(d["b"]), "fav": dd.acc(d["fav"]),
@@ -373,6 +374,7 @@ def build(target):
                                "hora_corta": dd.hora_et(d["utc"]) if d.get("utc") else "",
                                "sede": ", ".join(x for x in (d.get("estadio"), d.get("ciudad"), d.get("pais")) if x),
                                "is_ko": bool(d.get("is_ko")) or _elim,   # en KO todos muestran sede (todos importantes)
+                               "ronda": _ronda,                          # badge de fase (OCTAVOS, FINAL...) en KO; '' en grupos
                                "destacado": (i == _feat) and not _elim} for i, d in enumerate(played)],
                  "campeon": [[dd.acc(t), round(float(p), 1)] for t, p in list(_ch.items())[:6]],
                  "record": {"aciertos": tr.get("aciertos_1x2", 0), "n": tr.get("n", 0)}}
