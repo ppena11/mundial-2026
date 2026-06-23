@@ -86,8 +86,12 @@ def _summary(fh, played, pick, clearest, tr):
         return sum(1 for f in fechas if f and f <= _tgt)
     for i, d in enumerate(played):
         hora = dd.hora_hablada(d["utc"]) if d.get("utc") else ""
-        base = (f"PRONÓSTICO {dd.acc(d['a'])} contra {dd.acc(d['b'])}: favorito {dd.acc(d['fav'])} con "
-                f"{round(100*d['fp'])} por ciento; marcador previsto {dd.acc(d['a'])} {d['sx']} - {d['sy']} {dd.acc(d['b'])}.")
+        if d['fav'] == "Empate":
+            base = (f"PRONÓSTICO {dd.acc(d['a'])} contra {dd.acc(d['b'])}: el modelo ve EMPATE a {d['sx']} "
+                    f"({round(100*d['fp'])} por ciento de empate); marcador previsto {dd.acc(d['a'])} {d['sx']} - {d['sy']} {dd.acc(d['b'])}.")
+        else:
+            base = (f"PRONÓSTICO {dd.acc(d['a'])} contra {dd.acc(d['b'])}: favorito {dd.acc(d['fav'])} con "
+                    f"{round(100*d['fp'])} por ciento; marcador previsto {dd.acc(d['a'])} {d['sx']} - {d['sy']} {dd.acc(d['b'])}.")
         detallado = eliminatorias or d.get("is_ko") or (i == feat)
         if detallado:
             sede = ", ".join(x for x in (d.get("estadio"), d.get("ciudad"), d.get("pais")) if x)
@@ -155,6 +159,8 @@ AI_SYSTEM = (
     "naturales: 'ojo con A contra B', 'A se mide ante B', 'A parte como favorito ante B', 'el modelo se inclina "
     "por A frente a B'. PROHIBIDO pegar el nombre y el giro sin conector (MAL: 'Alemania ojo con Costa de Marfil'; "
     "BIEN: 'ojo con Alemania contra Costa de Marfil'). NOMBRA al equipo (no digas 'el equipo favorito'). "
+    "Si el dato dice 'el modelo ve EMPATE', NO inventes un favorito: di que el modelo PREVÉ UN EMPATE (p. ej. "
+    "'el modelo ve un empate a 1' o 'partido parejo, igualada a 1'), coherente con el marcador. "
     "VARÍA también cómo dices el marcador ('gana 2 a 1', 'se queda en 1 a 0', 'se impone 2 a 0'), no repitas "
     "'marcador previsto'. FIDELIDAD AL MARCADOR: NINGUNA palabra que implique PALIZA ('goleada', 'golea', 'aplasta', "
     "'destroza', 'arrasa/arrasando', 'masacra', 'vapulea', 'humilla', 'pasa por encima') salvo que el marcador tenga "
@@ -339,8 +345,11 @@ def build(target):
             m_w, m_l, m_d = mp.get(a), mp.get(b), mp.get("Draw")
             if m_w and m_l:
                 sx, sy, pw, pdr, pl, _, _ = pm.ensamble_marcador(lh, la, rho, m_w, m_d, m_l)
-        fav,fp=(a,pw) if pw>=pl else (b,pl)
-        mfav=mp.get(fav) if mp else None        # probabilidad implícita del MERCADO para el favorito (o None)
+        _oc = pm.outcome_de(sx, sy)             # favorito DERIVA del marcador más probable (concuerda con el pick y el recap)
+        if _oc == "1":   fav, fp = a, pw
+        elif _oc == "2": fav, fp = b, pl
+        else:            fav, fp = "Empate", pdr   # marcador de empate -> el pronóstico ES empate (no hay favorito)
+        mfav = (mp.get("Draw") if _oc == "X" else mp.get(fav)) if mp else None   # prob de mercado del resultado previsto
         played.append({"a":a,"b":b,"fav":fav,"fp":fp,"m_fav":mfav,"vc":vc,"sx":sx,"sy":sy,"pdr":pdr,
                        "utc":m.get("utc",""),"estadio":m.get("estadio",""),
                        "ciudad":m.get("ciudad",""),"pais":m.get("pais",""),"is_ko":m.get("is_ko",False)})

@@ -73,7 +73,7 @@ def log_predictions(target):
         k = _key(a, b, dd.et_date(m["utc"]))
         if k in have: continue
         pw, pdr, pl, lh, la, (sx, sy) = pm.one_x_two(a, b, atk, dfn, c, g, rho, local_anfitrion=True)
-        pick = ["1", "X", "2"][[pw, pdr, pl].index(max(pw, pdr, pl))]
+        pick = pm.outcome_de(sx, sy)   # el pick DERIVA del marcador más probable (lo que se publica), para que concuerden
         rows.append({"key": k, "fecha": dd.et_date(m["utc"]), "a": a, "b": b, "label": m["label"],
                      "p1": round(pw, 4), "pX": round(pdr, 4), "p2": round(pl, 4),
                      "pick": pick, "marcador_pred": f"{sx}-{sy}", "actual": None})

@@ -589,14 +589,12 @@ _ea = pmx.ensamble_marcador(1.3, 1.3, 0.0, 0.05, 0.10, 0.85)   # mercado favorec
 ok("ensamble modelo+mercado: el mercado inclina el marcador (local fuerte->gana local; visita fuerte->gana visita)",
    _eh[2] > _eh[4] and _eh[0] >= _eh[1] and _ea[4] > _ea[2] and _ea[1] >= _ea[0],
    f"local={_eh[0]}-{_eh[1]} pw={_eh[2]:.2f} | visita={_ea[0]}-{_ea[1]} pl={_ea[4]:.2f}")
-# COHERENCIA marcador<->favorito: si el favorito 1X2 es victoria, el marcador NO puede ser empate (y viceversa)
-ok("ensamble: favorito local -> marcador con local ganando (NO empate)", _eh[0] > _eh[1], f"{_eh[0]}-{_eh[1]}")
-ok("ensamble: favorito visita -> marcador con visita ganando (NO empate)", _ea[1] > _ea[0], f"{_ea[0]}-{_ea[1]}")
-_gtest = {(0,0):0.20,(1,1):0.18,(1,0):0.12,(2,1):0.10,(0,1):0.08}
-ok("_modal_bucket: pick victoria -> sx>sy ; pick empate -> sx==sy (marcador concuerda con el 1X2)",
-   pmx._modal_bucket(_gtest,0.50,0.30,0.20)[0] > pmx._modal_bucket(_gtest,0.50,0.30,0.20)[1]
-   and pmx._modal_bucket(_gtest,0.20,0.60,0.20)[0] == pmx._modal_bucket(_gtest,0.20,0.60,0.20)[1],
-   f"win={pmx._modal_bucket(_gtest,0.50,0.30,0.20)} draw={pmx._modal_bucket(_gtest,0.20,0.60,0.20)}")
+# El marcador más probable se MANTIENE; el pick/favorito DERIVA de él (no al revés) para que todo concuerde.
+ok("outcome_de: el resultado 1X2 sale del marcador (2-0->1, 1-1->X, 0-2->2)",
+   pmx.outcome_de(2,0)=="1" and pmx.outcome_de(1,1)=="X" and pmx.outcome_de(0,2)=="2", "outcome_de mal")
+ok("track_record: el pick deriva del marcador previsto (marcador de empate -> pick 'X', no un ganador)",
+   pmx.outcome_de(1,1)=="X" and pmx.outcome_de(3,1)=="1",
+   "si el marcador es 1-1, el pick debe ser empate (X), no victoria")
 import os as _os, json as _json
 _cp = dd.campeon_probs()
 _pref_ok = True
