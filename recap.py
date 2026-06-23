@@ -60,7 +60,9 @@ AI_RECAP_SYS = (
     "a pausa forzada; original, no copies ejemplos). CIERRE OBLIGATORIO (NUNCA lo omitas, aunque tengas que recortar lo demás): "
     "invita a SUSCRIBIRSE a mi canal de YouTube y a ver el cierre en el link de mi bio (NO nombres 'Substack' en la "
     "voz) y firma la voz diciendo EXACTAMENTE: "
-    "Soy éi ái uíz Pédro (así se pronuncia @aiwithpedro). SIN emojis ni símbolos "
+    "Soy éi ái uíz Pédro (así se pronuncia @aiwithpedro). La despedida ('nos vemos mañana') y la firma van como "
+    "FRASES SEPARADAS con PUNTO, NUNCA pegadas con coma (mal: 'Pédro, nos vemos mañana'; bien: 'Nos vemos mañana. "
+    "Soy éi ái uíz Pédro.'). SIN emojis ni símbolos "
     "(lo lee un sintetizador de voz); números con dígitos y marcadores como '3 a 0' (NUNCA '3-0').\n"
     '"caption": 1 o 2 líneas para YouTube Shorts, con gancho; puede llevar 1 o 2 emojis; NO incluyas hashtags aquí.\n'
     '"hashtags": lista de EXACTAMENTE 5 hashtags virales; incluye #Mundial2026, #IA y #parati.\n'
@@ -122,6 +124,14 @@ def proximo_partido(after_iso, atk, dfn, c, g, rho):
     clave = [c for c in cands if c["key"]] or cands
     clave.sort(key=lambda c: c["fp"], reverse=True)
     return clave[0]
+
+def _sep_firma(voz):
+    """La despedida y la firma van como FRASES APARTE (punto), no pegadas con coma: pausas.normalizar_pausas pone
+    el silencio en los límites de frase (puntos), así que 'Pédro, nos vemos mañana' queda pegado; '...Pédro. Nos
+    vemos mañana.' sí respira."""
+    voz = re.sub(r",\s*nos vemos", ". Nos vemos", voz, flags=re.IGNORECASE)
+    voz = re.sub(r"(Soy éi ái uíz [Pp]édro)\s*,\s*(\S)", lambda m: f"{m.group(1)}. {m.group(2).upper()}", voz)
+    return voz
 
 def build(target):
     target_iso = _iso(target)
@@ -214,7 +224,8 @@ def build(target):
         + " ".join(f"{dd.acc(x['a'])} {x['marcador_real'].replace('-', ' a ')} {dd.acc(x['b'])}, "
                    f"{'acertamos' if x['ok1x2'] else 'fallamos'}." for x in matches)
         + f" En total llevamos {rec_txt}.{prox_txt} El análisis completo está en el link de mi bio. "
-          f"Suscríbete a mi canal de YouTube. Soy {BRAND_VOZ}, nos vemos mañana.")
+          f"Suscríbete a mi canal de YouTube. Nos vemos mañana. Soy {BRAND_VOZ}.")
+    voz = _sep_firma(voz)   # despedida/firma como frases APARTE (punto), no pegadas con coma
     caption = re.sub(r"\s*#\S+", "", (ai.get("caption") or "").strip()).strip() or (
         f"Así nos fue anoche: {hits}/{n} aciertos 🎯 Mostramos aciertos y fallos. Análisis gratis en mi Substack (link en bio).")
     tags = _five(ai.get("hashtags") or [], [matches[0]["a"], matches[0]["b"]])

@@ -319,6 +319,11 @@ try:
     ok("recap: voz apta para TTS (sin # ni emojis)",
        "#" not in cu["voz"] and all(ord(ch) < 0x2190 for ch in cu["voz"]), "voz con símbolos")
     ok("recap: 'lo que viene' apunta a una fecha posterior", bool(cu.get("proximo")) and cu["proximo"]["fecha_h"] != cu["fecha_h"], f"{cu.get('proximo')}")
+    ok("recap: la firma no queda pegada a la despedida (frases aparte para que pausas respire)",
+       "Pédro, nos vemos" not in cu["voz"] and "Pédro,nos vemos" not in cu["voz"], cu["voz"][-60:])
+    ok("recap _sep_firma: 'Pédro, nos vemos mañana' -> '. Nos vemos' (pausa)",
+       recap._sep_firma("Suscríbete. Soy éi ái uíz Pédro, nos vemos mañana.") == "Suscríbete. Soy éi ái uíz Pédro. Nos vemos mañana.",
+       recap._sep_firma("Soy éi ái uíz Pédro, nos vemos mañana."))
     import make_recap
     make_recap.render(rday)
     with open("recap.png", "rb") as f: h = f.read(8)
