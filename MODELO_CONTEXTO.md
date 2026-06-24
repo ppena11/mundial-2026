@@ -123,11 +123,40 @@ a medir cuando cambien los datos. La calibración se puede activar puntualmente 
 | `calibration.py` | Vector scaling multinomial (Platt/temperatura generalizado) + métricas |
 | `fit_dc.importance()` | Peso por tipo de competición (usado por el backtest; off en producción) |
 
+## Análisis 2026 (predicciones vs realidad) → mejora validada
+
+`evaluate_2026.py` compara, fuera de muestra (modelo entrenado con datos < 2026-06-01), las
+predicciones contra los partidos REALES ya jugados. Hallazgos sobre 50 partidos de grupo:
+
+- Rendimiento sólido: **RPS 0.155, acierto 1X2 66%**; en **sedes de altura 100%** de acierto (5).
+- **Sesgo detectado:** el modelo **subestima los goles** (previstos 2.46 vs reales 2.96/partido).
+- Las "sorpresas" del 2026 eran empates de favoritos — pero con 50 partidos eso es ruido.
+
+**Disciplina anti-sobreajuste:** en vez de calibrar a 50 partidos, se convirtió el sesgo en
+hipótesis y se validó en el held-out de los **4 Mundiales históricos (256 partidos)**:
+
+- El sub-conteo de goles se **replica** (histórico: previstos 2.24 vs reales 2.57). ✅ real.
+- **Compresión de favoritos: RECHAZADA** (empeora el RPS monotónicamente).
+- **Inflar empates: RECHAZADO** (históricamente el modelo ya predice de más: 27.7% vs 22.3%).
+
+**Mejora implementada (un solo knob, validado):** `WC_GOAL_LEVEL = 1.15` — nivel de goles
+mundialista (el modelo entrena con amistosos/eliminatorias, más defensivos). Multiplica ambos λ.
+En el held-out histórico calibra los goles (previstos 2.57 = reales 2.57), **mejora el RPS**
+(0.2012→0.2006) y acerca los empates (27.7%→25.0%). En el 2026: goles 2.46→**2.83**, RPS 0.1559→**0.1552**.
+Aplicado en `sim_live.py` y `predict_match.py`.
+
+| Archivo nuevo | Qué hace |
+|---|---|
+| `evaluate_2026.py` | Predicciones vs resultados reales del Mundial 2026 (RPS/acierto/calibración + desgloses) |
+| `backtest.goal_level_scan()` | Escaneo del nivel de goles (mu) sobre el held-out de Mundiales |
+| `context_factors.WC_GOAL_LEVEL` | Nivel de goles mundialista (1.15), validado |
+
 ## Re-ejecutar
 
 ```bash
 python validate_layers.py --cut 2024-06-01   # RPS altura + sobredispersión
-python backtest.py                            # backtest Mundiales 2010-2022 (RPS/logloss/Brier)
+python backtest.py                            # backtest Mundiales 2010-2022 + escaneo de nivel de goles
+python evaluate_2026.py                       # predicciones vs resultados reales del Mundial 2026
 python build_context.py                       # regenerar wc2026_context.json desde la investigación
 python build_altitude_validation.py           # regenerar altitude_validation.json
 pytest test_context_factors.py test_format_engine.py test_schedule_2026.py test_validate_layers.py test_calibration.py test_backtest.py

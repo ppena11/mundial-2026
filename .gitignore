@@ -92,3 +92,6 @@ video_remotion/.remotion/
 
 # Calibrador experimental (regenerable con backtest.py; off por defecto)
 calibration.json
+
+# Análisis 2026 vs realidad (regenerable con evaluate_2026.py)
+eval_2026.json

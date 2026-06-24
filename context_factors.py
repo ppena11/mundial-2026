@@ -44,6 +44,12 @@ USE_TRAVEL = True       # viaje/jet lag: calibrado por literatura (viajar al est
 DISPERSION_R = 17       # binomial negativa (colas más gordas): r=17 validado fuera de muestra
                         # (NB supera a Poisson en log-verosimilitud de goles). None = Poisson puro.
 
+# Nivel de goles mundialista: el modelo entrena con amistosos/eliminatorias (más defensivos) y
+# SUBESTIMA los goles del Mundial. Multiplicador simétrico sobre ambos λ, VALIDADO en el held-out
+# de 5 Mundiales (2010-2022 + 2026 hasta hoy): calibra los goles (previstos→reales) y mejora el RPS.
+# mu=1.15 iguala goles previstos≈reales (2.57) sin sobreinflar. 1.0 = desactivado.
+WC_GOAL_LEVEL = 1.15
+
 # ============================================================
 # Geografía
 # ============================================================

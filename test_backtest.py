@@ -30,6 +30,17 @@ def test_metrics_perfect_prediction():
     assert m["rps"] == pytest.approx(0.0, abs=1e-9)
     assert m["brier"] == pytest.approx(0.0, abs=1e-9)
 
+def test_wc_goal_level_applied_in_prediction():
+    # el nivel de goles mundialista multiplica ambos λ en predict_match.one_x_two
+    import math
+    import predict_match as pm
+    import context_factors as cf
+    atk = {"X": 0.2, "Y": 0.0}; dfn = {"X": 0.1, "Y": 0.0}
+    _, _, _, lh, la, _ = pm.one_x_two("X", "Y", atk, dfn, 0.0, 0.2, -0.05)
+    assert lh == pytest.approx(math.exp(0.2) * cf.WC_GOAL_LEVEL, abs=1e-9)
+    assert la == pytest.approx(math.exp(-0.1) * cf.WC_GOAL_LEVEL, abs=1e-9)
+    assert cf.WC_GOAL_LEVEL > 1.0   # sube el nivel de goles (el modelo los subestima)
+
 def test_importance_weights():
     # eliminatorias/Mundial pesan más que amistosos
     assert fit_dc.importance("Friendly") == 1.0

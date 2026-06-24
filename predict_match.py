@@ -52,8 +52,8 @@ def outcome_de(sx, sy):
 def one_x_two(a, b, atk, dfn, c, g, rho, local_anfitrion=False, sede=None, kickoff_hour=None):
     ga_host = g if (a in HOSTS and local_anfitrion) else 0
     gb_host = g if (b in HOSTS and local_anfitrion) else 0
-    lh = math.exp(c + atk[a] - dfn[b] + ga_host)
-    la = math.exp(c + atk[b] - dfn[a] + gb_host)
+    lh = math.exp(c + atk[a] - dfn[b] + ga_host) * cf.WC_GOAL_LEVEL
+    la = math.exp(c + atk[b] - dfn[a] + gb_host) * cf.WC_GOAL_LEVEL
     # Factores de contexto si se da la sede (altura + calor; el viaje no es derivable de un
     # partido suelto sin calendario, así que queda apagado aquí).
     if sede:

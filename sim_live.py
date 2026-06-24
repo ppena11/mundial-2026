@@ -78,8 +78,8 @@ def gm(a,b,ko=False,fa=1.0,fb=1.0):
     """Simula un partido y devuelve el ganador (o None si empate en grupos).
     fa/fb = multiplicadores de contexto (altura/calor/viaje) sobre λ de a y b.
     El muestreo va por format_engine (Dixon-Coles + binomial negativa opcional)."""
-    lh=math.exp(c+A[a]-dfn[b]+(g if a in hosts else 0))*fa
-    la=math.exp(c+A[b]-dfn[a]+(g if b in hosts else 0))*fb
+    lh=math.exp(c+A[a]-dfn[b]+(g if a in hosts else 0))*fa*cf.WC_GOAL_LEVEL
+    la=math.exp(c+A[b]-dfn[a]+(g if b in hosts else 0))*fb*cf.WC_GOAL_LEVEL
     ga,gb=fe.sample_score(lh,la,rho,dispersion_r=cf.DISPERSION_R)
     if ko and ga==gb:return (a if random.random()<lh/(lh+la) else b)
     return a if ga>gb else (b if gb>ga else None)
@@ -218,7 +218,8 @@ for _ in range(K):
                 if key in PLAYED:                      # resultado REAL
                     ga,gb=PLAYED[key][a],PLAYED[key][b]
                 else:                                  # simula el que falta (con factores de contexto)
-                    lh=math.exp(c+A[a]-dfn[b]+(g if a in hosts else 0));la=math.exp(c+A[b]-dfn[a]+(g if b in hosts else 0))
+                    lh=math.exp(c+A[a]-dfn[b]+(g if a in hosts else 0))*cf.WC_GOAL_LEVEL
+                    la=math.exp(c+A[b]-dfn[a]+(g if b in hosts else 0))*cf.WC_GOAL_LEVEL
                     _f=PAIR_FACTORS.get(key,{}); lh*=_f.get(a,1.0); la*=_f.get(b,1.0)
                     ga,gb=fe.sample_score(lh,la,0.0,dispersion_r=cf.DISPERSION_R)
                 gmatches.append((a,b,ga,gb))

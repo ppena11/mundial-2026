@@ -18,6 +18,7 @@ from datetime import date
 
 import fit_dc
 import calibration as cal
+import context_factors as cf
 
 WC_START = {2010: "2010-06-11", 2014: "2014-06-12", 2018: "2018-06-14", 2022: "2022-11-20"}
 
@@ -67,6 +68,35 @@ def evaluate_wc(year, calib_years=4):
             "calibrator": calibrator}
 
 
+def goal_level_scan(mu_grid=(1.0, 1.05, 1.10, 1.15, 1.20, 1.25), years=(2010, 2014, 2018, 2022)):
+    """Escanea el multiplicador de nivel de goles (mu) sobre el held-out de Mundiales.
+
+    Devuelve por mu: RPS medio, goles previstos/partido y goles reales/partido. Sirve para
+    elegir el WC_GOAL_LEVEL que calibra los goles sin sobreajustar el RPS.
+    """
+    import math
+    from validate_layers import probs_from_lambdas
+    data = []  # (lh, la, outcome, total_goals)
+    for y in years:
+        start = WC_START[y]
+        rows = fit_dc.load("1990-01-01", f"{y}-12-31", with_tournament=True)
+        M = fit_dc.fit(fit_dc.build([r for r in rows if r[0] < start], start))
+        ti = {t: i for i, t in enumerate(M["teams"])}; O = M["OTH"]
+        for r in _wc_test_rows(rows, y, start):
+            d, h, a, gh, ga, neu = r[:6]
+            hi = ti.get(h, O); ai = ti.get(a, O)
+            lh = math.exp(M["c"] + M["atk"][hi] - M["dfn"][ai] + M["g"] * (0 if neu else 1))
+            la = math.exp(M["c"] + M["atk"][ai] - M["dfn"][hi])
+            data.append((lh, la, 0 if gh > ga else (1 if gh == ga else 2), gh + ga))
+    real_goals = sum(t for *_, t in data) / len(data)
+    out = []
+    for mu in mu_grid:
+        rps = sum(fit_dc.rps(probs_from_lambdas(lh * mu, la * mu, -0.05), o) for lh, la, o, _ in data) / len(data)
+        pg = sum((lh + la) * mu for lh, la, _, _ in data) / len(data)
+        out.append({"mu": mu, "rps": rps, "pred_goals": pg, "real_goals": real_goals})
+    return out
+
+
 def run_all(years=(2010, 2014, 2018, 2022)):
     rows = {}
     agg = {"base": [], "+comp": [], "+cal": []}
@@ -96,6 +126,11 @@ if __name__ == "__main__":
         br = sum(m["brier"] for m in ms) / len(ms)
         print(f"   {v:<8} RPS={rps:.4f}  logloss={ll:.4f}  Brier={br:.4f}")
     # recomendación de calibración final (ajustada sobre todo el histórico reciente)
+    print("\nNIVEL DE GOLES (mu) sobre el held-out de Mundiales (RPS menor = mejor; goles→reales):")
+    for r in goal_level_scan():
+        print(f"   mu={r['mu']:.2f}  RPS={r['rps']:.4f}  goles_prev={r['pred_goals']:.2f}  reales={r['real_goals']:.2f}")
+    print(f"   → producción: WC_GOAL_LEVEL = {cf.WC_GOAL_LEVEL} (calibra goles; mejora RPS)")
+
     print("\nAjustando calibrador final sobre histórico reciente (2014→2026) para producción...")
     allrows = fit_dc.load("1990-01-01", "2026-06-01", with_tournament=True)
     Mw = fit_dc.fit(fit_dc.build(allrows, "2026-06-01", importance_fn=fit_dc.importance))
