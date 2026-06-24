@@ -163,6 +163,83 @@ class Schedule:
 # ============================================================
 # Carga (cache local -> red)
 # ============================================================
+# ============================================================
+# Bracket oficial de eliminatorias (con sedes) desde el calendario
+# ============================================================
+_SLOT_POS = re.compile(r"^([12])([A-L])$")        # "2A", "1F"
+_SLOT_REF = re.compile(r"^([WL])(\d+)$")           # "W74" (ganador), "L101" (perdedor)
+_KO_ROUND_NUM = {"Round of 32": 73, "Round of 16": 89, "Quarter-final": 97, "Semi-final": 101}
+
+def _parse_slot(s, team_group):
+    """Convierte un slot del calendario a una tupla:
+       ('W',grupo)=ganador de grupo, ('R',grupo)=2º, ('3',frozenset)=mejor tercero,
+       ('M',num)=ganador del partido num, ('LM',num)=perdedor del partido num. None si no parsea."""
+    s = str(s).strip()
+    m = _SLOT_POS.match(s)
+    if m:
+        return ("W" if m.group(1) == "1" else "R", m.group(2))
+    if s.startswith("3") and "/" in s:
+        return ("3", frozenset(s[1:].split("/")))
+    m = _SLOT_REF.match(s)
+    if m:
+        return ("M" if m.group(1) == "W" else "LM", int(m.group(2)))
+    if s in team_group:          # nombre de equipo ya colocado = ganador de su grupo
+        return ("W", team_group[s])
+    return None
+
+def build_bracket(matches, team_group):
+    """Construye el bracket oficial 2026 con sedes desde los partidos KO del calendario.
+
+    matches    : lista normalizada (de Schedule) — usa team1/team2 como códigos de slot.
+    team_group : {equipo_es: letra_grupo} para mapear nombres ya colocados a su posición.
+
+    Numera por orden de aparición dentro de cada ronda (R32 73-88, R16 89-96, QF 97-100,
+    SF 101-102, 3º 103, Final 104) y VALIDA la consistencia del árbol. Devuelve un dict:
+      {ok, match:{num:{round,a,b,ground,hour,date}}, third_candidates:{num:frozenset}, order:[nums]}
+    Si la validación falla (p. ej. el feed cambió), ok=False y el sim no aplica el bracket.
+    """
+    by_round = {}
+    for m in matches:
+        if not m.get("is_group") and m.get("round"):
+            by_round.setdefault(m["round"], []).append(m)
+    match = {}; third_candidates = {}
+    def add(num, m):
+        a = _parse_slot(m["team1"], team_group); b = _parse_slot(m["team2"], team_group)
+        match[num] = {"round": m["round"], "a": a, "b": b, "ground": m["ground"],
+                      "hour": m["hour"], "date": m["date"], "offset": m["utc_offset"]}
+        for slot in (a, b):
+            if slot and slot[0] == "3":
+                third_candidates[num] = slot[1]
+    for rnd, base in _KO_ROUND_NUM.items():
+        for i, m in enumerate(by_round.get(rnd, [])):
+            add(base + i, m)
+    for m in by_round.get("Match for third place", []): add(103, m)
+    for m in by_round.get("Final", []): add(104, m)
+
+    # --- validación de consistencia ---
+    ok = True
+    counts = {"Round of 32": 16, "Round of 16": 8, "Quarter-final": 4, "Semi-final": 2}
+    for rnd, n in counts.items():
+        if len(by_round.get(rnd, [])) != n: ok = False
+    if any(s is None for mm in match.values() for s in (mm["a"], mm["b"])): ok = False
+    refs = [s[1] for mm in match.values() for s in (mm["a"], mm["b"]) if s and s[0] in ("M", "LM")]
+    from collections import Counter
+    rc = Counter(refs)
+    # cada partido 73..100 alimenta exactamente uno; 101 y 102 alimentan dos (final + 3º)
+    for num in range(73, 101):
+        if rc.get(num, 0) != 1: ok = False
+    if rc.get(101, 0) != 2 or rc.get(102, 0) != 2: ok = False
+    # cada ganador/segundo de grupo aparece exactamente una vez en la R32
+    pos = Counter((s[0], s[1]) for n in range(73, 89) if n in match
+                  for s in (match[n]["a"], match[n]["b"]) if s and s[0] in ("W", "R"))
+    for L in "ABCDEFGHIJKL":
+        if pos.get(("W", L), 0) != 1 or pos.get(("R", L), 0) != 1: ok = False
+    if len(third_candidates) != 8: ok = False
+
+    order = sorted(match.keys())
+    return {"ok": ok, "match": match, "third_candidates": third_candidates, "order": order}
+
+
 def _fetch_raw():
     with urllib.request.urlopen(OPENFOOTBALL_URL, timeout=30) as fh:
         return json.load(fh).get("matches", [])

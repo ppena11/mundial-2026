@@ -72,20 +72,25 @@ Tres features por equipo, **derivadas del calendario real** (no de un dataset ex
 
 ## Integración y dónde se aplica
 
-- **`sim_live.py`** (pipeline diario, 20.000 sims): factores precomputados por par de equipos (sede,
-  hora y viaje son fijos), aplicados a los **partidos de grupo** que faltan; ranking de grupo y
-  terceros por el motor FIFA; muestreo con binomial negativa.
+- **`sim_live.py`** (pipeline diario, 20.000 sims):
+  - **Fase de grupos:** factores precomputados por par de equipos (sede, hora y viaje son fijos),
+    aplicados a los partidos que faltan; ranking de grupo y terceros por el motor FIFA.
+  - **Eliminatorias:** usa el **bracket OFICIAL 2026** con sedes (`schedule_2026.build_bracket`):
+    cada partido KO conoce su sede/hora reales, así que altura/calor/viaje se aplican también ahí
+    (incluidos los 2 partidos en altura de Ciudad de México: R32 y R16). El viaje en KO se deriva del
+    recorrido real del equipo a medida que avanza. Si el calendario fuese inconsistente, cae con
+    elegancia a siembra por fuerza sin factores (`BR_OK=False`).
+  - Muestreo con binomial negativa en todo el torneo.
 - **`predict_match.py`**: `--sede "Mexico City" --hora 14` activa altura + calor para un partido suelto.
 
 ## Limitaciones conscientes (honestidad)
 
-- En **eliminatorias** los factores de contexto están **apagados**: el bracket se siembra por fuerza y
-  no mapea a las sedes oficiales, así que no se puede atribuir la sede a equipos concretos. Esto deja
-  fuera **2 partidos** reales en altura (R32 y R16 en Ciudad de México). Los **10 partidos de grupo**
-  en altura (Azteca/Guadalajara) sí se capturan, que es donde está casi toda la señal.
 - **Calor y viaje** no tienen laboratorio histórico etiquetado, así que están calibrados por
   literatura y probados a nivel de mecanismo, pero **no** validados con RPS como la altura. Por eso son
   pequeños y acotados, y se pueden apagar con un flag en `context_factors.py`.
+- El **bracket oficial** se reconstruye del calendario abierto (openfootball) numerando los KO por
+  orden de aparición y **validando** la consistencia del árbol; si la fuente cambiara su formato, el
+  validador lo detecta y el sim no aplica un bracket roto.
 
 ## Re-ejecutar
 

@@ -164,11 +164,52 @@ _nf = sum(1 for v in PAIR_FACTORS.values() if any(abs(x-1.0) > 1e-9 for x in v.v
 print(f"Factores de contexto en {_nf}/{len(PAIR_FACTORS)} partidos de grupo "
       f"(altura={cf.USE_ALTITUDE}, calor={cf.USE_HEAT}, viaje={cf.USE_TRAVEL}, dispersión_r={cf.DISPERSION_R})")
 
+# ---------- BRACKET OFICIAL DE ELIMINATORIAS (con sedes) ----------
+TEAM_GROUP = {t: gN for gN, T in GROUPS.items() for t in T}
+BRACKET = _sched.build_bracket(SCHED.matches, TEAM_GROUP)
+BR_OK = BRACKET["ok"]
+# último partido de grupo de cada equipo (origen del viaje hacia la R32)
+LAST_GROUP = {}
+for _t, _ms in SCHED.by_team.items():
+    if _ms:
+        _m = _ms[-1]; LAST_GROUP[_t] = (_m["ground"], _m["date"], _m["utc_offset"])
+_alt_ko = sum(1 for n in BRACKET["match"] if (cf.venue(BRACKET["match"][n]["ground"]) or {}).get("elevation_m", 0) > cf.ALT_THRESHOLD) if BR_OK else 0
+print(f"Bracket oficial de eliminatorias: {'OK' if BR_OK else 'NO disponible (uso siembra por fuerza)'}"
+      f"{f' — {_alt_ko} partidos KO en altura con factores' if BR_OK else ''}")
+
+def ko_travel(team, ground, date_str, offset, last_played):
+    """Viaje/descanso/jet lag de un equipo en un partido KO, desde su partido anterior."""
+    prev = last_played.get(team)
+    if not prev:
+        return None
+    pg, pd, po = prev
+    out = {"rest_days": None, "km_travel": 0.0, "tz_change": 0}
+    try:
+        if date_str and pd:
+            out["rest_days"] = (date.fromisoformat(date_str) - date.fromisoformat(pd)).days
+    except Exception:
+        pass
+    vN = cf.venue(ground); vP = cf.venue(pg)
+    if vN and vP and None not in (vN.get("lat"), vN.get("lon"), vP.get("lat"), vP.get("lon")):
+        out["km_travel"] = cf.haversine(vP["lat"], vP["lon"], vN["lat"], vN["lon"])
+    if offset is not None and po is not None:
+        out["tz_change"] = offset - po
+    return out
+
+def resolve_slot(slot, num, pos1, pos2, third_team, tassign, winner, loser):
+    """Equipo concreto que ocupa un slot del bracket en una simulación dada."""
+    k, v = slot
+    if k == "W": return pos1[v]
+    if k == "R": return pos2[v]
+    if k == "3": return third_team[tassign[num]]
+    if k == "M": return winner[v]
+    return loser[v]   # "LM" (perdedor, para el 3er puesto)
+
 # ---------- SIMULACIÓN CONDICIONADA ----------
 random.seed(11); K=20000
 champ={t:0 for t in MAP}; fin={t:0 for t in MAP}
 for _ in range(K):
-    seeds=[]; thirds=[]
+    pos1={}; pos2={}; third_team={}; thirds=[]
     for gN,T in GROUPS.items():
         gmatches=[]
         for i in range(4):
@@ -183,18 +224,42 @@ for _ in range(K):
                 gmatches.append((a,b,ga,gb))
         order=fe.rank_group(T,gmatches)                # cascada FIFA 2026 (head-to-head, etc.)
         tabg=fe.group_table(T,gmatches)
-        seeds.append((1,A[order[0]]+dfn[order[0]],order[0]));seeds.append((2,A[order[1]]+dfn[order[1]],order[1]))
-        third=order[2]; thirds.append((third,tabg[third]["pts"],tabg[third]["gd"],tabg[third]["gf"]))
-    th=fe.rank_thirds(thirds)[:8]                       # 8 mejores terceros (criterios oficiales 2026)
-    for t in th:seeds.append((3,A[t]+dfn[t],t))
-    seeds.sort(key=lambda s:(s[0],-s[1]));order=[s[2] for s in seeds];n=len(order)
-    br=[(order[i],order[n-1-i]) for i in range(n//2)]
-    while len(br)>1:
-        nx=[w for a,b in br for w in [gm(a,b,ko=True)]]
-        if len(nx)==2:
-            for t in nx:fin[t]+=1
-        br=[(nx[i],nx[i+1]) for i in range(0,len(nx),2)]
-    champ[gm(br[0][0],br[0][1],ko=True)]+=1
+        pos1[gN]=order[0]; pos2[gN]=order[1]; third_team[gN]=order[2]
+        thirds.append((order[2],tabg[order[2]]["pts"],tabg[order[2]]["gd"],tabg[order[2]]["gf"]))
+    top8=set(fe.rank_thirds(thirds)[:8])               # 8 mejores terceros (criterios oficiales 2026)
+
+    if BR_OK:
+        # --- BRACKET OFICIAL: casillas reales + sede/hora por partido + factores en KO ---
+        qual_groups={gN for gN in GROUPS if third_team[gN] in top8}
+        tassign=fe.assign_thirds(qual_groups, candidates=BRACKET["third_candidates"])
+        last_played=dict(LAST_GROUP)
+        winner={}; loser={}
+        for num in BRACKET["order"]:
+            mm=BRACKET["match"][num]
+            a=resolve_slot(mm["a"],num,pos1,pos2,third_team,tassign,winner,loser)
+            b=resolve_slot(mm["b"],num,pos1,pos2,third_team,tassign,winner,loser)
+            ta=ko_travel(a,mm["ground"],mm["date"],mm["offset"],last_played)
+            tb=ko_travel(b,mm["ground"],mm["date"],mm["offset"],last_played)
+            fa,fb=cf.match_factors(a,b,mm["ground"],mm["hour"],home_travel=ta,away_travel=tb,
+                                   enable_alt=cf.USE_ALTITUDE,enable_heat=cf.USE_HEAT,enable_travel=cf.USE_TRAVEL)
+            w=gm(a,b,ko=True,fa=fa,fb=fb); winner[num]=w; loser[num]=a if w==b else b
+            last_played[w]=(mm["ground"],mm["date"],mm["offset"])
+        for t in (winner[101],winner[102]): fin[t]+=1   # finalistas
+        champ[winner[104]]+=1
+    else:
+        # --- RESPALDO: siembra por fuerza (sin factores en KO) si el bracket no está disponible ---
+        seeds=[]
+        for gN in GROUPS:
+            seeds.append((1,A[pos1[gN]]+dfn[pos1[gN]],pos1[gN]));seeds.append((2,A[pos2[gN]]+dfn[pos2[gN]],pos2[gN]))
+        for t in top8: seeds.append((3,A[t]+dfn[t],t))
+        seeds.sort(key=lambda s:(s[0],-s[1]));order=[s[2] for s in seeds];n=len(order)
+        br=[(order[i],order[n-1-i]) for i in range(n//2)]
+        while len(br)>1:
+            nx=[w for a,b in br for w in [gm(a,b,ko=True)]]
+            if len(nx)==2:
+                for t in nx:fin[t]+=1
+            br=[(nx[i],nx[i+1]) for i in range(0,len(nx),2)]
+        champ[gm(br[0][0],br[0][1],ko=True)]+=1
 
 # ---------- SALIDA (mismo formato que sim20k) ----------
 fase = "PRE-TORNEO (sin partidos)" if n_real==0 else f"EN CURSO ({n_real} partidos de grupo jugados)"

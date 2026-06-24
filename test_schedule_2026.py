@@ -93,3 +93,62 @@ def test_travel_for_pair(synth_schedule):
     ta, tb = synth_schedule.travel_for_pair("X", "Y")
     assert ta["tz_change"] == pytest.approx(3.0)   # X viajó al este
     assert tb["km_travel"] == pytest.approx(0.0)   # Y no se movió
+
+
+# ---------------- _parse_slot ----------------
+def test_parse_slot_positions():
+    tg = {"Alemania": "E", "Mexico": "A"}
+    assert sch._parse_slot("1F", tg) == ("W", "F")
+    assert sch._parse_slot("2A", tg) == ("R", "A")
+    assert sch._parse_slot("3C/E/F/H/I", tg) == ("3", frozenset("CEFHI"))
+    assert sch._parse_slot("W74", tg) == ("M", 74)
+    assert sch._parse_slot("L101", tg) == ("LM", 101)
+    assert sch._parse_slot("Alemania", tg) == ("W", "E")   # nombre ya colocado = ganador de su grupo
+    assert sch._parse_slot("???", tg) is None
+
+
+# ---------------- build_bracket (calendario real cacheado) ----------------
+GROUPS_REAL = {"A": ["Mexico", "Sudafrica", "Corea del Sur", "Chequia"],
+               "B": ["Canada", "Bosnia", "Catar", "Suiza"],
+               "C": ["Brasil", "Marruecos", "Haiti", "Escocia"],
+               "D": ["Estados Unidos", "Paraguay", "Australia", "Turquia"],
+               "E": ["Alemania", "Curazao", "Costa de Marfil", "Ecuador"],
+               "F": ["Paises Bajos", "Japon", "Suecia", "Tunez"],
+               "G": ["Belgica", "Egipto", "Iran", "Nueva Zelanda"],
+               "H": ["Espana", "Cabo Verde", "Arabia Saudi", "Uruguay"],
+               "I": ["Francia", "Senegal", "Irak", "Noruega"],
+               "J": ["Argentina", "Argelia", "Austria", "Jordania"],
+               "K": ["Portugal", "R.D. Congo", "Uzbekistan", "Colombia"],
+               "L": ["Inglaterra", "Croacia", "Ghana", "Panama"]}
+
+def _real_bracket():
+    s = sch.load()
+    if not any(not m["is_group"] for m in s.matches):
+        pytest.skip("calendario real no disponible (sin cache ni red)")
+    tg = {t: g for g, ts in GROUPS_REAL.items() for t in ts}
+    return sch.build_bracket(s.matches, tg)
+
+def test_build_bracket_consistent():
+    br = _real_bracket()
+    assert br["ok"] is True                      # árbol consistente
+    assert len(br["match"]) == 32                # 16+8+4+2+1+1
+    assert len(br["third_candidates"]) == 8      # 8 casillas de tercero en R32
+
+def test_build_bracket_structure():
+    br = _real_bracket()
+    # #79 = R32 en Ciudad de México: ganador grupo A vs un tercero de {C,E,F,H,I}
+    m79 = br["match"][79]
+    assert m79["ground"] == "Mexico City" and m79["a"] == ("W", "A") and m79["b"][0] == "3"
+    # #92 = R16 en CDMX, alimentado por ganadores de #79 y #80
+    m92 = br["match"][92]
+    assert m92["ground"] == "Mexico City" and m92["a"] == ("M", 79) and m92["b"] == ("M", 80)
+    # final y tercer puesto
+    assert br["match"][104]["a"] == ("M", 101) and br["match"][104]["b"] == ("M", 102)
+    assert br["match"][103]["a"] == ("LM", 101) and br["match"][103]["b"] == ("LM", 102)
+
+def test_build_bracket_broken_is_not_ok():
+    # un calendario KO incompleto debe marcar ok=False (degrada con elegancia, no revienta)
+    fake = [{"is_group": False, "round": "Round of 32", "team1": "1A", "team2": "2B",
+             "ground": "X", "hour": 12, "utc_offset": -5, "date": "2026-06-28"}]
+    br = sch.build_bracket(fake, {})
+    assert br["ok"] is False
