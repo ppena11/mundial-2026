@@ -17,6 +17,7 @@ Escribe champ_today.json y champ_today.png (mismo formato que sim20k).
 """
 import csv, math, random, json, urllib.parse
 import fit_dc, engine
+import context_factors as cf, format_engine as fe, schedule_2026 as _sched
 from datetime import date, timedelta
 try:
     import requests
@@ -73,16 +74,13 @@ def pois(l):
         k+=1;p*=random.random()
         if p<=L:return k-1
 
-def gm(a,b,ko=False):
-    lh=math.exp(c+A[a]-dfn[b]+(g if a in hosts else 0));la=math.exp(c+A[b]-dfn[a]+(g if b in hosts else 0))
-    ga,gb=pois(lh),pois(la)
-    if ga<=1 and gb<=1:
-        w={(0,0):(1-lh*la*rho),(0,1):la*(1+lh*rho),(1,0):lh*(1+la*rho),(1,1):lh*la*(1-rho)}
-        tot=sum(v for v in w.values() if v>0);r=random.random()*tot;ac=0
-        for cc_,v in w.items():
-            if v>0:
-                ac+=v
-                if ac>=r:ga,gb=cc_;break
+def gm(a,b,ko=False,fa=1.0,fb=1.0):
+    """Simula un partido y devuelve el ganador (o None si empate en grupos).
+    fa/fb = multiplicadores de contexto (altura/calor/viaje) sobre λ de a y b.
+    El muestreo va por format_engine (Dixon-Coles + binomial negativa opcional)."""
+    lh=math.exp(c+A[a]-dfn[b]+(g if a in hosts else 0))*fa
+    la=math.exp(c+A[b]-dfn[a]+(g if b in hosts else 0))*fb
+    ga,gb=fe.sample_score(lh,la,rho,dispersion_r=cf.DISPERSION_R)
     if ko and ga==gb:return (a if random.random()<lh/(lh+la) else b)
     return a if ga>gb else (b if gb>ga else None)
 
@@ -144,30 +142,51 @@ n_real = sum(1 for grp in GROUPS.values() for i in range(4) for j in range(i+1,4
              if frozenset((grp[i],grp[j])) in PLAYED)
 print(f"Partidos de grupo ya jugados detectados: {n_real}")
 
+# ---------- CALENDARIO + FACTORES DE CONTEXTO (altura/calor/viaje) ----------
+# Se precomputan UNA vez por par de equipos (la sede, hora y viaje son fijos; solo los goles
+# son aleatorios). Así no se recalculan en cada una de las 20.000 simulaciones.
+try:
+    SCHED = _sched.load()
+except Exception as _e:
+    print(f"(sin calendario para factores de contexto: {_e})"); SCHED = _sched.Schedule([])
+PAIR_FACTORS = {}   # frozenset({a,b}) -> {a: f_a, b: f_b}
+for _gN, _T in GROUPS.items():
+    for _i in range(4):
+        for _j in range(_i+1, 4):
+            _a, _b = _T[_i], _T[_j]
+            _ground, _hour = SCHED.factors_for(_a, _b)
+            _ta, _tb = SCHED.travel_for_pair(_a, _b)
+            _fa, _fb = cf.match_factors(_a, _b, _ground, _hour, home_travel=_ta, away_travel=_tb,
+                                        enable_alt=cf.USE_ALTITUDE, enable_heat=cf.USE_HEAT,
+                                        enable_travel=cf.USE_TRAVEL)
+            PAIR_FACTORS[frozenset((_a, _b))] = {_a: _fa, _b: _fb}
+_nf = sum(1 for v in PAIR_FACTORS.values() if any(abs(x-1.0) > 1e-9 for x in v.values()))
+print(f"Factores de contexto en {_nf}/{len(PAIR_FACTORS)} partidos de grupo "
+      f"(altura={cf.USE_ALTITUDE}, calor={cf.USE_HEAT}, viaje={cf.USE_TRAVEL}, dispersión_r={cf.DISPERSION_R})")
+
 # ---------- SIMULACIÓN CONDICIONADA ----------
 random.seed(11); K=20000
 champ={t:0 for t in MAP}; fin={t:0 for t in MAP}
 for _ in range(K):
     seeds=[]; thirds=[]
     for gN,T in GROUPS.items():
-        tab={t:[0,0,0] for t in T}   # pts, dif, gf
+        gmatches=[]
         for i in range(4):
             for j in range(i+1,4):
                 a,b=T[i],T[j]; key=frozenset((a,b))
                 if key in PLAYED:                      # resultado REAL
                     ga,gb=PLAYED[key][a],PLAYED[key][b]
-                else:                                  # simula el que falta
+                else:                                  # simula el que falta (con factores de contexto)
                     lh=math.exp(c+A[a]-dfn[b]+(g if a in hosts else 0));la=math.exp(c+A[b]-dfn[a]+(g if b in hosts else 0))
-                    ga,gb=pois(lh),pois(la)
-                if ga>gb:tab[a][0]+=3
-                elif gb>ga:tab[b][0]+=3
-                else:tab[a][0]+=1;tab[b][0]+=1
-                tab[a][1]+=ga-gb;tab[b][1]+=gb-ga;tab[a][2]+=ga;tab[b][2]+=gb
-        o=sorted(T,key=lambda t:(tab[t][0],tab[t][1],tab[t][2],random.random()),reverse=True)
-        seeds.append((1,A[o[0]]+dfn[o[0]],o[0]));seeds.append((2,A[o[1]]+dfn[o[1]],o[1]))
-        thirds.append((o[2],tab[o[2]][0],tab[o[2]][1]))
-    th=sorted(thirds,key=lambda x:(x[1],x[2],random.random()),reverse=True)[:8]
-    for t in th:seeds.append((3,A[t[0]]+dfn[t[0]],t[0]))
+                    _f=PAIR_FACTORS.get(key,{}); lh*=_f.get(a,1.0); la*=_f.get(b,1.0)
+                    ga,gb=fe.sample_score(lh,la,0.0,dispersion_r=cf.DISPERSION_R)
+                gmatches.append((a,b,ga,gb))
+        order=fe.rank_group(T,gmatches)                # cascada FIFA 2026 (head-to-head, etc.)
+        tabg=fe.group_table(T,gmatches)
+        seeds.append((1,A[order[0]]+dfn[order[0]],order[0]));seeds.append((2,A[order[1]]+dfn[order[1]],order[1]))
+        third=order[2]; thirds.append((third,tabg[third]["pts"],tabg[third]["gd"],tabg[third]["gf"]))
+    th=fe.rank_thirds(thirds)[:8]                       # 8 mejores terceros (criterios oficiales 2026)
+    for t in th:seeds.append((3,A[t]+dfn[t],t))
     seeds.sort(key=lambda s:(s[0],-s[1]));order=[s[2] for s in seeds];n=len(order)
     br=[(order[i],order[n-1-i]) for i in range(n//2)]
     while len(br)>1:

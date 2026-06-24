@@ -86,3 +86,6 @@ video_remotion/node_modules/
 video_remotion/out/
 video_remotion/public/
 video_remotion/.remotion/
+
+# Entorno virtual local (Claude Code)
+.venv/

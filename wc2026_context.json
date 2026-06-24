@@ -1,0 +1,1355 @@
+{
+ "venues": {
+  "Mexico City": {
+   "stadium": "Estadio Azteca (named Estadio Banorte / 'Mexico City Stadium' for FIFA WC 2026)",
+   "city": "Mexico City (Coyoacan)",
+   "lat": 19.30306,
+   "lon": -99.15056,
+   "elevation_m": 2200,
+   "roof": "open",
+   "effective_ac_during_play": false,
+   "summer_afternoon_heat_risk": "moderate",
+   "utc_offset": -6,
+   "hot_humid": false,
+   "sources": [
+    "https://en.wikipedia.org/wiki/Estadio_Azteca",
+    "https://stadiumdb.com/tournaments/world_cup/2026/estadio_azteca",
+    "https://www.tsn.ca/soccer/fifa-world-cup/article/mexico-citys-altitude-poses-a-key-challenge-for-teams-at-the-2026-world-cup/",
+    "https://weather.com/2026/06/02/sports-recreation/heres-where-world-cup-heat-could-be-the-biggest-concern"
+   ]
+  },
+  "Guadalajara (Zapopan)": {
+   "stadium": "Estadio Akron (named 'Estadio Guadalajara' for FIFA WC 2026)",
+   "city": "Zapopan (Guadalajara metro), Jalisco",
+   "lat": 20.68167,
+   "lon": -103.46278,
+   "elevation_m": 1670,
+   "roof": "open",
+   "effective_ac_during_play": false,
+   "summer_afternoon_heat_risk": "moderate",
+   "utc_offset": -6,
+   "hot_humid": true,
+   "sources": [
+    "https://en.wikipedia.org/wiki/Estadio_Akron",
+    "https://meetstadium.com/stadiums/estadio-akron/",
+    "https://stadiumdb.com/tournaments/world_cup/2026/estadio_omnilife",
+    "https://talesofthestands.com/2026/03/08/estadio-akron-guadalajara-green-hill-stadium/"
+   ]
+  },
+  "Monterrey (Guadalupe)": {
+   "stadium": "Estadio BBVA (named 'Estadio Monterrey' for FIFA WC 2026)",
+   "city": "Guadalupe (Monterrey metro), Nuevo Leon",
+   "lat": 25.66917,
+   "lon": -100.24444,
+   "elevation_m": 530,
+   "roof": "open",
+   "effective_ac_during_play": false,
+   "summer_afternoon_heat_risk": "extreme",
+   "utc_offset": -6,
+   "hot_humid": true,
+   "sources": [
+    "https://en.wikipedia.org/wiki/Estadio_BBVA",
+    "https://meetstadium.com/stadiums/estadio-bbva/",
+    "https://stadiumdb.com/tournaments/world_cup/2026/estadio_bbva_bancomer",
+    "https://www.bloomberg.com/graphics/2026-fifa-world-cup-games-weather/"
+   ]
+  },
+  "Atlanta": {
+   "stadium": "Mercedes-Benz Stadium (named 'Atlanta Stadium' for FIFA WC 2026)",
+   "city": "Atlanta, Georgia",
+   "lat": 33.75556,
+   "lon": -84.4,
+   "elevation_m": 307,
+   "roof": "retractable",
+   "effective_ac_during_play": true,
+   "summer_afternoon_heat_risk": "low",
+   "utc_offset": -4,
+   "hot_humid": true,
+   "sources": [
+    "https://en.wikipedia.org/wiki/Mercedes-Benz_Stadium",
+    "https://footballgroundguide.com/news/which-2026-world-cup-stadiums-have-air-conditioning.html",
+    "https://sports.yahoo.com/articles/fifa-world-cup-2026-stadiums-112000413.html",
+    "https://atlantafi.com/atlanta-elevation/"
+   ]
+  },
+  "Dallas (Arlington)": {
+   "stadium": "AT&T Stadium (FIFA name: Dallas Stadium)",
+   "city": "Arlington (Dallas-Fort Worth)",
+   "lat": 32.74778,
+   "lon": -97.09278,
+   "elevation_m": 173,
+   "roof": "retractable",
+   "effective_ac_during_play": true,
+   "summer_afternoon_heat_risk": "low",
+   "utc_offset": -5,
+   "hot_humid": true,
+   "sources": [
+    "https://en.wikipedia.org/wiki/AT%26T_Stadium",
+    "https://elevation.maplogs.com/poi/at_t_stadium_1_at_t_way_arlington_tx_usa.416693.html",
+    "https://footballgroundguide.com/news/which-2026-world-cup-stadiums-have-air-conditioning.html"
+   ]
+  },
+  "Houston": {
+   "stadium": "NRG Stadium (FIFA name: Houston Stadium)",
+   "city": "Houston",
+   "lat": 29.68472,
+   "lon": -95.41083,
+   "elevation_m": 15,
+   "roof": "retractable",
+   "effective_ac_during_play": true,
+   "summer_afternoon_heat_risk": "low",
+   "utc_offset": -5,
+   "hot_humid": true,
+   "sources": [
+    "https://en.wikipedia.org/wiki/NRG_Stadium",
+    "https://elevation.maplogs.com/poi/nrg_stadium_nrg_pkwy_houston_tx_usa.416703.html",
+    "https://footballgroundguide.com/news/which-2026-world-cup-stadiums-have-air-conditioning.html",
+    "https://www.fanorate.com/soccer-2026/venue-guides/nrg-stadium-fifa-world-cup-2026-houston-guide/"
+   ]
+  },
+  "Kansas City": {
+   "stadium": "GEHA Field at Arrowhead Stadium (FIFA name: Kansas City Stadium)",
+   "city": "Kansas City, Missouri",
+   "lat": 39.04889,
+   "lon": -94.48389,
+   "elevation_m": 257,
+   "roof": "open",
+   "effective_ac_during_play": false,
+   "summer_afternoon_heat_risk": "high",
+   "utc_offset": -5,
+   "hot_humid": true,
+   "sources": [
+    "https://en.wikipedia.org/wiki/Arrowhead_Stadium",
+    "https://elevation.maplogs.com/poi/arrowhead_stadium_1_arrowhead_dr_kansas_city_mo_usa.352564.html",
+    "https://footballgroundguide.com/news/which-2026-world-cup-stadiums-have-air-conditioning.html"
+   ]
+  },
+  "Miami (Miami Gardens)": {
+   "stadium": "Hard Rock Stadium (FIFA name: Miami Stadium)",
+   "city": "Miami Gardens, Florida",
+   "lat": 25.95796,
+   "lon": -80.23886,
+   "elevation_m": 3,
+   "roof": "open",
+   "effective_ac_during_play": false,
+   "summer_afternoon_heat_risk": "extreme",
+   "utc_offset": -4,
+   "hot_humid": true,
+   "sources": [
+    "https://en.wikipedia.org/wiki/Hard_Rock_Stadium",
+    "https://elevation.maplogs.com/poi/hard_rock_stadium_don_shula_dr_miami_gardens_fl_usa.416642.html",
+    "https://footballgroundguide.com/news/which-2026-world-cup-stadiums-have-air-conditioning.html",
+    "https://www.fifa.com/en/tournaments/mens/worldcup/canadamexicousa2026/articles/miami-stadium-host-seven-matches"
+   ]
+  },
+  "New York/New Jersey (East Rutherford)": {
+   "stadium": "MetLife Stadium",
+   "city": "East Rutherford (New York/New Jersey)",
+   "lat": 40.813528,
+   "lon": -74.074361,
+   "elevation_m": 2,
+   "roof": "open",
+   "effective_ac_during_play": false,
+   "summer_afternoon_heat_risk": "high",
+   "utc_offset": -4,
+   "hot_humid": true,
+   "sources": [
+    "https://en.wikipedia.org/wiki/MetLife_Stadium",
+    "https://elevation.maplogs.com/poi/1_metlife_stadium_dr_east_rutherford_nj_usa.320716.html",
+    "https://en.wikipedia.org/wiki/2026_FIFA_World_Cup_final"
+   ]
+  },
+  "Boston (Foxborough)": {
+   "stadium": "Gillette Stadium (Boston Stadium for the tournament)",
+   "city": "Foxborough, Massachusetts (Greater Boston)",
+   "lat": 42.091,
+   "lon": -71.264,
+   "elevation_m": 78,
+   "roof": "open",
+   "effective_ac_during_play": false,
+   "summer_afternoon_heat_risk": "moderate",
+   "utc_offset": -4,
+   "hot_humid": true,
+   "sources": [
+    "https://en.wikipedia.org/wiki/Gillette_Stadium",
+    "https://elevation.maplogs.com/poi/gillette_stadium_1_patriot_pl_foxborough_ma_usa.416715.html",
+    "https://bostonfwc26.com/the-stadium/"
+   ]
+  },
+  "Philadelphia": {
+   "stadium": "Lincoln Financial Field",
+   "city": "Philadelphia, Pennsylvania",
+   "lat": 39.90083,
+   "lon": -75.1675,
+   "elevation_m": 3,
+   "roof": "open",
+   "effective_ac_during_play": false,
+   "summer_afternoon_heat_risk": "high",
+   "utc_offset": -4,
+   "hot_humid": true,
+   "sources": [
+    "https://en.wikipedia.org/wiki/Lincoln_Financial_Field",
+    "https://elevation.maplogs.com/poi/1_lincoln_financial_field_way_philadelphia_pa_usa.416648.html",
+    "https://stadiumdb.com/tournaments/world_cup/2026/lincoln_financial_field"
+   ]
+  },
+  "Toronto": {
+   "stadium": "BMO Field (Toronto Stadium for the tournament)",
+   "city": "Toronto, Ontario",
+   "lat": 43.63333,
+   "lon": -79.41861,
+   "elevation_m": 75,
+   "roof": "open",
+   "effective_ac_during_play": false,
+   "summer_afternoon_heat_risk": "moderate",
+   "utc_offset": -4,
+   "hot_humid": true,
+   "sources": [
+    "https://en.wikipedia.org/wiki/BMO_Field",
+    "https://stadiumdb.com/tournaments/world_cup/2026/bmo_field",
+    "https://www.torontofc.ca/news/raising-roof-bmo-field"
+   ]
+  },
+  "Los Angeles (Inglewood)": {
+   "stadium": "SoFi Stadium",
+   "city": "Inglewood (Greater Los Angeles)",
+   "lat": 33.9535,
+   "lon": -118.3387,
+   "elevation_m": 38,
+   "roof": "fixed",
+   "effective_ac_during_play": false,
+   "summer_afternoon_heat_risk": "low",
+   "utc_offset": -7,
+   "hot_humid": false,
+   "sources": [
+    "https://en.wikipedia.org/wiki/SoFi_Stadium",
+    "https://elevation.maplogs.com/poi/sofi_stadium_s_prairie_ave_inglewood_ca_usa.527075.html",
+    "https://api.opentopodata.org/v1/ned10m?locations=33.9535,-118.3387",
+    "https://www.united-2026.com/stadiums/sofi-stadium"
+   ]
+  },
+  "San Francisco Bay Area (Santa Clara)": {
+   "stadium": "Levi's Stadium",
+   "city": "Santa Clara, California (San Francisco Bay Area)",
+   "lat": 37.403,
+   "lon": -121.9697,
+   "elevation_m": 5,
+   "roof": "open",
+   "effective_ac_during_play": false,
+   "summer_afternoon_heat_risk": "moderate",
+   "utc_offset": -7,
+   "hot_humid": true,
+   "sources": [
+    "https://en.wikipedia.org/wiki/Levi%27s_Stadium",
+    "https://elevation.maplogs.com/poi/levi_s_stadium_marie_p_debartolo_way_santa_clara_ca_usa.416634.html",
+    "https://api.opentopodata.org/v1/ned10m?locations=37.4030,-121.9697",
+    "https://stadiumdb.com/tournaments/world_cup/2026/levis_stadium"
+   ]
+  },
+  "Seattle": {
+   "stadium": "Lumen Field",
+   "city": "Seattle, Washington",
+   "lat": 47.5952,
+   "lon": -122.3316,
+   "elevation_m": 5,
+   "roof": "open",
+   "effective_ac_during_play": false,
+   "summer_afternoon_heat_risk": "low",
+   "utc_offset": -7,
+   "hot_humid": false,
+   "sources": [
+    "https://en.wikipedia.org/wiki/Lumen_Field",
+    "https://www.lumenfield.com/fifa-world-cup/2026-fifa-world-cup-seattle",
+    "https://api.opentopodata.org/v1/ned10m?locations=47.5952,-122.3316",
+    "https://api.opentopodata.org/v1/aster30m?locations=47.5952,-122.3316"
+   ]
+  },
+  "Vancouver": {
+   "stadium": "BC Place",
+   "city": "Vancouver, British Columbia",
+   "lat": 49.2767,
+   "lon": -123.1119,
+   "elevation_m": 10,
+   "roof": "retractable",
+   "effective_ac_during_play": false,
+   "summer_afternoon_heat_risk": "low",
+   "utc_offset": -7,
+   "hot_humid": false,
+   "sources": [
+    "https://en.wikipedia.org/wiki/BC_Place",
+    "https://dailyhive.com/vancouver/why-bc-place-roof-closed-fifa-world-cup",
+    "https://geogratis.gc.ca/services/elevation/cdem/altitude?lat=49.2767&lon=-123.1119",
+    "https://whatismyelevation.com/location/49.276684,-123.112404/BC-Place"
+   ]
+  }
+ },
+ "teams": {
+  "Estados Unidos": {
+   "proxy_location": "Atlanta / Fayetteville, Georgia (nueva sede de US Soccer y Arthur M. Blank National Training Center, inaugurado en mayo 2026; es el centro de concentracion real de la federacion). EE.UU. no tiene estadio fijo de local, pero su base oficial de entrenamiento esta en el area metropolitana de Atlanta, a ~315 m de elevacion, no a nivel del mar.",
+   "lat": 33.65,
+   "lon": -84.42,
+   "base_elevation_m": 315,
+   "utc_offset": -5,
+   "sources": [
+    "https://www.ussoccer.com/ntchq",
+    "https://www.ussoccer.com/stories/2026/05/federation/national-training-center-atlanta-fayetteville-georgia-officially-open",
+    "https://dateandtime.info/citycoordinates.php?id=4180439",
+    "https://en.wikipedia.org/wiki/Atlanta"
+   ]
+  },
+  "Paraguay": {
+   "proxy_location": "Asuncion (capital y sede de la APF; el equipo concentra y juega de local en el Estadio Defensores del Chaco). Tierras bajas, ~97 m.",
+   "lat": -25.28,
+   "lon": -57.63,
+   "base_elevation_m": 97,
+   "utc_offset": -3,
+   "sources": [
+    "https://latitudelongitude.org/py/asuncion/",
+    "https://www.distancesto.com/elevation/py/asuncion-latitude-longitude/history/12265.html",
+    "https://dateandtime.info/citycoordinates.php?id=3439389"
+   ]
+  },
+  "Australia": {
+   "proxy_location": "Sydney (sede de Football Australia / Socceroos). Nivel del mar bajo, ~40 m. Australia no tiene estadio fijo unico pero la federacion tiene su HQ en Sydney y es la base administrativa habitual.",
+   "lat": -33.86,
+   "lon": 151.21,
+   "base_elevation_m": 40,
+   "utc_offset": 10,
+   "sources": [
+    "https://en.wikipedia.org/wiki/Football_Australia",
+    "https://elevation.maplogs.com/poi/sydney_nsw_australia.38665.html",
+    "https://dateandtime.info/citycoordinates.php?id=2147714"
+   ]
+  },
+  "Turquia": {
+   "proxy_location": "Estambul (Istanbul). La capital es Ankara (~891 m), pero la Federacion Turca (TFF) tiene su sede en Estambul y la seleccion juega habitualmente de local en estadios de Estambul (Ataturk Olimpiyat, etc.). Por eso se usa Estambul, a nivel del mar (~40 m), no Ankara.",
+   "lat": 41.01,
+   "lon": 28.98,
+   "base_elevation_m": 40,
+   "utc_offset": 3,
+   "sources": [
+    "https://en.wikipedia.org/wiki/Atat%C3%BCrk_Olympic_Stadium",
+    "https://dateandtime.info/citycoordinates.php?id=745044",
+    "https://elevation.city/tr/fyvo"
+   ]
+  },
+  "Alemania": {
+   "proxy_location": "Frankfurt am Main (DFB Campus, sede de la Federacion Alemana y centro de entrenamiento nacional). La capital es Berlin, pero la federacion y su base de seleccion estan en Frankfurt, ~113 m.",
+   "lat": 50.08,
+   "lon": 8.65,
+   "base_elevation_m": 113,
+   "utc_offset": 1,
+   "sources": [
+    "https://www.dfb.de/en/about-us/dfb-campus",
+    "https://en.wikipedia.org/wiki/German_Football_Association",
+    "https://dateandtime.info/citycoordinates.php?id=2925533"
+   ]
+  },
+  "Curazao": {
+   "proxy_location": "Willemstad (capital; la seleccion juega de local en el Estadio Ergilio Hato). Isla caribena, casi a nivel del mar, ~9 m.",
+   "lat": 12.11,
+   "lon": -68.93,
+   "base_elevation_m": 9,
+   "utc_offset": -4,
+   "sources": [
+    "https://en.wikipedia.org/wiki/Ergilio_Hato_Stadium",
+    "https://dateandtime.info/citycoordinates.php?id=3513090",
+    "https://latitude.to/map/cw/curacao/cities/willemstad"
+   ]
+  },
+  "Costa de Marfil": {
+   "proxy_location": "Abidjan (sede de la FIF; desde 2020 la seleccion juega de local en el Estadio Alassane Ouattara/Ebimpe, en el area de Abidjan). Costa atlantica, casi a nivel del mar, ~8 m. (Nota: la capital politica es Yamoussoukro, pero el futbol se centra en Abidjan.)",
+   "lat": 5.32,
+   "lon": -4.02,
+   "base_elevation_m": 8,
+   "utc_offset": 0,
+   "sources": [
+    "https://en.wikipedia.org/wiki/Ivory_Coast_national_football_team",
+    "https://en.wikipedia.org/wiki/Alassane_Ouattara_Stadium",
+    "https://dateandtime.info/citycoordinates.php?id=2293538"
+   ]
+  },
+  "Ecuador": {
+   "proxy_location": "Quito (capital; la seleccion juega de local en el Estadio Rodrigo Paz Delgado, 'Casa Blanca', en Quito). CASO ANDINO CRITICO: gran altitud. La ciudad de Quito esta a ~2.850 m y el estadio del seleccionado a ~2.734 m. Se usa ~2.800 m como base de aclimatacion en altura.",
+   "lat": -0.23,
+   "lon": -78.52,
+   "base_elevation_m": 2800,
+   "utc_offset": -5,
+   "sources": [
+    "https://en.wikipedia.org/wiki/Quito",
+    "https://en.wikipedia.org/wiki/Estadio_Rodrigo_Paz_Delgado",
+    "https://whatismyelevation.com/location/-0.107694,-78.489083/Estadio-Rodrigo-Paz-Delgado--Ecuador-/Estadio_Rodrigo_Paz_Delgado"
+   ]
+  },
+  "Paises Bajos": {
+   "proxy_location": "Amsterdam (la seleccion juega habitualmente de local en el Johan Cruyff Arena de Amsterdam; la sede administrativa de la KNVB esta en Zeist, ~5 m, a 50 km). Se usa Amsterdam como base, casi a nivel del mar (~13 m, parte por debajo del nivel del mar). El diferencial de altura es practicamente identico usando Zeist o Amsterdam.",
+   "lat": 52.37,
+   "lon": 4.89,
+   "base_elevation_m": 13,
+   "utc_offset": 1,
+   "sources": [
+    "https://dateandtime.info/citycoordinates.php?id=2759794",
+    "https://elevation.maplogs.com/poi/amsterdam_netherlands.3049.html",
+    "https://grokipedia.com/page/Zeist"
+   ]
+  },
+  "Japon": {
+   "proxy_location": "Tokio (sede de la JFA y del Estadio Nacional; la seleccion rota sedes pero su base administrativa y principal recinto es Tokio; el Saitama Stadium 2002, contiguo, tiene elevacion similar). ~40 m, nivel del mar.",
+   "lat": 35.68,
+   "lon": 139.77,
+   "base_elevation_m": 40,
+   "utc_offset": 9,
+   "sources": [
+    "https://en.wikipedia.org/wiki/Japan_national_football_team",
+    "https://en.wikipedia.org/wiki/Japan_National_Stadium",
+    "https://dateandtime.info/citycoordinates.php?id=1850147"
+   ]
+  },
+  "Suecia": {
+   "proxy_location": "Estocolmo / Solna (la seleccion juega de local en el Strawberry Arena, ex Friends Arena, en Solna, justo al norte del centro de Estocolmo). ~28 m, nivel del mar.",
+   "lat": 59.35,
+   "lon": 18.07,
+   "base_elevation_m": 28,
+   "utc_offset": 1,
+   "sources": [
+    "https://en.wikipedia.org/wiki/Nationalarenan",
+    "https://dateandtime.info/citycoordinates.php?id=2673730",
+    "https://elevation.maplogs.com/poi/stockholm_sweden.22694.html"
+   ]
+  },
+  "Tunez": {
+   "proxy_location": "Tunez (Tunis) capital; la seleccion juega de local en el Stade Olympique de Rades, en el area metropolitana de Tunez. Costa mediterranea, baja elevacion, ~23 m.",
+   "lat": 36.82,
+   "lon": 10.17,
+   "base_elevation_m": 23,
+   "utc_offset": 1,
+   "sources": [
+    "https://dateandtime.info/citycoordinates.php?id=2464470",
+    "https://latitude.to/articles-by-country/tn/tunisia/47757/stade-olympique-de-rades",
+    "https://latitude.to/map/tn/tunisia/cities/tunis"
+   ]
+  },
+  "Mexico": {
+   "proxy_location": "Ciudad de Mexico (Estadio Azteca)",
+   "lat": 19.4285,
+   "lon": -99.1277,
+   "base_elevation_m": 2200,
+   "utc_offset": -6,
+   "sources": [
+    "https://en.wikipedia.org/wiki/Estadio_Azteca",
+    "https://en.wikipedia.org/wiki/Mexico_City",
+    "https://pubmed.ncbi.nlm.nih.gov/5660854/",
+    "https://www.foxsports.com/articles/soccer/mexico-citys-altitude-poses-a-key-challenge-for-teams-at-the-2026-world-cup"
+   ]
+  },
+  "Sudafrica": {
+   "proxy_location": "Johannesburg (FNB Stadium, Highveld)",
+   "lat": -26.2347,
+   "lon": 27.9822,
+   "base_elevation_m": 1753,
+   "utc_offset": 2,
+   "sources": [
+    "https://en.wikipedia.org/wiki/FNB_Stadium",
+    "https://en.wikipedia.org/wiki/Loftus_Versfeld_Stadium"
+   ]
+  },
+  "Corea del Sur": {
+   "proxy_location": "Seul (Seoul World Cup Stadium)",
+   "lat": 37.5683,
+   "lon": 126.8975,
+   "base_elevation_m": 38,
+   "utc_offset": 9,
+   "sources": [
+    "https://en.wikipedia.org/wiki/Seoul_World_Cup_Stadium",
+    "https://elevation.maplogs.com/poi/seoul_south_korea.75482.html"
+   ]
+  },
+  "Chequia": {
+   "proxy_location": "Praga (Fortuna/Eden Arena; tambien sede federacion FACR)",
+   "lat": 50.0755,
+   "lon": 14.4378,
+   "base_elevation_m": 200,
+   "utc_offset": 2,
+   "sources": [
+    "https://en.wikipedia.org/wiki/Fortuna_Arena",
+    "https://en.wikipedia.org/wiki/Czech_Republic_national_football_team",
+    "https://elevation.maplogs.com/poi/prague_czech_republic.86750.html"
+   ]
+  },
+  "Canada": {
+   "proxy_location": "Toronto (BMO Field / National Soccer Stadium, junto al lago Ontario)",
+   "lat": 43.6333,
+   "lon": -79.4186,
+   "base_elevation_m": 76,
+   "utc_offset": -4,
+   "sources": [
+    "https://en.wikipedia.org/wiki/BMO_Field",
+    "https://www.bmofield.com/teams/detail/canada-soccer",
+    "https://elevation-check.com/cities/en/toronto.html"
+   ]
+  },
+  "Bosnia": {
+   "proxy_location": "Zenica (Estadio Bilino Polje, sede principal de la seleccion; no la capital Sarajevo)",
+   "lat": 44.2034,
+   "lon": 17.9077,
+   "base_elevation_m": 316,
+   "utc_offset": 2,
+   "sources": [
+    "https://en.wikipedia.org/wiki/Bilino_Polje_Stadium",
+    "https://en.wikipedia.org/wiki/Bosnia_and_Herzegovina_national_football_team",
+    "https://dateandtime.info/citycoordinates.php?id=3186573"
+   ]
+  },
+  "Catar": {
+   "proxy_location": "Doha / Al Rayyan (Khalifa International Stadium)",
+   "lat": 25.2637,
+   "lon": 51.4481,
+   "base_elevation_m": 12,
+   "utc_offset": 3,
+   "sources": [
+    "https://en.wikipedia.org/wiki/Khalifa_International_Stadium",
+    "https://dateandtime.info/citycoordinates.php?id=290030",
+    "https://dateandtime.info/citycoordinates.php?id=289888"
+   ]
+  },
+  "Suiza": {
+   "proxy_location": "Berna (capital y sede de la federacion SFV/ASF; la seleccion rota de estadio sin sede fija)",
+   "lat": 46.948,
+   "lon": 7.4474,
+   "base_elevation_m": 540,
+   "utc_offset": 2,
+   "sources": [
+    "https://en.wikipedia.org/wiki/Bern",
+    "https://en.wikipedia.org/wiki/Switzerland_national_football_team",
+    "https://elevation.maplogs.com/poi/bern_switzerland.11500.html"
+   ]
+  },
+  "Brasil": {
+   "proxy_location": "Teresopolis (CT Granja Comary, centro de entrenamiento oficial de la CBF en la Serra; no Brasilia ni Rio)",
+   "lat": -22.4489,
+   "lon": -42.9764,
+   "base_elevation_m": 871,
+   "utc_offset": -3,
+   "sources": [
+    "https://en.wikipedia.org/wiki/Granja_Comary",
+    "https://www.britannica.com/place/Teresopolis",
+    "https://grokipedia.com/page/Teres%C3%B3polis"
+   ]
+  },
+  "Marruecos": {
+   "proxy_location": "Rabat (Estadio Principe Moulay Abdellah, sede actual de la seleccion + capital)",
+   "lat": 33.9716,
+   "lon": -6.8498,
+   "base_elevation_m": 78,
+   "utc_offset": 1,
+   "sources": [
+    "https://en.wikipedia.org/wiki/Prince_Moulay_Abdellah_Stadium",
+    "https://en.wikipedia.org/wiki/Morocco_national_football_team",
+    "https://www.distancesto.com/elevation/ma/rabat-latitude-longitude/history/14172.html"
+   ]
+  },
+  "Haiti": {
+   "proxy_location": "Puerto Principe (Stade Sylvio Cator, sede de la federacion; nivel del mar)",
+   "lat": 18.5435,
+   "lon": -72.3388,
+   "base_elevation_m": 40,
+   "utc_offset": -4,
+   "sources": [
+    "https://en.wikipedia.org/wiki/Stade_Sylvio_Cator",
+    "https://en.wikipedia.org/wiki/Haiti_national_football_team",
+    "https://dateandtime.info/citycoordinates.php?id=3718426"
+   ]
+  },
+  "Escocia": {
+   "proxy_location": "Glasgow (Hampden Park, estadio nacional, area de Mount Florida)",
+   "lat": 55.8259,
+   "lon": -4.252,
+   "base_elevation_m": 50,
+   "utc_offset": 1,
+   "sources": [
+    "https://en.wikipedia.org/wiki/Hampden_Park",
+    "https://www.scottishfa.co.uk/scottish-fa/organisation/hampden-park/",
+    "https://elevation.maplogs.com/poi/glasgow_city_uk.97258.html"
+   ]
+  },
+  "Argentina": {
+   "proxy_location": "Buenos Aires (Estadio Monumental, River Plate; AFA concentra en el predio de Ezeiza, area metropolitana de Buenos Aires)",
+   "lat": -34.5453,
+   "lon": -58.4498,
+   "base_elevation_m": 25,
+   "utc_offset": -3,
+   "sources": [
+    "https://en.wikipedia.org/wiki/Estadio_Monumental_(Buenos_Aires)",
+    "https://whatismyelevation.com/location/-34.601,-58.399/Buenos_Aires",
+    "https://en.wikipedia.org/wiki/Buenos_Aires"
+   ]
+  },
+  "Argelia": {
+   "proxy_location": "Argel (Algiers; la seleccion juega de local en el Stade Nelson Mandela de Baraki, suburbio de Argel)",
+   "lat": 36.7538,
+   "lon": 3.0588,
+   "base_elevation_m": 25,
+   "utc_offset": 1,
+   "sources": [
+    "https://en.wikipedia.org/wiki/Algeria_national_football_team_home_stadium",
+    "https://en.wikipedia.org/wiki/Nelson_Mandela_Stadium",
+    "https://elevation.maplogs.com/poi/algiers_algeria.103510.html"
+   ]
+  },
+  "Austria": {
+   "proxy_location": "Viena (Vienna; Ernst-Happel-Stadion, sede habitual de la seleccion austriaca)",
+   "lat": 48.2082,
+   "lon": 16.3738,
+   "base_elevation_m": 171,
+   "utc_offset": 2,
+   "sources": [
+    "https://en.wikipedia.org/wiki/Vienna",
+    "https://elevation.maplogs.com/poi/vienna_austria.13663.html"
+   ]
+  },
+  "Jordania": {
+   "proxy_location": "Amman (Amman International Stadium, sede de la seleccion jordana)",
+   "lat": 31.9539,
+   "lon": 35.9106,
+   "base_elevation_m": 850,
+   "utc_offset": 3,
+   "sources": [
+    "https://whatismyelevation.com/location/31.951971,35.931354/Amman",
+    "https://dateandtime.info/citycoordinates.php?id=250441"
+   ]
+  },
+  "Portugal": {
+   "proxy_location": "Lisboa (Lisbon; la FPF tiene su sede y Cidade do Futebol en Oeiras; partidos en Estadio da Luz / Jose Alvalade)",
+   "lat": 38.7223,
+   "lon": -9.1393,
+   "base_elevation_m": 45,
+   "utc_offset": 1,
+   "sources": [
+    "https://elevation.maplogs.com/poi/lisbon_portugal.11032.html",
+    "https://dateandtime.info/citycoordinates.php?id=2267057"
+   ]
+  },
+  "R.D. Congo": {
+   "proxy_location": "Kinshasa (Stade des Martyrs, sede principal de la seleccion congolesa)",
+   "lat": -4.3217,
+   "lon": 15.3125,
+   "base_elevation_m": 281,
+   "utc_offset": 1,
+   "sources": [
+    "https://en.wikipedia.org/wiki/Kinshasa",
+    "https://elevation.maplogs.com/poi/kinshasa_democratic_republic_of_the_congo.136469.html"
+   ]
+  },
+  "Uzbekistan": {
+   "proxy_location": "Tashkent (Tashkent; Milliy/Bunyodkor Stadium, sede de la seleccion uzbeka)",
+   "lat": 41.3111,
+   "lon": 69.2797,
+   "base_elevation_m": 440,
+   "utc_offset": 5,
+   "sources": [
+    "https://elevation.maplogs.com/poi/tashkent_uzbekistan.198481.html",
+    "https://dateandtime.info/citycoordinates.php?id=1512569"
+   ]
+  },
+  "Colombia": {
+   "proxy_location": "Barranquilla (Estadio Metropolitano Roberto Melendez; sede de local de la seleccion colombiana desde 1987, a nivel del mar, NO Bogota que esta a 2640 m)",
+   "lat": 10.9269,
+   "lon": -74.8007,
+   "base_elevation_m": 18,
+   "utc_offset": -5,
+   "sources": [
+    "https://en.wikipedia.org/wiki/Estadio_Metropolitano_Roberto_Mel%C3%A9ndez",
+    "https://elevation.maplogs.com/poi/metropolitan_stadium_roberto_melendez_murillo_toro_barranquilla_atl_ntico_colombia.282232.html"
+   ]
+  },
+  "Inglaterra": {
+   "proxy_location": "Londres (London; Wembley Stadium, sede de la seleccion inglesa; St George's Park training en Burton-upon-Trent)",
+   "lat": 51.556,
+   "lon": -0.2796,
+   "base_elevation_m": 15,
+   "utc_offset": 1,
+   "sources": [
+    "https://en.wikipedia.org/wiki/List_of_highest_points_in_London",
+    "https://elevation-check.com/cities/en/london.html"
+   ]
+  },
+  "Croacia": {
+   "proxy_location": "Zagreb (Stadion Maksimir, sede principal de la seleccion croata)",
+   "lat": 45.815,
+   "lon": 15.9819,
+   "base_elevation_m": 158,
+   "utc_offset": 2,
+   "sources": [
+    "https://en.wikipedia.org/wiki/Zagreb",
+    "https://en.wikipedia.org/wiki/Stadion_Maksimir",
+    "https://elevation.maplogs.com/poi/zagreb_croatia.126216.html"
+   ]
+  },
+  "Ghana": {
+   "proxy_location": "Accra (Accra Sports Stadium, confirmado como sede exclusiva de local de los Black Stars)",
+   "lat": 5.55,
+   "lon": -0.1925,
+   "base_elevation_m": 50,
+   "utc_offset": 0,
+   "sources": [
+    "https://en.wikipedia.org/wiki/Accra_Sports_Stadium",
+    "https://www.newsghana.com.gh/accra-stadium-confirmed-as-black-stars-exclusive-home-venue/",
+    "https://elevation.maplogs.com/poi/accra_ghana.122518.html"
+   ]
+  },
+  "Panama": {
+   "proxy_location": "Ciudad de Panama (Panama City; Estadio Rommel Fernandez, sede de local de la seleccion panamena)",
+   "lat": 8.968,
+   "lon": -79.533,
+   "base_elevation_m": 17,
+   "utc_offset": -5,
+   "sources": [
+    "https://en.wikipedia.org/wiki/Rommel_Fern%C3%A1ndez_Stadium",
+    "https://elevation.maplogs.com/poi/panama_city_panama.11289.html"
+   ]
+  },
+  "Belgica": {
+   "proxy_location": "Bruselas (Estadio Rey Balduino / Koning Boudewijnstadion, sede habitual de la seleccion belga)",
+   "lat": 50.8954,
+   "lon": 4.3334,
+   "base_elevation_m": 53,
+   "utc_offset": 2,
+   "sources": [
+    "https://en.wikipedia.org/wiki/Brussels",
+    "https://elevation.maplogs.com/poi/king_baudouin_stadium_avenue_de_marathon_bruxelles_belgium.513927.html",
+    "https://en.wikipedia.org/wiki/King_Baudouin_Stadium"
+   ]
+  },
+  "Egipto": {
+   "proxy_location": "El Cairo (Cairo International Stadium, sede de la seleccion egipcia)",
+   "lat": 30.0626,
+   "lon": 31.3119,
+   "base_elevation_m": 30,
+   "utc_offset": 3,
+   "sources": [
+    "https://en.wikipedia.org/wiki/Cairo",
+    "https://elevation-check.com/cities/en/cairo.html",
+    "https://whatismyelevation.com/location/30.051906,31.248022/Cairo"
+   ]
+  },
+  "Iran": {
+   "proxy_location": "Teheran (Estadio Azadi, sede de la seleccion irani; ciudad en altiplano a ~1.200 m)",
+   "lat": 35.7244,
+   "lon": 51.275,
+   "base_elevation_m": 1273,
+   "utc_offset": 3.5,
+   "sources": [
+    "https://en.wikipedia.org/wiki/Azadi_Stadium",
+    "https://en.wikipedia.org/wiki/Tehran",
+    "https://stadiumdb.com/stadiums/irn/azadi_stadium"
+   ]
+  },
+  "Nueva Zelanda": {
+   "proxy_location": "Wellington (Wellington Regional Stadium / Hnry Stadium, sede principal de los All Whites; capital, no Auckland)",
+   "lat": -41.2728,
+   "lon": 174.7867,
+   "base_elevation_m": 5,
+   "utc_offset": 12,
+   "sources": [
+    "https://en.wikipedia.org/wiki/New_Zealand_men%27s_national_football_team",
+    "https://en.wikipedia.org/wiki/Wellington_Regional_Stadium",
+    "https://whatismyelevation.com/location/-41.3,174.7833/Wellington----New-Zealand-"
+   ]
+  },
+  "Espana": {
+   "proxy_location": "Madrid (sede federativa RFEF en Las Rozas y estadios habituales; meseta a ~650 m)",
+   "lat": 40.4168,
+   "lon": -3.7038,
+   "base_elevation_m": 657,
+   "utc_offset": 2,
+   "sources": [
+    "https://en.wikipedia.org/wiki/Madrid",
+    "https://madridandyou.com/en/blog/madrid-altitude-above-the-sea-level/",
+    "https://whatismyelevation.com/location/40.401972,-3.685298/Madrid"
+   ]
+  },
+  "Cabo Verde": {
+   "proxy_location": "Praia (capital, isla de Santiago; la seleccion juega tambien en el Estadio Nacional de Praia)",
+   "lat": 14.9177,
+   "lon": -23.5092,
+   "base_elevation_m": 37,
+   "utc_offset": -1,
+   "sources": [
+    "https://en.wikipedia.org/wiki/Plateau_(Praia)",
+    "https://www.britannica.com/place/Cabo-Verde",
+    "https://elevation.maplogs.com/poi/cape_verde.10669.html"
+   ]
+  },
+  "Arabia Saudi": {
+   "proxy_location": "Riad (capital y sede de la federacion saudi; meseta interior a ~600 m)",
+   "lat": 24.7136,
+   "lon": 46.6753,
+   "base_elevation_m": 612,
+   "utc_offset": 3,
+   "sources": [
+    "https://en.wikipedia.org/wiki/Riyadh",
+    "https://elevation.maplogs.com/poi/riyadh_saudi_arabia.258624.html",
+    "https://whatismyelevation.com/location/24.643,46.771/Riyadh"
+   ]
+  },
+  "Uruguay": {
+   "proxy_location": "Montevideo (Estadio Centenario, sede de la seleccion uruguaya)",
+   "lat": -34.8941,
+   "lon": -56.1609,
+   "base_elevation_m": 43,
+   "utc_offset": -3,
+   "sources": [
+    "https://en.wikipedia.org/wiki/Estadio_Centenario",
+    "https://en.wikipedia.org/wiki/Montevideo",
+    "https://whatismyelevation.com/location/-34.858,-56.1711/Montevideo--Montevideo--Uruguay-"
+   ]
+  },
+  "Francia": {
+   "proxy_location": "Paris (Stade de France, Saint-Denis, sede de Les Bleus; sede federativa FFF en Paris)",
+   "lat": 48.9244,
+   "lon": 2.3601,
+   "base_elevation_m": 38,
+   "utc_offset": 2,
+   "sources": [
+    "https://en.wikipedia.org/wiki/Stade_de_France",
+    "https://elevation-check.com/cities/en/paris.html",
+    "https://www.altitude-maps.com/city/72_774,Saint-Denis,Ile-de-France,France"
+   ]
+  },
+  "Senegal": {
+   "proxy_location": "Dakar/Diamniadio (Stade Abdoulaye Wade en Diamniadio, ~30 km de Dakar, sede actual de los Leones)",
+   "lat": 14.7333,
+   "lon": -17.1833,
+   "base_elevation_m": 21,
+   "utc_offset": 0,
+   "sources": [
+    "https://en.wikipedia.org/wiki/Diamniadio_Olympic_Stadium",
+    "https://fr.wikipedia.org/wiki/Stade_Abdoulaye-Wade",
+    "https://elevation.maplogs.com/poi/dakar_region_dakar_senegal.273383.html"
+   ]
+  },
+  "Irak": {
+   "proxy_location": "Basora (Basra International Stadium, sede habitual de los partidos de local de Irak; Bagdad es la capital pero juega en Basora)",
+   "lat": 30.5142,
+   "lon": 47.7784,
+   "base_elevation_m": 4,
+   "utc_offset": 3,
+   "sources": [
+    "https://en.wikipedia.org/wiki/Basra_International_Stadium",
+    "https://whatismyelevation.com/location/30.5135,47.8136/Basra--Al-Barah--Iraq-s9d",
+    "https://en.wikipedia.org/wiki/Iraq_national_football_team"
+   ]
+  },
+  "Noruega": {
+   "proxy_location": "Oslo (Ullevaal Stadion, sede de la seleccion noruega; estadio en el norte de la ciudad a ~100 m)",
+   "lat": 59.9491,
+   "lon": 10.7343,
+   "base_elevation_m": 100,
+   "utc_offset": 2,
+   "sources": [
+    "https://en.wikipedia.org/wiki/Ullevaal_Stadion",
+    "https://elevation.maplogs.com/poi/oslo_norway.61029.html",
+    "https://latitude.to/satellite-map/no/norway/19803/ullevaal-stadion"
+   ]
+  }
+ },
+ "rules": {
+  "group_tiebreakers": [
+   "1. Mayor numero de PUNTOS (3 por victoria, 1 por empate) en los 3 partidos del grupo (criterio principal, no es desempate).",
+   "2. Si 2+ equipos empatan en puntos, se aplica primero el MINIGRUPO head-to-head (solo partidos entre los equipos empatados): a) mayor numero de puntos en los enfrentamientos directos entre los equipos empatados.",
+   "3. b) mejor diferencia de goles en los enfrentamientos directos entre los equipos empatados.",
+   "4. c) mayor numero de goles marcados en los enfrentamientos directos entre los equipos empatados.",
+   "5. Si el empate persiste (o no se resuelve por head-to-head), se pasa a TODO el grupo: mejor diferencia de goles en todos los partidos del grupo.",
+   "6. Mayor numero de goles marcados en todos los partidos del grupo.",
+   "7. Mayor 'team conduct score' (puntaje de juego limpio / fair play) en todos los partidos del grupo, calculado por descuentos: tarjeta amarilla -1; doble amarilla / roja indirecta -3; roja directa -4; amarilla + roja directa en el mismo partido -5 (solo se aplica el descuento mayor por jugador por partido). Gana el de menos descuentos.",
+   "8. Posicion en la mas reciente Clasificacion Mundial Masculina FIFA/Coca-Cola publicada antes del torneo (criterio final)."
+  ],
+  "best_thirds_tiebreakers": [
+   "1. Mayor numero de PUNTOS obtenidos en los 3 partidos de grupo (un tercero con 4 pts SIEMPRE rankea por encima de uno con 3 pts, sin importar diferencia de goles).",
+   "2. Mejor diferencia de goles en todos los partidos del grupo.",
+   "3. Mayor numero de goles marcados en todos los partidos del grupo.",
+   "4. Mayor 'team conduct score' (puntaje de juego limpio / fair play): amarilla -1, doble amarilla/roja indirecta -3, roja directa -4, amarilla+roja directa -5; gana el de menos descuentos.",
+   "5. Posicion en la mas reciente Clasificacion Mundial FIFA/Coca-Cola (criterio final).",
+   "NOTA: para los terceros NO se usa head-to-head porque provienen de grupos distintos y no se enfrentaron entre si; se va directo a las estadisticas globales de grupo. Los 8 mejores de los 12 terceros avanzan a la ronda de 32."
+  ],
+  "sources": [
+   "https://www.fifa.com/en/tournaments/mens/worldcup/canadamexicousa2026/articles/groups-how-teams-qualify-tie-breakers",
+   "https://www.foxsports.com/stories/soccer/fifa-world-cup-group-stage-third-place-tiebreakers",
+   "https://www.espn.com/soccer/story/_/id/48703925/world-cup-group-stage-explained-tiebreakers-third-place-teams",
+   "https://bolavip.com/en/world-cup/how-best-third-place-teams-qualify-world-cup",
+   "https://bolavip.com/en/world-cup/fifa-fair-play-points-world-cup-group-stage",
+   "https://en.wikipedia.org/wiki/2026_FIFA_World_Cup"
+  ],
+  "notes": "confidence: HIGH para ambas cascadas. Las reglas son consistentes en todas las fuentes consultadas (FIFA.com, Fox Sports, ESPN, Bolavip, NBC, Wikipedia).\n\nCAMBIO CLAVE vs Mundiales anteriores (confirmado por multiples fuentes): para 2026 el PRIMER desempate dentro de grupo cuando hay empate en puntos es el HEAD-TO-HEAD (puntos en enfrentamientos directos entre los equipos empatados), NO la diferencia de goles general como en 2018/2022. Solo si el head-to-head no resuelve se pasa a diferencia de goles general del grupo.\n\nVALORES DE FAIR PLAY / TEAM CONDUCT SCORE (confidence: HIGH, confirmados por Bolavip y Fox Sports; FIFA usa el termino 'team conduct score'): amarilla = -1; doble amarilla (roja indirecta) = -3; roja directa = -4; amarilla seguida de roja directa = -5. Solo se aplica el descuento mas alto por jugador en un mismo partido. El equipo con MENOS puntos descontados (mayor puntaje) rankea por encima.\n\nPUNTO DE BAJA CONFIANZA (confidence: LOW): no encontre confirmacion explicita en fuentes autoritativas de cual es el criterio absolutamente final si DOS equipos siguen empatados tras la Clasificacion FIFA (en torneos previos era 'sorteo'/drawing of lots). La pagina oficial de FIFA.com devolvio contenido vacio en los intentos de WebFetch (solo accesible via snippet de WebSearch), y Wikipedia del torneo no detallo el sorteo final. Es practicamente imposible un empate tras el ranking FIFA porque dos selecciones nunca comparten la misma posicion, por lo que el ranking FIFA opera de facto como criterio terminal. NO inventé un criterio de sorteo; lo marco como no verificado.\n\nLIMITACION DE FUENTES: la URL oficial de FIFA.com (groups-how-teams-qualify-tie-breakers) no se pudo leer con WebFetch (devolvio pagina en blanco repetidamente), pero su contenido si aparecio resumido en los snippets de WebSearch y coincide criterio por criterio con Fox Sports, que cita textualmente la redaccion oficial ('Highest team conduct score in all group matches...'). Por eso la confianza global es alta.\n\nEl usuario menciono fuentes de estadios/clima/geografia, pero esas no aplican a esta pregunta (reglas de desempate); no se consultaron porque serian irrelevantes para los criterios de clasificacion.\""
+ },
+ "lit": {
+  "altitude_lambda_drop_per_1000m_above_1500": 0.04,
+  "altitude_floor_multiplier": 0.82,
+  "altitude_notes": "CONFIDENCE: MEDIUM. La evidencia mas autoritativa es McSharry (BMJ 2007, \"Altitude and athletic performance: statistical analysis using football results\"), que analizo 1.460 partidos internacionales en 10 paises sudamericanos durante mas de 100 anos. Hallazgos clave: (a) por cada 1.000 m de DIFERENCIA de altitud, la diferencia de goles cambia ~0,5 goles a favor del equipo de mayor altitud; (b) la probabilidad de victoria local sube de 0,537 (igual altitud) a 0,825 cuando el local de gran altura recibe a un rival de nivel del mar (dif. ~3.695 m), y baja a 0,213 en el caso inverso (equipo de llanura jugando en gran altura). McSharry tambien concluye que los equipos de llanura NO logran aclimatarse a la gran altura en plazos de viaje normales.\n\nDERIVACION del lambda ofensivo: ese ~0,5 gol de cambio en diferencia de goles por 1.000 m se reparte entre (i) el local de altura marcando mas e (ii) el visitante de llanura marcando menos. La componente atribuible a la CAIDA OFENSIVA del visitante no aclimatado es aprox. la mitad, ~0,25 gol/1.000 m. Sobre una base tipica de goles esperados del visitante en eliminatorias CONMEBOL de ~1,1-1,3, eso equivale a una caida fraccional de ~4-6% por cada 1.000 m por encima de ~1.500 m (umbral aproximado donde empieza el deterioro aerobico notable; FIFA fijo limites en 2.500 y luego 3.000 m). Estimacion central conservadora: 0,04 (4%) por 1.000 m sobre 1.500 m. CORROBORACION independiente: estudio de Copa Libertadores 2000-2015 (Journal of Human Sport and Exercise, 2023, modelo Poisson sobre 2.039 partidos) reporta que cuando el visitante asciende ~3.605 m de diferencia el local marca 2+ goles de media y multiplica x2,5 sus probabilidades de ganar.\n\nAPLICACION a los estadios laboratorio (sobre umbral 1.500 m):\n- La Paz, Estadio Hernando Siles: 3.582 m (Wikipedia) -> exceso ~2.082 m -> caida ofensiva del visitante no aclimatado ~8-10% (multiplicador ~0,90-0,92).\n- Quito, Estadio Olimpico Atahualpa: ~2.850 m -> exceso ~1.350 m -> caida ~5-6% (~0,94-0,95).\n- Bogota, El Campin: ~2.553 m (ciudad ~2.640 m) -> exceso ~1.050-1.140 m -> caida ~4-5% (~0,95-0,96).\n\nPISO (floor): el efecto fisiologico se satura; no es lineal indefinidamente. McSharry implica un piso de prob. de victoria del visitante ~0,21 en el extremo La Paz vs nivel del mar. Recomiendo un multiplicador ofensivo minimo de ~0,82 (caida maxima ~18%) incluso en La Paz, para no sobrecastigar; un floor mas conservador de 0,90 es defendible si se prefiere prudencia. NOTA IMPORTANTE: Bogota es un caso atipico documentado -> varios analisis (ESPN, Chumacero \"Altitude or Hot Air?\") senalan que los visitantes rinden relativamente BIEN en Bogota pese a su altura, posiblemente por mejor adaptacion/menor altura efectiva; conviene un descuento extra del efecto en Bogota. La aclimatacion previa (llegar dias antes) reduce pero NO elimina el efecto segun la literatura.",
+  "jetlag_eastward_worse": true,
+  "jetlag_per_timezone_penalty_notes": "CONFIDENCE: ALTA en la DIRECCION (este peor que oeste), MEDIA en la magnitud trasladada a futbol. Dos estudios revisados por pares y de gran muestra confirman que viajar HACIA EL ESTE es peor que hacia el oeste, por el periodo circadiano humano >24h (es mas facil retrasar el reloj -viaje al oeste- que adelantarlo -viaje al este-).\n\nNBA (Frontiers in Physiology 2022, 11.481 partidos 2011/12-2020/21): el jet lag hacia el este (NO el oeste) en el equipo LOCAL se asocio con: -6,03% en probabilidad de victoria (p=0,051), -1,29 puntos en diferencial (p=0,015), -1,29 rebotes (p<0,0001), -1,2% en eFG% (p<0,01). Dependencia de dosis: con 2 h de adelanto el diferencial cae -4,53 puntos; con 1 h -0,72 puntos. SIN efecto significativo del jet lag hacia el oeste, y SIN efecto en el equipo visitante. Jet lag definido como husos cruzados descontando reasincronizacion de ~1 h/dia.\n\nMLB (PNAS 2017, Song et al.): viaje al este redujo la prob. de victoria del local -3,5% (p<0,05) vs solo -2,0% (no significativo, p=0,11) al oeste. El efecto del viaje al este (~-3,5%) casi anula la ventaja de localia base (+3,9%): \"si el local viajo dos husos al este y el visitante venia del mismo huso, la ventaja de localia se anulaba\". Aumento de jonrones concedidos +0,107/partido (local) y +0,073 (visitante) tras viaje al este.\n\nREGLA DE CALIBRACION sugerida para futbol: penalizar SOLO el viaje hacia el ESTE; magnitud aproximada -0,5 a -1,5 punto porcentual de prob. de victoria por huso horario cruzado hacia el este (interpolando NBA ~-1%/huso a -3%/2 husos y MLB ~-1,75%/2 husos), aplicada en proporcion a husos NO recuperados (descontar ~1 h/dia de dias previos en destino). Viaje al oeste: penalizacion ~0 o despreciable. Importante: en NBA/MLB el efecto recae sobre el LOCAL que viajo; en un Mundial todos los equipos viajan, asi que la variable relevante es el DIFERENCIAL de husos cruzados hacia el este entre ambos equipos, neto de dias de aclimatacion.",
+  "heat_effect_on_goals_direction": "AMBIGUO / aproximadamente NEUTRO sobre el total de goles. La evidencia es consistente en que el calor/humedad REDUCE el volumen e intensidad del juego (menos distancia recorrida, menos sprints, menos pases, menos toques, menos regates, menos contraataques), pero NO encuentra asociacion significativa directa entre temperatura/WBGT y los GOLES totales. La reduccion de intensidad afecta tanto al ataque como a la defensa, por lo que el efecto neto sobre goles totales es indeterminado. Senal indirecta: mas partidos a definicion por penales en calor extremo (sugiere menos goles en juego abierto en fases finales), pero sin confirmacion robusta sobre goles por partido.",
+  "heat_notes": "CONFIDENCE: MEDIA. Multiples estudios coinciden en la DIRECCION sobre el JUEGO pero la evidencia sobre GOLES TOTALES es explicitamente ambigua/nula.\n\n(1) Schwarz et al. 2025 (European Journal of Sport Science, 4 ligas profesionales): por cada +1C aumenta -> -2,3 a -3,1 pases totales, -3,3 a -4,2 toques, -1,3 a -1,5 perdidas, -0,11 regates; pero GOLES, TIROS y pases clave SIN asociacion significativa. Conclusion textual: juego \"mas estatico y lento\" pero la capacidad de marcar se mantiene; efectos estandarizados pequenos (beta 0,10-0,29).\n\n(2) Estudio Champions League (PMC11474995): temperatura mas alta reduce tiros de contraataque (OR=0,55, -45%), tiros desde el area chica (OR=0,83), regates ganados (OR=0,75) y pases precisos (OR=0,95); la humedad amplifica el efecto (regates OR=0,87). El viento aumenta tiros de corta distancia (OR=1,21). Es decir, deteriora la CALIDAD/peligro de las jugadas ofensivas de alta intensidad, pero el estudio no establece un efecto neto claro sobre goles totales.\n\n(3) Estudios del Mundial 2014 / revisiones: rendimiento optimo con T<22C y humedad <60%; las peores condiciones con humedad >60% y T>22C. Mas penales/definiciones en calor extremo.\n\nRECOMENDACION de calibracion: tratar el calor/humedad como un factor de BAJA intensidad/ritmo (reduce ligeramente xG de ambos equipos por menos transiciones rapidas) pero NO aplicar un ajuste fuerte y unidireccional sobre el total de goles, dada la ambiguedad. Si se modela, usar efecto pequeno y simetrico (reduce marginalmente goles esperados de ambos lados) con confidence baja; documentar la incertidumbre. La humedad parece mas penalizante que la temperatura seca para acciones ofensivas de alta intensidad.",
+  "sources": [
+   "McSharry PE. Altitude and athletic performance: statistical analysis using football results. BMJ 2007;335:1278-1281. https://www.sciencedaily.com/releases/2007/12/071221094837.htm",
+   "Altitude and athletic performance: statistical analysis using football results (BMJ full text via Ovid): https://www.ovid.com/journals/bmjd/fulltext/10.1136/bmj.39393.45156.ad~altitude-and-athletic-performance-statistical-analysis-using",
+   "CONMEBOL Libertadores Cup: Altitude impact on goals and results in 16 years of soccer matches (2000-2015, Poisson GLM, 2039 partidos). Journal of Human Sport and Exercise 2023;18(1). https://jhse.ua.es/article/view/2023-v18-n1-conmebol-libertadores-cup-altitude-impact-goals-results-16-years-soccer-matches",
+   "Chumacero R. Altitude or Hot Air? (critica/cuantificacion del efecto altitud). MPRA Paper 15178. https://mpra.ub.uni-muenchen.de/15178/1/MPRA_paper_15178.pdf",
+   "High-altitude football controversy - Wikipedia (umbrales FIFA 2.500/3.000 m). https://en.wikipedia.org/wiki/High-altitude_football_controversy",
+   "Estadio Hernando Siles - Wikipedia (La Paz, 3.582 m). https://en.wikipedia.org/wiki/Estadio_Hernando_Siles",
+   "Estadio El Campin - Wikipedia (Bogota, ~2.553 m; ciudad ~2.640 m). https://en.wikipedia.org/wiki/Estadio_El_Camp%C3%ADn",
+   "ESPN: South America's home-field advantage like no other (Quito ~2.800 m, La Paz ~3.600 m; visitantes rinden relativamente bien en Bogota). https://www.espn.com/soccer/story/_/id/37345733/south-america-home-field-advantage-no-other",
+   "NBA jet lag: Eastward Jet Lag is Associated with Impaired Performance and Game Outcome in the NBA. Frontiers in Physiology 2022;13:892681. https://pmc.ncbi.nlm.nih.gov/articles/PMC9245584/",
+   "MLB jet lag: Song A, et al. How jet lag impairs Major League Baseball performance. PNAS 2017;114(6):1407-1412. https://pmc.ncbi.nlm.nih.gov/articles/PMC5307448/",
+   "Schwarz E, et al. Associations Between Match-Play Characteristics and Environmental Temperatures in 4 Professional Football Leagues. European Journal of Sport Science 2025. https://pmc.ncbi.nlm.nih.gov/articles/PMC11829705/",
+   "The influence of meteorological factors on the technical performance of football teams during matches (Champions League). PMC11474995. https://pmc.ncbi.nlm.nih.gov/articles/PMC11474995/",
+   "2026 World Cup: How heat, humidity and altitude could affect match goals - Focus on Travel News. https://ftnnews.com/travel-news/sports/2026-world-cup-how-heat-humidity-and-altitude-could-affect-match-goals/"
+  ]
+ },
+ "verification": {
+  "venue_checks": [
+   {
+    "ground_key": "Mexico City",
+    "elevation_m_independent": 2200,
+    "roof_independent": "open",
+    "agrees": true,
+    "sources": [
+     "https://en.wikipedia.org/wiki/Estadio_Azteca",
+     "https://sports.yahoo.com/articles/fifa-world-cup-2026-stadiums-112000413.html",
+     "https://www.foxsports.com/articles/soccer/mexico-citys-altitude-poses-a-key-challenge-for-teams-at-the-2026-world-cup"
+    ]
+   },
+   {
+    "ground_key": "Guadalajara (Zapopan)",
+    "elevation_m_independent": 1670,
+    "roof_independent": "open",
+    "agrees": false,
+    "corrected_elevation_m": 1670,
+    "discrepancy": "Proposed 1566 m corresponds to the general Guadalajara city elevation; independent sources for the stadium site itself place it ~100 m higher. The English Wikipedia infobox states 1,670 m (5,480 ft) AMSL and whatismyelevation.com returns 5,485 ft (~1,672 m) at the exact stadium coordinates (20.681667, -103.462778). Note: several travel/secondary sources do cite ~1,550-1,600 m, so the proposed figure is within a documented range but is on the low end vs the most precise stadium-coordinate sources.",
+    "sources": [
+     "https://en.wikipedia.org/wiki/Estadio_Akron",
+     "https://whatismyelevation.com/location/20.681667,-103.462778/Estadio-Akron--Mexico-/Estadio_Akron"
+    ]
+   },
+   {
+    "ground_key": "Monterrey (Guadalupe)",
+    "elevation_m_independent": 530,
+    "roof_independent": "open",
+    "agrees": true,
+    "discrepancy": "Wikipedia infobox confirms 530 m (1,740 ft) AMSL exactly. A coordinate-based elevation lookup (whatismyelevation) returned ~1,613 ft (~492 m) for the BBVA location, slightly lower, but the proposed 530 m matches the authoritative Wikipedia figure. Roof confirmed open by FIFA 2026 roof-type listing (only Atlanta, Dallas, Houston, Vancouver are retractable).",
+    "sources": [
+     "https://en.wikipedia.org/wiki/Estadio_BBVA",
+     "https://sports.yahoo.com/articles/fifa-world-cup-2026-stadiums-112000413.html"
+    ]
+   },
+   {
+    "ground_key": "Atlanta",
+    "elevation_m_independent": 307,
+    "roof_independent": "retractable",
+    "agrees": false,
+    "corrected_elevation_m": 307,
+    "discrepancy": "Roof confirmed retractable (pinwheel of 8 translucent petals). Elevation: independent elevation lookup (maplogs) at the stadium address gives 307 m / 1,007 ft AMSL; proposed 320 m is ~13 m high. Downtown Atlanta sits ~300-320 m, so the proposed value is in the right band but ~307 m is the better stadium-specific figure.",
+    "sources": [
+     "https://en.wikipedia.org/wiki/Mercedes-Benz_Stadium",
+     "https://elevation.maplogs.com/poi/mercedes_benz_stadium_1_amb_drive_northwest_atlanta_ga_usa.417251.html",
+     "https://sports.yahoo.com/articles/fifa-world-cup-2026-stadiums-112000413.html"
+    ]
+   },
+   {
+    "ground_key": "Dallas (Arlington)",
+    "elevation_m_independent": 173,
+    "roof_independent": "retractable",
+    "agrees": true,
+    "discrepancy": "Elevation lookup (maplogs) at the stadium address confirms 173 m / 568 ft AMSL exactly. Roof confirmed retractable (largest single-span retractable roof; opens/closes in ~12 min).",
+    "sources": [
+     "https://elevation.maplogs.com/poi/at_t_stadium_1_at_t_way_arlington_tx_usa.416693.html",
+     "https://en.wikipedia.org/wiki/AT%26T_Stadium",
+     "https://sports.yahoo.com/articles/fifa-world-cup-2026-stadiums-112000413.html"
+    ]
+   },
+   {
+    "ground_key": "Houston",
+    "elevation_m_independent": 15,
+    "roof_independent": "retractable",
+    "agrees": true,
+    "discrepancy": "Independent source (Apollo Mapping) states the NRG complex is ~50 ft (15.2 m) above sea level, matching proposed 15 m. Roof confirmed retractable (first NFL retractable roof; two panels split at midfield).",
+    "sources": [
+     "https://apollomapping.com/blog/pleiades-1-stadium-month-nrg-stadium",
+     "https://en.wikipedia.org/wiki/NRG_Stadium",
+     "https://sports.yahoo.com/articles/fifa-world-cup-2026-stadiums-112000413.html"
+    ]
+   },
+   {
+    "ground_key": "Kansas City",
+    "elevation_m_independent": 257,
+    "roof_independent": "open",
+    "agrees": true,
+    "discrepancy": "USGS-based figure of 843 ft (257 m) matches proposed exactly (some sources cite ~880 ft for surrounding parking complex). Roof confirmed open per FIFA 2026 roof-type listing.",
+    "sources": [
+     "https://elevation.maplogs.com/poi/arrowhead_stadium_1_arrowhead_dr_kansas_city_mo_usa.352564.html",
+     "https://sports.yahoo.com/articles/fifa-world-cup-2026-stadiums-112000413.html"
+    ]
+   },
+   {
+    "ground_key": "Miami (Miami Gardens)",
+    "elevation_m_independent": 3,
+    "roof_independent": "open",
+    "agrees": true,
+    "discrepancy": "Elevation lookup (maplogs) at the stadium address confirms 3 m / 10 ft AMSL. Roof is an open-air ETFE canopy over the seating bowl (field remains open to sky), classified open per FIFA 2026 listing.",
+    "sources": [
+     "https://elevation.maplogs.com/poi/hard_rock_stadium_don_shula_dr_miami_gardens_fl_usa.416642.html",
+     "https://en.wikipedia.org/wiki/Hard_Rock_Stadium",
+     "https://sports.yahoo.com/articles/fifa-world-cup-2026-stadiums-112000413.html"
+    ]
+   },
+   {
+    "ground_key": "Los Angeles (Inglewood)",
+    "elevation_m_independent": 38,
+    "roof_independent": "fixed",
+    "agrees": true,
+    "discrepancy": "Roof confirmed fixed (permanent translucent ETFE canopy of 302 panels, 46 operable for ventilation; NOT retractable). Inglewood city elevation ~125 ft (~38 m) consistent with proposed value; precise stadium-coordinate elevation not independently pinned to the meter but 38 m is plausible. Confidence on elevation: medium.",
+    "sources": [
+     "https://en.wikipedia.org/wiki/SoFi_Stadium",
+     "https://azahner.com/projects/sofi-stadium/"
+    ]
+   },
+   {
+    "ground_key": "San Francisco Bay Area (Santa Clara)",
+    "elevation_m_independent": 5,
+    "roof_independent": "open",
+    "agrees": true,
+    "discrepancy": "Elevation lookup (maplogs) at the stadium address confirms 5 m / 16 ft AMSL. Roof confirmed open per FIFA 2026 listing.",
+    "sources": [
+     "https://elevation.maplogs.com/poi/levi_s_stadium_marie_p_debartolo_way_santa_clara_ca_usa.416634.html",
+     "https://sports.yahoo.com/articles/fifa-world-cup-2026-stadiums-112000413.html"
+    ]
+   },
+   {
+    "ground_key": "Seattle",
+    "elevation_m_independent": 5,
+    "roof_independent": "open",
+    "agrees": true,
+    "discrepancy": "World Stadium Database lists Lumen Field elevation at 5 m, matching proposed. Roof confirmed open per FIFA 2026 listing (partial cantilevered cover over seats, field open).",
+    "sources": [
+     "https://www.worldstadiumdatabase.com/lumen-field-stadium-seattle_washington-in-usa.htm",
+     "https://en.wikipedia.org/wiki/Lumen_Field",
+     "https://sports.yahoo.com/articles/fifa-world-cup-2026-stadiums-112000413.html"
+    ]
+   },
+   {
+    "ground_key": "Vancouver",
+    "elevation_m_independent": 9,
+    "roof_independent": "retractable",
+    "agrees": true,
+    "discrepancy": "Roof confirmed retractable (cable-supported retractable centre panel covering the pitch). Elevation: World Stadium Database lists 9 m vs proposed 10 m; within rounding tolerance (downtown Vancouver / False Creek waterfront is near sea level).",
+    "sources": [
+     "https://en.wikipedia.org/wiki/BC_Place",
+     "https://www.worldstadiumdatabase.com/bc-place-stadium-stadium-vancouver-in-canada.htm",
+     "https://sports.yahoo.com/articles/fifa-world-cup-2026-stadiums-112000413.html"
+    ]
+   },
+   {
+    "ground_key": "New York/New Jersey (East Rutherford)",
+    "elevation_m_independent": 2,
+    "roof_independent": "open",
+    "agrees": true,
+    "discrepancy": "Elevation lookup (maplogs) at the stadium address confirms 2 m / 7 ft AMSL. Roof confirmed open per FIFA 2026 listing.",
+    "sources": [
+     "https://elevation.maplogs.com/poi/1_metlife_stadium_dr_east_rutherford_nj_usa.320716.html",
+     "https://sports.yahoo.com/articles/fifa-world-cup-2026-stadiums-112000413.html"
+    ]
+   },
+   {
+    "ground_key": "Boston (Foxborough)",
+    "elevation_m_independent": 83,
+    "roof_independent": "open",
+    "agrees": true,
+    "discrepancy": "Roof confirmed open per FIFA 2026 listing. Elevation: independent sources give ~271 ft (~82.6 m) vs proposed 78 m; difference of ~5 m is within typical site-variation/rounding tolerance, so treated as agreeing. Confidence: medium.",
+    "sources": [
+     "https://elevation.maplogs.com/poi/gillette_stadium_1_patriot_pl_foxborough_ma_usa.416715.html",
+     "https://en.wikipedia.org/wiki/Gillette_Stadium",
+     "https://sports.yahoo.com/articles/fifa-world-cup-2026-stadiums-112000413.html"
+    ]
+   },
+   {
+    "ground_key": "Philadelphia",
+    "elevation_m_independent": 3,
+    "roof_independent": "open",
+    "agrees": true,
+    "discrepancy": "Independent topo/elevation sources give ~10 ft (3 m) AMSL, matching proposed. Roof confirmed open per FIFA 2026 listing.",
+    "sources": [
+     "https://www.topozone.com/pennsylvania/philadelphia-pa/park/lincoln-financial-field/",
+     "https://en.wikipedia.org/wiki/Lincoln_Financial_Field",
+     "https://sports.yahoo.com/articles/fifa-world-cup-2026-stadiums-112000413.html"
+    ]
+   },
+   {
+    "ground_key": "Toronto",
+    "elevation_m_independent": 75,
+    "roof_independent": "open",
+    "agrees": true,
+    "discrepancy": "BMO Field sits at Exhibition Place on the Lake Ontario shore; Toronto/lake-level elevation ~75-76.5 m matches proposed 75 m. Roof confirmed open per FIFA 2026 listing (note: a temporary capacity expansion is being built but the venue remains open-air).",
+    "sources": [
+     "https://en.wikipedia.org/wiki/BMO_Field",
+     "https://elevation-check.com/cities/en/toronto.html",
+     "https://sports.yahoo.com/articles/fifa-world-cup-2026-stadiums-112000413.html"
+    ]
+   }
+  ],
+  "team_checks": [
+   {
+    "team_es": "Mexico",
+    "base_elevation_m_independent": 2200,
+    "agrees": false,
+    "corrected_elevation_m": 2200,
+    "discrepancy": "Wikipedia (infobox) y multiples fuentes dan 2,200 m AMSL para el Estadio Azteca. El valor propuesto 2,240 esta ~40 m alto. La ciudad de Mexico promedia ~2,240 m, pero el estadio especifico (sur, Santa Ursula) esta a 2,200 m. Diferencia menor (~2%); no afecta la clasificacion de gran altitud. Recomendado: 2,200 m.",
+    "sources": [
+     "https://en.wikipedia.org/wiki/Estadio_Azteca",
+     "https://www.foxsports.com/articles/soccer/mexico-citys-altitude-poses-a-key-challenge-for-teams-at-the-2026-world-cup"
+    ]
+   },
+   {
+    "team_es": "Ecuador",
+    "base_elevation_m_independent": 2734,
+    "agrees": true,
+    "corrected_elevation_m": 2800,
+    "discrepancy": "El Estadio Rodrigo Paz Delgado (Casa Blanca, Quito) esta a 2,734 m (Wikipedia, exacto). La ciudad de Quito esta a ~2,850 m. El valor propuesto 2,800 es una estimacion documentada de aclimatacion intermedia entre estadio (2,734) y ciudad (2,850); es razonable. Si se quiere el estadio exacto, usar 2,734. Caso andino critico confirmado.",
+    "sources": [
+     "https://en.wikipedia.org/wiki/Estadio_Rodrigo_Paz_Delgado",
+     "https://en.wikipedia.org/wiki/Quito"
+    ]
+   },
+   {
+    "team_es": "Colombia",
+    "base_elevation_m_independent": 18,
+    "agrees": true,
+    "corrected_elevation_m": 18,
+    "discrepancy": "Confirmado: Barranquilla esta a ~17-24 m (fuentes varian 17/24/30 m). El valor propuesto 18 m cae en rango. Punto clave correcto: la seleccion juega de local en Barranquilla (nivel del mar) y NO en Bogota (2,640 m). Sin discrepancia material.",
+    "sources": [
+     "https://en.wikipedia.org/wiki/Estadio_Metropolitano_Roberto_Mel%C3%A9ndez",
+     "https://whatismyelevation.com/location/10.96,-74.8/Barranquilla--Atlntico--Colombia-7vc"
+    ]
+   },
+   {
+    "team_es": "Iran",
+    "base_elevation_m_independent": 1273,
+    "agrees": true,
+    "corrected_elevation_m": 1273,
+    "discrepancy": "Confirmado exacto: el Estadio Azadi de Teheran esta sobre una colina a 1,273 m AMSL (busqueda y fuentes geograficas). Coincide con el valor propuesto. Caso de altitud moderada-alta correctamente capturado.",
+    "sources": [
+     "https://en.wikipedia.org/wiki/Azadi_Stadium",
+     "https://elevation.maplogs.com/poi/tehran_iran.10909.html"
+    ]
+   },
+   {
+    "team_es": "Arabia Saudi",
+    "base_elevation_m_independent": 612,
+    "agrees": true,
+    "corrected_elevation_m": 612,
+    "discrepancy": "Confirmado: Riad esta a ~600-612 m (promedio 600 m; medicion precisa 612 m). Coincide con el valor propuesto. Meseta interior correctamente reflejada.",
+    "sources": [
+     "https://en.wikipedia.org/wiki/Riyadh",
+     "https://whatismyelevation.com/location/24.6408,46.7727/Riyadh--Ar-Riy--Saudi-Arabia-kcd4134t/"
+    ]
+   },
+   {
+    "team_es": "Sudafrica",
+    "base_elevation_m_independent": 1753,
+    "agrees": true,
+    "corrected_elevation_m": 1753,
+    "discrepancy": "Confirmado exacto: Johannesburg (Highveld) esta a 1,753 m, y el FNB Stadium (Nasrec, Soweto) esta dentro del area metropolitana a esa elevacion. Coincide con el valor propuesto. Caso de altitud alta correctamente capturado.",
+    "sources": [
+     "https://en.wikipedia.org/wiki/FNB_Stadium",
+     "https://en.wikipedia.org/wiki/Johannesburg"
+    ]
+   },
+   {
+    "team_es": "Bolivia",
+    "base_elevation_m_independent": 3640,
+    "agrees": false,
+    "corrected_elevation_m": 3640,
+    "discrepancy": "AVISO: Bolivia NO aparece en la lista de valores propuestos. Es la omision de altitud mas critica: la seleccion juega de local en La Paz (Estadio Hernando Siles) a ~3,600-3,640 m, la mayor altitud del futbol internacional. Si Bolivia esta clasificada en el Mundial 2026, su base_elevation_m debe agregarse en ~3,640 m. confidence: alta para La Paz como sede, pero no pude verificar el dato porque el equipo no estaba en la lista.",
+    "sources": [
+     "https://en.wikipedia.org/wiki/Estadio_Hernando_Siles",
+     "https://en.wikipedia.org/wiki/La_Paz"
+    ]
+   },
+   {
+    "team_es": "Austria",
+    "base_elevation_m_independent": 171,
+    "agrees": true,
+    "corrected_elevation_m": 171,
+    "discrepancy": "Confirmado: Viena esta a 171 m (centro/terraza interior 170-180 m). El Ernst-Happel-Stadion esta en el Prater junto al Danubio (zona baja ~150-160 m), pero el valor de ciudad 171 m es adecuado como proxy. Coincide con lo propuesto.",
+    "sources": [
+     "https://elevation-check.com/cities/en/vienna.html",
+     "https://en.wikipedia.org/wiki/Ernst-Happel-Stadion"
+    ]
+   },
+   {
+    "team_es": "Suiza",
+    "base_elevation_m_independent": 540,
+    "agrees": true,
+    "corrected_elevation_m": 540,
+    "discrepancy": "Confirmado: Berna esta a ~540 m (Bahnhofplatz 540 m; promedio ciudad ~549 m, rango 480-640 m por barrios). El valor propuesto 540 m coincide. Buen proxy ya que la seleccion rota de estadio sin sede fija.",
+    "sources": [
+     "https://whatismyelevation.com/location/46.9167,7.467/Bern--Bern--Switzerland-",
+     "https://en-gb.topographic-map.com/map-cbpkl/Bern/"
+    ]
+   },
+   {
+    "team_es": "Jordania",
+    "base_elevation_m_independent": 850,
+    "agrees": false,
+    "corrected_elevation_m": 850,
+    "discrepancy": "Discrepancia moderada. Amman ciudad ~757 m (promedio bajo del rango); el terreno varia 700-1,100 m. El Amman International Stadium (Al-Hussein Youth City) esta segun fuentes a ~920 m, mas alto que la ciudad. El valor propuesto 770 m es razonable para la ciudad pero subestima el estadio especifico (~920 m). Recomendado: ~850 m como punto medio ciudad/estadio, o 920 m si se usa la ubicacion exacta del estadio. confidence: media (no hay cifra de estadio en Wikipedia; depende de servicios de elevacion).",
+    "sources": [
+     "https://elevation.maplogs.com/poi/amman_jordan.115756.html",
+     "https://whatismyelevation.com/location/33.522789,36.320161/Amman-International-Stadium--Jordan-/Amman_International_Stadium"
+    ]
+   },
+   {
+    "team_es": "Brasil",
+    "base_elevation_m_independent": 871,
+    "agrees": true,
+    "corrected_elevation_m": 871,
+    "discrepancy": "Confirmado exacto: Teresopolis (Regiao Serrana, RJ), sede del CT Granja Comary de la CBF, esta a 871 m. Coincide con lo propuesto. Buena eleccion (no Brasilia ni Rio); altitud moderada del centro de entrenamiento real.",
+    "sources": [
+     "https://en.wikivoyage.org/wiki/Teres%C3%B3polis",
+     "https://grokipedia.com/page/Teres%C3%B3polis"
+    ]
+   },
+   {
+    "team_es": "Estados Unidos",
+    "base_elevation_m_independent": 286,
+    "agrees": true,
+    "corrected_elevation_m": 300,
+    "discrepancy": "Confirmado aproximado: Fayetteville, Georgia (area metro de Atlanta) esta a ~286 m (938 ft); algunas fuentes dan cifras mas bajas por errores de conversion. El valor propuesto 315 m es consistente con el rango del area metro de Atlanta (Atlanta centro ~320 m). Razonable; recomendado 286-315 m. Sin discrepancia material.",
+    "sources": [
+     "https://www.topozone.com/georgia/fayette-ga/city/fayetteville-3/",
+     "https://elevation.maplogs.com/poi/fayetteville_ga_usa.18329.html"
+    ]
+   },
+   {
+    "team_es": "Alemania",
+    "base_elevation_m_independent": 113,
+    "agrees": true,
+    "corrected_elevation_m": 113,
+    "discrepancy": "Confirmado: Frankfurt am Main esta a 113 m, sede del DFB Campus. Coincide exacto con lo propuesto.",
+    "sources": [
+     "https://elevation.city/de/1qpct",
+     "https://www.floodmap.net/Elevation/ElevationMap/?gi=2925533"
+    ]
+   },
+   {
+    "team_es": "Croacia",
+    "base_elevation_m_independent": 135,
+    "agrees": true,
+    "corrected_elevation_m": 140,
+    "discrepancy": "Zagreb ciudad ~135 m. El Stadion Maksimir esta en el NE de Zagreb, terreno algo mas alto. El valor propuesto 158 m esta ~20 m por encima del promedio de ciudad pero es plausible para la zona de Maksimir. Discrepancia menor, no material.",
+    "sources": [
+     "https://en.wikipedia.org/wiki/Stadion_Maksimir",
+     "https://elevation.maplogs.com/poi/zagreb_croatia.126216.html"
+    ]
+   },
+   {
+    "team_es": "R.D. Congo",
+    "base_elevation_m_independent": 281,
+    "agrees": true,
+    "corrected_elevation_m": 281,
+    "discrepancy": "Confirmado: Kinshasa ~281-300 m; el Stade des Martyrs esta dentro de la ciudad. El valor propuesto 281 m coincide. Sin discrepancia material.",
+    "sources": [
+     "https://en.wikipedia.org/wiki/Stade_des_Martyrs",
+     "https://whatismyelevation.com/location/-4.3297,15.315/Kinshasa--Kinshasa--Congo--Kinshasa--"
+    ]
+   },
+   {
+    "team_es": "Uzbekistan",
+    "base_elevation_m_independent": 424,
+    "agrees": true,
+    "corrected_elevation_m": 440,
+    "discrepancy": "Tashkent ~424-440 m segun fuente. El valor propuesto 440 m esta dentro del rango. Sin discrepancia material.",
+    "sources": [
+     "https://whatismyelevation.com/location/41.3117,69.2949/Tashkent--Toshkent--Uzbekistan-",
+     "https://elevation.city/uz/wf3t"
+    ]
+   },
+   {
+    "team_es": "Espana",
+    "base_elevation_m_independent": 646,
+    "agrees": true,
+    "corrected_elevation_m": 650,
+    "discrepancy": "Madrid centro ~646 m; Las Rozas (sede RFEF) ~696 m. El valor propuesto 657 m esta dentro del rango ciudad/Las Rozas. Razonable como proxy de meseta. Sin discrepancia material.",
+    "sources": [
+     "https://madridandyou.com/en/blog/madrid-altitude-above-the-sea-level/",
+     "https://www.floodmap.net/Elevation/ElevationMap/?gi=3118848"
+    ]
+   },
+   {
+    "team_es": "Canada",
+    "base_elevation_m_independent": 76,
+    "agrees": true,
+    "corrected_elevation_m": 76,
+    "discrepancy": "Confirmado exacto: BMO Field en Exhibition Place esta junto a Lago Ontario (orilla ~76.5 m AMSL; el lago a ~74 m). Coincide con lo propuesto 76 m.",
+    "sources": [
+     "https://en.wikipedia.org/wiki/BMO_Field",
+     "https://elevation-check.com/cities/en/toronto.html"
+    ]
+   },
+   {
+    "team_es": "Bosnia",
+    "base_elevation_m_independent": 316,
+    "agrees": true,
+    "corrected_elevation_m": 316,
+    "discrepancy": "Confirmado exacto: Zenica (valle del rio Bosna) esta a 316 m; Bilino Polje es un area urbana de Zenica. Coincide con lo propuesto. Correcto usar Zenica como sede principal, no Sarajevo.",
+    "sources": [
+     "https://en.wikipedia.org/wiki/Zenica",
+     "https://en.wikipedia.org/wiki/Bilino_Polje"
+    ]
+   },
+   {
+    "team_es": "Corea del Sur",
+    "base_elevation_m_independent": 38,
+    "agrees": true,
+    "corrected_elevation_m": 38,
+    "discrepancy": "Seul esta practicamente a nivel del mar; el Seoul World Cup Stadium (Sangam, Mapo-gu, junto al rio Han) esta a baja elevacion. El valor propuesto 38 m es razonable como nivel del mar. Sin discrepancia material.",
+    "sources": [
+     "https://en.wikipedia.org/wiki/Seoul_World_Cup_Stadium",
+     "https://www.taegukwarriors.com/the-elevation-dilemma-advantage-korea/"
+    ]
+   },
+   {
+    "team_es": "Turquia",
+    "base_elevation_m_independent": 39,
+    "agrees": true,
+    "corrected_elevation_m": 40,
+    "discrepancy": "Istanbul promedio ~39 m (terreno muy variable). El valor propuesto 40 m es correcto como nivel del mar. Nota: el Ataturk Olimpiyat (Basaksehir) esta en colinas a ~140 m, pero como proxy de ciudad de baja altitud, 40 m es adecuado. Correcto usar Estambul (sede TFF) y no Ankara (~891 m).",
+    "sources": [
+     "https://en.wikipedia.org/wiki/Atat%C3%BCrk_Olympic_Stadium",
+     "https://whatismyelevation.com/location/41.107,29.008/Istanbul"
+    ]
+   },
+   {
+    "team_es": "Noruega",
+    "base_elevation_m_independent": 50,
+    "agrees": true,
+    "corrected_elevation_m": 90,
+    "discrepancy": "Oslo varia mucho (centro ~23 m, promedio citado ~50 m, hasta ~97 m segun fuente). El Ullevaal Stadion esta en el norte de la ciudad (zona mas alta). El valor propuesto 100 m esta en el extremo alto pero es plausible para la ubicacion norte de Ullevaal. confidence: media; recomendado ~90-100 m para la zona de Ullevaal.",
+    "sources": [
+     "https://en.wikipedia.org/wiki/Ullevaal_Stadion",
+     "https://elevation.city/no/1vdcc"
+    ]
+   },
+   {
+    "team_es": "Nueva Zelanda",
+    "base_elevation_m_independent": 5,
+    "agrees": true,
+    "corrected_elevation_m": 5,
+    "discrepancy": "Confirmado: el Wellington Regional Stadium esta sobre terreno ganado al mar (railway land) al norte del CBD, casi a nivel del mar. El valor propuesto 5 m es correcto (la ciudad promedia ~31 m pero el estadio esta en la costa). Sin discrepancia material.",
+    "sources": [
+     "https://en.wikipedia.org/wiki/Wellington_Regional_Stadium",
+     "https://www.skystadium.co.nz/about-us/stadium-facts"
+    ]
+   }
+  ]
+ }
+}

@@ -16,6 +16,7 @@ ANTES de correrlo (opcional): edita lineups.json con quién NO está en el XI.
 """
 import sys, os, math, json
 import fit_dc, engine
+import context_factors as cf
 
 engine.setconf(["Rep. Checa","Serbia y Montenegro"],"UEFA"); engine.setconf(["Cabo Verde"],"CAF")
 MAP = json.load(open("namemap.json", encoding="utf-8"))
@@ -48,11 +49,17 @@ def outcome_de(sx, sy):
     se DERIVA de él para que todo concuerde): sx>sy -> '1', empate -> 'X', sx<sy -> '2'."""
     return "1" if sx > sy else ("X" if sx == sy else "2")
 
-def one_x_two(a, b, atk, dfn, c, g, rho, local_anfitrion=False):
+def one_x_two(a, b, atk, dfn, c, g, rho, local_anfitrion=False, sede=None, kickoff_hour=None):
     ga_host = g if (a in HOSTS and local_anfitrion) else 0
     gb_host = g if (b in HOSTS and local_anfitrion) else 0
     lh = math.exp(c + atk[a] - dfn[b] + ga_host)
     la = math.exp(c + atk[b] - dfn[a] + gb_host)
+    # Factores de contexto si se da la sede (altura + calor; el viaje no es derivable de un
+    # partido suelto sin calendario, así que queda apagado aquí).
+    if sede:
+        fh, fa = cf.match_factors(a, b, sede, kickoff_hour, enable_travel=False,
+                                  enable_alt=cf.USE_ALTITUDE, enable_heat=cf.USE_HEAT)
+        lh *= fh; la *= fa
     K = 11
     ph = [math.exp(-lh)*lh**k/math.factorial(k) for k in range(K)]
     pa = [math.exp(-la)*la**k/math.factorial(k) for k in range(K)]
@@ -187,15 +194,29 @@ if __name__ == "__main__":
     if a not in MAP or b not in MAP:
         print(f"Selección desconocida. Usa los nombres de namemap.json. Recibido: {a!r}, {b!r}"); sys.exit(1)
 
+    # sede + hora opcionales para activar altura/calor (claves de wc2026_context.json / calendario)
+    sede = None; hora = None
+    if "--sede" in sys.argv:
+        sede = sys.argv[sys.argv.index("--sede") + 1]
+    if "--hora" in sys.argv:
+        try: hora = int(sys.argv[sys.argv.index("--hora") + 1])
+        except (ValueError, IndexError): hora = None
+
     atk, dfn, c, g, rho = fit_model()
     sq = apply_adjustments(atk, dfn)
-    pw, pd, pl, lh, la, (sx, sy) = one_x_two(a, b, atk, dfn, c, g, rho, local_anf)
+    pw, pd, pl, lh, la, (sx, sy) = one_x_two(a, b, atk, dfn, c, g, rho, local_anf, sede=sede, kickoff_hour=hora)
 
     def bajas(t):
         return [n for n,w,av in sq.get(t,{}).get("key_players",[]) if not av]
 
     print(f"\n=== {a}  vs  {b} ===")
-    print(f"(sede neutral{' · local juega en casa' if local_anf else ''})\n")
+    if sede:
+        v = cf.venue(sede)
+        det = f"sede {sede}" + (f" ({v['elevation_m']:.0f} m, techo {v.get('roof')})" if v else "")
+        det += f" · saque {hora}h" if hora is not None else ""
+        print(f"({det}{' · local juega en casa' if local_anf else ''})\n")
+    else:
+        print(f"(sede neutral{' · local juega en casa' if local_anf else ''})\n")
     print(f"  1  {a:<16} {100*pw:>5.1f}%")
     print(f"  X  {'Empate':<16} {100*pd:>5.1f}%")
     print(f"  2  {b:<16} {100*pl:>5.1f}%")

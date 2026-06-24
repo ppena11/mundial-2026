@@ -616,6 +616,40 @@ ok("ningún prompt de contenido menciona TikTok",
    "quedó TikTok en un prompt")
 
 # ============================================================
+section("16) CONTEXTO (altura/calor/viaje) + FORMATO (sobredispersión + desempates FIFA)")
+import context_factors as _cf, format_engine as _fe, schedule_2026 as _sc, random as _rnd
+# 16a. checks directos (no dependen de pytest)
+ok("altura: equipo nivel del mar en el Azteca ≈0.91", abs(_cf.f_altitude(2240, 0) - 0.9104) < 1e-3, str(_cf.f_altitude(2240, 0)))
+ok("altura: nativo de altura NO se castiga (gap 0 → 1.0)", _cf.f_altitude(2240, 2240) == 1.0)
+ok("multiplicadores acotados a [0.90, 1.08]", _cf.CLAMP_LO == 0.90 and _cf.CLAMP_HI == 1.08 and _cf.f_altitude(6000, 0) == 0.90)
+ok("calor: techo cerrado + aire apaga el factor", _cf.f_heat("extreme", "retractable", True, 14) == 1.0)
+ok("viaje: hacia el ESTE penaliza más que hacia el oeste", _cf.f_travel(4, 0, 3) < _cf.f_travel(4, 0, -3))
+ok("haversine: (0,0)→(0,180) = media circunferencia", abs(_cf.haversine(0, 0, 0, 180) - math.pi * _cf._EARTH_KM) < 1.0)
+_o = _fe.rank_group(["A", "B", "C", "D"],
+                    [("A", "B", 1, 0), ("A", "C", 1, 1), ("A", "D", 0, 1),
+                     ("B", "C", 1, 0), ("B", "D", 1, 1), ("C", "D", 2, 2)], rng=_rnd.Random(0))
+ok("desempate FIFA: head-to-head ordena a dos empatados (A venció a B)", _o.index("A") < _o.index("B"))
+_res = _fe.assign_thirds(set("ABCDEFGH"))
+ok("mejores terceros: 8 casillas asignadas sin repetir", len(_res) == 8 and len(set(_res.values())) == 8)
+_p = [_fe.negbin_pmf(k, 2.0, 4.0) for k in range(80)]
+_m = sum(k * _p[k] for k in range(80)); _v = sum(k * k * _p[k] for k in range(80)) - _m * _m
+ok("sobredispersión: binomial negativa tiene Var>media (colas más gordas que Poisson)", _v > _m + 0.05, f"var={_v:.3f} media={_m:.3f}")
+ok("calendario: parseo de hora/UTC ('13:00 UTC-6')", _sc.parse_kickoff("13:00 UTC-6") == (13, -6.0))
+_ctx = _cf.load_context()
+ok("datos verificados: 16 sedes y 48 selecciones cargadas", len(_ctx.get("venues", {})) == 16 and len(_ctx.get("teams", {})) == 48,
+   f"sedes={len(_ctx.get('venues', {}))} equipos={len(_ctx.get('teams', {}))}")
+# 16b. baterías detalladas con pytest si está disponible (degrada con elegancia si no)
+try:
+    import pytest as _pytest  # noqa: F401
+    _r = run(["-m", "pytest", "-q",
+              "test_context_factors.py", "test_format_engine.py",
+              "test_schedule_2026.py", "test_validate_layers.py"])
+    ok("pytest: baterías de altura/formato/calendario/validación en verde",
+       _r.returncode == 0, (_r.stdout[-400:] + _r.stderr[-200:]))
+except ImportError:
+    print("  NOTA  pytest no instalado: omito las baterías detalladas (pip install pytest para correrlas)")
+
+# ============================================================
 print(f"\n========== RESULTADO: {PASS} PASS / {FAIL} FAIL ==========")
 if FAILS:
     print("Fallos:")
