@@ -650,7 +650,8 @@ try:
     import pytest as _pytest  # noqa: F401
     _r = run(["-m", "pytest", "-q",
               "test_context_factors.py", "test_format_engine.py", "test_schedule_2026.py",
-              "test_validate_layers.py", "test_calibration.py", "test_backtest.py"])
+              "test_validate_layers.py", "test_calibration.py", "test_backtest.py",
+              "test_backtest_tournament.py"])
     ok("pytest: baterías de altura/formato/calendario/validación/calibración/backtest en verde",
        _r.returncode == 0, (_r.stdout[-400:] + _r.stderr[-200:]))
 except ImportError:

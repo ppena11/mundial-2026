@@ -151,12 +151,47 @@ Aplicado en `sim_live.py` y `predict_match.py`.
 | `backtest.goal_level_scan()` | Escaneo del nivel de goles (mu) sobre el held-out de Mundiales |
 | `context_factors.WC_GOAL_LEVEL` | Nivel de goles mundialista (1.15), validado |
 
+## Validación contra resultados reales — TODAS las etapas, incluido el campeón
+
+**Importante:** el Mundial 2026 aún no tiene eliminatorias (la ronda de 32 empieza el 28-jun), así
+que contra la realidad del 2026 solo hay **fase de grupos** (`evaluate_2026.py`, 50 partidos:
+RPS 0.155, acierto 1X2 66%). El **campeón y las eliminatorias se validan sobre los 4 Mundiales
+pasados** corriendo la **simulación completa** (`backtest_tournament.py`).
+
+`backtest_tournament.py` entrena el modelo solo con datos previos a cada Mundial y simula el torneo
+entero (grupos → R16 → QF → SF → Final → campeón) con la misma maquinaria del pipeline, sobre el
+formato real de 32 equipos (grupos y bracket reales de openfootball). Resultados (K=10.000):
+
+| | 2010 | 2014 | 2018 | 2022 | promedio |
+|---|---|---|---|---|---|
+| Campeón real | España | Alemania | Francia | Argentina | — |
+| Ranking del campeón real (de 32) | **1** | 6 | 4 | **2** | **3.2** |
+| P(campeón real) | 21% | 4% | 6% | 16% | ~12% |
+
+- **Campeón: −logP(real) = 2.37** vs **3.47** del azar uniforme (1/32) → el pronóstico de campeón
+  es claramente informativo (asigna al campeón real ~4× la prob. del azar; rank medio 3/32).
+- **Calibración por etapa (Brier, menor=mejor):** R16 0.192 · QF 0.122 · SF 0.079 · Final 0.054.
+- 2014 (Alemania, rank 6) y 2018 (Francia, rank 4) fueron campeones "sorpresa" frente a los ratings;
+  el modelo no los daba favoritos, lo cual es honesto (ningún modelo serio los daba).
+
+**Cobertura de herramientas por comparación (honestidad):**
+
+| Comparación | DC | desempates FIFA | NB colas | nivel goles | altura/calor/viaje | mercado | lesiones |
+|---|---|---|---|---|---|---|---|
+| Pipeline diario (`sim_live`+ensemble) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| 2026 grupos (`evaluate_2026`) | ✅ | — | (1X2 analítico) | ✅ | ✅ | n/d | n/d |
+| Campeón histórico (`backtest_tournament`) | ✅ | ✅ | ✅ | ✅ | n/d* | n/d* | n/d* |
+
+\* No hay datos históricos de sede/cuotas/lesiones de Mundiales pasados, así que esas capas no se
+pueden aplicar al backtest histórico (no se inventan). El **motor** validado es el mismo del pipeline.
+
 ## Re-ejecutar
 
 ```bash
 python validate_layers.py --cut 2024-06-01   # RPS altura + sobredispersión
-python backtest.py                            # backtest Mundiales 2010-2022 + escaneo de nivel de goles
-python evaluate_2026.py                       # predicciones vs resultados reales del Mundial 2026
+python backtest.py                            # backtest 1X2 Mundiales 2010-2022 + escaneo de nivel de goles
+python backtest_tournament.py                 # validación de CAMPEÓN y todas las etapas (sim completa)
+python evaluate_2026.py                       # predicciones vs resultados reales del Mundial 2026 (grupos)
 python build_context.py                       # regenerar wc2026_context.json desde la investigación
 python build_altitude_validation.py           # regenerar altitude_validation.json
 pytest test_context_factors.py test_format_engine.py test_schedule_2026.py test_validate_layers.py test_calibration.py test_backtest.py
