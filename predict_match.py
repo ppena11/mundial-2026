@@ -206,6 +206,15 @@ if __name__ == "__main__":
     sq = apply_adjustments(atk, dfn)
     pw, pd, pl, lh, la, (sx, sy) = one_x_two(a, b, atk, dfn, c, g, rho, local_anf, sede=sede, kickoff_hour=hora)
 
+    # calibración 1X2 OPCIONAL (off por defecto): el backtest muestra que el modelo DC ya está
+    # bien calibrado, así que no se aplica salvo que se pida con --calibrar (ver backtest.py).
+    if "--calibrar" in sys.argv:
+        import calibration
+        C = calibration.load()
+        if C:
+            pw, pd, pl = calibration.apply_calibrator(C, [pw, pd, pl])
+            print("(probabilidades 1X2 calibradas con calibration.json)")
+
     def bajas(t):
         return [n for n,w,av in sq.get(t,{}).get("key_players",[]) if not av]
 

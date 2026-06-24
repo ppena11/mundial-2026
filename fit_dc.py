@@ -2,25 +2,50 @@ import csv, math, numpy as np
 from scipy.optimize import minimize
 from datetime import date
 
-def load(window_start="2019-01-01", end="2026-06-01"):
+# Peso por importancia de competición: los amistosos son ruido; eliminatorias/Mundial pesan más.
+def importance(t):
+    """Factor de peso por tipo de torneo (eliminatorias/Mundial > amistosos)."""
+    t = t or ""
+    if t == "Friendly": return 1.0
+    if t == "FIFA World Cup": return 4.0
+    if any(m in t for m in ("UEFA Euro", "Copa Am", "African Cup of Nations",
+                            "AFC Asian Cup", "Gold Cup", "Confederations", "Finalissima")) \
+       and "qualification" not in t: return 3.5
+    if "Nations League" in t: return 2.5
+    if "qualification" in t: return 2.0
+    return 1.2
+
+def load(window_start="2019-01-01", end="2026-06-01", with_tournament=False):
+    """Carga partidos de results.csv. with_tournament=True añade el torneo como 7º campo."""
     rows=[]
     for r in csv.DictReader(open("results.csv",encoding="utf-8")):
         if r["home_score"] in ("NA","") : continue
         if not (window_start<=r["date"]<=end): continue
-        rows.append((r["date"],r["home_team"],r["away_team"],int(r["home_score"]),int(r["away_score"]),r["neutral"]=="TRUE"))
+        row=(r["date"],r["home_team"],r["away_team"],int(r["home_score"]),int(r["away_score"]),r["neutral"]=="TRUE")
+        if with_tournament: row=row+(r["tournament"],)
+        rows.append(row)
     return rows
 
-def build(rows, ref_date, min_matches=6, halflife=730):
+def build(rows, ref_date, min_matches=6, halflife=730, importance_fn=None):
+    """Construye la matriz de diseño. Si importance_fn se da y las filas traen torneo (7º campo),
+    el peso de cada partido se multiplica por importance_fn(torneo) (competitivos > amistosos)."""
     cnt={}
-    for _,h,a,_,_,_ in rows: cnt[h]=cnt.get(h,0)+1; cnt[a]=cnt.get(a,0)+1
+    for row in rows:
+        h, a = row[1], row[2]
+        cnt[h]=cnt.get(h,0)+1; cnt[a]=cnt.get(a,0)+1
     teams=sorted([t for t,c in cnt.items() if c>=min_matches])
     idx={t:i for i,t in enumerate(teams)}; OTH=len(teams); n=len(teams)+1
     def gi(t): return idx.get(t,OTH)
     ref=date.fromisoformat(ref_date); xi=math.log(2)/halflife
     H=[];A=[];GH=[];GA=[];W=[];NEU=[]
-    for d,h,a,gh,ga,neu in rows:
+    for row in rows:
+        d,h,a,gh,ga,neu = row[:6]
+        tour = row[6] if len(row) > 6 else None
         dt=(ref-date.fromisoformat(d)).days
-        H.append(gi(h));A.append(gi(a));GH.append(gh);GA.append(ga);W.append(math.exp(-xi*dt));NEU.append(0.0 if neu else 1.0)
+        w=math.exp(-xi*dt)
+        if importance_fn is not None and tour is not None:
+            w*=importance_fn(tour)
+        H.append(gi(h));A.append(gi(a));GH.append(gh);GA.append(ga);W.append(w);NEU.append(0.0 if neu else 1.0)
     return (np.array(H),np.array(A),np.array(GH,float),np.array(GA,float),
             np.array(W),np.array(NEU),teams,n,OTH)
 

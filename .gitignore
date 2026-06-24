@@ -89,3 +89,6 @@ video_remotion/.remotion/
 
 # Entorno virtual local (Claude Code)
 .venv/
+
+# Calibrador experimental (regenerable con backtest.py; off por defecto)
+calibration.json

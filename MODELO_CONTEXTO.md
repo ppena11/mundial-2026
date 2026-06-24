@@ -92,12 +92,44 @@ Tres features por equipo, **derivadas del calendario real** (no de un dataset ex
   orden de aparición y **validando** la consistencia del árbol; si la fuente cambiara su formato, el
   validador lo detecta y el sim no aplica un bracket roto.
 
+## Recomendaciones evaluadas y su veredicto (disciplina)
+
+Se implementó la **infraestructura** de varias recomendaciones y se midió su aporte con
+backtesting fuera de muestra. La disciplina manda: si no mejora, se deja apagada.
+
+| Recomendación | Estado | Veredicto (held-out) |
+|---|---|---|
+| Dixon-Coles + decaimiento temporal | ✅ producción | base del modelo |
+| Corrección DC marcadores bajos | ✅ producción | — |
+| Lesiones / disponibilidad | ✅ producción | `player_layer` |
+| Contexto físico 2026 (altura/calor/viaje) | ✅ producción | altura mejora RPS |
+| Colas pesadas (binomial negativa) | ✅ producción | r=17 valida |
+| Cuotas/mercado (ensamble) | ✅ producción | `money_layer` |
+| **Backtest Mundiales 2010–2022** | ✅ `backtest.py` | **nueva pieza de credibilidad** |
+| **Peso por importancia de competición** | ⚙️ disponible, **OFF** | no mejora el held-out de Mundiales |
+| **Calibración (vector scaling)** | ⚙️ disponible, **OFF** | el modelo DC ya está bien calibrado |
+| xG (StatsBomb/FBref) | ❌ no | sin cobertura de eliminatorias recientes de las 48 → sería inventar |
+| XGBoost/LightGBM | ❌ no | sustituido por stacker logístico; con datos escasos de selecciones no aporta |
+
+**Backtest (promedio 4 Mundiales, RPS menor = mejor):** base **0.2013**, +competición 0.2037,
++calibración 0.2051. Es decir: las dos perillas no mejoran y se quedan apagadas — justo la
+disciplina ("si no mejora, se apaga, sin piedad"). El backtest queda como herramienta para volver
+a medir cuando cambien los datos. La calibración se puede activar puntualmente con
+`predict_match.py … --calibrar` (requiere generar `calibration.json` con `backtest.py`).
+
+| Archivo nuevo | Qué hace |
+|---|---|
+| `backtest.py` | Backtest held-out sobre Mundiales 2010–2022 (RPS/log-loss/Brier) comparando variantes |
+| `calibration.py` | Vector scaling multinomial (Platt/temperatura generalizado) + métricas |
+| `fit_dc.importance()` | Peso por tipo de competición (usado por el backtest; off en producción) |
+
 ## Re-ejecutar
 
 ```bash
 python validate_layers.py --cut 2024-06-01   # RPS altura + sobredispersión
+python backtest.py                            # backtest Mundiales 2010-2022 (RPS/logloss/Brier)
 python build_context.py                       # regenerar wc2026_context.json desde la investigación
 python build_altitude_validation.py           # regenerar altitude_validation.json
-pytest test_context_factors.py test_format_engine.py test_schedule_2026.py test_validate_layers.py
+pytest test_context_factors.py test_format_engine.py test_schedule_2026.py test_validate_layers.py test_calibration.py test_backtest.py
 python test_suite.py                          # batería completa (incluye lo anterior)
 ```

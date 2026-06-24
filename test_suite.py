@@ -638,13 +638,20 @@ ok("calendario: parseo de hora/UTC ('13:00 UTC-6')", _sc.parse_kickoff("13:00 UT
 _ctx = _cf.load_context()
 ok("datos verificados: 16 sedes y 48 selecciones cargadas", len(_ctx.get("venues", {})) == 16 and len(_ctx.get("teams", {})) == 48,
    f"sedes={len(_ctx.get('venues', {}))} equipos={len(_ctx.get('teams', {}))}")
-# 16b. baterías detalladas con pytest si está disponible (degrada con elegancia si no)
+# 16b. calibración + peso por competición (infraestructura; ver backtest.py)
+import calibration as _cal, fit_dc as _fd
+ok("peso por competición: Mundial(4) > eliminatoria(2) > amistoso(1)",
+   _fd.importance("FIFA World Cup") > _fd.importance("FIFA World Cup qualification") > _fd.importance("Friendly"))
+_cid = _cal.apply_calibrator({"a": [1, 1, 1], "b": [0, 0, 0]}, [0.5, 0.3, 0.2])
+ok("calibración: identidad (a=1,b=0) preserva y normaliza las probabilidades",
+   abs(sum(_cid) - 1.0) < 1e-9 and abs(_cid[0] - 0.5) < 1e-9)
+# 16c. baterías detalladas con pytest si está disponible (degrada con elegancia si no)
 try:
     import pytest as _pytest  # noqa: F401
     _r = run(["-m", "pytest", "-q",
-              "test_context_factors.py", "test_format_engine.py",
-              "test_schedule_2026.py", "test_validate_layers.py"])
-    ok("pytest: baterías de altura/formato/calendario/validación en verde",
+              "test_context_factors.py", "test_format_engine.py", "test_schedule_2026.py",
+              "test_validate_layers.py", "test_calibration.py", "test_backtest.py"])
+    ok("pytest: baterías de altura/formato/calendario/validación/calibración/backtest en verde",
        _r.returncode == 0, (_r.stdout[-400:] + _r.stderr[-200:]))
 except ImportError:
     print("  NOTA  pytest no instalado: omito las baterías detalladas (pip install pytest para correrlas)")
