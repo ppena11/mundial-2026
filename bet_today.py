@@ -12,11 +12,67 @@ Uso:
 Por cada partido pegas:  cuota1, cuotaX, cuota2, cuotaOver2.5, cuotaUnder2.5
 (deja en blanco las que no quieras; Enter vacío salta el partido).
 """
-import math, sys
+import math, sys, os, unicodedata
 from datetime import date
 import json, urllib.request
 import fit_dc, predict_match as pm, context_factors as cf, schedule_2026 as sch, value_finder as vf
 import predict_today as pt
+
+OUTRIGHT_CAP = 0.01   # outright: tope 1% (más conservador; alta varianza + posible sobrevaloración)
+
+def _norm(s):
+    s = unicodedata.normalize("NFKD", s or "")
+    return "".join(c for c in s if not unicodedata.combining(c)).strip().lower()
+
+def _match_team(name, teams):
+    n = _norm(name)
+    for t in teams:
+        if _norm(t) == n:
+            return t
+    for t in teams:                       # coincidencia parcial (ej. "argentina")
+        if n and n in _norm(t):
+            return t
+    return None
+
+def outright(bankroll):
+    """Mercado de CAMPEÓN/FINALISTA: lee las probabilidades del modelo (champ_today.json del sim)
+    y marca valor + stake conservador con las cuotas outright de Mise-o-jeu."""
+    if not os.path.exists("champ_today.json"):
+        print("Falta champ_today.json. Corre primero:  python sim_live.py"); return
+    d = json.load(open("champ_today.json", encoding="utf-8"))
+    champ = d.get("campeon", {}); final = d.get("final", {})
+    top = sorted(champ, key=champ.get, reverse=True)[:12]
+    print("\nProbabilidades del MODELO (del último sim · champ_today.json):")
+    print(f"  {'selección':<14}{'campeón':>9}{'finalista':>11}")
+    for t in top:
+        print(f"  {t:<14}{champ[t]:>8.1f}%{final.get(t,0):>10.1f}%")
+    print("\n⚠️  El outright es ALTA VARIANZA y donde el modelo más puede sobrevalorar (p. ej. Argentina")
+    print("    por la forma). Stake con tope 1%. No pongas el grueso de la banca aquí.")
+    print("Pega: Equipo,cuota_campeon   (uno por línea; nombres como arriba; vacío para terminar)")
+    bets = []
+    while True:
+        try:
+            raw = input("> ").strip()
+        except (EOFError, KeyboardInterrupt):
+            break
+        if not raw:
+            break
+        try:
+            name, odds = [x.strip() for x in raw.split(",")]; odds = float(odds)
+        except ValueError:
+            print("  formato: Equipo,cuota"); continue
+        key = _match_team(name, champ)
+        if not key:
+            print(f"  no reconozco '{name}' (usa los nombres de arriba)"); continue
+        bets.append({"market": "Campeón", "sel": key, "p_model": champ[key] / 100.0, "odds": odds})
+    print(f"\n{'mercado':<10}{'selección':<14}{'p_mod':>7}{'implic':>8}{'cuota':>8}{'EV%':>8}{'stake$':>9}")
+    print("-" * 64)
+    total = 0.0
+    for r in vf.analyze(bankroll, bets, cap=OUTRIGHT_CAP):
+        flag = "  ✅" if r["value"] else ""
+        total += r["stake"]
+        print(f"{r['market']:<10}{r['sel']:<14}{100*r['p_model']:>6.0f}%{r['implicita']:>7.0f}%{r['odds']:>8.2f}{r['EV%']:>8.1f}{r['stake']:>9.2f}{flag}")
+    print(f"\nstake total outright ${total:.2f} ({100*total/bankroll:.1f}% de la banca · tope 1%/apuesta)")
 
 
 def model_lines(day):
@@ -56,6 +112,9 @@ def _ask_odds(prompt):
 
 if __name__ == "__main__":
     bankroll = float(sys.argv[1]) if len(sys.argv) > 1 and sys.argv[1].replace(".", "", 1).isdigit() else 1000.0
+    if "--campeon" in sys.argv or "--outright" in sys.argv:
+        print(f"=== OUTRIGHT (campeón) · banca ${bankroll:.0f} · Kelly×{vf.KELLY_FRACTION} · tope {OUTRIGHT_CAP:.0%} · min EV {vf.MIN_EDGE:.0%} ===")
+        outright(bankroll); sys.exit(0)
     day = sys.argv[2] if len(sys.argv) > 2 else date.today().isoformat()
     print(f"\n=== APUESTAS DE VALOR {day} · banca ${bankroll:.0f} · Kelly×{vf.KELLY_FRACTION} · tope {vf.STAKE_CAP:.0%} · min EV {vf.MIN_EDGE:.0%} ===")
     games = model_lines(day)
