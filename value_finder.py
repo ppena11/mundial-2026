@@ -43,6 +43,14 @@ def stake(bankroll, p_model, odds, frac=KELLY_FRACTION, cap=STAKE_CAP, min_edge=
     f = min(cap, frac * kelly_fraction(p_model, odds))
     return round(f * bankroll, 2)
 
+def prob_over(grid, line=2.5):
+    """P(total de goles > line) a partir de la grilla de marcadores {(x,y): prob}."""
+    return sum(p for (x, y), p in grid.items() if x + y > line)
+
+def prob_under(grid, line=2.5):
+    """P(total de goles < line)."""
+    return sum(p for (x, y), p in grid.items() if x + y < line)
+
 def analyze(bankroll, lines, **kw):
     """lines: [{'market','sel','p_model','odds'}, ...] -> añade EV%, implícita, stake, value."""
     out = []

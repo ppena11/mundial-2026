@@ -29,6 +29,12 @@ def test_stake_fractional_kelly():
     # 65% a 1.80: Kelly completo = (0.65*1.80-1)/0.80 = 0.2125 ; ×0.25 = 0.0531 ; ×1000 = 53.13
     assert vf.stake(1000, 0.65, 1.80, frac=0.25, cap=1.0, min_edge=0.0) == pytest.approx(53.12, abs=0.1)
 
+def test_prob_over_under():
+    grid = {(0, 0): 0.2, (1, 0): 0.2, (1, 1): 0.2, (2, 1): 0.2, (3, 1): 0.2}  # totales 0,1,2,3,4
+    assert vf.prob_over(grid, 2.5) == pytest.approx(0.4)    # totales 3 y 4
+    assert vf.prob_under(grid, 2.5) == pytest.approx(0.6)   # totales 0,1,2
+    assert vf.prob_over(grid, 2.5) + vf.prob_under(grid, 2.5) == pytest.approx(1.0)  # sin push en .5
+
 def test_analyze_flags_value_and_sorts():
     lines = [{"market": "1X2", "sel": "A", "p_model": 0.50, "odds": 1.80},   # sin valor
              {"market": "O/U", "sel": "Over", "p_model": 0.70, "odds": 1.90}]  # valor
