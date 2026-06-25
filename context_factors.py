@@ -64,6 +64,12 @@ DISPERSION_R = _env_float("CF_DISP", 17)     # binomial negativa (colas): r=17 v
 # mu=1.15 iguala goles previstos≈reales (2.57) sin sobreinflar. 1.0 = desactivado.
 WC_GOAL_LEVEL = _env_float("CF_GOAL", 1.15)
 
+# Actualización EN TORNEO ("ver el Mundial"): incluir los partidos del Mundial ya jugados en el
+# fit, con peso de forma FORM_BOOST y fiabilidad por contexto (goleadas/rojas se ponderan menos).
+# Validado: mejora el RPS de eliminatorias (0.1872→0.1812). FORM_BOOST≈2 óptimo (8 sobre-reacciona).
+USE_WC_FORM = _env_flag("CF_FORM", True)
+WC_FORM_BOOST = _env_float("CF_FORM_BOOST", 2.0)
+
 # ============================================================
 # Geografía
 # ============================================================

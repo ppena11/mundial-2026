@@ -26,9 +26,11 @@ def load(window_start="2019-01-01", end="2026-06-01", with_tournament=False):
         rows.append(row)
     return rows
 
-def build(rows, ref_date, min_matches=6, halflife=730, importance_fn=None):
+def build(rows, ref_date, min_matches=6, halflife=730, importance_fn=None, row_weight_fn=None):
     """Construye la matriz de diseño. Si importance_fn se da y las filas traen torneo (7º campo),
-    el peso de cada partido se multiplica por importance_fn(torneo) (competitivos > amistosos)."""
+    el peso de cada partido se multiplica por importance_fn(torneo) (competitivos > amistosos).
+    row_weight_fn(row)->float permite un multiplicador de peso por partido (p. ej. actualización
+    en torneo: subir el peso de los partidos del Mundial y bajarlo en goleadas/distorsiones)."""
     cnt={}
     for row in rows:
         h, a = row[1], row[2]
@@ -45,6 +47,8 @@ def build(rows, ref_date, min_matches=6, halflife=730, importance_fn=None):
         w=math.exp(-xi*dt)
         if importance_fn is not None and tour is not None:
             w*=importance_fn(tour)
+        if row_weight_fn is not None:
+            w*=row_weight_fn(row)
         H.append(gi(h));A.append(gi(a));GH.append(gh);GA.append(ga);W.append(w);NEU.append(0.0 if neu else 1.0)
     return (np.array(H),np.array(A),np.array(GH,float),np.array(GA,float),
             np.array(W),np.array(NEU),teams,n,OTH)

@@ -17,15 +17,33 @@ ANTES de correrlo (opcional): edita lineups.json con quién NO está en el XI.
 import sys, os, math, json
 import fit_dc, engine
 import context_factors as cf
+from datetime import date, timedelta
 
 engine.setconf(["Rep. Checa","Serbia y Montenegro"],"UEFA"); engine.setconf(["Cabo Verde"],"CAF")
 MAP = json.load(open("namemap.json", encoding="utf-8"))
 HOSTS = {"Mexico","Estados Unidos","Canada"}
 
 def fit_model():
-    rows = fit_dc.load("2019-01-01","2026-06-01")
-    data = fit_dc.build(rows, "2026-06-01")
-    M = fit_dc.fit(data, separate=True)
+    # Actualización en torneo: incluye los partidos del Mundial ya jugados con peso de forma y
+    # fiabilidad por contexto (goleadas/rojas pesan menos). Sin USE_WC_FORM: fit pre-torneo clásico.
+    if cf.USE_WC_FORM:
+        end = (date.today() + timedelta(days=1)).isoformat(); ref = date.today().isoformat()
+        rows = fit_dc.load("2019-01-01", end, with_tournament=True)
+        redcards = {}
+        try:
+            import wc_form; redcards = wc_form.load_red_cards()
+        except Exception:
+            pass
+        inv = {v: k for k, v in MAP.items()}
+        def wfn(row):
+            if row[0] >= "2026-06-11" and len(row) > 6 and row[6] == "FIFA World Cup":
+                import wc_form
+                rm = redcards.get(frozenset((inv.get(row[1]), inv.get(row[2]))))
+                return cf.WC_FORM_BOOST * wc_form.reliability(row[3], row[4], rm)
+            return 1.0
+        M = fit_dc.fit(fit_dc.build(rows, ref, row_weight_fn=wfn), separate=True)
+    else:
+        M = fit_dc.fit(fit_dc.build(fit_dc.load("2019-01-01", "2026-06-01"), "2026-06-01"), separate=True)
     ti = {t:i for i,t in enumerate(M['teams'])}
     atk = {es:M['atk'][ti[dn]] for es,dn in MAP.items()}
     dfn = {es:M['dfn'][ti[dn]] for es,dn in MAP.items()}

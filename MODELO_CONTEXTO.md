@@ -151,6 +151,32 @@ Aplicado en `sim_live.py` y `predict_match.py`.
 | `backtest.goal_level_scan()` | Escaneo del nivel de goles (mu) sobre el held-out de Mundiales |
 | `context_factors.WC_GOAL_LEVEL` | Nivel de goles mundialista (1.15), validado |
 
+## Actualización EN TORNEO ("ver el Mundial") — aprende de cada partido jugado
+
+El `sim_live` no solo CONDICIONA a los resultados reales (fija quién avanza): además **actualiza la
+fuerza de cada equipo** con los partidos del Mundial ya jugados, para que las predicciones de las
+rondas siguientes reflejen la forma actual. Se incorpora al fit con:
+
+```
+peso_partido = recencia × FORM_BOOST × fiabilidad(contexto)
+```
+
+- **FORM_BOOST = 2.0** (validado). Incluir la fase de grupos mejora el RPS de las eliminatorias en
+  el held-out de 4 Mundiales: **0.1872 → 0.1812** (~3% mejor). Pesos muy altos (8) sobre-reaccionan
+  a pocos partidos → peor; 2-3 es el punto óptimo (`validate_form_update.py`).
+- **Fiabilidad por contexto (clave, "leer el partido"):** una goleada está a menudo DISTORSIONADA
+  (rival expulsado, garbage time) y dice menos sobre la fuerza repetible. Por eso el peso baja con el
+  margen (`margin_reliability`) y baja MÁS si hubo una **roja temprana** (`red_card_reliability`,
+  con datos de API-Football en CI). Ejemplo real: **Canadá 6-0 Catar** se pondera a ~0.55, no como
+  un 6-0 limpio. Así un marcador inflado no sube de más el rating de Canadá.
+- Toggle `CF_FORM` / `CF_FORM_BOOST`. La evaluación held-out (`evaluate_2026.py`) usa un fit LIMPIO
+  pre-torneo (no incluye la forma) para no entrenar sobre lo que evalúa.
+
+| Archivo nuevo | Qué hace |
+|---|---|
+| `wc_form.py` | Fiabilidad por contexto (margen + roja) + carga de rojas (API-Football, best-effort) |
+| `validate_form_update.py` | Valida que actualizar con la fase de grupos mejora el RPS de eliminatorias |
+
 ## Validación contra resultados reales — TODAS las etapas, incluido el campeón
 
 **Importante:** el Mundial 2026 aún no tiene eliminatorias (la ronda de 32 empieza el 28-jun), así
@@ -191,6 +217,7 @@ pueden aplicar al backtest histórico (no se inventan). El **motor** validado es
 python validate_layers.py --cut 2024-06-01   # RPS altura + sobredispersión
 python backtest.py                            # backtest 1X2 Mundiales 2010-2022 + escaneo de nivel de goles
 python backtest_tournament.py                 # validación de CAMPEÓN y todas las etapas (sim completa)
+python validate_form_update.py                # valida la actualización en torneo (forma) en eliminatorias
 python evaluate_2026.py                       # predicciones vs resultados reales del Mundial 2026 (grupos)
 python build_context.py                       # regenerar wc2026_context.json desde la investigación
 python build_altitude_validation.py           # regenerar altitude_validation.json

@@ -67,7 +67,13 @@ def outcome(ga, gb):
 
 
 def evaluate(use_context):
-    atk, dfn, c, g, rho = pm.fit_model()                 # entrenado SOLO con datos < 2026-06-01
+    # fit LIMPIO pre-torneo (held-out honesto): estrictamente < 2026-06-01, SIN forma del Mundial,
+    # para no entrenar sobre los partidos que se evalúan (pm.fit_model sí usa forma en producción).
+    M = fit_dc.fit(fit_dc.build(fit_dc.load("2019-01-01", "2026-06-01"), "2026-06-01"), separate=True)
+    ti = {t: i for i, t in enumerate(M["teams"])}
+    atk = {es: M["atk"][ti[dn]] for es, dn in pm.MAP.items()}
+    dfn = {es: M["dfn"][ti[dn]] for es, dn in pm.MAP.items()}
+    c, g, rho = M["c"], M["g"], M["rho"]
     schedule = sch.load()
     matches = played_matches()
     rows = []

@@ -32,20 +32,38 @@ except ImportError:
 engine.setconf(["Rep. Checa","Serbia y Montenegro"],"UEFA"); engine.setconf(["Cabo Verde"],"CAF")
 MAP = json.load(open("namemap.json", encoding="utf-8"))
 
-# ---------- RATINGS (idéntico a sim20k) ----------
+# ---------- RATINGS (con ACTUALIZACIÓN EN TORNEO: aprende de los partidos del Mundial jugados) ----------
 def build():
-    refd = date.fromisoformat("2026-06-01"); xi = math.log(2)/730
+    refd = date.today(); xi = math.log(2)/730        # ref móvil: los partidos del Mundial son los más recientes
+    end = (refd + timedelta(days=1)).isoformat()
     rows = [r for r in csv.DictReader(open("results.csv", encoding="utf-8"))
-            if r["home_score"] not in ("NA","") and "2019-01-01" <= r["date"] < "2026-06-01"]
+            if r["home_score"] not in ("NA","") and "2019-01-01" <= r["date"] < end]
     cnt = {}
     for r in rows: cnt[r["home_team"]] = cnt.get(r["home_team"],0)+1; cnt[r["away_team"]] = cnt.get(r["away_team"],0)+1
     teams = sorted([t for t,c in cnt.items() if c>=6]); idx = {t:i for i,t in enumerate(teams)}; OTH = len(teams); n = len(teams)+1
+    # rojas del Mundial (mejor esfuerzo; vacío sin API key) para no inflar el rating con marcadores distorsionados
+    redcards = {}
+    if cf.USE_WC_FORM:
+        try:
+            import wc_form; redcards = wc_form.load_red_cards()
+        except Exception:
+            redcards = {}
+    inv = {v: k for k, v in MAP.items()}   # nombre EN (results.csv) -> ES (para casar rojas)
+    nwc = 0
     H=[];A_=[];GH=[];GA=[];W=[];NEU=[]
     for r in rows:
-        dt=(refd-date.fromisoformat(r["date"])).days
+        d = r["date"]; gh = int(r["home_score"]); ga = int(r["away_score"])
+        w = math.exp(-xi*(refd-date.fromisoformat(d)).days)
+        # "ver el Mundial": los partidos del Mundial 2026 pesan más (forma), pero una goleada o una
+        # roja temprana se ponderan menos (marcador distorsionado, p. ej. Canadá 6-0 con rival expulsado).
+        if cf.USE_WC_FORM and d >= "2026-06-11" and r.get("tournament") == "FIFA World Cup":
+            import wc_form
+            rm = redcards.get(frozenset((inv.get(r["home_team"]), inv.get(r["away_team"]))))
+            w *= cf.WC_FORM_BOOST * wc_form.reliability(gh, ga, rm); nwc += 1
         H.append(idx.get(r["home_team"],OTH));A_.append(idx.get(r["away_team"],OTH))
-        GH.append(int(r["home_score"]));GA.append(int(r["away_score"]));W.append(math.exp(-xi*dt))
-        NEU.append(0.0 if r["neutral"]=="TRUE" else 1.0)
+        GH.append(gh);GA.append(ga);W.append(w);NEU.append(0.0 if r["neutral"]=="TRUE" else 1.0)
+    if cf.USE_WC_FORM and nwc:
+        print(f"Actualización en torneo: {nwc} partidos del Mundial incorporados al rating (forma×fiabilidad, FORM_BOOST={cf.WC_FORM_BOOST})")
     import numpy as np
     return (np.array(H),np.array(A_),np.array(GH,float),np.array(GA,float),np.array(W),np.array(NEU),teams,n,OTH)
 

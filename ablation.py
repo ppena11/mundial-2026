@@ -27,6 +27,7 @@ TOOLS = [
     ("Sobredispersión (binomial neg.)",  {"CF_DISP": "none"}),
     ("Nivel de goles mundialista",       {"CF_GOAL": "1.0"}),
     ("Bracket oficial + desempates FIFA", {"SL_BRACKET": "0"}),
+    ("Forma del Mundial (en torneo)",    {"CF_FORM": "0"}),
 ]
 
 
