@@ -94,7 +94,7 @@ def _summary(fh, played, pick, clearest, tr):
                     f"{round(100*d['fp'])} por ciento; marcador previsto {dd.acc(d['a'])} {d['sx']} - {d['sy']} {dd.acc(d['b'])}.")
         detallado = eliminatorias or d.get("is_ko") or (i == feat)
         if detallado:
-            sede = ", ".join(x for x in (d.get("estadio"), d.get("ciudad"), d.get("pais")) if x)
+            sede = d.get("estadio", "")   # SOLO el estadio (sin ciudad ni país: el país 'Estados Unidos' disparaba falsos anclajes de tarjeta)
             det = (f" Hora: {hora}." if hora else "") + (f" Sede: {sede}." if sede else "")
             L.append("- [DETALLE] " + base + det)
             na, nb = _num_partido(d['a']), _num_partido(d['b'])
@@ -161,8 +161,14 @@ AI_SYSTEM = (
     "BIEN: 'ojo con Alemania contra Costa de Marfil'). NOMBRA al equipo (no digas 'el equipo favorito'). "
     "Si el dato dice 'el modelo ve EMPATE', NO inventes un favorito: di que el modelo PREVÉ UN EMPATE (p. ej. "
     "'el modelo ve un empate a 1' o 'partido parejo, igualada a 1'), coherente con el marcador. "
-    "VARÍA también cómo dices el marcador ('gana 2 a 1', 'se queda en 1 a 0', 'se impone 2 a 0'), no repitas "
-    "'marcador previsto'. FIDELIDAD AL MARCADOR: NINGUNA palabra que implique PALIZA ('goleada', 'golea', 'aplasta', "
+    "VARÍA cómo dices el marcador, pero SIEMPRE en el MISMO ORDEN que el dato/la tarjeta (que muestran "
+    "'<equipo A> <sx> - <sy> <equipo B>'): el PRIMER número que digas es el del PRIMER equipo (sx), el segundo es "
+    "el del segundo (sy). PROHIBIDO invertir los números. Si gana el PRIMER equipo, natural: '<A> gana sx a sy'. "
+    "Si gana el SEGUNDO equipo, NO digas '<B> gana sy a sx' (invierte y choca con la tarjeta): di "
+    "'<A> cae sx a sy ante <B>' o atribuye el gol a cada uno ('<A> sx, <B> sy'), dejando CLARÍSIMO que gana <B>. "
+    "Ej.: dato 'Paraguay 0 - 1 Australia' (gana Australia) -> 'Paraguay cae cero a uno ante Australia' o "
+    "'Paraguay cero, Australia uno' (NUNCA 'Australia uno a cero'). El ganador es SIEMPRE el del número MAYOR. "
+    "FIDELIDAD AL MARCADOR: NINGUNA palabra que implique PALIZA ('goleada', 'golea', 'aplasta', "
     "'destroza', 'arrasa/arrasando', 'masacra', 'vapulea', 'humilla', 'pasa por encima') salvo que el marcador tenga "
     "3 o más goles de diferencia; un 2 a 0 es 'gana con autoridad', 'se impone con claridad' o 'es favorita clara', "
     "NO una paliza. El favoritismo alto (85 por ciento) se dice como DOMINIO ('manda', 'no falla'), no como goleada. "
@@ -185,9 +191,9 @@ AI_SYSTEM = (
     "([excited], [pausa], [happy], etc.): el guion es SOLO lo que se dice en voz, sin corchetes de ningún tipo. "
     "Ese partido se narra como prosa normal y fluida. "
     "Los partidos marcados con [DETALLE] reciben el trato de narrador COMPLETO: además del pronóstico, di SIEMPRE "
-    "la HORA (en formato HABLADO: 'a la 1 de la tarde', NUNCA '13 horas') Y dónde se juega EN DETALLE: nombre del "
-    "estadio, ciudad Y PAÍS (p. ej. 'en el NRG Stadium de Houston, Estados Unidos') —NUNCA omitas la hora, el "
-    "estadio NI EL PAÍS del destacado—, e integra con naturalidad LA NOTICIA del día como parte del comentario "
+    "la HORA (en formato HABLADO: 'a la 1 de la tarde', NUNCA '13 horas') Y dónde se juega: SOLO el nombre del "
+    "ESTADIO (p. ej. 'en el NRG Stadium') —NUNCA la ciudad ni el país (di SOLO el estadio; el país confunde y "
+    "no aporta)—, e integra con naturalidad LA NOTICIA del día como parte del comentario "
     "(SIN citar el medio ni decir 'según'). "
     "En fase de grupos suele venir marcado UNO (el más importante); en eliminatorias vienen marcados TODOS. "
     "Para LOS DEMÁS partidos (sin [DETALLE]) di SOLO el pronóstico (marcador y favorito) y la HORA; NO menciones su sede ni noticia. "
@@ -200,7 +206,7 @@ AI_SYSTEM = (
     "Ritmo de narrador: ágil y CONCISO, MÁXIMO ~175 palabras (~70 s). Frases cortas, CERO relleno (fuera 'listo "
     "para revelarte', 'mantener la confianza en la cancha', 'un duelo más parejo de lo que parece' y similares). "
     "Los partidos NO destacados: UNA sola frase mínima (favorito + marcador + hora), nada más. NO sacrifiques la "
-    "hora, el estadio ni el país del destacado. "
+    "hora ni el estadio del destacado. "
     "TODAS las horas en formato HABLADO ('a las 8 de la noche'), NUNCA en formato 24 horas ('20 horas'). "
     "CIERRA con una frase MEMORABLE y con chispa que mezcle ACTITUD + tu marca de IA, pero que sea UNA FRASE "
     "FLUIDA Y COMPLETA (algo ORIGINAL al estilo de 'el fútbol no tiene libreto, pero mi inteligencia artificial ya "
@@ -390,7 +396,7 @@ def build(target):
                                "fp": round(100 * d["fp"]), "sx": d["sx"], "sy": d["sy"],
                                "hora": dd.hora_hablada(d["utc"]) if d.get("utc") else "",
                                "hora_corta": dd.hora_et(d["utc"]) if d.get("utc") else "",
-                               "sede": ", ".join(x for x in (d.get("estadio"), d.get("ciudad"), d.get("pais")) if x),
+                               "sede": d.get("estadio", ""),   # SOLO el estadio (sin ciudad ni país)
                                "is_ko": bool(d.get("is_ko")) or _elim,   # en KO todos muestran sede (todos importantes)
                                "ronda": _ronda,                          # badge de fase (OCTAVOS, FINAL...) en KO; '' en grupos
                                "destacado": (i == _feat) and not _elim} for i, d in enumerate(played)],
