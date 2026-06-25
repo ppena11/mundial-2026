@@ -138,14 +138,26 @@ if __name__ == "__main__":
                 odds = float(val)
             except ValueError:
                 continue
-            bets.append({"market": f"{a[:3]}-{b[:3]}", "sel": lab.format(a=a, b=b), "p_model": P[k], "odds": odds})
+            bets.append({"market": f"{a[:3]}-{b[:3]}", "sel": lab.format(a=a, b=b), "p_model": P[k], "odds": odds,
+                         "a": a, "b": b, "selcode": k, "date": day})
+    analyzed = vf.analyze(bankroll, bets)
     print(f"\n{'partido':<10}{'apuesta':<18}{'p_mod':>7}{'implic':>8}{'cuota':>7}{'EV%':>7}{'stake$':>9}")
     print("-" * 66)
-    total = 0.0
-    for r in vf.analyze(bankroll, bets):
+    total = sum(r["stake"] for r in analyzed)
+    for r in analyzed:
         flag = "  ✅" if r["value"] else ""
-        total += r["stake"]
         print(f"{r['market']:<10}{r['sel']:<18}{100*r['p_model']:>6.0f}%{r['implicita']:>7.0f}%{r['odds']:>7.2f}{r['EV%']:>7.1f}{r['stake']:>9.2f}{flag}")
-    val = [r for r in vf.analyze(bankroll, bets) if r["value"]]
+    val = [r for r in analyzed if r["value"]]
     print(f"\n{len(val)} apuesta(s) de VALOR · stake total ${total:.2f} ({100*total/bankroll:.1f}% de la banca)")
-    print("Recuerda: registra tu cuota vs la de cierre (CLV) para saber si tienes edge real.")
+    if val:
+        try:
+            ans = input("¿Registrar estas apuestas de valor en bets_log.jsonl (para medir CLV)? (s/n): ").strip().lower()
+        except (EOFError, KeyboardInterrupt):
+            ans = "n"
+        if ans.startswith("s"):
+            with open("bets_log.jsonl", "a", encoding="utf-8") as f:
+                for r in val:
+                    f.write(json.dumps({"ts": date.today().isoformat(), "date": r["date"], "a": r["a"], "b": r["b"],
+                                        "sel": r["selcode"], "my_odds": r["odds"], "my_prob": round(r["p_model"], 4),
+                                        "stake": r["stake"]}, ensure_ascii=False) + "\n")
+            print(f"  ✅ {len(val)} apuestas registradas. Corre  python clv_tracker.py  para ver el CLV/ROI.")

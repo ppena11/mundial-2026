@@ -101,3 +101,6 @@ backtest_tournament.json
 
 # Caché de tarjetas rojas (regenerable; off por defecto)
 redcards_2026.json
+
+# Registro PRIVADO de apuestas (local; no se sube)
+bets_log.jsonl
