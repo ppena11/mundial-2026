@@ -410,8 +410,8 @@ ok("_summary incluye hora HABLADA y sede = SOLO el estadio (sin ciudad ni país)
    and "Sede: Estadio Azteca, " not in sm_x, sm_x)
 ok("AI_SYSTEM pide hora + SOLO el estadio (sin ciudad ni país) y NO citar el medio",
    all(s in msx.AI_SYSTEM for s in ("SOLO el nombre del", "ESTADIO", "NUNCA la ciudad ni el país", "SIN citar el medio")), "falta la regla")
-ok("AI_SYSTEM: el marcador se dice en el ORDEN de la tarjeta (no invertir números)",
-   all(s in msx.AI_SYSTEM for s in ("MISMO ORDEN que el dato", "PROHIBIDO invertir los números", "NUNCA 'Australia uno a cero'")), "falta la regla de coherencia del marcador")
+ok("AI_SYSTEM: el marcador se dice en el ORDEN de la tarjeta (sx primero, no invertir números)",
+   all(s in msx.AI_SYSTEM for s in ("REGLA ABSOLUTA", "PROHIBIDÍSIMAS", "JAMÁS 'Australia uno a cero'")), "falta la regla de coherencia del marcador")
 ok("_summary ya NO mete 'el día N del torneo'", "hoy es el día" not in sm_x.lower(), "quedó el día N")
 ok("AI_SYSTEM abre con la fecha y prohíbe 'día N del torneo'",
    "Aquí están los pronósticos del Mundial 2026 de mi inteligencia artificial" in msx.AI_SYSTEM and "el día N del torneo" in msx.AI_SYSTEM, "falta la regla")
