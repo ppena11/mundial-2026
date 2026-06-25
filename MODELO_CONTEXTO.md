@@ -123,6 +123,28 @@ a medir cuando cambien los datos. La calibración se puede activar puntualmente 
 | `calibration.py` | Vector scaling multinomial (Platt/temperatura generalizado) + métricas |
 | `fit_dc.importance()` | Peso por tipo de competición (usado por el backtest; off en producción) |
 
+## Marcador publicado coherente con el favorito (lo que mide el recap)
+
+El recap viral puntúa el **1/X/2 que implica el marcador publicado** (un 2-0 previsto y un 4-2 real
+cuentan como acierto; empate previsto + empate real, también). El problema: el **modo global** de la
+matriz de marcadores tiende a **1-1** aunque el modelo favorezca a un ganador (P(victoria)>P(empate))
+→ se publicaba "empate" en partidos que el modelo daba ganados → fallo.
+
+**Fix de experto (`predict_match.likely_scoreline`):** publicar el marcador más probable COHERENTE
+con el resultado (1/X/2) más probable del modelo — "predigo que gana X, marcador más probable de esa
+victoria" (p. ej. 2-1), no el 1-1 global. Si el favorito es el empate, publica el empate más probable.
+
+Validado walk-forward sobre los 52 partidos jugados del Mundial (regla del recap):
+
+| | antes (modo global) | con marcador coherente |
+|---|---|---|
+| **Acierto recap (1X2 del marcador)** | 28/52 = **54%** | 33/52 = **63%** |
+| Marcador exacto (bonus) | 10% | **12%** |
+| RPS | 0.152 | 0.152 (igual) |
+
++9 puntos de acierto en lo que se vende, hasta su techo (el 63% que el modelo ya "sabe"), sin tocar
+el modelo —solo cómo se elige el marcador a publicar—. Aplicado en `one_x_two` y `ensamble_marcador`.
+
 ## Análisis 2026 (predicciones vs realidad) → mejora validada
 
 `evaluate_2026.py` compara, fuera de muestra (modelo entrenado con datos < 2026-06-01), las

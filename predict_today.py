@@ -70,7 +70,7 @@ if __name__ == "__main__":
                                   enable_alt=cf.USE_ALTITUDE, enable_heat=cf.USE_HEAT, enable_travel=cf.USE_TRAVEL)
         lh *= fh; la *= fa
         pw, pd, pl, grid = pm._grid_probs(lh, la, rho)
-        sx, sy = max(grid, key=grid.get)
+        sx, sy = pm.likely_scoreline(grid, pw, pd, pl)
         ft = (m.get("score") or {}).get("ft")
         rows.append({"a": a, "b": b, "ground": ground, "hour": hour, "p1": pw, "pX": pd, "p2": pl,
                      "lh": lh, "la": la, "sx": sx, "sy": sy, "fh": fh, "fa": fa, "ft": ft})

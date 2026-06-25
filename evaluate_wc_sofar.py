@@ -39,7 +39,7 @@ def main():
             ta, tb = schedule.travel_for_pair(a, b)
             fh, fa = cf.match_factors(a, b, p["ground"], p["hour"], home_travel=ta, away_travel=tb)
             lh *= fh; la *= fa
-            pw, pd, pl, grid = pm._grid_probs(lh, la, rho); sx, sy = max(grid, key=grid.get)
+            pw, pd, pl, grid = pm._grid_probs(lh, la, rho); sx, sy = pm.likely_scoreline(grid, pw, pd, pl)
             o = pm.outcome_de(p["gh"], p["ga"])
             rows.append({"recap": pm.outcome_de(sx, sy) == o,
                          "exact": (sx == p["gh"] and sy == p["ga"]),

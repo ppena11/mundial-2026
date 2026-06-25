@@ -58,7 +58,7 @@ def predict(a, b, ground, hour, atk, dfn, c, g, rho, schedule, use_context):
                                   enable_alt=cf.USE_ALTITUDE, enable_heat=cf.USE_HEAT, enable_travel=cf.USE_TRAVEL)
         lh *= fh; la *= fa
     pw, pd, pl, grid = pm._grid_probs(lh, la, rho)
-    top = max(grid, key=grid.get)
+    top = pm.likely_scoreline(grid, pw, pd, pl)
     return pw, pd, pl, lh, la, top
 
 

@@ -74,6 +74,21 @@ def outcome_de(sx, sy):
     se DERIVA de él para que todo concuerde): sx>sy -> '1', empate -> 'X', sx<sy -> '2'."""
     return "1" if sx > sy else ("X" if sx == sy else "2")
 
+
+def likely_scoreline(grid, pw, pd, pl):
+    """Marcador a PUBLICAR: el más probable COHERENTE con el resultado (1X2) más probable del modelo.
+
+    Corrige el sesgo del MODO GLOBAL del grid: el marcador individual más frecuente tiende a 1-1
+    (empate) aunque el modelo favorezca a un ganador (P(victoria) > P(empate)). Un experto predice
+    primero el RESULTADO (el más probable) y luego el marcador más probable DE ESE resultado: si el
+    modelo favorece al local, publica el marcador de victoria local más probable (p. ej. 2-1), no 1-1.
+    Si el favorito es el empate, publica el empate más probable. Devuelve (sx, sy).
+    """
+    fav = max(range(3), key=lambda k: (pw, pd, pl)[k])   # 0=local, 1=empate, 2=visita
+    cls = lambda x, y: 0 if x > y else (1 if x == y else 2)
+    cells = [c for c in grid if cls(*c) == fav]
+    return max(cells, key=grid.get) if cells else max(grid, key=grid.get)
+
 def one_x_two(a, b, atk, dfn, c, g, rho, local_anfitrion=False, sede=None, kickoff_hour=None):
     ga_host = g if (a in HOSTS and local_anfitrion) else 0
     gb_host = g if (b in HOSTS and local_anfitrion) else 0
@@ -103,7 +118,8 @@ def one_x_two(a, b, atk, dfn, c, g, rho, local_anfitrion=False, sede=None, kicko
             elif x==y: pd += p
             else: pl += p
     s = pw+pd+pl
-    top = max(grid, key=grid.get)   # marcador MÁS PROBABLE (el favorito/pick se deriva de él, no al revés)
+    # marcador a publicar: coherente con el resultado más probable del modelo (no el modo global 1-1)
+    top = likely_scoreline(grid, pw, pd, pl)
     return pw/s, pd/s, pl/s, lh, la, top
 
 def _grid_probs(lh, la, rho, K=11):
@@ -133,7 +149,7 @@ def ensamble_marcador(lh, la, rho, m_w, m_d, m_l, w_modelo=0.6):
     Devuelve (sx, sy, pw, pd, pl, lh', la'). Si el mercado no es válido, no cambia nada."""
     pw, pd, pl, _ = _grid_probs(lh, la, rho)
     if not (m_w and m_l) or (m_w + (m_d or 0) + m_l) <= 0:
-        g = _grid_probs(lh, la, rho)[3]; top = max(g, key=g.get)
+        g = _grid_probs(lh, la, rho)[3]; top = likely_scoreline(g, pw, pd, pl)
         return top[0], top[1], pw, pd, pl, lh, la
     s = m_w + (m_d or 0) + m_l; m_w, m_d, m_l = m_w/s, (m_d or 0)/s, m_l/s
     bw = w_modelo*pw + (1-w_modelo)*m_w
@@ -148,7 +164,7 @@ def ensamble_marcador(lh, la, rho, m_w, m_d, m_l, w_modelo=0.6):
     d = (lo + hi) / 2
     lh2, la2 = lh*math.exp(d), la*math.exp(-d)
     pw2, pd2, pl2, grid = _grid_probs(lh2, la2, rho)
-    top = max(grid, key=grid.get)   # marcador MÁS PROBABLE del ensamble (el favorito/pick se deriva de él)
+    top = likely_scoreline(grid, pw2, pd2, pl2)   # marcador coherente con el resultado más probable
     return top[0], top[1], pw2, pd2, pl2, lh2, la2
 
 def make_match_png(res, path="champ_match.png"):
