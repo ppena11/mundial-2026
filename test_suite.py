@@ -14,6 +14,9 @@ from datetime import date, timedelta
 # --- desactivar costos/no-determinismo ANTES de usar los módulos ---
 for k in ("ANTHROPIC_API_KEY", "ELEVENLABS_API_KEY", "ELEVENLABS_VOICE_ID"):
     os.environ.pop(k, None)
+# La batería corre sim_live con pocas simulaciones para ser rápida (las pruebas validan
+# integridad/condicionamiento, no precisión). Producción usa el default alto (K=100.000).
+os.environ["SL_K"] = "4000"
 
 import daily_digest as dd
 import predict_match as pm

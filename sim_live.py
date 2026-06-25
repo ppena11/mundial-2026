@@ -213,7 +213,9 @@ def resolve_slot(slot, num, pos1, pos2, third_team, tassign, winner, loser):
     return loser[v]   # "LM" (perdedor, para el 3er puesto)
 
 # ---------- SIMULACIÓN CONDICIONADA ----------
-random.seed(int(os.environ.get("SL_SEED", "11"))); K=int(os.environ.get("SL_K", "20000"))
+# K=100.000 (≈90 s) baja el ruido Monte Carlo del pronóstico de campeón a ~1pp (vs ~2.4pp a 20k).
+# Configurable con SL_K (la batería de pruebas usa un K bajo para correr rápido).
+random.seed(int(os.environ.get("SL_SEED", "11"))); K=int(os.environ.get("SL_K", "100000"))
 champ={t:0 for t in MAP}; fin={t:0 for t in MAP}
 for _ in range(K):
     pos1={}; pos2={}; third_team={}; thirds=[]
