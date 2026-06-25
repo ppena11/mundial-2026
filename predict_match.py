@@ -35,11 +35,18 @@ def fit_model():
         except Exception:
             pass
         inv = {v: k for k, v in MAP.items()}
+        wc_count = {}
+        for row in rows:
+            if row[0] >= "2026-06-11" and len(row) > 6 and row[6] == "FIFA World Cup":
+                wc_count[row[1]] = wc_count.get(row[1], 0) + 1; wc_count[row[2]] = wc_count.get(row[2], 0) + 1
         def wfn(row):
             if row[0] >= "2026-06-11" and len(row) > 6 and row[6] == "FIFA World Cup":
                 import wc_form
                 rm = redcards.get(frozenset((inv.get(row[1]), inv.get(row[2]))))
-                return cf.WC_FORM_BOOST * wc_form.reliability(row[3], row[4], rm)
+                w = wc_form.reliability(row[3], row[4], rm)                      # fiabilidad siempre
+                if wc_count.get(row[1], 0) >= cf.WC_FORM_MIN and wc_count.get(row[2], 0) >= cf.WC_FORM_MIN:
+                    w *= cf.WC_FORM_BOOST                                        # boost solo con ≥ min partidos
+                return w
             return 1.0
         M = fit_dc.fit(fit_dc.build(rows, ref, row_weight_fn=wfn), separate=True)
     else:

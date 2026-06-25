@@ -49,17 +49,29 @@ def build():
         except Exception:
             redcards = {}
     inv = {v: k for k, v in MAP.items()}   # nombre EN (results.csv) -> ES (para casar rojas)
+    def _is_wc(r): return r["date"] >= "2026-06-11" and r.get("tournament") == "FIFA World Cup"
+    wc_count = {}                          # partidos del Mundial jugados por cada equipo (para el shrinkage)
+    if cf.USE_WC_FORM:
+        for r in rows:
+            if _is_wc(r):
+                wc_count[r["home_team"]] = wc_count.get(r["home_team"], 0) + 1
+                wc_count[r["away_team"]] = wc_count.get(r["away_team"], 0) + 1
     nwc = 0
     H=[];A_=[];GH=[];GA=[];W=[];NEU=[]
     for r in rows:
         d = r["date"]; gh = int(r["home_score"]); ga = int(r["away_score"])
         w = math.exp(-xi*(refd-date.fromisoformat(d)).days)
-        # "ver el Mundial": los partidos del Mundial 2026 pesan más (forma), pero una goleada o una
-        # roja temprana se ponderan menos (marcador distorsionado, p. ej. Canadá 6-0 con rival expulsado).
-        if cf.USE_WC_FORM and d >= "2026-06-11" and r.get("tournament") == "FIFA World Cup":
+        # "ver el Mundial": los partidos del Mundial pesan más (forma). Pero (1) una goleada o roja
+        # temprana se ponderan menos —marcador distorsionado, p. ej. Canadá 6-0 con rival expulsado—,
+        # y (2) el BOOST de forma solo se aplica si ambos equipos ya jugaron ≥ WC_FORM_MIN partidos
+        # (no sobre-reaccionar a 1 solo partido). La fiabilidad por contexto se aplica siempre.
+        if cf.USE_WC_FORM and _is_wc(r):
             import wc_form
             rm = redcards.get(frozenset((inv.get(r["home_team"]), inv.get(r["away_team"]))))
-            w *= cf.WC_FORM_BOOST * wc_form.reliability(gh, ga, rm); nwc += 1
+            w *= wc_form.reliability(gh, ga, rm)
+            if wc_count.get(r["home_team"], 0) >= cf.WC_FORM_MIN and wc_count.get(r["away_team"], 0) >= cf.WC_FORM_MIN:
+                w *= cf.WC_FORM_BOOST
+            nwc += 1
         H.append(idx.get(r["home_team"],OTH));A_.append(idx.get(r["away_team"],OTH))
         GH.append(gh);GA.append(ga);W.append(w);NEU.append(0.0 if r["neutral"]=="TRUE" else 1.0)
     if cf.USE_WC_FORM and nwc:

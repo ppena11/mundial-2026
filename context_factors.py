@@ -69,6 +69,11 @@ WC_GOAL_LEVEL = _env_float("CF_GOAL", 1.15)
 # Validado: mejora el RPS de eliminatorias (0.1872→0.1812). FORM_BOOST≈2 óptimo (8 sobre-reacciona).
 USE_WC_FORM = _env_flag("CF_FORM", True)
 WC_FORM_BOOST = _env_float("CF_FORM_BOOST", 2.0)
+# Shrinkage anti-sobre-reacción: el BOOST de forma solo se aplica a un equipo que ya jugó ≥ este
+# nº de partidos del Mundial (con 1 partido el rating se sobre-reacciona y empeora la predicción de
+# la jornada siguiente). Validado walk-forward: con min=2 los grupos dejan de dañarse (Δ≈0) y las
+# eliminatorias siguen mejorando (+0.0033). La fiabilidad por goleada/roja se aplica SIEMPRE.
+WC_FORM_MIN = _env_float("CF_FORM_MIN", 2)
 
 # ============================================================
 # Geografía

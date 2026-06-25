@@ -161,21 +161,33 @@ rondas siguientes reflejen la forma actual. Se incorpora al fit con:
 peso_partido = recencia × FORM_BOOST × fiabilidad(contexto)
 ```
 
-- **FORM_BOOST = 2.0** (validado). Incluir la fase de grupos mejora el RPS de las eliminatorias en
-  el held-out de 4 Mundiales: **0.1872 → 0.1812** (~3% mejor). Pesos muy altos (8) sobre-reaccionan
-  a pocos partidos → peor; 2-3 es el punto óptimo (`validate_form_update.py`).
-- **Fiabilidad por contexto (clave, "leer el partido"):** una goleada está a menudo DISTORSIONADA
+**CADA partido jugado actualiza el rating** (no solo de cara a eliminatorias). Validación
+walk-forward PARTIDO A PARTIDO sobre 4 Mundiales (predecir cada fecha con todo lo jugado antes):
+
+| fase | RPS congelado | RPS actualizado (producción) | Δ |
+|---|---|---|---|
+| **TODOS** (con info previa) | 0.1997 | 0.1994 | **+0.0003** |
+| Grupos (jornada 2 y 3) | 0.2031 | 0.2038 | −0.0007 (≈neutral) |
+| **Eliminatorias** | 0.1886 | 0.1853 | **+0.0033** |
+
+- **FORM_BOOST = 2.0** y **shrinkage WC_FORM_MIN = 2** (clave): el boost de forma solo se aplica a un
+  equipo que ya jugó ≥2 partidos del Mundial. Con 1 solo partido el rating SE SOBRE-REACCIONA y
+  empeora la jornada siguiente; el shrinkage lo evita. Resultado: el efecto es **claramente positivo
+  en eliminatorias** (+0.0033) y **neto positivo** en general (+0.0003), sin dañar los grupos
+  (de −0.0013 sin shrinkage a −0.0007 con él). Honesto: el grueso del beneficio aparece de la 2ª/3ª
+  jornada en adelante, porque con un solo partido aún no hay evidencia fiable —como debe ser.
+- **Fiabilidad por contexto (clave, "leer el partido"):** una goleada suele estar DISTORSIONADA
   (rival expulsado, garbage time) y dice menos sobre la fuerza repetible. Por eso el peso baja con el
-  margen (`margin_reliability`) y baja MÁS si hubo una **roja temprana** (`red_card_reliability`,
-  con datos de API-Football en CI). Ejemplo real: **Canadá 6-0 Catar** se pondera a ~0.55, no como
-  un 6-0 limpio. Así un marcador inflado no sube de más el rating de Canadá.
-- Toggle `CF_FORM` / `CF_FORM_BOOST`. La evaluación held-out (`evaluate_2026.py`) usa un fit LIMPIO
-  pre-torneo (no incluye la forma) para no entrenar sobre lo que evalúa.
+  margen (`margin_reliability`) y baja MÁS si hubo **roja temprana** (`red_card_reliability`, datos de
+  API-Football en CI). Ejemplo real: **Canadá 6-0 Catar** se pondera a ~0.55, no como un 6-0 limpio.
+- Toggles `CF_FORM` / `CF_FORM_BOOST` / `CF_FORM_MIN`. El held-out (`evaluate_2026.py`) usa un fit
+  LIMPIO pre-torneo (no incluye la forma) para no entrenar sobre lo que evalúa.
 
 | Archivo nuevo | Qué hace |
 |---|---|
 | `wc_form.py` | Fiabilidad por contexto (margen + roja) + carga de rojas (API-Football, best-effort) |
-| `validate_form_update.py` | Valida que actualizar con la fase de grupos mejora el RPS de eliminatorias |
+| `validate_form_update.py` | Valida la actualización grupos→eliminatorias (RPS) |
+| `validate_walkforward.py` | Valida PARTIDO A PARTIDO (todas las fases) con/sin shrinkage |
 
 ## Validación contra resultados reales — TODAS las etapas, incluido el campeón
 
@@ -218,6 +230,7 @@ python validate_layers.py --cut 2024-06-01   # RPS altura + sobredispersión
 python backtest.py                            # backtest 1X2 Mundiales 2010-2022 + escaneo de nivel de goles
 python backtest_tournament.py                 # validación de CAMPEÓN y todas las etapas (sim completa)
 python validate_form_update.py                # valida la actualización en torneo (forma) en eliminatorias
+python validate_walkforward.py                # valida la actualización PARTIDO A PARTIDO (todas las fases)
 python evaluate_2026.py                       # predicciones vs resultados reales del Mundial 2026 (grupos)
 python build_context.py                       # regenerar wc2026_context.json desde la investigación
 python build_altitude_validation.py           # regenerar altitude_validation.json
