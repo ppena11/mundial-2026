@@ -13,7 +13,11 @@ inflado —p. ej. Canadá 6-0 Catar— sin dejar de incorporar la información r
 
 Funciones puras (margin_reliability, reliability) con pruebas en test_wc_form.py.
 """
-import os
+import json, os
+from datetime import datetime, timezone
+
+_HERE = os.path.dirname(os.path.abspath(__file__))
+_REDCARD_CACHE = os.path.join(_HERE, "redcards_2026.json")
 
 # Fiabilidad por margen de goles (robusta; no necesita datos de tarjetas).
 # Margen ≤2: resultado plenamente informativo. Goleadas: cada vez menos (ruido/distorsión).
@@ -39,30 +43,55 @@ def reliability(gh, ga, red_minute=None):
     return min(margin_reliability(gh, ga), red_card_reliability(red_minute))
 
 
+def _cache_read():
+    """Lee la caché diaria de rojas: {frozenset({a,b}): minuto}. Vacío si no existe o es de otro día."""
+    try:
+        c = json.load(open(_REDCARD_CACHE, encoding="utf-8"))
+        if c.get("date") == datetime.now(timezone.utc).strftime("%Y-%m-%d"):
+            return {frozenset(k.split("|")): v for k, v in c.get("cards", {}).items()}
+    except Exception:
+        pass
+    return None
+
 def load_red_cards():
-    """Mejor esfuerzo: {frozenset({equipo_es,equipo_es}): minuto_primera_roja}. Vacío si no hay
-    fuente (openfootball no trae tarjetas; API-Football sí, con API_FOOTBALL_KEY —presente en CI)."""
-    cards = {}
+    """Minuto de la primera roja por partido: {frozenset({equipo_es,equipo_es}): minuto}.
+
+    OFF por defecto (devuelve {}): la fiabilidad por MARGEN ya descuenta el marcador inflado (Canadá
+    6-0 → 0.55) SIN gastar API. Activar con CF_REDCARDS=1 (refina el descuento con la roja real).
+    Cuando está activa, CACHEA a redcards_2026.json y solo llama a API-Football UNA vez al día
+    (la versión sin caché hacía ~100 llamadas por cada fit → reventaba la cuota en la nube)."""
+    if os.environ.get("CF_REDCARDS", "0") not in ("1", "true", "True"):
+        return {}
+    cached = _cache_read()
+    if cached is not None:
+        return cached
     key = os.environ.get("API_FOOTBALL_KEY", "")
     if not key or key == "PEGA_TU_KEY_AQUI":
-        return cards
+        return {}
+    cards = {}
     try:
-        import json, requests
-        nm = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "namemap.json"), encoding="utf-8"))
+        import requests
+        nm = json.load(open(os.path.join(_HERE, "namemap.json"), encoding="utf-8"))
         en2es = {en: es for es, en in nm.items()}
-        r = requests.get("https://v3.football.api-sports.io/fixtures",
-                         headers={"x-apisports-key": key}, params={"league": 1, "season": 2026},
-                         timeout=20)
-        for fx in r.json().get("response", []):
-            fid = fx["fixture"]["id"]
+        fixtures = requests.get("https://v3.football.api-sports.io/fixtures",
+                                headers={"x-apisports-key": key}, params={"league": 1, "season": 2026},
+                                timeout=20).json().get("response", [])
+        for fx in fixtures:
+            if fx.get("fixture", {}).get("status", {}).get("short") not in ("FT", "AET", "PEN"):
+                continue   # solo partidos terminados (acota las llamadas a eventos)
             ev = requests.get("https://v3.football.api-sports.io/fixtures/events",
-                              headers={"x-apisports-key": key}, params={"fixture": fid}, timeout=20).json().get("response", [])
+                              headers={"x-apisports-key": key}, params={"fixture": fx["fixture"]["id"]},
+                              timeout=20).json().get("response", [])
             home = en2es.get(fx["teams"]["home"]["name"], fx["teams"]["home"]["name"])
             away = en2es.get(fx["teams"]["away"]["name"], fx["teams"]["away"]["name"])
             mins = [e.get("time", {}).get("elapsed") for e in ev
                     if e.get("type") == "Card" and "Red" in str(e.get("detail", "")) and e.get("time", {}).get("elapsed") is not None]
             if mins:
                 cards[frozenset((home, away))] = min(mins)
+        # cachea (clave "a|b" porque JSON no admite frozenset)
+        json.dump({"date": datetime.now(timezone.utc).strftime("%Y-%m-%d"),
+                   "cards": {"|".join(sorted(k)): v for k, v in cards.items()}},
+                  open(_REDCARD_CACHE, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     except Exception:
         return {}
     return cards

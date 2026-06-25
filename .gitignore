@@ -98,3 +98,6 @@ eval_2026.json
 
 # Validación de torneo (regenerable con backtest_tournament.py)
 backtest_tournament.json
+
+# Caché de tarjetas rojas (regenerable; off por defecto)
+redcards_2026.json

@@ -32,8 +32,13 @@ def test_reliability_takes_worst():
 def test_reliability_clean_result_full():
     assert wc_form.reliability(2, 1, None) == 1.0
 
-def test_load_red_cards_no_key_returns_empty(monkeypatch):
-    monkeypatch.delenv("API_FOOTBALL_KEY", raising=False)
+def test_load_red_cards_off_by_default(monkeypatch):
+    monkeypatch.delenv("CF_REDCARDS", raising=False)        # OFF por defecto -> sin API, vacío
+    assert wc_form.load_red_cards() == {}
+
+def test_load_red_cards_on_without_key_returns_empty(monkeypatch):
+    monkeypatch.setenv("CF_REDCARDS", "1")
+    monkeypatch.delenv("API_FOOTBALL_KEY", raising=False)   # activa pero sin key -> vacío, no rompe
     assert wc_form.load_red_cards() == {}
 
 
