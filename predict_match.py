@@ -98,16 +98,17 @@ def likely_scoreline(grid, pw, pd, pl):
     cells = [c for c in grid if cls(*c) == fav]
     return max(cells, key=grid.get) if cells else max(grid, key=grid.get)
 
-def one_x_two(a, b, atk, dfn, c, g, rho, local_anfitrion=False, sede=None, kickoff_hour=None):
+def one_x_two(a, b, atk, dfn, c, g, rho, local_anfitrion=False, sede=None, kickoff_hour=None,
+              home_travel=None, away_travel=None):
     ga_host = g if (a in HOSTS and local_anfitrion) else 0
     gb_host = g if (b in HOSTS and local_anfitrion) else 0
     lh = math.exp(c + atk[a] - dfn[b] + ga_host) * cf.WC_GOAL_LEVEL
     la = math.exp(c + atk[b] - dfn[a] + gb_host) * cf.WC_GOAL_LEVEL
-    # Factores de contexto si se da la sede (altura + calor; el viaje no es derivable de un
-    # partido suelto sin calendario, así que queda apagado aquí).
-    if sede:
-        fh, fa = cf.match_factors(a, b, sede, kickoff_hour, enable_travel=False,
-                                  enable_alt=cf.USE_ALTITUDE, enable_heat=cf.USE_HEAT)
+    # Factores de contexto: altura + calor (si se da la sede) y viaje/jet lag (si se dan los datos
+    # de viaje, derivados del calendario). Se aplican TODAS las capas disponibles.
+    if sede or home_travel or away_travel:
+        fh, fa = cf.match_factors(a, b, sede, kickoff_hour, home_travel=home_travel, away_travel=away_travel,
+                                  enable_alt=cf.USE_ALTITUDE, enable_heat=cf.USE_HEAT, enable_travel=cf.USE_TRAVEL)
         lh *= fh; la *= fa
     K = 11
     ph = _pmf_list(lh, K)

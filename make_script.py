@@ -323,6 +323,10 @@ def _limpiar_voz(text):
 def build(target):
     games = dd.matches_on(target)
     atk,dfn,c,g,rho = pm.fit_model(); pm.apply_adjustments(atk,dfn)
+    try:
+        import schedule_2026 as _sched; _SCHED = _sched.load()   # sede/hora/viaje reales por partido
+    except Exception:
+        _SCHED = None
     mkt={}
     try:
         import fetch_odds
@@ -335,7 +339,12 @@ def build(target):
     for m in sorted(games,key=lambda x:x["utc"]):
         a,b=m["a"],m["b"]
         if a not in pm.MAP or b not in pm.MAP: continue
-        pw,pdr,pl,lh,la,(sx,sy)=pm.one_x_two(a,b,atk,dfn,c,g,rho,local_anfitrion=True)
+        # sede/hora/viaje reales del calendario -> aplica altura+calor+viaje en el marcador
+        _ground,_hora,_ta,_tb=(None,None,None,None)
+        if _SCHED is not None:
+            _ground,_hora=_SCHED.factors_for(a,b); _ta,_tb=_SCHED.travel_for_pair(a,b)
+        pw,pdr,pl,lh,la,(sx,sy)=pm.one_x_two(a,b,atk,dfn,c,g,rho,local_anfitrion=True,
+                                             sede=_ground,kickoff_hour=_hora,home_travel=_ta,away_travel=_tb)
         mp=mkt.get(frozenset((a,b))); vc=[]
         if mp:
             ma,mb=mp.get(a),mp.get(b)
