@@ -23,6 +23,20 @@ import json, math, os
 
 _HERE = os.path.dirname(os.path.abspath(__file__))
 
+# Overrides por entorno SOLO para auditoría/ablación (ablation.py). Si la variable no está,
+# se usa el default de producción IDÉNTICO — no cambia nada en el pipeline normal.
+def _env_flag(name, default):
+    v = os.environ.get(name)
+    return default if v is None else (v not in ("0", "false", "False", ""))
+
+def _env_float(name, default):
+    v = os.environ.get(name)
+    if v is None:
+        return default
+    if v.lower() == "none":
+        return None
+    return float(v)
+
 # ============================================================
 # Cotas globales (la disciplina del diseño: nunca castigar/premiar de más)
 # ============================================================
@@ -38,17 +52,17 @@ def clamp(x, lo=CLAMP_LO, hi=CLAMP_HI):
 # Se ajusta tras validar con validate_layers.py. Disciplina: si una capa no mejora
 # el RPS fuera de muestra, se apaga aquí (sin piedad).
 # ============================================================
-USE_ALTITUDE = True     # altura: validada contra RPS histórico (laboratorio CONMEBOL)
-USE_HEAT = True         # calor: efecto ~neutro en goles (literatura); compresión simétrica pequeña
-USE_TRAVEL = True       # viaje/jet lag: calibrado por literatura (viajar al este es peor)
-DISPERSION_R = 17       # binomial negativa (colas más gordas): r=17 validado fuera de muestra
-                        # (NB supera a Poisson en log-verosimilitud de goles). None = Poisson puro.
+USE_ALTITUDE = _env_flag("CF_ALT", True)     # altura: validada contra RPS histórico (CONMEBOL)
+USE_HEAT = _env_flag("CF_HEAT", True)        # calor: efecto ~neutro en goles; compresión simétrica
+USE_TRAVEL = _env_flag("CF_TRAVEL", True)    # viaje/jet lag: calibrado por literatura (este peor)
+DISPERSION_R = _env_float("CF_DISP", 17)     # binomial negativa (colas): r=17 validado OOS.
+                                             # None/Poisson si CF_DISP=none.
 
 # Nivel de goles mundialista: el modelo entrena con amistosos/eliminatorias (más defensivos) y
 # SUBESTIMA los goles del Mundial. Multiplicador simétrico sobre ambos λ, VALIDADO en el held-out
 # de 5 Mundiales (2010-2022 + 2026 hasta hoy): calibra los goles (previstos→reales) y mejora el RPS.
 # mu=1.15 iguala goles previstos≈reales (2.57) sin sobreinflar. 1.0 = desactivado.
-WC_GOAL_LEVEL = 1.15
+WC_GOAL_LEVEL = _env_float("CF_GOAL", 1.15)
 
 # ============================================================
 # Geografía

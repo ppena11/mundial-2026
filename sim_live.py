@@ -15,10 +15,15 @@ y se usará en vez de ESPN.
 
 Escribe champ_today.json y champ_today.png (mismo formato que sim20k).
 """
-import csv, math, random, json, urllib.parse
+import csv, math, random, json, os, urllib.parse
 import fit_dc, engine
 import context_factors as cf, format_engine as fe, schedule_2026 as _sched
 from datetime import date, timedelta
+
+# Toggles SOLO para auditoría/ablación (ablation.py). Defaults = producción (todo activado).
+_ABL_INJ = os.environ.get("SL_INJ", "1") not in ("0", "false")
+_ABL_HOST = os.environ.get("SL_HOST", "1") not in ("0", "false")
+_ABL_BRACKET = os.environ.get("SL_BRACKET", "1") not in ("0", "false")
 try:
     import requests
 except ImportError:
@@ -47,16 +52,18 @@ def build():
 M = fit_dc.fit(build(), separate=True); ti = {t:i for i,t in enumerate(M['teams'])}
 atk = {es:M['atk'][ti[dn]] for es,dn in MAP.items()}; dfn = {es:M['dfn'][ti[dn]] for es,dn in MAP.items()}
 c = M['c']; g = M['g']; rho = M['rho']
+if not _ABL_HOST: g = 0.0   # ablación: sin ventaja de anfitrión
 
 # ajuste por lesiones/XI (igual que sim20k)
 dATK={}; dDEF={}
-try:
-    import player_layer
-    for _t,_d in player_layer.load_squad_data().items():
-        _aa,_da = player_layer.player_adjustment(0.0,0.0,_d["starters_available"],_d["key_players"])
-        dATK[_t]=_aa; dDEF[_t]=_da
-except Exception as _e:
-    print(f"(sin ajuste por lesiones: {_e})")
+if _ABL_INJ:
+    try:
+        import player_layer
+        for _t,_d in player_layer.load_squad_data().items():
+            _aa,_da = player_layer.player_adjustment(0.0,0.0,_d["starters_available"],_d["key_players"])
+            dATK[_t]=_aa; dDEF[_t]=_da
+    except Exception as _e:
+        print(f"(sin ajuste por lesiones: {_e})")
 A = {t:atk[t]+dATK.get(t,0.0) for t in atk}
 dfn = {t:dfn[t]+dDEF.get(t,0.0) for t in dfn}
 
@@ -167,7 +174,7 @@ print(f"Factores de contexto en {_nf}/{len(PAIR_FACTORS)} partidos de grupo "
 # ---------- BRACKET OFICIAL DE ELIMINATORIAS (con sedes) ----------
 TEAM_GROUP = {t: gN for gN, T in GROUPS.items() for t in T}
 BRACKET = _sched.build_bracket(SCHED.matches, TEAM_GROUP)
-BR_OK = BRACKET["ok"]
+BR_OK = BRACKET["ok"] and _ABL_BRACKET   # ablación: si se apaga, cae a siembra por fuerza
 # último partido de grupo de cada equipo (origen del viaje hacia la R32)
 LAST_GROUP = {}
 for _t, _ms in SCHED.by_team.items():
@@ -206,7 +213,7 @@ def resolve_slot(slot, num, pos1, pos2, third_team, tassign, winner, loser):
     return loser[v]   # "LM" (perdedor, para el 3er puesto)
 
 # ---------- SIMULACIÓN CONDICIONADA ----------
-random.seed(11); K=20000
+random.seed(int(os.environ.get("SL_SEED", "11"))); K=int(os.environ.get("SL_K", "20000"))
 champ={t:0 for t in MAP}; fin={t:0 for t in MAP}
 for _ in range(K):
     pos1={}; pos2={}; third_team={}; thirds=[]
