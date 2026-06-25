@@ -16,8 +16,17 @@ ANTES de correrlo (opcional): edita lineups.json con quién NO está en el XI.
 """
 import sys, os, math, json
 import fit_dc, engine
-import context_factors as cf
+import context_factors as cf, format_engine as fe
 from datetime import date, timedelta
+
+def _pmf_list(lam, K):
+    """Distribución de goles de un equipo: Poisson o BINOMIAL NEGATIVA (sobredispersión) según
+    context_factors.DISPERSION_R. Así el marcador/goles probables usan la misma herramienta de
+    colas gordas que el simulador de campeón (no solo Poisson)."""
+    r = cf.DISPERSION_R
+    if r is None:
+        return [math.exp(-lam) * lam ** k / math.factorial(k) for k in range(K)]
+    return [fe.negbin_pmf(k, lam, r) for k in range(K)]
 
 engine.setconf(["Rep. Checa","Serbia y Montenegro"],"UEFA"); engine.setconf(["Cabo Verde"],"CAF")
 MAP = json.load(open("namemap.json", encoding="utf-8"))
@@ -101,8 +110,8 @@ def one_x_two(a, b, atk, dfn, c, g, rho, local_anfitrion=False, sede=None, kicko
                                   enable_alt=cf.USE_ALTITUDE, enable_heat=cf.USE_HEAT)
         lh *= fh; la *= fa
     K = 11
-    ph = [math.exp(-lh)*lh**k/math.factorial(k) for k in range(K)]
-    pa = [math.exp(-la)*la**k/math.factorial(k) for k in range(K)]
+    ph = _pmf_list(lh, K)
+    pa = _pmf_list(la, K)
     pw = pd = pl = 0.0
     grid = {}
     for x in range(K):
@@ -124,8 +133,8 @@ def one_x_two(a, b, atk, dfn, c, g, rho, local_anfitrion=False, sede=None, kicko
 
 def _grid_probs(lh, la, rho, K=11):
     """1X2 + grilla de marcadores para unos goles esperados (mismo cálculo Dixon-Coles que one_x_two)."""
-    ph = [math.exp(-lh)*lh**k/math.factorial(k) for k in range(K)]
-    pa = [math.exp(-la)*la**k/math.factorial(k) for k in range(K)]
+    ph = _pmf_list(lh, K)
+    pa = _pmf_list(la, K)
     pw = pd = pl = 0.0; grid = {}
     for x in range(K):
         for y in range(K):

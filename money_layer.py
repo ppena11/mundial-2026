@@ -19,12 +19,21 @@ CRON (clave): para tener histórico, corre snapshot() cada 1-2h.
 import os,sys,json,math,time
 from datetime import datetime, timezone
 
-HIST="odds_history.jsonl"   # una línea JSON por snapshot
+HIST="odds_history.jsonl"           # cuotas de campeón (outright), una línea JSON por snapshot
+H2H_HIST="odds_h2h_history.jsonl"   # cuotas 1X2 POR PARTIDO (de-vigueadas), para el head-to-head vs mercado
 
 def snapshot(odds_dict, label="outrights"):
     """Guarda un snapshot de cuotas {equipo: cuota_decimal} con timestamp."""
     rec={"ts": datetime.now(timezone.utc).isoformat(), "label": label, "odds": odds_dict}
     with open(HIST,"a",encoding="utf-8") as f: f.write(json.dumps(rec, ensure_ascii=False)+"\n")
+    return rec
+
+def snapshot_h2h(matches):
+    """Guarda las cuotas 1X2 por partido (de fetch_odds.h2h) con timestamp. Acumular estos snapshots
+    permite, más adelante, comparar el RPS del modelo vs el del mercado partido a partido (el estándar
+    de oro: 'ganarle a la línea de cierre')."""
+    rec={"ts": datetime.now(timezone.utc).isoformat(), "matches": matches}
+    with open(H2H_HIST,"a",encoding="utf-8") as f: f.write(json.dumps(rec, ensure_ascii=False)+"\n")
     return rec
 
 def _load():
@@ -75,6 +84,13 @@ if __name__=="__main__":
             # guarda también el feed limpio para el ensemble (una sola llamada sirve para todo)
             json.dump(data, open("odds_live.json","w",encoding="utf-8"), ensure_ascii=False, indent=2)
             print(f"Snapshot guardado: {len(data['odds'])} equipos @ {datetime.now(timezone.utc).isoformat()}")
+            # NUEVO: snapshot de cuotas 1X2 POR PARTIDO (para comparar modelo vs mercado a futuro)
+            try:
+                h = fetch_odds.h2h()
+                if h:
+                    snapshot_h2h(h); print(f"Snapshot 1X2 por partido: {len(h)} partidos -> {H2H_HIST}")
+            except Exception as e2:
+                print(f"(sin snapshot 1X2 por partido: {e2})")
         except Exception as e:
             print("Para snapshot real necesitas fetch_odds.py + ODDS_API_KEY. Error:",e)
     elif "--moves" in sys.argv:
