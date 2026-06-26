@@ -33,6 +33,12 @@ _TAG = {"Estados Unidos":"USA","Corea del Sur":"Corea","Arabia Saudi":"ArabiaSau
         "Costa de Marfil":"CostaDeMarfil","R.D. Congo":"Congo","Sudafrica":"Sudafrica"}
 def _tag(team): return "#" + _TAG.get(team, team.replace(" ", ""))
 
+def num_partido_en_torneo(team, target_iso, todos):
+    """Nº de partido del equipo en el torneo HASTA target (inclusive), contado por fecha ET (NO UTC): los partidos
+    de NOCHE en ET caen al día UTC siguiente; contarlos por UTC los descontaba (bug 'segundo' vs 'tercer' partido)."""
+    fechas = sorted(dd.et_date(m["utc"]) for m in todos if team in (m.get("a"), m.get("b")) and m.get("utc"))
+    return sum(1 for f in fechas if f and f <= target_iso)
+
 def _summary(fh, played, pick, clearest, tr):
     """Resumen de datos del día que se le pasa a Claude para que redacte el guion."""
     flarga = dd.fecha_larga(f"{fh[6:10]}{fh[3:5]}{fh[0:2]}")   # 'jueves 18 de junio', calculada en Python
@@ -81,9 +87,6 @@ def _summary(fh, played, pick, clearest, tr):
     except Exception:
         _todos = []
     _tgt = f"{target[:4]}-{target[4:6]}-{target[6:8]}"
-    def _num_partido(team):
-        fechas = sorted(m.get("utc", "")[:10] for m in _todos if team in (m.get("a"), m.get("b")))
-        return sum(1 for f in fechas if f and f <= _tgt)
     for i, d in enumerate(played):
         hora = dd.hora_hablada(d["utc"]) if d.get("utc") else ""
         if d['fav'] == "Empate":
@@ -97,7 +100,7 @@ def _summary(fh, played, pick, clearest, tr):
             sede = d.get("estadio", "")   # SOLO el estadio (sin ciudad ni país: el país 'Estados Unidos' disparaba falsos anclajes de tarjeta)
             det = (f" Hora: {hora}." if hora else "") + (f" Sede: {sede}." if sede else "")
             L.append("- [DETALLE] " + base + det)
-            na, nb = _num_partido(d['a']), _num_partido(d['b'])
+            na, nb = num_partido_en_torneo(d['a'], _tgt, _todos), num_partido_en_torneo(d['b'], _tgt, _todos)
             if na and nb:
                 L.append(f"  Número de partido en el torneo (úsalo EXACTO si lo mencionas, NO lo inventes): "
                          f"es el partido {na} de {dd.acc(d['a'])} y el partido {nb} de {dd.acc(d['b'])}.")

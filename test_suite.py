@@ -412,6 +412,13 @@ ok("AI_SYSTEM pide hora + SOLO el estadio (sin ciudad ni país) y NO citar el me
    all(s in msx.AI_SYSTEM for s in ("SOLO el nombre del", "ESTADIO", "NUNCA la ciudad ni el país", "SIN citar el medio")), "falta la regla")
 ok("AI_SYSTEM: el marcador se dice en el ORDEN de la tarjeta (sx primero, no invertir números)",
    all(s in msx.AI_SYSTEM for s in ("REGLA ABSOLUTA", "PROHIBIDÍSIMAS", "JAMÁS 'Australia uno a cero'")), "falta la regla de coherencia del marcador")
+# nº de partido del equipo: contado por fecha ET, NO UTC (un juego de noche en ET cae al día UTC siguiente y se descontaba)
+_synth_np = [{"a":"X","b":"Y","utc":"2026-06-14T23:00Z"},   # ET 2026-06-14
+             {"a":"X","b":"Z","utc":"2026-06-26T02:00Z"}]   # ET 2026-06-25 (pero fecha UTC = 2026-06-26)
+ok("num_partido_en_torneo cuenta por ET (el juego de noche en ET no se descuenta como 'segundo')",
+   msx.num_partido_en_torneo("X", "2026-06-25", _synth_np) == 2
+   and msx.num_partido_en_torneo("X", "2026-06-24", _synth_np) == 1,
+   f"25/06 ET -> {msx.num_partido_en_torneo('X','2026-06-25',_synth_np)} (esperado 2)")
 ok("_summary ya NO mete 'el día N del torneo'", "hoy es el día" not in sm_x.lower(), "quedó el día N")
 ok("AI_SYSTEM abre con la fecha y prohíbe 'día N del torneo'",
    "Aquí están los pronósticos del Mundial 2026 de mi inteligencia artificial" in msx.AI_SYSTEM and "el día N del torneo" in msx.AI_SYSTEM, "falta la regla")
