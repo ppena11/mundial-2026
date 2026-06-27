@@ -332,7 +332,8 @@ def _limpiar_voz(text):
     text = re.sub(rf"\bA la {horas}\b", r"A las \1", text)
     return re.sub(r"\s{2,}", " ", text).strip()
 
-def build(target):
+def _played_modelo(target):
+    """Calcula los pronósticos del día CON el modelo (uso normal/diario)."""
     games = dd.matches_on(target)
     atk,dfn,c,g,rho = pm.fit_model(); pm.apply_adjustments(atk,dfn)
     try:
@@ -374,6 +375,37 @@ def build(target):
         played.append({"a":a,"b":b,"fav":fav,"fp":fp,"m_fav":mfav,"vc":vc,"sx":sx,"sy":sy,"pdr":pdr,
                        "utc":m.get("utc",""),"estadio":m.get("estadio",""),
                        "ciudad":m.get("ciudad",""),"pais":m.get("pais",""),"is_ko":m.get("is_ko",False)})
+    return played
+
+def played_desde_log(target):
+    """Reconstruye los pronósticos de una fecha PASADA tal como se PUBLICARON (predictions_log.jsonl), SIN
+    re-simular el modelo (hoy daría otros resultados). El marcador, favorito y prob. salen del log; sede/hora del
+    calendario (estáticos). Para reproducir videos antiguos sin cambiar nada."""
+    import re as _re, track_record as _trk
+    iso = f"{target[:4]}-{target[4:6]}-{target[6:8]}"
+    rows = [r for r in _trk.load_log() if r.get("fecha") == iso and r.get("marcador_pred")]
+    sched = {}
+    for m in dd.fetch_all():
+        if m.get("utc") and dd.et_date(m["utc"]) == iso:
+            sched[frozenset((m.get("a"), m.get("b")))] = m
+    played = []
+    for r in rows:
+        a, b = r["a"], r["b"]
+        mm = _re.match(r"\s*(\d+)\s*-\s*(\d+)", r.get("marcador_pred", ""))
+        if not mm: continue
+        sx, sy = int(mm.group(1)), int(mm.group(2))
+        p1, px, p2 = r.get("p1", 0), r.get("pX", 0), r.get("p2", 0)
+        oc = pm.outcome_de(sx, sy)
+        fav, fp = (a, p1) if oc == "1" else ((b, p2) if oc == "2" else ("Empate", px))
+        sm = sched.get(frozenset((a, b)), {})
+        played.append({"a": a, "b": b, "fav": fav, "fp": fp, "m_fav": None, "vc": [], "sx": sx, "sy": sy, "pdr": px,
+                       "utc": sm.get("utc", ""), "estadio": sm.get("estadio", ""),
+                       "ciudad": sm.get("ciudad", ""), "pais": sm.get("pais", ""), "is_ko": sm.get("is_ko", False)})
+    played.sort(key=lambda d: d.get("utc", ""))
+    return played
+
+def build(target, played_override=None):
+    played = played_override if played_override is not None else _played_modelo(target)
     if not played:                                   # día sin partidos -> dato curioso (voz + caption)
         import curio
         cu = curio.ensure(target)
