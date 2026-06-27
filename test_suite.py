@@ -419,6 +419,10 @@ ok("num_partido_en_torneo cuenta por ET (el juego de noche en ET no se descuenta
    msx.num_partido_en_torneo("X", "2026-06-25", _synth_np) == 2
    and msx.num_partido_en_torneo("X", "2026-06-24", _synth_np) == 1,
    f"25/06 ET -> {msx.num_partido_en_torneo('X','2026-06-25',_synth_np)} (esperado 2)")
+ok("fix_team_hashtags: corrige typos de equipo (#PaísesBasos->#PaisesBajos, #Croasia->#Croacia) y respeta los buenos",
+   msx.fix_team_hashtags(["#PaísesBasos", "#Mundial2026", "#Brasil", "#Croasia", "#IA"])
+   == ["#PaisesBajos", "#Mundial2026", "#Brasil", "#Croacia", "#IA"],
+   msx.fix_team_hashtags(["#PaísesBasos", "#Mundial2026", "#Brasil", "#Croasia", "#IA"]))
 ok("_summary ya NO mete 'el día N del torneo'", "hoy es el día" not in sm_x.lower(), "quedó el día N")
 ok("AI_SYSTEM abre con la fecha y prohíbe 'día N del torneo'",
    "Aquí están los pronósticos del Mundial 2026 de mi inteligencia artificial" in msx.AI_SYSTEM and "el día N del torneo" in msx.AI_SYSTEM, "falta la regla")

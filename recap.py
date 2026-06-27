@@ -94,8 +94,12 @@ def ai_recap(summary):
 
 def _five(tags, teams):
     base = ["#Mundial2026"] + ["#" + t.replace(" ", "").replace(".", "") for t in teams[:2]] + ["#IA", "#parati"]
+    try:
+        from make_script import fix_team_hashtags as _fix
+    except Exception:
+        _fix = lambda x: x
     out = []
-    for t in [str(x) for x in tags] + base:
+    for t in _fix([str(x) for x in tags] + base):   # corrige typos de equipo (#PaísesBasos -> #PaisesBajos)
         t = t if t.startswith("#") else "#" + t
         if t not in out:
             out.append(t)
@@ -241,7 +245,11 @@ def build(target):
     yt_d = (ai.get("youtube_descripcion") or "").strip() or (
         f"El Mundial 2026 en 60 segundos al día ⚽ Anoche mi IA acertó {hits} de {n}: comparo el pronóstico con los "
         f"resultados reales, con aciertos y fallos y total transparencia. Suscríbete para el detalle diario, link en la bio.")
-    yt_h = [(t if str(t).startswith("#") else "#"+str(t)) for t in (ai.get("youtube_hashtags") or [])]
+    try:
+        from make_script import fix_team_hashtags as _fix
+    except Exception:
+        _fix = lambda x: x
+    yt_h = _fix([(t if str(t).startswith("#") else "#"+str(t)) for t in (ai.get("youtube_hashtags") or [])])
     for extra in ["#Mundial2026", "#" + matches[0]["a"].replace(" ", "").replace(".", ""), "#Shorts", "#Resultados", "#WorldCup2026"]:
         if len(yt_h) >= 5: break
         if extra not in yt_h: yt_h.append(extra)

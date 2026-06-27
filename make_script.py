@@ -33,6 +33,25 @@ _TAG = {"Estados Unidos":"USA","Corea del Sur":"Corea","Arabia Saudi":"ArabiaSau
         "Costa de Marfil":"CostaDeMarfil","R.D. Congo":"Congo","Sudafrica":"Sudafrica"}
 def _tag(team): return "#" + _TAG.get(team, team.replace(" ", ""))
 
+_CANON_TAGS = None
+def fix_team_hashtags(tags):
+    """Corrige hashtags de nombres de equipo mal escritos por la IA (p. ej. #PaísesBasos -> #PaisesBajos): si un
+    hashtag se parece mucho (≥0.82) a un equipo, lo cambia por la forma canónica de _tag(); el resto se respeta."""
+    global _CANON_TAGS
+    import unicodedata, difflib
+    def _n(h): return "".join(c for c in unicodedata.normalize("NFD", str(h).lstrip("#").lower()) if unicodedata.category(c) != "Mn")
+    if _CANON_TAGS is None:
+        _CANON_TAGS = {_n(_tag(t)): _tag(t) for t in pm.MAP}
+    out = []
+    for t in tags:
+        n = _n(t)
+        if n in _CANON_TAGS:
+            out.append(_CANON_TAGS[n])
+        else:
+            m = difflib.get_close_matches(n, list(_CANON_TAGS), n=1, cutoff=0.82)
+            out.append(_CANON_TAGS[m[0]] if m else (t if str(t).startswith("#") else "#" + str(t)))
+    return out
+
 def num_partido_en_torneo(team, target_iso, todos):
     """Nº de partido del equipo en el torneo HASTA target (inclusive), contado por fecha ET (NO UTC): los partidos
     de NOCHE en ET caen al día UTC siguiente; contarlos por UTC los descontaba (bug 'segundo' vs 'tercer' partido)."""
@@ -293,7 +312,7 @@ def _yt_tags(tags, played):
         pass
     base = ["#Mundial2026"] + [_tag(t) for t in teams] + ["#Shorts", "#Pronosticos", "#WorldCup2026"]
     out = []
-    for t in [(x if str(x).startswith("#") else "#"+str(x)) for x in tags] + base:
+    for t in fix_team_hashtags([(x if str(x).startswith("#") else "#"+str(x)) for x in tags] + base):
         if t not in out: out.append(t)
     return out[:5]
 
@@ -480,7 +499,7 @@ def build(target, played_override=None):
         if cap_ai:
             import re
             cap_ai = re.sub(r"\s*#\S+", "", cap_ai).strip()   # Claude a veces mete hashtags en el caption: quitarlos
-            tags = [(t if t.startswith("#") else "#"+t) for t in tags_ai]
+            tags = fix_team_hashtags(tags_ai)          # corrige typos de equipo (#PaísesBasos -> #PaisesBajos)
             for t in day_hashtags(played).split():     # completa a 5 si Claude devolvió menos
                 if len(tags) >= 5: break
                 if t not in tags: tags.append(t)
