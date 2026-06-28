@@ -228,6 +228,25 @@ finally:
 ok("empate real + pick de ganador = FALLO; empate real + pick de empate = ACIERTO",
    g["x1"].get("acierto_1x2") is False and g["x2"].get("acierto_1x2") is True,
    f"x1(pick 1, real X)={g['x1'].get('acierto_1x2')} | x2(pick X, real X)={g['x2'].get('acierto_1x2')}")
+# REGLA (KO/penales): en eliminatoria el acierto es por QUIÉN AVANZA (penales incl.), NO por el empate reglamentario.
+ctrl_ko = [
+ {"key":"ko1","fecha":"2026-06-28","a":"A","b":"B","label":"Octavos","is_ko":True,"p1":0.6,"pX":0.25,"p2":0.15,"pick":"X","marcador_pred":"1-1","actual":None},  # empate previsto -> avanza A (favorito)
+ {"key":"ko2","fecha":"2026-06-28","a":"C","b":"D","label":"Octavos","is_ko":True,"p1":0.3,"pX":0.25,"p2":0.45,"pick":"2","marcador_pred":"0-1","actual":None},  # dijimos: avanza D
+]
+tr.save_log(ctrl_ko)
+_orig_fr2 = tr.fetch_results
+tr.fetch_results = lambda: {"ko1":{"a":"A","b":"B","ga":1,"gb":1,"adv":"A"},   # 1-1 y AVANZA A (el favorito) -> acierto
+                            "ko2":{"a":"C","b":"D","ga":1,"gb":1,"adv":"C"}}   # 1-1 pero avanza C, dijimos D -> fallo
+try:
+    tr.grade(); g2 = {r["key"]: r for r in tr.load_log()}
+finally:
+    tr.fetch_results = _orig_fr2
+ok("KO a penales: acierto por quién AVANZA (no por el empate reglamentario)",
+   g2["ko1"].get("acierto_1x2") is True and g2["ko2"].get("acierto_1x2") is False,
+   f"ko1(pick X->fav A, avanza A)={g2['ko1'].get('acierto_1x2')} | ko2(pick D, avanza C)={g2['ko2'].get('acierto_1x2')}")
+ok("_fav_ko: empate en KO -> avanza el favorito; empate en grupo -> Empate",
+   ms._fav_ko("X","A","B",0.6,0.15,0.25,True)==("A",0.6,True) and ms._fav_ko("X","A","B",0.6,0.15,0.25,False)[0]=="Empate",
+   f"{ms._fav_ko('X','A','B',0.6,0.15,0.25,True)} | grupo={ms._fav_ko('X','A','B',0.6,0.15,0.25,False)}")
 # restaurar
 for f in (bak_log, bak_tr):
     if os.path.exists(f+".bak"): shutil.move(f+".bak", f)

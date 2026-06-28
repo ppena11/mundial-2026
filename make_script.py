@@ -108,7 +108,11 @@ def _summary(fh, played, pick, clearest, tr):
     _tgt = f"{target[:4]}-{target[4:6]}-{target[6:8]}"
     for i, d in enumerate(played):
         hora = dd.hora_hablada(d["utc"]) if d.get("utc") else ""
-        if d['fav'] == "Empate":
+        if d.get('penales'):
+            base = (f"PRONÓSTICO {dd.acc(d['a'])} contra {dd.acc(d['b'])}: igualada a {d['sx']} en los noventa "
+                    f"({dd.acc(d['a'])} {d['sx']} - {d['sy']} {dd.acc(d['b'])}); como es eliminación directa se "
+                    f"DEFINE EN PENALES y avanzaría {dd.acc(d['fav'])} ({round(100*d['fp'])} por ciento de ganar el cruce).")
+        elif d['fav'] == "Empate":
             base = (f"PRONÓSTICO {dd.acc(d['a'])} contra {dd.acc(d['b'])}: el modelo ve EMPATE a {d['sx']} "
                     f"({round(100*d['fp'])} por ciento de empate); marcador previsto {dd.acc(d['a'])} {d['sx']} - {d['sy']} {dd.acc(d['b'])}.")
         else:
@@ -183,6 +187,9 @@ AI_SYSTEM = (
     "BIEN: 'ojo con Alemania contra Costa de Marfil'). NOMBRA al equipo (no digas 'el equipo favorito'). "
     "Si el dato dice 'el modelo ve EMPATE', NO inventes un favorito: di que el modelo PREVÉ UN EMPATE (p. ej. "
     "'el modelo ve un empate a 1' o 'partido parejo, igualada a 1'), coherente con el marcador. "
+    "Si el dato dice 'se DEFINE EN PENALES y avanzaría <equipo>' (eliminación directa con igualada en los noventa), "
+    "NO digas que es un empate seco: di que el partido se IGUALA en los noventa y se DEFINE EN PENALES, y que AVANZA "
+    "ese equipo (es eliminatoria, alguien tiene que pasar). Mantén el marcador en orden sx-sy igual. "
     "REGLA ABSOLUTA E INNEGOCIABLE DEL MARCADOR (la tarjeta muestra '<equipo A> <sx> - <sy> <equipo B>'): el "
     "PRIMER número que pronuncies para un partido es SIEMPRE el del PRIMER equipo (sx) y el SEGUNDO el del segundo "
     "equipo (sy) — pase lo que pase, GANE QUIEN GANE. NUNCA pongas primero el número del segundo equipo. "
@@ -351,6 +358,14 @@ def _limpiar_voz(text):
     text = re.sub(rf"\bA la {horas}\b", r"A las \1", text)
     return re.sub(r"\s{2,}", " ", text).strip()
 
+def _fav_ko(oc, a, b, p1, p2, px, is_ko):
+    """Favorito a partir del resultado previsto. En ELIMINATORIA un empate previsto NO existe: se define en
+    PENALES, así que avanza el favorito por probabilidad de victoria. Devuelve (fav, fp, penales)."""
+    if oc == "1": return a, p1, False
+    if oc == "2": return b, p2, False
+    if is_ko:     return (a, p1, True) if p1 >= p2 else (b, p2, True)
+    return "Empate", px, False
+
 def _played_modelo(target):
     """Calcula los pronósticos del día CON el modelo (uso normal/diario)."""
     games = dd.matches_on(target)
@@ -387,11 +402,9 @@ def _played_modelo(target):
             if m_w and m_l:
                 sx, sy, pw, pdr, pl, _, _ = pm.ensamble_marcador(lh, la, rho, m_w, m_d, m_l)
         _oc = pm.outcome_de(sx, sy)             # favorito DERIVA del marcador más probable (concuerda con el pick y el recap)
-        if _oc == "1":   fav, fp = a, pw
-        elif _oc == "2": fav, fp = b, pl
-        else:            fav, fp = "Empate", pdr   # marcador de empate -> el pronóstico ES empate (no hay favorito)
-        mfav = (mp.get("Draw") if _oc == "X" else mp.get(fav)) if mp else None   # prob de mercado del resultado previsto
-        played.append({"a":a,"b":b,"fav":fav,"fp":fp,"m_fav":mfav,"vc":vc,"sx":sx,"sy":sy,"pdr":pdr,
+        fav, fp, penales = _fav_ko(_oc, a, b, pw, pl, pdr, m.get("is_ko", False))
+        mfav = (mp.get(fav) if fav != "Empate" else mp.get("Draw")) if mp else None   # prob de mercado del resultado previsto
+        played.append({"a":a,"b":b,"fav":fav,"fp":fp,"penales":penales,"p1":pw,"p2":pl,"m_fav":mfav,"vc":vc,"sx":sx,"sy":sy,"pdr":pdr,
                        "utc":m.get("utc",""),"estadio":m.get("estadio",""),
                        "ciudad":m.get("ciudad",""),"pais":m.get("pais",""),"is_ko":m.get("is_ko",False)})
     return played
@@ -415,9 +428,9 @@ def played_desde_log(target):
         sx, sy = int(mm.group(1)), int(mm.group(2))
         p1, px, p2 = r.get("p1", 0), r.get("pX", 0), r.get("p2", 0)
         oc = pm.outcome_de(sx, sy)
-        fav, fp = (a, p1) if oc == "1" else ((b, p2) if oc == "2" else ("Empate", px))
         sm = sched.get(frozenset((a, b)), {})
-        played.append({"a": a, "b": b, "fav": fav, "fp": fp, "m_fav": None, "vc": [], "sx": sx, "sy": sy, "pdr": px,
+        fav, fp, penales = _fav_ko(oc, a, b, p1, p2, px, sm.get("is_ko", False))
+        played.append({"a": a, "b": b, "fav": fav, "fp": fp, "penales": penales, "p1": p1, "p2": p2, "m_fav": None, "vc": [], "sx": sx, "sy": sy, "pdr": px,
                        "utc": sm.get("utc", ""), "estadio": sm.get("estadio", ""),
                        "ciudad": sm.get("ciudad", ""), "pais": sm.get("pais", ""), "is_ko": sm.get("is_ko", False)})
     played.sort(key=lambda d: d.get("utc", ""))

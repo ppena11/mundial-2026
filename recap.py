@@ -50,7 +50,10 @@ AI_RECAP_SYS = (
     '"titulo": título viral para el post (máx ~70 caracteres, con gancho, máximo 1 emoji).\n'
     '"gancho": 1 o 2 frases para el digest; engancha con cómo nos fue (acierto destacado o sorpresa).\n'
     '"voz": guion HABLADO que REPASA TODOS los partidos de anoche, uno por uno, ágil y con ritmo (UNA frase corta '
-    "por partido: el marcador real + si ACERTAMOS o FALLAMOS; NO te alargues en ninguno). NO metas resultados de "
+    "por partido: el marcador real + si ACERTAMOS o FALLAMOS; NO te alargues en ninguno). "
+    "Si un partido dice 'se fue a PENALES y avanzó X', NO lo llames empate seco: di que igualaron en los noventa y "
+    "que X avanzó en la tanda de PENALES (es eliminación directa, alguien tiene que pasar). "
+    "NO metas resultados de "
     "OTROS días. Tono de narrador con PERSONALIDAD. Estructura: "
     "(1) GANCHO de UNA frase con el récord de anoche ('acertamos X de Y'), directo, sin frases vagas tipo 'noche de "
     "luces y sombras'; (2) RECORRE CADA partido con su marcador real y si acertamos o fallamos —VARIANDO cómo lo "
@@ -152,11 +155,18 @@ def build(target):
         if not r or r.get("actual") is None:
             continue
         pick_code = r["pick"]
-        pick_team = a if pick_code == "1" else (b if pick_code == "2" else "Empate")
+        is_ko = bool(r.get("is_ko"))
+        if is_ko and pick_code == "X":
+            pick_team = a if r.get("p1", 0) >= r.get("p2", 0) else b   # KO: empate previsto -> avanza el favorito (penales)
+        else:
+            pick_team = a if pick_code == "1" else (b if pick_code == "2" else "Empate")
         ppick = {"1": r["p1"], "X": r["pX"], "2": r["p2"]}[pick_code]
+        mr = r.get("marcador_real", ""); _pg = mr.split("-")
+        penales = is_ko and len(_pg) == 2 and _pg[0].strip() == _pg[1].strip()   # igualada en KO = se fue a penales
         matches.append({"a": a, "b": b, "hora": dd.hora_et(m["utc"]), "label": m["label"],
                         "pick_code": pick_code, "pick_team": pick_team, "ppick": round(ppick, 3),
-                        "marcador_pred": r.get("marcador_pred", ""), "marcador_real": r.get("marcador_real", ""),
+                        "marcador_pred": r.get("marcador_pred", ""), "marcador_real": mr,
+                        "is_ko": is_ko, "penales": penales, "avanza_real": r.get("avanza_real"),
                         "ok1x2": bool(r.get("acierto_1x2")), "okexact": bool(r.get("acierto_exacto"))})
 
     if not matches:
@@ -190,7 +200,9 @@ def build(target):
     sm = [f"Anoche fue {dia}, {fecha_h}. El modelo acertó {hits} de {n} partidos." if dia
           else f"Cierre del {fecha_h}. El modelo acertó {hits} de {n} partidos."]
     for x in matches:
-        sm.append(f"- {dd.acc(x['a'])} {x['marcador_real']} {dd.acc(x['b'])}: dijimos {dd.acc(x['pick_team'])} "
+        extra = (f", se fue a PENALES y avanzó {dd.acc(x['avanza_real'])}"
+                 if x.get("penales") and x.get("avanza_real") else "")
+        sm.append(f"- {dd.acc(x['a'])} {x['marcador_real']} {dd.acc(x['b'])}{extra}: dijimos {dd.acc(x['pick_team'])} "
                   f"({round(100*x['ppick'])} por ciento), {'ACERTAMOS' if x['ok1x2'] else 'FALLAMOS'}.")
     if surprise and surprise["ppick"] < 0.55:
         sm.append(f"Sorpresa bien clavada: {dd.acc(surprise['pick_team'])} (le daban {round(100*surprise['ppick'])} por ciento).")

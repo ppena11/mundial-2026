@@ -55,9 +55,12 @@ def fetch_results():
                 a = dd.EN2ES.get(home["team"]["displayName"], home["team"]["displayName"])
                 b = dd.EN2ES.get(away["team"]["displayName"], away["team"]["displayName"])
                 ga, gb = int(home.get("score", 0)), int(away.get("score", 0))
+                # equipo que AVANZA según ESPN (flag winner/advance) — vale para partidos definidos en PENALES
+                adv = next((dd.EN2ES.get(c["team"]["displayName"], c["team"]["displayName"])
+                            for c in cs if c.get("winner") or c.get("advance")), None)
             except Exception:
                 continue
-            res[_key(a, b, dd.et_date(e.get("date", "")))] = {"a": a, "b": b, "ga": ga, "gb": gb}
+            res[_key(a, b, dd.et_date(e.get("date", "")))] = {"a": a, "b": b, "ga": ga, "gb": gb, "adv": adv}
     return res
 
 def log_predictions(target):
@@ -75,6 +78,7 @@ def log_predictions(target):
         pw, pdr, pl, lh, la, (sx, sy) = pm.one_x_two(a, b, atk, dfn, c, g, rho, local_anfitrion=True)
         pick = pm.outcome_de(sx, sy)   # el pick DERIVA del marcador más probable (lo que se publica), para que concuerden
         rows.append({"key": k, "fecha": dd.et_date(m["utc"]), "a": a, "b": b, "label": m["label"],
+                     "is_ko": m.get("is_ko", False),
                      "p1": round(pw, 4), "pX": round(pdr, 4), "p2": round(pl, 4),
                      "pick": pick, "marcador_pred": f"{sx}-{sy}", "actual": None})
         nuevos += 1
@@ -92,9 +96,16 @@ def grade():
         if m["a"] == r["a"]: ga, gb = m["ga"], m["gb"]
         else:               ga, gb = m["gb"], m["ga"]
         outcome = "1" if ga > gb else ("X" if ga == gb else "2")
-        r["actual"] = outcome
+        r["actual"] = outcome                       # resultado reglamentario (lo usa el Brier)
         r["marcador_real"] = f"{ga}-{gb}"
-        r["acierto_1x2"] = (r["pick"] == outcome)
+        if r.get("is_ko") and m.get("adv"):         # ELIMINATORIA: acierto = predecir QUIÉN AVANZA (penales incluidos)
+            if r["pick"] == "1":   adv_pick = r["a"]
+            elif r["pick"] == "2": adv_pick = r["b"]
+            else:                  adv_pick = r["a"] if r.get("p1", 0) >= r.get("p2", 0) else r["b"]  # empate previsto -> favorito
+            r["avanza_real"] = m["adv"]
+            r["acierto_1x2"] = (adv_pick == m["adv"])
+        else:
+            r["acierto_1x2"] = (r["pick"] == outcome)
         r["acierto_exacto"] = (r["marcador_pred"] == f"{ga}-{gb}")
         graded += 1
     save_log(rows)

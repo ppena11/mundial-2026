@@ -212,7 +212,10 @@ def fetch_state():
         try: gl=[int(x.get("score",0)) for x in cs]
         except Exception: continue
         if slug in KO_SLUGS:
-            w = cs[0] if gl[0]>gl[1] else cs[1]
+            # el que AVANZA según ESPN (flag winner/advance) — vale para partidos definidos en PENALES,
+            # donde el marcador queda empatado; respaldo por marcador si el feed no trae el flag.
+            w = next((x for x in cs if x.get("winner") or x.get("advance")), None)
+            if w is None: w = cs[0] if gl[0]>gl[1] else cs[1]
             ko[frozenset(nm)] = EN2ES.get(w["team"]["displayName"],w["team"]["displayName"])
         else:
             gp[frozenset(nm)]={nm[0]:gl[0],nm[1]:gl[1]}
