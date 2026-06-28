@@ -1,17 +1,21 @@
 """
-sim_live_ko.py — simulación con CUADRO REAL de eliminatorias (DORMIDO / en pruebas).
+sim_live_ko.py — simulación con CUADRO REAL de eliminatorias (ACTIVO desde 28-jun-2026).
 Extiende sim_live: además de condicionar la fase de grupos, usa el cuadro REAL del
-Mundial 2026 (estructura de ESPN, transcrita abajo) y condiciona los resultados de
-eliminatoria ya jugados (el perdedor de un partido KO queda fuera de verdad).
+Mundial 2026 y condiciona los resultados de eliminatoria ya jugados (el perdedor de un
+partido KO queda fuera de verdad).
 
-ESTADO: NO está conectado a run_all (sigue usando sim_live.py). Es para validar el
-~28 de junio con datos reales antes de activarlo.
+ESTADO: conectado a run_all.py (run_sim). Es el simulador de campeón en producción.
 
-SUPOSICIÓN A VALIDAR EL 28-JUN: que la numeración R32 #1..#16 (y R16 #1..#8) coincide
-con el orden en que ESPN devuelve los eventos. La topología (quién juega contra quién)
-está transcrita de la API de ESPN. Si la numeración no calza, se reordena BRACKET aquí.
+CUADRO (validado 28-jun-2026 contra los placeholders EN VIVO de ESPN, no solo transcrito):
+  - Terminada la fase de grupos, ANCLA los 16 emparejamientos REALES de Dieciseisavos de
+    ESPN (compute_fixed_r32) en lugar de reconstruirlos — así no depende de la tabla de
+    asignación de terceros, que es la parte frágil. Verificado: 16/16 emparejamientos.
+  - R32_SLOTS coincide posición-a-posición con la numeración nativa de ESPN; R16/QF/SF
+    se contrastaron con round-of-16 / quarterfinals / semifinals (R16 pares, QF grupos y
+    SF mitades = ESPN). Antes había un error en el ORDEN de R16_PAIRS (ya corregido).
+  - Antes de terminar los grupos cae a la reconstrucción (R32_SLOTS + assign_thirds).
 
-Escribe champ_today.json / champ_today.png (mismo formato).
+Escribe champ_today.json (clave 'campeon', mismo formato que sim_live; lo consume make_ensemble).
 """
 import csv, math, random, json, urllib.parse
 import fit_dc, engine
@@ -94,10 +98,12 @@ R32_SLOTS = [
  (("W","K"),("3",frozenset("DEIJL"))),                   # 16
 ]
 # pares de la siguiente ronda (1-indexados como ESPN): ganador de match i vs ganador de match j
-R16_PAIRS=[(1,3),(2,5),(4,6),(11,12),(7,8),(13,15),(14,16),(9,10)]
-QF_PAIRS =[(1,2),(5,6),(3,4),(7,8)]
-SF_PAIRS =[(1,2),(3,4)]
-F_PAIR   =(1,2)
+# VALIDADO 28-jun-2026 contra los placeholders en vivo de ESPN (round-of-16/quarterfinals/semifinals/final):
+#   R16 #4=(7,8) y #5=(11,12) — el orden importa porque QF empareja por número de octavo (antes estaban permutados).
+R16_PAIRS=[(1,3),(2,5),(4,6),(7,8),(11,12),(9,10),(14,16),(13,15)]
+QF_PAIRS =[(1,2),(5,6),(3,4),(7,8)]   # QF1=R16(1,2) QF2=R16(5,6) QF3=R16(3,4) QF4=R16(7,8)  ✓ ESPN
+SF_PAIRS =[(1,2),(3,4)]               # SF1=QF1+QF2  SF2=QF3+QF4  ✓ ESPN
+F_PAIR   =(1,2)                       # Final=SF1+SF2  ✓ ESPN
 THIRD_SLOTS=[(i,s[1][1]) for i,s in enumerate(R32_SLOTS) if s[1][0]=="3"]  # (idx_R32, frozenset candidatos)
 
 def assign_thirds(qualified_groups):
@@ -124,10 +130,10 @@ def assign_thirds(qualified_groups):
 HEAD={"User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36"}
 PROXY="https://api.codetabs.com/v1/proxy/?quest="
 ESPN="https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world"
+import daily_digest as _dd_names
 EN2ES={en:es for es,en in MAP.items()}
-EN2ES.update({"Czechia":"Chequia","Czech Republic":"Chequia","USA":"Estados Unidos","United States":"Estados Unidos",
-              "South Korea":"Corea del Sur","Korea Republic":"Corea del Sur","IR Iran":"Iran","Türkiye":"Turquia",
-              "Bosnia & Herzegovina":"Bosnia","Bosnia and Herzegovina":"Bosnia","Bosnia-Herzegovina":"Bosnia","Côte d'Ivoire":"Costa de Marfil"})
+EN2ES.update(_dd_names.EN2ES)   # mapeo COMPLETO de daily_digest (incluye 'Congo DR'->R.D. Congo, que faltaba: sin él se perdían los 3 partidos del grupo K)
+EN2ES.update({"Korea Republic":"Corea del Sur"})   # extra propio que daily_digest no trae
 KO_SLUGS={"round-of-32","round-of-16","quarterfinals","semifinals","final","3rd-place"}
 
 def _get(url):
@@ -136,8 +142,9 @@ def _get(url):
     except Exception: return requests.get(PROXY+urllib.parse.quote(url,safe=""),headers=HEAD,timeout=45).json()
 
 def fetch_state():
-    """Devuelve (group_played {frozenset:{a:ga,b:gb}}, ko_winner {frozenset:ganador})."""
-    gp={}; ko={}
+    """Devuelve (group_played {frozenset:{a:ga,b:gb}}, ko_winner {frozenset:ganador}, r32_matchups [(a,b)...]).
+    r32_matchups = los 16 emparejamientos REALES de Dieciseisavos de ESPN (aunque no se hayan jugado), para anclarlos."""
+    gp={}; ko={}; r32=[]
     # simulacros locales para pruebas (tienen prioridad)
     try:
         for m in json.load(open("wc_results_mock.json",encoding="utf-8")):
@@ -148,32 +155,76 @@ def fetch_state():
             ko[frozenset((m[0],m[1]))]=m[2]
     except FileNotFoundError: pass
     if gp or ko:
-        print("(usando simulacros locales wc_*_mock.json)"); return gp,ko
-    if date.today() < date(2026,6,11): return gp,ko
+        print("(usando simulacros locales wc_*_mock.json)"); return gp,ko,r32
+    if date.today() < date(2026,6,11): return gp,ko,r32
     try:
         data=_get(f"{ESPN}/scoreboard?dates=20260611-20260720")
     except Exception as e:
-        print(f"(sin estado ESPN: {e})"); return gp,ko
+        print(f"(sin estado ESPN: {e})"); return gp,ko,r32
     for e in data.get("events",[]):
         comp=(e.get("competitions") or [{}])[0]
-        if comp.get("status",{}).get("type",{}).get("state")!="post": continue
         cs=comp.get("competitors",[])
         if len(cs)!=2: continue
         try:
             nm=[EN2ES.get(x["team"]["displayName"],x["team"]["displayName"]) for x in cs]
-            gl=[int(x.get("score",0)) for x in cs]
         except Exception: continue
         slug=e.get("season",{}).get("slug","")
+        if slug=="round-of-32": r32.append((nm[0],nm[1]))          # emparejamiento real (cualquier estado)
+        if comp.get("status",{}).get("type",{}).get("state")!="post": continue
+        try: gl=[int(x.get("score",0)) for x in cs]
+        except Exception: continue
         if slug in KO_SLUGS:
             w = cs[0] if gl[0]>gl[1] else cs[1]
             ko[frozenset(nm)] = EN2ES.get(w["team"]["displayName"],w["team"]["displayName"])
         else:
             gp[frozenset(nm)]={nm[0]:gl[0],nm[1]:gl[1]}
-    return gp,ko
+    return gp,ko,r32
 
-GP, KO = fetch_state()
+def _standings_real(gp):
+    """W/R/3º por grupo desde los resultados reales (pts, GD, GF). {team: ('W'/'R'/'3', grupo)} o None si falta algún grupo."""
+    tslot={}
+    for g,T in GROUPS.items():
+        s={t:[0,0,0] for t in T}
+        for i in range(4):
+            for j in range(i+1,4):
+                a,b=T[i],T[j]; k=frozenset((a,b))
+                if k not in gp: return None
+                ga,gb=gp[k][a],gp[k][b]
+                if ga>gb: s[a][0]+=3
+                elif gb>ga: s[b][0]+=3
+                else: s[a][0]+=1; s[b][0]+=1
+                s[a][1]+=ga-gb; s[b][1]+=gb-ga; s[a][2]+=ga; s[b][2]+=gb
+        o=sorted(T,key=lambda t:(s[t][0],s[t][1],s[t][2]),reverse=True)
+        tslot[o[0]]=('W',g); tslot[o[1]]=('R',g); tslot[o[2]]=('3',g)
+    return tslot
+
+def compute_fixed_r32(gp, r32_matchups):
+    """Posiciona los 16 emparejamientos R32 REALES de ESPN en el cuadro (R32_SLOTS) usando el standing real.
+    Devuelve {idx 0..15: (a,b)} si todos los grupos están jugados y los 16 calzan en posiciones únicas; si no, None
+    (se cae a la reconstrucción con assign_thirds). Así el cuadro KO es EXACTO sin depender de la tabla de terceros."""
+    if len(r32_matchups) != 16: return None
+    tslot = _standings_real(gp)
+    if tslot is None: return None
+    grp_of = {t:g for g,T in GROUPS.items() for t in T}
+    def fits(team, slot):
+        if slot[0]=='3': return tslot.get(team,('?',))[0]=='3' and grp_of.get(team) in slot[1]
+        return tslot.get(team)==slot
+    fixed={}; used=set()
+    for (x,y) in r32_matchups:
+        hit=None
+        for i,(sA,sB) in enumerate(R32_SLOTS):
+            if i in used: continue
+            if fits(x,sA) and fits(y,sB): hit=(i,(x,y)); break
+            if fits(x,sB) and fits(y,sA): hit=(i,(y,x)); break
+        if hit is None: return None
+        used.add(hit[0]); fixed[hit[0]]=hit[1]
+    return fixed if len(fixed)==16 else None
+
+GP, KO, R32M = fetch_state()
+FIXED_R32 = compute_fixed_r32(GP, R32M)   # cuadro KO REAL anclado de ESPN (si los grupos terminaron); si no, None -> reconstrucción
 n_grp=sum(1 for grp in GROUPS.values() for i in range(4) for j in range(i+1,4) if frozenset((grp[i],grp[j])) in GP)
 print(f"Partidos jugados detectados — grupos: {n_grp} | eliminatorias: {len(KO)}")
+print("  -> Dieciseisavos REALES de ESPN ANCLADOS (16 emparejamientos)" if FIXED_R32 else "  -> cuadro RECONSTRUIDO (grupos sin terminar)")
 
 def play(a,b):
     """Condiciona por resultado real si existe; si no, simula."""
@@ -185,30 +236,34 @@ def play(a,b):
 random.seed(11); Ksims=20000
 champ={t:0 for t in MAP}; fin={t:0 for t in MAP}
 for _ in range(Ksims):
-    pos={}; thirds=[]
-    for gN,T in GROUPS.items():
-        tab={t:[0,0,0] for t in T}
-        for i in range(4):
-            for j in range(i+1,4):
-                a,b=T[i],T[j];key=frozenset((a,b))
-                if key in GP: ga,gb=GP[key][a],GP[key][b]
-                else:
-                    lh=math.exp(c+A[a]-dfn[b]+(g if a in hosts else 0));la=math.exp(c+A[b]-dfn[a]+(g if b in hosts else 0));ga,gb=pois(lh),pois(la)
-                if ga>gb:tab[a][0]+=3
-                elif gb>ga:tab[b][0]+=3
-                else:tab[a][0]+=1;tab[b][0]+=1
-                tab[a][1]+=ga-gb;tab[b][1]+=gb-ga;tab[a][2]+=ga;tab[b][2]+=gb
-        o=sorted(T,key=lambda t:(tab[t][0],tab[t][1],tab[t][2],random.random()),reverse=True)
-        pos[("W",gN)]=o[0];pos[("R",gN)]=o[1]
-        thirds.append((gN,o[2],tab[o[2]][0],tab[o[2]][1],tab[o[2]][2]))
-    best=sorted(thirds,key=lambda x:(x[2],x[3],x[4],random.random()),reverse=True)[:8]
-    qgroups={x[0] for x in best}; third_team={x[0]:x[1] for x in best}
-    amap=assign_thirds(qgroups)   # idx_R32 -> grupo
     winners={}
-    for idx,(sA,sB) in enumerate(R32_SLOTS):
-        ta = third_team[amap[idx]] if sA[0]=="3" else pos[sA]
-        tb = third_team[amap[idx]] if sB[0]=="3" else pos[sB]
-        winners[("R32",idx+1)] = play(ta,tb)
+    if FIXED_R32 is not None:                          # cuadro KO REAL anclado: solo se simulan los RESULTADOS
+        for idx,(a,b) in FIXED_R32.items():
+            winners[("R32",idx+1)] = play(a,b)
+    else:                                              # pre-KO: simular grupos y reconstruir el cuadro
+        pos={}; thirds=[]
+        for gN,T in GROUPS.items():
+            tab={t:[0,0,0] for t in T}
+            for i in range(4):
+                for j in range(i+1,4):
+                    a,b=T[i],T[j];key=frozenset((a,b))
+                    if key in GP: ga,gb=GP[key][a],GP[key][b]
+                    else:
+                        lh=math.exp(c+A[a]-dfn[b]+(g if a in hosts else 0));la=math.exp(c+A[b]-dfn[a]+(g if b in hosts else 0));ga,gb=pois(lh),pois(la)
+                    if ga>gb:tab[a][0]+=3
+                    elif gb>ga:tab[b][0]+=3
+                    else:tab[a][0]+=1;tab[b][0]+=1
+                    tab[a][1]+=ga-gb;tab[b][1]+=gb-ga;tab[a][2]+=ga;tab[b][2]+=gb
+            o=sorted(T,key=lambda t:(tab[t][0],tab[t][1],tab[t][2],random.random()),reverse=True)
+            pos[("W",gN)]=o[0];pos[("R",gN)]=o[1]
+            thirds.append((gN,o[2],tab[o[2]][0],tab[o[2]][1],tab[o[2]][2]))
+        best=sorted(thirds,key=lambda x:(x[2],x[3],x[4],random.random()),reverse=True)[:8]
+        qgroups={x[0] for x in best}; third_team={x[0]:x[1] for x in best}
+        amap=assign_thirds(qgroups)   # idx_R32 -> grupo
+        for idx,(sA,sB) in enumerate(R32_SLOTS):
+            ta = third_team[amap[idx]] if sA[0]=="3" else pos[sA]
+            tb = third_team[amap[idx]] if sB[0]=="3" else pos[sB]
+            winners[("R32",idx+1)] = play(ta,tb)
     def round_play(pairs,name,src):
         out={}
         for n,(i,j) in enumerate(pairs,1):
