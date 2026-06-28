@@ -93,11 +93,12 @@ def snapshot_odds():
     subprocess.run([sys.executable,"money_layer.py","--snapshot"], timeout=60, check=True)
 
 def run_sim():
-    # sim_live_ko = consciente del torneo Y del cuadro de eliminatorias.
-    # Antes del Mundial se comporta como sim20k; en fase de grupos condiciona a los resultados reales;
-    # terminada la fase de grupos ANCLA los 16 emparejamientos REALES de Dieciseisavos de ESPN y su árbol
-    # (R16/QF/SF validados 28-jun-2026 contra los placeholders en vivo), simulando solo los resultados KO.
-    subprocess.run([sys.executable,"sim_live_ko.py"], timeout=600, check=True)
+    # sim_live_ko = modelo COMPLETO (forma del Mundial, lesiones, Dixon-Coles+dispersión, factores
+    # altura/calor/viaje en grupos Y eliminatorias, desempates FIFA, 100k sims) + el CUADRO REAL de ESPN:
+    # terminada la fase de grupos ANCLA los 16 emparejamientos reales de Dieciseisavos y su árbol R16/QF/SF
+    # (validado 28-jun-2026 en vivo) y CONDICIONA los resultados KO ya jugados. (El bracket de schedule_2026
+    # no coincide con ESPN, por eso aquí se usa el de ESPN.)
+    subprocess.run([sys.executable,"sim_live_ko.py"], timeout=900, check=True)
 
 def detect_money():
     subprocess.run([sys.executable,"money_layer.py","--moves"], timeout=30, check=True)
