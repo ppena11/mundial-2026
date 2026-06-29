@@ -158,9 +158,10 @@ def build(target):
         is_ko = bool(r.get("is_ko"))
         if is_ko and pick_code == "X":
             pick_team = a if r.get("p1", 0) >= r.get("p2", 0) else b   # KO: empate previsto -> avanza el favorito (penales)
+            ppick = max(r.get("p1", 0), r.get("p2", 0)) + 0.5 * r.get("pX", 0)   # % = prob. de AVANZAR (gana + ½ empate)
         else:
             pick_team = a if pick_code == "1" else (b if pick_code == "2" else "Empate")
-        ppick = {"1": r["p1"], "X": r["pX"], "2": r["p2"]}[pick_code]
+            ppick = {"1": r["p1"], "X": r["pX"], "2": r["p2"]}[pick_code]
         mr = r.get("marcador_real", ""); _pg = mr.split("-")
         penales = is_ko and len(_pg) == 2 and _pg[0].strip() == _pg[1].strip()   # igualada en KO = se fue a penales
         matches.append({"a": a, "b": b, "hora": dd.hora_et(m["utc"]), "label": m["label"],

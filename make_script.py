@@ -360,10 +360,13 @@ def _limpiar_voz(text):
 
 def _fav_ko(oc, a, b, p1, p2, px, is_ko):
     """Favorito a partir del resultado previsto. En ELIMINATORIA un empate previsto NO existe: se define en
-    PENALES, así que avanza el favorito por probabilidad de victoria. Devuelve (fav, fp, penales)."""
+    PENALES, así que avanza el favorito y el % que se muestra es su probabilidad de AVANZAR =
+    P(gana) + ½·P(empate) (los penales son ~50/50; nada inventado). Devuelve (fav, fp, penales)."""
     if oc == "1": return a, p1, False
     if oc == "2": return b, p2, False
-    if is_ko:     return (a, p1, True) if p1 >= p2 else (b, p2, True)
+    if is_ko:                                                  # empate en KO -> avanza el favorito; % = prob. de avanzar
+        if p1 >= p2: return a, p1 + 0.5*px, True
+        else:        return b, p2 + 0.5*px, True
     return "Empate", px, False
 
 def _played_modelo(target):

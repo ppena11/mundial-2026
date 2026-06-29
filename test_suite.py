@@ -244,9 +244,10 @@ finally:
 ok("KO a penales: acierto por quién AVANZA (no por el empate reglamentario)",
    g2["ko1"].get("acierto_1x2") is True and g2["ko2"].get("acierto_1x2") is False,
    f"ko1(pick X->fav A, avanza A)={g2['ko1'].get('acierto_1x2')} | ko2(pick D, avanza C)={g2['ko2'].get('acierto_1x2')}")
-ok("_fav_ko: empate en KO -> avanza el favorito; empate en grupo -> Empate",
-   ms._fav_ko("X","A","B",0.6,0.15,0.25,True)==("A",0.6,True) and ms._fav_ko("X","A","B",0.6,0.15,0.25,False)[0]=="Empate",
-   f"{ms._fav_ko('X','A','B',0.6,0.15,0.25,True)} | grupo={ms._fav_ko('X','A','B',0.6,0.15,0.25,False)}")
+_fk = ms._fav_ko("X","A","B",0.6,0.15,0.25,True)   # avanza A; prob de avanzar = 0.6 + 0.5*0.25 = 0.725
+ok("_fav_ko: empate en KO -> avanza el favorito con prob de AVANZAR (gana + ½ empate); empate en grupo -> Empate",
+   _fk[0]=="A" and _fk[2] is True and abs(_fk[1]-0.725)<1e-9 and ms._fav_ko("X","A","B",0.6,0.15,0.25,False)[0]=="Empate",
+   f"{_fk} | grupo={ms._fav_ko('X','A','B',0.6,0.15,0.25,False)}")
 # restaurar
 for f in (bak_log, bak_tr):
     if os.path.exists(f+".bak"): shutil.move(f+".bak", f)
