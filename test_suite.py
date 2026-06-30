@@ -375,6 +375,31 @@ for f in (bak_log, bak_tr):
 for f in ("recap_today.json", "recap_voiceover.txt", "recap_caption.txt"):
     if os.path.exists(f): os.remove(f)
 
+# TRANSPARENCIA (KO): el recap muestra el pronóstico en la orientación con que se REGISTRÓ, aunque ESPN voltee
+# local/visitante entre la mañana y la noche (en eliminatorias pasa). Antes invertía el marcador del pronóstico.
+_bl = "predictions_log.jsonl"
+if os.path.exists(_bl): shutil.copy(_bl, _bl + ".bak")
+_A, _B, _utc = "Paises Bajos", "Marruecos", "2026-06-29T19:00Z"
+tr.save_log([{"key": tr._key(_A, _B, "2026-06-29"), "fecha": "2026-06-29", "a": _A, "b": _B, "label": "Octavos",
+              "is_ko": True, "p1": 0.6, "pX": 0.25, "p2": 0.15, "pick": "1", "marcador_pred": "1-0",
+              "actual": "1", "marcador_real": "1-0", "acierto_1x2": True, "acierto_exacto": True}])
+_omo, _ofr = dd.matches_on, tr.fetch_results
+dd.matches_on = lambda d: [{"a": _B, "b": _A, "utc": _utc, "label": "Octavos", "is_ko": True}]  # ESPN VOLTEADO (B,A)
+tr.fetch_results = lambda: {}
+try:
+    _cor = recap.build("20260629"); _m0 = (_cor.get("matches") or [{}])[0]
+    ok("recap KO: respeta la orientación del pronóstico publicado (no lo invierte aunque ESPN voltee local/visitante)",
+       _m0.get("a") == _A and _m0.get("b") == _B and _m0.get("marcador_pred") == "1-0",
+       f"a={_m0.get('a')} b={_m0.get('b')} pred={_m0.get('marcador_pred')} (matches_on lo devolvió volteado)")
+except Exception as e:
+    ok("recap KO: respeta la orientación del pronóstico publicado", False, f"{type(e).__name__}: {e}")
+finally:
+    dd.matches_on, tr.fetch_results = _omo, _ofr
+    if os.path.exists(_bl + ".bak"): shutil.move(_bl + ".bak", _bl)
+    elif os.path.exists(_bl): os.remove(_bl)
+for f in ("recap_today.json", "recap_voiceover.txt", "recap_caption.txt", "viral_recap.json"):
+    if os.path.exists(f): os.remove(f)
+
 # ============================================================
 section("14) SUBTÍTULOS (texto = nuestro guion; Whisper solo para el tiempo)")
 import subtitulos as sub

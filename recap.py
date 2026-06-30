@@ -154,6 +154,10 @@ def build(target):
         r = logbykey.get(tr._key(a, b, dd.et_date(m["utc"])))
         if not r or r.get("actual") is None:
             continue
+        # TRANSPARENCIA: mostrar el partido EXACTAMENTE en la orientación con que se PRONOSTICÓ y registró
+        # (marcador_pred, marcador_real y pick están en la orientación r['a']-r['b']). En KO ESPN puede invertir
+        # local/visitante entre la mañana y la noche; usar la de matches_on volteaba el marcador del pronóstico.
+        a, b = r["a"], r["b"]
         pick_code = r["pick"]
         is_ko = bool(r.get("is_ko"))
         if is_ko and pick_code == "X":
