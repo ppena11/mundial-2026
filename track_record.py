@@ -64,22 +64,25 @@ def fetch_results():
     return res
 
 def log_predictions(target):
-    """Registra las predicciones de los partidos de la fecha `target` (con la info de ese día,
-    para que el historial sea justo: lo que de verdad se publicó)."""
+    """Registra las predicciones del día `target` EXACTAMENTE como se PUBLICAN en el pronóstico.
+    Usa la MISMA fuente que el video (make_script._played_modelo: ensamble modelo+mercado), para que el recap
+    califique y muestre lo que de verdad se dijo — NO una versión solo-modelo distinta (transparencia)."""
     rows = load_log()
     have = {r["key"] for r in rows}
-    atk, dfn, c, g, rho = pm.fit_model(); pm.apply_adjustments(atk, dfn)
+    import make_script as _ms
+    played = _ms._played_modelo(target)   # marcador/favorito PUBLICADOS (modelo+mercado), una sola fuente de verdad
     nuevos = 0
-    for m in dd.matches_on(target):
-        a, b = m["a"], m["b"]
+    for d in played:
+        a, b = d["a"], d["b"]
         if a not in pm.MAP or b not in pm.MAP: continue   # KO con equipos por definir -> aún no
-        k = _key(a, b, dd.et_date(m["utc"]))
+        iso = dd.et_date(d.get("utc", ""))
+        k = _key(a, b, iso)
         if k in have: continue
-        pw, pdr, pl, lh, la, (sx, sy) = pm.one_x_two(a, b, atk, dfn, c, g, rho, local_anfitrion=True)
-        pick = pm.outcome_de(sx, sy)   # el pick DERIVA del marcador más probable (lo que se publica), para que concuerden
-        rows.append({"key": k, "fecha": dd.et_date(m["utc"]), "a": a, "b": b, "label": m["label"],
-                     "is_ko": m.get("is_ko", False),
-                     "p1": round(pw, 4), "pX": round(pdr, 4), "p2": round(pl, 4),
+        sx, sy = d["sx"], d["sy"]
+        pick = pm.outcome_de(sx, sy)   # el pick DERIVA del marcador publicado, para que todo concuerde
+        rows.append({"key": k, "fecha": iso, "a": a, "b": b, "label": d.get("label", ""),
+                     "is_ko": d.get("is_ko", False),
+                     "p1": round(d.get("p1", 0.0), 4), "pX": round(d.get("pdr", 0.0), 4), "p2": round(d.get("p2", 0.0), 4),
                      "pick": pick, "marcador_pred": f"{sx}-{sy}", "actual": None})
         nuevos += 1
     save_log(rows)

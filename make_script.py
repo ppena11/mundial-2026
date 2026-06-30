@@ -408,7 +408,7 @@ def _played_modelo(target):
         fav, fp, penales = _fav_ko(_oc, a, b, pw, pl, pdr, m.get("is_ko", False))
         mfav = (mp.get(fav) if fav != "Empate" else mp.get("Draw")) if mp else None   # prob de mercado del resultado previsto
         played.append({"a":a,"b":b,"fav":fav,"fp":fp,"penales":penales,"p1":pw,"p2":pl,"m_fav":mfav,"vc":vc,"sx":sx,"sy":sy,"pdr":pdr,
-                       "utc":m.get("utc",""),"estadio":m.get("estadio",""),
+                       "label":m.get("label",""),"utc":m.get("utc",""),"estadio":m.get("estadio",""),
                        "ciudad":m.get("ciudad",""),"pais":m.get("pais",""),"is_ko":m.get("is_ko",False)})
     return played
 

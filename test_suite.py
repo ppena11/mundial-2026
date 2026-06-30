@@ -400,6 +400,26 @@ finally:
 for f in ("recap_today.json", "recap_voiceover.txt", "recap_caption.txt", "viral_recap.json"):
     if os.path.exists(f): os.remove(f)
 
+# TRANSPARENCIA: el LOG registra EXACTAMENTE el pronóstico PUBLICADO (ensamble modelo+mercado de make_script),
+# no una versión solo-modelo distinta. Antes el mercado podía voltear el favorito en el video pero el log
+# guardaba el del modelo -> el recap mostraba/calificaba otro pronóstico.
+_omod = ms._played_modelo
+ms._played_modelo = lambda t: [{"a": "Paises Bajos", "b": "Marruecos", "sx": 1, "sy": 0, "p1": 0.45, "p2": 0.40,
+                                "pdr": 0.15, "is_ko": True, "label": "Octavos", "utc": "2026-06-29T19:00Z"}]
+_bl3 = "predictions_log.jsonl"
+if os.path.exists(_bl3): shutil.copy(_bl3, _bl3 + ".bak")
+tr.save_log([])
+try:
+    tr.log_predictions("20260629")
+    _rr = {r["key"]: r for r in tr.load_log()}.get(tr._key("Paises Bajos", "Marruecos", "2026-06-29"), {})
+    ok("log registra el pronóstico PUBLICADO (marcador/pick del ensamble modelo+mercado), no el modelo solo",
+       _rr.get("marcador_pred") == "1-0" and _rr.get("pick") == "1",
+       f"marcador={_rr.get('marcador_pred')} pick={_rr.get('pick')} (debe coincidir con lo publicado)")
+finally:
+    ms._played_modelo = _omod
+    if os.path.exists(_bl3 + ".bak"): shutil.move(_bl3 + ".bak", _bl3)
+    elif os.path.exists(_bl3): os.remove(_bl3)
+
 # ============================================================
 section("14) SUBTÍTULOS (texto = nuestro guion; Whisper solo para el tiempo)")
 import subtitulos as sub
