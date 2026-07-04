@@ -1,259 +1,227 @@
 1
-00:00:00,000 --> 00:00:01,882
+00:00:00,280 --> 00:00:01,120
 Aquí están los pronósticos
 
 2
-00:00:01,882 --> 00:00:03,192
+00:00:01,120 --> 00:00:02,660
 del Mundial 2026 de
 
 3
-00:00:03,192 --> 00:00:05,483
+00:00:02,660 --> 00:00:04,519
 mi inteligencia artificial para
 
 4
-00:00:05,483 --> 00:00:05,883
+00:00:04,519 --> 00:00:04,960
 hoy,
 
 5
-00:00:05,811 --> 00:00:07,120
-viernes 3 de julio.
+00:00:04,960 --> 00:00:06,759
+sábado 4 de julio.
 
 6
-00:00:07,120 --> 00:00:08,103
-Vamos 51 de 85.
+00:00:06,759 --> 00:00:09,339
+Vamos 54 de 88.
 
 7
-00:00:08,103 --> 00:00:09,658
-Australia se mide ante
+00:00:09,339 --> 00:00:10,560
+Canadá se mide ante
 
 8
-00:00:09,658 --> 00:00:11,868
-Egipto en eliminación directa:
+00:00:10,560 --> 00:00:11,419
+Marruecos a la una
 
 9
-00:00:11,868 --> 00:00:13,013
-partido parejo,
+00:00:11,419 --> 00:00:12,179
+de la tarde en
 
 10
-00:00:13,013 --> 00:00:13,996
-igualada a 0 en
+00:00:12,179 --> 00:00:13,599
+el NRG Stadium,
 
 11
-00:00:13,996 --> 00:00:15,469
-los noventa minutos y
+00:00:13,599 --> 00:00:14,380
+y el modelo ve
 
 12
-00:00:15,469 --> 00:00:16,942
-se define en penales,
+00:00:14,380 --> 00:00:15,339
+favorito claro al equipo
 
 13
-00:00:16,942 --> 00:00:18,497
-con Egipto avanzando.
+00:00:15,339 --> 00:00:16,320
+marroquí con un cero
 
 14
-00:00:18,497 --> 00:00:20,216
-El mercado lo subestima;
+00:00:16,320 --> 00:00:17,300
+a uno.
 
 15
-00:00:20,216 --> 00:00:21,444
-mi modelo ve mayor
+00:00:17,300 --> 00:00:18,379
+El mercado lo ve
 
 16
-00:00:21,444 --> 00:00:23,163
-solidez defensiva en los
+00:00:18,379 --> 00:00:19,480
+aún más contundente con
 
 17
-00:00:23,163 --> 00:00:24,718
-australianos de lo que
+00:00:19,480 --> 00:00:21,160
+54 por ciento,
 
 18
-00:00:24,718 --> 00:00:26,273
-el consenso reconoce.
+00:00:21,160 --> 00:00:22,100
+pero mi modelo le
 
 19
-00:00:26,273 --> 00:00:27,010
-A las dos de
+00:00:22,100 --> 00:00:23,160
+da 25 por ciento
 
 20
-00:00:27,010 --> 00:00:27,910
-la tarde en el
+00:00:23,160 --> 00:00:24,059
+a Canadá y el
 
 21
-00:00:27,910 --> 00:00:28,892
-AT&T Stadium,
+00:00:24,059 --> 00:00:25,260
+consenso solo 18:
 
 22
-00:00:28,892 --> 00:00:30,038
-todo apunta a que
+00:00:25,260 --> 00:00:26,199
+hay espacio para la
 
 23
-00:00:30,038 --> 00:00:31,511
-Mohamed Salah lleva a
+00:00:26,199 --> 00:00:27,320
+sorpresa en Houston,
 
 24
-00:00:31,511 --> 00:00:33,312
-los egipcios al siguiente
+00:00:27,320 --> 00:00:28,239
+donde cierra el fútbol
 
 25
-00:00:33,312 --> 00:00:33,803
-nivel.
+00:00:28,239 --> 00:00:29,000
+de la ciudad sede
 
 26
-00:00:33,803 --> 00:00:35,931
-Argentina parte como favorita
+00:00:29,000 --> 00:00:29,899
+en estos cuartos de
 
 27
-00:00:35,931 --> 00:00:37,896
-contundente ante Cabo Verde
+00:00:29,899 --> 00:00:30,879
+final.
 
 28
-00:00:37,896 --> 00:00:38,468
-con un 2 a
+00:00:30,879 --> 00:00:31,820
+Luego,
 
 29
-00:00:38,468 --> 00:00:38,868
-0:
+00:00:31,820 --> 00:00:32,979
+Paraguay enfrenta a Francia
 
 30
-00:00:38,632 --> 00:00:40,187
-este marcador es claro
+00:00:32,979 --> 00:00:33,700
+a las cinco de
 
 31
-00:00:40,187 --> 00:00:41,415
-porque el modelo y
-
-32
-00:00:41,415 --> 00:00:43,298
-el mercado casi coinciden,
-
-33
-00:00:43,298 --> 00:00:45,016
-ambos ven una diferencia
-
-34
-00:00:45,016 --> 00:00:46,490
-de calidad abismal en
-
-35
-00:00:46,490 --> 00:00:47,881
-el cuarto partido de
-
-36
-00:00:47,881 --> 00:00:48,781
-cada equipo.
-
-37
-00:00:48,781 --> 00:00:49,600
-A las seis de
-
-38
-00:00:49,600 --> 00:00:50,500
+00:00:33,700 --> 00:00:34,619
 la tarde en el
 
+32
+00:00:34,619 --> 00:00:36,020
+Lincoln Financial Field,
+
+33
+00:00:36,020 --> 00:00:36,640
+y aquí el modelo
+
+34
+00:00:36,640 --> 00:00:37,304
+no tiene dudas:
+
+35
+00:00:37,304 --> 00:00:38,119
+dos a cero para
+
+36
+00:00:38,119 --> 00:00:39,066
+los franceses con 70
+
+37
+00:00:39,066 --> 00:00:41,179
+por ciento de confianza.
+
+38
+00:00:41,179 --> 00:00:42,046
+El mercado los ve
+
 39
-00:00:50,500 --> 00:00:51,810
-Hard Rock Stadium,
+00:00:42,046 --> 00:00:43,340
+aún más dominantes con
 
 40
-00:00:51,810 --> 00:00:53,692
-Argentina toma el control.
+00:00:43,340 --> 00:00:44,460
+82 por ciento,
 
 41
-00:00:53,692 --> 00:00:55,739
-Colombia también domina ante
+00:00:44,460 --> 00:00:45,920
+pero ese dominio tiene
 
 42
-00:00:55,739 --> 00:00:56,230
-Ghana:
+00:00:45,920 --> 00:00:47,000
+sentido dado el calor
 
 43
-00:00:56,230 --> 00:00:57,539
-favorita con 70 por
+00:00:47,000 --> 00:00:48,619
+extremo y las tormentas
 
 44
-00:00:57,539 --> 00:00:58,112
-ciento,
+00:00:48,619 --> 00:00:50,000
+que amenazan el partido,
 
 45
-00:00:58,112 --> 00:00:58,685
-gana 2 a 0
+00:00:50,000 --> 00:00:51,619
+factores que pueden jugar
 
 46
-00:00:58,685 --> 00:00:59,913
-en su cuarto juego
+00:00:51,619 --> 00:00:52,359
+a favor de la
 
 47
-00:00:59,913 --> 00:01:00,731
-del torneo.
+00:00:52,359 --> 00:00:54,320
+potencia francesa.
 
 48
-00:01:00,731 --> 00:01:01,550
-A las nueve y
+00:00:54,320 --> 00:00:55,560
+El fútbol no avisa
 
 49
-00:01:01,550 --> 00:01:02,696
-media de la noche
+00:00:55,560 --> 00:00:57,000
+cuándo llega la sorpresa,
 
 50
-00:01:02,696 --> 00:01:04,415
-en el Arrowhead Stadium,
-
-51
-00:01:04,415 --> 00:01:06,215
-los cafeteros avanzan sin
-
-52
-00:01:06,215 --> 00:01:06,870
-fisuras,
-
-53
-00:01:06,870 --> 00:01:08,753
-aunque Queiroz reporta una
-
-54
-00:01:08,753 --> 00:01:09,980
-baja por lesión en
-
-55
-00:01:09,980 --> 00:01:10,717
-sus filas.
-
-56
-00:01:10,717 --> 00:01:12,108
-El fútbol no escribe
-
-57
-00:01:12,108 --> 00:01:13,909
-sus partidas de antemano,
-
-58
-00:01:13,909 --> 00:01:16,201
+00:00:57,000 --> 00:00:58,399
 pero mi inteligencia artificial
 
-59
-00:01:16,201 --> 00:01:17,347
-ya lee el libreto
+51
+00:00:58,399 --> 00:00:59,219
+sí.
 
-60
-00:01:17,347 --> 00:01:17,838
-de hoy.
-
-61
-00:01:17,838 --> 00:01:19,311
+52
+00:00:59,219 --> 00:01:00,159
 Suscríbete a mi canal
 
-62
-00:01:19,311 --> 00:01:20,539
-de YouTube para el
+53
+00:01:00,159 --> 00:01:01,359
+de YouTube y ve
 
-63
-00:01:20,539 --> 00:01:22,176
-análisis completo en el
+54
+00:01:01,359 --> 00:01:02,520
+el análisis completo en
 
-64
-00:01:22,176 --> 00:01:23,158
-link de mi bio.
+55
+00:01:02,520 --> 00:01:03,229
+el link de mi
 
-65
-00:01:23,158 --> 00:01:24,386
+56
+00:01:03,229 --> 00:01:03,629
+bio.
+
+57
+00:01:03,479 --> 00:01:05,079
 Soy aiwithpedro.
