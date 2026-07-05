@@ -1,227 +1,207 @@
 1
-00:00:00,280 --> 00:00:01,120
+00:00:00,000 --> 00:00:01,755
 Aquí están los pronósticos
 
 2
-00:00:01,120 --> 00:00:02,660
+00:00:01,755 --> 00:00:02,976
 del Mundial 2026 de
 
 3
-00:00:02,660 --> 00:00:04,519
+00:00:02,976 --> 00:00:05,113
 mi inteligencia artificial para
 
 4
-00:00:04,519 --> 00:00:04,960
+00:00:05,113 --> 00:00:05,513
 hoy,
 
 5
-00:00:04,960 --> 00:00:06,759
-sábado 4 de julio.
+00:00:05,418 --> 00:00:06,640
+domingo 5 de julio.
 
 6
-00:00:06,759 --> 00:00:09,339
-Vamos 54 de 88.
+00:00:06,640 --> 00:00:07,556
+Vamos 56 de 90.
 
 7
-00:00:09,339 --> 00:00:10,560
-Canadá se mide ante
+00:00:07,556 --> 00:00:09,311
+Brasil parte como favorito
 
 8
-00:00:10,560 --> 00:00:11,419
-Marruecos a la una
+00:00:09,311 --> 00:00:10,532
+ante Noruega en los
 
 9
-00:00:11,419 --> 00:00:12,179
-de la tarde en
+00:00:10,532 --> 00:00:11,677
+octavos de final,
 
 10
-00:00:12,179 --> 00:00:13,599
-el NRG Stadium,
+00:00:11,677 --> 00:00:13,280
+con un marcador previsto
 
 11
-00:00:13,599 --> 00:00:14,380
-y el modelo ve
+00:00:13,280 --> 00:00:13,680
+de 2 a 1
 
 12
-00:00:14,380 --> 00:00:15,339
-favorito claro al equipo
+00:00:13,661 --> 00:00:14,577
+a las cuatro de
 
 13
-00:00:15,339 --> 00:00:16,320
-marroquí con un cero
-
-14
-00:00:16,320 --> 00:00:17,300
-a uno.
-
-15
-00:00:17,300 --> 00:00:18,379
-El mercado lo ve
-
-16
-00:00:18,379 --> 00:00:19,480
-aún más contundente con
-
-17
-00:00:19,480 --> 00:00:21,160
-54 por ciento,
-
-18
-00:00:21,160 --> 00:00:22,100
-pero mi modelo le
-
-19
-00:00:22,100 --> 00:00:23,160
-da 25 por ciento
-
-20
-00:00:23,160 --> 00:00:24,059
-a Canadá y el
-
-21
-00:00:24,059 --> 00:00:25,260
-consenso solo 18:
-
-22
-00:00:25,260 --> 00:00:26,199
-hay espacio para la
-
-23
-00:00:26,199 --> 00:00:27,320
-sorpresa en Houston,
-
-24
-00:00:27,320 --> 00:00:28,239
-donde cierra el fútbol
-
-25
-00:00:28,239 --> 00:00:29,000
-de la ciudad sede
-
-26
-00:00:29,000 --> 00:00:29,899
-en estos cuartos de
-
-27
-00:00:29,899 --> 00:00:30,879
-final.
-
-28
-00:00:30,879 --> 00:00:31,820
-Luego,
-
-29
-00:00:31,820 --> 00:00:32,979
-Paraguay enfrenta a Francia
-
-30
-00:00:32,979 --> 00:00:33,700
-a las cinco de
-
-31
-00:00:33,700 --> 00:00:34,619
+00:00:14,577 --> 00:00:15,417
 la tarde en el
 
+14
+00:00:15,417 --> 00:00:16,562
+MetLife Stadium.
+
+15
+00:00:16,562 --> 00:00:17,630
+Este es su quinto
+
+16
+00:00:17,630 --> 00:00:18,928
+partido en el torneo
+
+17
+00:00:18,928 --> 00:00:19,767
+y el modelo ve
+
+18
+00:00:19,767 --> 00:00:21,294
+claridad en su dominio,
+
+19
+00:00:21,294 --> 00:00:23,049
+aunque el mercado coincide
+
+20
+00:00:23,049 --> 00:00:23,812
+en ese 54 por
+
+21
+00:00:23,812 --> 00:00:24,347
+ciento;
+
+22
+00:00:24,347 --> 00:00:26,102
+Noruega llega con opciones
+
+23
+00:00:26,102 --> 00:00:26,636
+reales,
+
+24
+00:00:26,636 --> 00:00:28,316
+pero la defensa brasileña
+
+25
+00:00:28,316 --> 00:00:29,460
+ha estado sólida.
+
+26
+00:00:29,460 --> 00:00:30,987
+El mercado subestima un
+
+27
+00:00:30,987 --> 00:00:32,284
+poco a los nórdicos,
+
+28
+00:00:32,284 --> 00:00:33,277
+que el modelo ve
+
+29
+00:00:33,277 --> 00:00:34,421
+con 26 por ciento:
+
+30
+00:00:34,421 --> 00:00:35,414
+tienen chance.
+
+31
+00:00:35,414 --> 00:00:35,872
+Luego,
+
 32
-00:00:34,619 --> 00:00:36,020
-Lincoln Financial Field,
+00:00:35,872 --> 00:00:37,398
+Inglaterra se mide ante
 
 33
-00:00:36,020 --> 00:00:36,640
-y aquí el modelo
+00:00:37,398 --> 00:00:38,467
+México a las ocho
 
 34
-00:00:36,640 --> 00:00:37,304
-no tiene dudas:
+00:00:38,467 --> 00:00:39,306
+de la noche en
 
 35
-00:00:37,304 --> 00:00:38,119
-dos a cero para
+00:00:39,306 --> 00:00:40,604
+el Estadio Banorte,
 
 36
-00:00:38,119 --> 00:00:39,066
-los franceses con 70
+00:00:40,604 --> 00:00:41,901
+también en octavos.
 
 37
-00:00:39,066 --> 00:00:41,179
-por ciento de confianza.
+00:00:41,901 --> 00:00:42,970
+El modelo da leve
 
 38
-00:00:41,179 --> 00:00:42,046
-El mercado los ve
+00:00:42,970 --> 00:00:44,420
+ventaja a los ingleses
 
 39
-00:00:42,046 --> 00:00:43,340
-aún más dominantes con
+00:00:44,420 --> 00:00:45,488
+con 43 por ciento
 
 40
-00:00:43,340 --> 00:00:44,460
-82 por ciento,
+00:00:45,488 --> 00:00:46,252
+y espera un 1
 
 41
-00:00:44,460 --> 00:00:45,920
-pero ese dominio tiene
+00:00:46,252 --> 00:00:47,167
+a 0 para ellos.
 
 42
-00:00:45,920 --> 00:00:47,000
-sentido dado el calor
+00:00:47,167 --> 00:00:48,770
+México llega invicto con
 
 43
-00:00:47,000 --> 00:00:48,619
-extremo y las tormentas
+00:00:48,770 --> 00:00:50,602
+cuatro victorias y portería
 
 44
-00:00:48,619 --> 00:00:50,000
-que amenazan el partido,
+00:00:50,602 --> 00:00:51,136
+en cero,
 
 45
-00:00:50,000 --> 00:00:51,619
-factores que pueden jugar
+00:00:51,136 --> 00:00:52,663
+un récord histórico que
 
 46
-00:00:51,619 --> 00:00:52,359
-a favor de la
+00:00:52,663 --> 00:00:54,037
+lo hace más peligroso
 
 47
-00:00:52,359 --> 00:00:54,320
-potencia francesa.
+00:00:54,037 --> 00:00:54,724
+de lo que el
 
 48
-00:00:54,320 --> 00:00:55,560
-El fútbol no avisa
+00:00:54,724 --> 00:00:55,945
+marcador sugiere,
 
 49
-00:00:55,560 --> 00:00:57,000
-cuándo llega la sorpresa,
+00:00:55,945 --> 00:00:57,547
+pero Inglaterra tiene la
 
 50
-00:00:57,000 --> 00:00:58,399
-pero mi inteligencia artificial
+00:00:57,547 --> 00:00:59,150
+experiencia defensiva.
 
 51
-00:00:58,399 --> 00:00:59,219
-sí.
+00:00:59,150 --> 00:01:01,135
+Dos eliminatorias decisivas,
 
 52
-00:00:59,219 --> 00:01:00,159
-Suscríbete a mi canal
-
-53
-00:01:00,159 --> 00:01:01,359
-de YouTube y ve
-
-54
-00:01:01,359 --> 00:01:02,520
-el análisis completo en
-
-55
-00:01:02,520 --> 00:01:03,229
-el link de mi
-
-56
-00:01:03,229 --> 00:01:03,629
-bio.
-
-57
-00:01:03,479 --> 00:01:05,079
-Soy aiwithpedro.
+00:01:01,135 --> 00:01:02,738
+dos pronósticos claros.
