@@ -1,207 +1,271 @@
 1
-00:00:00,000 --> 00:00:01,755
+00:00:00,376 --> 00:00:01,882
 Aquí están los pronósticos
 
 2
-00:00:01,755 --> 00:00:02,976
+00:00:01,882 --> 00:00:03,388
 del Mundial 2026 de
 
 3
-00:00:02,976 --> 00:00:05,113
+00:00:03,388 --> 00:00:04,895
 mi inteligencia artificial para
 
 4
-00:00:05,113 --> 00:00:05,513
+00:00:04,895 --> 00:00:05,295
 hoy,
 
 5
-00:00:05,418 --> 00:00:06,640
-domingo 5 de julio.
+00:00:05,271 --> 00:00:06,777
+lunes 6 de julio.
 
 6
-00:00:06,640 --> 00:00:07,556
-Vamos 56 de 90.
+00:00:06,777 --> 00:00:08,283
+Vamos 57 de 92.
 
 7
-00:00:07,556 --> 00:00:09,311
-Brasil parte como favorito
+00:00:08,283 --> 00:00:09,790
+Portugal se mide ante
 
 8
-00:00:09,311 --> 00:00:10,532
-ante Noruega en los
+00:00:09,790 --> 00:00:11,296
+España a las tres
 
 9
-00:00:10,532 --> 00:00:11,677
-octavos de final,
+00:00:11,296 --> 00:00:12,802
+de la tarde en
 
 10
-00:00:11,677 --> 00:00:13,280
-con un marcador previsto
+00:00:12,802 --> 00:00:13,932
+el AT&T Stadium,
 
 11
-00:00:13,280 --> 00:00:13,680
-de 2 a 1
-
-12
-00:00:13,661 --> 00:00:14,577
-a las cuatro de
-
-13
-00:00:14,577 --> 00:00:15,417
-la tarde en el
-
-14
-00:00:15,417 --> 00:00:16,562
-MetLife Stadium.
-
-15
-00:00:16,562 --> 00:00:17,630
-Este es su quinto
-
-16
-00:00:17,630 --> 00:00:18,928
-partido en el torneo
-
-17
-00:00:18,928 --> 00:00:19,767
+00:00:13,932 --> 00:00:15,438
 y el modelo ve
 
+12
+00:00:15,438 --> 00:00:16,944
+a los españoles ganando
+
+13
+00:00:16,944 --> 00:00:18,074
+uno a cero.
+
+14
+00:00:18,074 --> 00:00:19,580
+España parte como favorita
+
+15
+00:00:19,580 --> 00:00:21,086
+clara con el 47
+
+16
+00:00:21,086 --> 00:00:21,839
+por ciento,
+
+17
+00:00:21,839 --> 00:00:23,345
+y esta cifra casa
+
 18
-00:00:19,767 --> 00:00:21,294
-claridad en su dominio,
+00:00:23,345 --> 00:00:24,851
+casi exacta con lo
 
 19
-00:00:21,294 --> 00:00:23,049
-aunque el mercado coincide
+00:00:24,851 --> 00:00:26,358
+que maneja el mercado,
 
 20
-00:00:23,049 --> 00:00:23,812
-en ese 54 por
+00:00:26,358 --> 00:00:27,864
+pero lo interesante es
 
 21
-00:00:23,812 --> 00:00:24,347
-ciento;
+00:00:27,864 --> 00:00:29,370
+el partido en sí:
 
 22
-00:00:24,347 --> 00:00:26,102
-Noruega llega con opciones
+00:00:29,370 --> 00:00:30,500
+Cristiano contra Lamine,
 
 23
-00:00:26,102 --> 00:00:26,636
-reales,
+00:00:30,500 --> 00:00:32,140
+dos generaciones del fútbol
 
 24
-00:00:26,636 --> 00:00:28,316
-pero la defensa brasileña
+00:00:32,140 --> 00:00:33,579
+mundial decidiendo en una
 
 25
-00:00:28,316 --> 00:00:29,460
-ha estado sólida.
+00:00:33,579 --> 00:00:34,600
+cancha que merece su
 
 26
-00:00:29,460 --> 00:00:30,987
-El mercado subestima un
+00:00:34,600 --> 00:00:35,880
+propia película.
 
 27
-00:00:30,987 --> 00:00:32,284
-poco a los nórdicos,
+00:00:35,880 --> 00:00:36,659
+Este uno a cero
 
 28
-00:00:32,284 --> 00:00:33,277
-que el modelo ve
+00:00:36,659 --> 00:00:38,079
+me parece contundente porque
 
 29
-00:00:33,277 --> 00:00:34,421
-con 26 por ciento:
+00:00:38,079 --> 00:00:39,740
+la defensa portuguesa ha
 
 30
-00:00:34,421 --> 00:00:35,414
-tienen chance.
+00:00:39,740 --> 00:00:40,799
+estado sólida,
 
 31
-00:00:35,414 --> 00:00:35,872
-Luego,
+00:00:40,799 --> 00:00:41,920
+pero la magia ofensiva
 
 32
-00:00:35,872 --> 00:00:37,398
-Inglaterra se mide ante
+00:00:41,920 --> 00:00:42,859
+de España en los
 
 33
-00:00:37,398 --> 00:00:38,467
-México a las ocho
+00:00:42,859 --> 00:00:44,380
+últimos juegos les da
 
 34
-00:00:38,467 --> 00:00:39,306
-de la noche en
+00:00:44,380 --> 00:00:45,399
+ese punto extra que
 
 35
-00:00:39,306 --> 00:00:40,604
-el Estadio Banorte,
+00:00:45,399 --> 00:00:47,500
+define los encuentros cerrados.
 
 36
-00:00:40,604 --> 00:00:41,901
-también en octavos.
+00:00:47,500 --> 00:00:48,039
+Luego,
 
 37
-00:00:41,901 --> 00:00:42,970
-El modelo da leve
+00:00:48,039 --> 00:00:49,219
+Estados Unidos recibe a
 
 38
-00:00:42,970 --> 00:00:44,420
-ventaja a los ingleses
+00:00:49,219 --> 00:00:50,159
+Bélgica a las ocho
 
 39
-00:00:44,420 --> 00:00:45,488
-con 43 por ciento
+00:00:50,159 --> 00:00:51,000
+de la noche en
 
 40
-00:00:45,488 --> 00:00:46,252
-y espera un 1
+00:00:51,000 --> 00:00:52,119
+el Lumen Field,
 
 41
-00:00:46,252 --> 00:00:47,167
-a 0 para ellos.
+00:00:52,119 --> 00:00:52,979
+con los belgas ganando
 
 42
-00:00:47,167 --> 00:00:48,770
-México llega invicto con
+00:00:52,979 --> 00:00:54,100
+dos a uno.
 
 43
-00:00:48,770 --> 00:00:50,602
-cuatro victorias y portería
+00:00:54,100 --> 00:00:54,899
+Aquí el modelo le
 
 44
-00:00:50,602 --> 00:00:51,136
-en cero,
+00:00:54,899 --> 00:00:56,200
+da 56 por ciento
 
 45
-00:00:51,136 --> 00:00:52,663
-un récord histórico que
+00:00:56,200 --> 00:00:57,659
+al favorito frente al
 
 46
-00:00:52,663 --> 00:00:54,037
-lo hace más peligroso
+00:00:57,659 --> 00:00:58,939
+34 por ciento del
 
 47
-00:00:54,037 --> 00:00:54,724
-de lo que el
+00:00:58,939 --> 00:00:59,859
+consenso del mercado,
 
 48
-00:00:54,724 --> 00:00:55,945
-marcador sugiere,
+00:00:59,859 --> 00:01:01,240
+y esa brecha es
 
 49
-00:00:55,945 --> 00:00:57,547
-pero Inglaterra tiene la
+00:01:01,240 --> 00:01:01,939
+real:
 
 50
-00:00:57,547 --> 00:00:59,150
-experiencia defensiva.
+00:01:01,939 --> 00:01:03,759
+Bélgica llega reforzada tras
 
 51
-00:00:59,150 --> 00:01:01,135
-Dos eliminatorias decisivas,
+00:01:03,759 --> 00:01:05,620
+sus últimos resultados y
 
 52
-00:01:01,135 --> 00:01:02,738
-dos pronósticos claros.
+00:01:05,620 --> 00:01:06,599
+el mercado parece no
+
+53
+00:01:06,599 --> 00:01:07,400
+verla con la claridad
+
+54
+00:01:07,400 --> 00:01:08,519
+que debería.
+
+55
+00:01:08,519 --> 00:01:09,340
+Este dos a uno
+
+56
+00:01:09,340 --> 00:01:11,079
+es ajustado pero firme,
+
+57
+00:01:11,079 --> 00:01:12,420
+y el contraste entre
+
+58
+00:01:12,420 --> 00:01:13,099
+lo que mi modelo
+
+59
+00:01:13,099 --> 00:01:14,140
+predice y lo que
+
+60
+00:01:14,140 --> 00:01:15,640
+el consenso vende es
+
+61
+00:01:15,640 --> 00:01:17,060
+un buen termómetro de
+
+62
+00:01:17,060 --> 00:01:18,060
+dónde está el verdadero
+
+63
+00:01:18,060 --> 00:01:19,560
+valor del día.
+
+64
+00:01:19,560 --> 00:01:20,420
+El fútbol no se
+
+65
+00:01:20,420 --> 00:01:21,620
+juega en las apuestas,
+
+66
+00:01:21,620 --> 00:01:22,680
+pero en el análisis:
+
+67
+00:01:22,680 --> 00:01:24,519
+mi inteligencia artificial ya
+
+68
+00:01:24,519 --> 00:01:25,780
+está tres pasos adelante.
