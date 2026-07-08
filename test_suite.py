@@ -334,7 +334,10 @@ if os.path.exists(curio.CURIO_FILE): os.remove(curio.CURIO_FILE)
 # ============================================================
 section("13) CIERRE DEL DÍA (recap: resultados vs pronóstico)")
 bak_log = "predictions_log.jsonl"; bak_tr = "track_record.json"
-for f in (bak_log, bak_tr):
+# outputs REALES del recap del día: respaldarlos para RESTAURARLOS al final (antes los tests los BORRABAN
+# y se perdían los captions del día si la suite corría después de auto_recap)
+_RECAP_OUTS = ("recap_today.json", "recap_voiceover.txt", "recap_caption.txt", "recap_youtube.txt", "viral_recap.json")
+for f in (bak_log, bak_tr) + _RECAP_OUTS:
     if os.path.exists(f): shutil.copy(f, f + ".bak")
 tr.fetch_results = lambda: {}                  # offline: el log ya viene calificado
 rday = "20260611"
@@ -372,8 +375,7 @@ except Exception as e:
 for f in (bak_log, bak_tr):
     if os.path.exists(f + ".bak"): shutil.move(f + ".bak", f)
     elif os.path.exists(f): os.remove(f)
-for f in ("recap_today.json", "recap_voiceover.txt", "recap_caption.txt"):
-    if os.path.exists(f): os.remove(f)
+# (los outputs del recap se restauran en el cleanup FINAL de la sección; aquí no se borra nada)
 
 # TRANSPARENCIA (KO): el recap muestra el pronóstico en la orientación con que se REGISTRÓ, aunque ESPN voltee
 # local/visitante entre la mañana y la noche (en eliminatorias pasa). Antes invertía el marcador del pronóstico.
@@ -397,8 +399,9 @@ finally:
     dd.matches_on, tr.fetch_results = _omo, _ofr
     if os.path.exists(_bl + ".bak"): shutil.move(_bl + ".bak", _bl)
     elif os.path.exists(_bl): os.remove(_bl)
-for f in ("recap_today.json", "recap_voiceover.txt", "recap_caption.txt", "viral_recap.json"):
-    if os.path.exists(f): os.remove(f)
+for f in _RECAP_OUTS:                       # RESTAURA los outputs reales del día (no borrar contenido publicable)
+    if os.path.exists(f + ".bak"): shutil.move(f + ".bak", f)
+    elif os.path.exists(f): os.remove(f)
 
 # TRANSPARENCIA: el LOG registra EXACTAMENTE el pronóstico PUBLICADO (ensamble modelo+mercado de make_script),
 # no una versión solo-modelo distinta. Antes el mercado podía voltear el favorito en el video pero el log
