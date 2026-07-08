@@ -507,8 +507,10 @@ finally:
 _bak_vpj = open("viral_pronostico.json", encoding="utf-8").read() if os.path.exists("viral_pronostico.json") else None
 try:
     json.dump({"target": "20260101", "partidos": [{"a": "X", "b": "Y"}]}, open("viral_pronostico.json", "w", encoding="utf-8"))
-    ok("render_viral: export de pronóstico de OTRO día -> hoy es día sin partidos (usa el cuadro)",
-       rv._hay_partidos_hoy() is False, "un export viejo contaba como partidos de hoy")
+    _viejo_no = rv._hay_partidos_hoy() is False
+    os.remove("viral_pronostico.json")
+    ok("render_viral: export de pronóstico VIEJO o AUSENTE -> hoy es día sin partidos (usa el cuadro)",
+       _viejo_no and rv._hay_partidos_hoy() is False, "un export viejo/ausente contaba como partidos de hoy")
 finally:
     if _bak_vpj is not None: open("viral_pronostico.json", "w", encoding="utf-8").write(_bak_vpj)
     elif os.path.exists("viral_pronostico.json"): os.remove("viral_pronostico.json")

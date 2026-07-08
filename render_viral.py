@@ -103,7 +103,7 @@ def _hay_partidos_hoy():
             return False   # export VIEJO (de un día anterior): hoy no hubo pronóstico (día sin partidos)
         return bool(vp.get("partidos"))
     except Exception:
-        return True   # ante la duda, comportamiento clásico
+        return False   # sin export (o corrupto) = hoy no se generó pronóstico -> día sin partidos
 
 if __name__ == "__main__":
     what = sys.argv[1] if len(sys.argv) > 1 else "both"
