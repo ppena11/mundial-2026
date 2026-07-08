@@ -503,6 +503,15 @@ finally:
     if _bak_vb is not None: open("viral_bracket.json", "w", encoding="utf-8").write(_bak_vb)
     for _f in ("viral_bracket_video.json",):
         if os.path.exists(_f): os.remove(_f)
+# 9b) _hay_partidos_hoy: un viral_pronostico.json VIEJO (target de otro día) NO cuenta como partidos de hoy
+_bak_vpj = open("viral_pronostico.json", encoding="utf-8").read() if os.path.exists("viral_pronostico.json") else None
+try:
+    json.dump({"target": "20260101", "partidos": [{"a": "X", "b": "Y"}]}, open("viral_pronostico.json", "w", encoding="utf-8"))
+    ok("render_viral: export de pronóstico de OTRO día -> hoy es día sin partidos (usa el cuadro)",
+       rv._hay_partidos_hoy() is False, "un export viejo contaba como partidos de hoy")
+finally:
+    if _bak_vpj is not None: open("viral_pronostico.json", "w", encoding="utf-8").write(_bak_vpj)
+    elif os.path.exists("viral_pronostico.json"): os.remove("viral_pronostico.json")
 # 10) frase_cuadro: narrable y con la palabra ancla 'cuadro' en rondas pendientes
 ok("frase_cuadro: contiene la palabra ancla 'cuadro' y los cruces reales",
    "cuadro" in mb.frase_cuadro(b0) and "Francia contra Marruecos" in mb.frase_cuadro(b0) and

@@ -98,6 +98,9 @@ def still_bracket():
 def _hay_partidos_hoy():
     try:
         vp = json.load(open(os.path.join(ROOT, "viral_pronostico.json"), encoding="utf-8"))
+        from datetime import date
+        if vp.get("target") and vp["target"] != date.today().strftime("%Y%m%d"):
+            return False   # export VIEJO (de un día anterior): hoy no hubo pronóstico (día sin partidos)
         return bool(vp.get("partidos"))
     except Exception:
         return True   # ante la duda, comportamiento clásico
