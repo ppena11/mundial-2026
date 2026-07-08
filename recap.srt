@@ -1,107 +1,135 @@
 1
-00:00:00,405 --> 00:00:01,621
-Anoche fue increíble:
+00:00:00,000 --> 00:00:01,388
+Anoche martes fue un
 
 2
-00:00:01,621 --> 00:00:03,243
-acertamos los dos partidos.
+00:00:01,388 --> 00:00:02,696
+cierre agridulce.
 
 3
-00:00:03,243 --> 00:00:04,459
-Portugal contra España,
+00:00:02,696 --> 00:00:04,084
+Argentina nos dio la
 
 4
-00:00:04,459 --> 00:00:06,081
-dijimos que ganaba España
+00:00:04,084 --> 00:00:04,575
+razón:
 
 5
-00:00:06,081 --> 00:00:07,297
-y así fue,
+00:00:04,575 --> 00:00:05,228
+goleó 3 a 2
 
 6
-00:00:07,297 --> 00:00:08,513
-0 a 1,
+00:00:05,228 --> 00:00:05,882
+a Egipto,
 
 7
-00:00:08,513 --> 00:00:10,135
-la sorpresa bien clavada
+00:00:05,882 --> 00:00:08,088
+el pronóstico salió redondito.
 
 8
-00:00:10,135 --> 00:00:11,756
-con ese 47 por
+00:00:08,088 --> 00:00:09,395
+Pero Suiza nos jugó
 
 9
-00:00:11,756 --> 00:00:12,972
-ciento de confianza.
+00:00:09,395 --> 00:00:10,539
+una mala pasada:
 
 10
-00:00:12,972 --> 00:00:14,594
-Luego Estados Unidos enfrentó
+00:00:10,539 --> 00:00:11,274
+igualó 0 a 0
 
 11
-00:00:14,594 --> 00:00:15,360
-a Bélgica,
+00:00:11,274 --> 00:00:12,990
+contra Colombia y avanzó
 
 12
-00:00:15,360 --> 00:00:17,359
-dijimos Bélgica y Bélgica
+00:00:12,990 --> 00:00:13,888
+en la tanda de
 
 13
-00:00:17,359 --> 00:00:18,079
-no falló,
+00:00:13,888 --> 00:00:14,542
+penales,
 
 14
-00:00:18,079 --> 00:00:19,219
-1 a 4,
+00:00:14,542 --> 00:00:16,830
+cuando nosotros apostábamos por
 
 15
-00:00:19,219 --> 00:00:20,780
-una paliza donde los
+00:00:16,830 --> 00:00:18,055
+los colombianos.
 
 16
-00:00:20,780 --> 00:00:22,879
-belgas simplemente dominaron de
+00:00:18,055 --> 00:00:19,117
+Acertamos 1 de 2
 
 17
-00:00:22,879 --> 00:00:24,300
-principio a fin.
+00:00:19,117 --> 00:00:19,852
+partidos.
 
 18
-00:00:24,300 --> 00:00:26,179
-Vamos 59 de 94
+00:00:19,852 --> 00:00:20,751
+Vamos 60 de 96
 
 19
-00:00:26,179 --> 00:00:27,559
+00:00:20,751 --> 00:00:22,303
 aciertos en el torneo,
 
 20
-00:00:27,559 --> 00:00:29,460
-estamos en 62.8 por
+00:00:22,303 --> 00:00:23,120
+un 62 punto 5
 
 21
-00:00:29,460 --> 00:00:29,980
-ciento de certeza.
+00:00:23,120 --> 00:00:24,836
+por ciento de precisión.
 
 22
-00:00:29,980 --> 00:00:32,380
-Mañana llega Argentina contra
+00:00:24,836 --> 00:00:26,797
+Mañana llega Francia contra
 
 23
-00:00:32,380 --> 00:00:33,100
-Egipto,
+00:00:26,797 --> 00:00:27,614
+Marruecos,
 
 24
-00:00:33,100 --> 00:00:34,759
-favorito claro la albiceleste
+00:00:27,614 --> 00:00:29,166
+con los franceses como
 
 25
-00:00:34,759 --> 00:00:36,219
-con 66 por ciento.
+00:00:29,166 --> 00:00:30,718
+favoritos claros al 42
 
 26
-00:00:36,219 --> 00:00:37,859
-Nos vemos mañana.
+00:00:30,718 --> 00:00:31,535
+por ciento.
 
 27
-00:00:37,859 --> 00:00:39,282
+00:00:31,535 --> 00:00:33,088
+Suscríbete al canal de
+
+28
+00:00:33,088 --> 00:00:34,313
+YouTube y sigue el
+
+29
+00:00:34,313 --> 00:00:35,457
+cierre en el link
+
+30
+00:00:35,457 --> 00:00:36,356
+de mi bio para
+
+31
+00:00:36,356 --> 00:00:37,990
+no perderte el análisis
+
+32
+00:00:37,990 --> 00:00:39,379
+diario del Mundial.
+
+33
+00:00:39,379 --> 00:00:40,604
+Nos vemos mañana.
+
+34
+00:00:40,604 --> 00:00:41,829
 Soy aiwithpedro.

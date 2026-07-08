@@ -1,207 +1,87 @@
 1
-00:00:00,329 --> 00:00:01,647
-Aquí están los pronósticos
+00:00:00,000 --> 00:00:00,483
+¡Hola!
 
 2
-00:00:01,647 --> 00:00:02,966
-del Mundial 2026 de
+00:00:00,483 --> 00:00:01,690
+Hoy es miércoles y
 
 3
-00:00:02,966 --> 00:00:04,284
-mi inteligencia artificial para
+00:00:01,690 --> 00:00:03,059
+el balón descansa en
 
 4
-00:00:04,284 --> 00:00:04,684
-hoy,
+00:00:03,059 --> 00:00:04,185
+el Mundial 2026,
 
 5
-00:00:04,614 --> 00:00:05,932
-martes 7 de julio.
+00:00:04,185 --> 00:00:06,520
+pero tenemos noticias candentes.
 
 6
-00:00:05,932 --> 00:00:07,250
-Vamos 59 de 94.
+00:00:06,520 --> 00:00:08,613
+Según nuestras simulaciones,
 
 7
-00:00:07,250 --> 00:00:08,569
-Argentina se mide ante
+00:00:08,613 --> 00:00:10,062
+España es la favorita
 
 8
-00:00:08,569 --> 00:00:09,887
-Egipto a las doce
+00:00:10,062 --> 00:00:11,672
+indiscutible con 26 por
 
 9
-00:00:09,887 --> 00:00:11,205
-del mediodía en el
+00:00:11,672 --> 00:00:13,121
+ciento de opciones de
 
 10
-00:00:11,205 --> 00:00:11,864
-Mercedes-Benz Stadium,
+00:00:13,121 --> 00:00:13,846
+campeona.
 
 11
-00:00:11,864 --> 00:00:13,183
-y el modelo ve
+00:00:13,846 --> 00:00:15,133
+Francia le pisa los
 
 12
-00:00:13,183 --> 00:00:14,501
-a los argentinos ganando
+00:00:15,133 --> 00:00:16,341
+talones con 21 por
 
 13
-00:00:14,501 --> 00:00:15,490
-uno a cero.
+00:00:16,341 --> 00:00:16,904
+ciento,
 
 14
-00:00:15,490 --> 00:00:16,808
-Este es su quinto
+00:00:16,904 --> 00:00:18,836
+mientras Argentina ronda el
 
 15
-00:00:16,808 --> 00:00:18,126
-partido en el torneo
+00:00:18,836 --> 00:00:19,802
+16 por ciento.
 
 16
-00:00:18,126 --> 00:00:19,445
-y la diferencia de
+00:00:19,802 --> 00:00:21,493
+La batalla está abierta.
 
 17
-00:00:19,445 --> 00:00:20,433
-calidad se nota:
+00:00:21,493 --> 00:00:23,022
+No te pierdas nuestros
 
 18
-00:00:20,433 --> 00:00:21,752
-Argentina manda con claridad
+00:00:23,022 --> 00:00:25,035
+análisis diarios en YouTube.
 
 19
-00:00:21,752 --> 00:00:23,070
-y Egipto llega tocado
+00:00:25,035 --> 00:00:26,645
+Suscríbete y sígueme en
 
 20
-00:00:23,070 --> 00:00:25,980
-después de varios compromisos
+00:00:26,645 --> 00:00:27,450
+el link de mi
 
 21
-00:00:25,980 --> 00:00:27,300
-difíciles.
+00:00:27,450 --> 00:00:27,850
+bio.
 
 22
-00:00:27,300 --> 00:00:28,660
-El mercado está prácticamente
-
-23
-00:00:28,660 --> 00:00:29,440
-en línea con mi
-
-24
-00:00:29,440 --> 00:00:29,839
-modelo,
-
-25
-00:00:29,820 --> 00:00:30,920
-ambos dan a Argentina
-
-26
-00:00:30,920 --> 00:00:32,659
-como favorita clara.
-
-27
-00:00:32,659 --> 00:00:33,500
-Más tarde,
-
-28
-00:00:33,500 --> 00:00:34,020
-a las cuatro de
-
-29
-00:00:34,020 --> 00:00:34,780
-la tarde en el
-
-30
-00:00:34,780 --> 00:00:35,840
-BC Place,
-
-31
-00:00:35,840 --> 00:00:36,600
-Suiza se enfrenta a
-
-32
-00:00:36,600 --> 00:00:37,600
-Colombia en un partido
-
-33
-00:00:37,600 --> 00:00:39,439
-mucho más parejo.
-
-34
-00:00:39,439 --> 00:00:40,700
-El modelo se inclina
-
-35
-00:00:40,700 --> 00:00:42,079
-por Colombia con uno
-
-36
-00:00:42,079 --> 00:00:42,640
-a cero,
-
-37
-00:00:42,640 --> 00:00:43,219
-pero aquí hay más
-
-38
-00:00:43,219 --> 00:00:44,340
-incertidumbre:
-
-39
-00:00:44,340 --> 00:00:45,340
-el consenso del mercado
-
-40
-00:00:45,340 --> 00:00:46,500
-apenas da una ventaja
-
-41
-00:00:46,500 --> 00:00:48,700
-mínima a los colombianos,
-
-42
-00:00:48,700 --> 00:00:49,479
-lo que refleja lo
-
-43
-00:00:49,479 --> 00:00:51,439
-ajustado del pronóstico.
-
-44
-00:00:51,439 --> 00:00:52,600
-Son sus quintos partidos
-
-45
-00:00:52,600 --> 00:00:54,079
-y ambas selecciones buscan
-
-46
-00:00:54,079 --> 00:00:55,439
-posicionarse en la recta
-
-47
-00:00:55,439 --> 00:00:56,359
-final de grupos.
-
-48
-00:00:56,359 --> 00:00:57,600
-El fútbol trae sorpresas
-
-49
-00:00:57,600 --> 00:00:58,520
-cada día,
-
-50
-00:00:58,520 --> 00:00:59,780
-pero mi inteligencia artificial
-
-51
-00:00:59,780 --> 00:01:01,259
-ya tiene el análisis
-
-52
-00:01:01,259 --> 00:01:01,859
-listo.
+00:00:27,772 --> 00:00:28,980
+Soy aiwithpedro.
