@@ -140,6 +140,15 @@ def _material(p):
                  "lleva al frente la noticia más viral del Mundial.")
     if p["news"]:
         L.append(f"NOTICIA REAL (fuente {p['news']['source']}): {p['news']['title']}")
+    try:                                # EL CUADRO real de la recta final: en día de descanso es EL contenido
+        import json as _j, make_bracket as _mb
+        _br = _j.load(open("viral_bracket.json", encoding="utf-8"))
+        _fr = _mb.frase_cuadro(_br)
+        if _fr and p["days"] <= 0:
+            L.append("EL CUADRO REAL DE LA RECTA FINAL (dato prioritario; nárralo con la palabra 'cuadro', "
+                     "el video muestra la infografía de las llaves): " + _fr)
+    except Exception:
+        pass
     L.append("DATO EXACTO DE MIS SIMULACIONES (úsalo, no inventes otros números): " + p["model_fact"])
     if p["champ"]:
         L.append("Top campeón hoy: " + ", ".join(f"{dd.acc(t)} {round(v)} por ciento" for t, v in p["champ"][:3]) + ".")

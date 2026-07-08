@@ -67,13 +67,57 @@ def render(comp, audio_src, words_file, data_file, pub_audio, props_name, out_na
     shutil.copy(os.path.join(VR, "out", out_name), os.path.join(ROOT, out_name))
     print(f"→ {out_name} listo"); return True
 
+def _bracket_data():
+    """Archivo data para BracketViral ({'fecha','bracket'}) desde viral_bracket.json; None si no hay cuadro."""
+    try:
+        br = json.load(open(os.path.join(ROOT, "viral_bracket.json"), encoding="utf-8"))
+        if len(br.get("qf") or []) != 4: return None
+    except Exception:
+        return None
+    from datetime import date
+    d = {"fecha": date.today().strftime("%d/%m/%Y"), "bracket": br}
+    p = os.path.join(ROOT, "viral_bracket_video.json")
+    json.dump(d, open(p, "w", encoding="utf-8"), ensure_ascii=False)
+    return p
+
+def still_bracket():
+    """PNG del cuadro (frame con la animación ya asentada) -> bracket.png (post de imagen en días sin partido)."""
+    dfile = _bracket_data()
+    if not dfile: print("(bracket.png: sin viral_bracket.json; omito)"); return False
+    os.makedirs(PUB, exist_ok=True); os.makedirs(os.path.join(VR, "out"), exist_ok=True)
+    props = {"words": [], "data": json.load(open(dfile, encoding="utf-8")), "audio": "", "durationSec": 8,
+             "avatar": "", "avatarStadium": False}
+    json.dump(props, open(os.path.join(PUB, "bracket_still_props.json"), "w", encoding="utf-8"), ensure_ascii=False)
+    r = subprocess.run("npx remotion still src/index.ts BracketViral out/bracket.png "
+                       "--props=public/bracket_still_props.json --frame=170", cwd=VR, shell=True)
+    if r.returncode == 0 and os.path.exists(os.path.join(VR, "out", "bracket.png")):
+        shutil.copy(os.path.join(VR, "out", "bracket.png"), os.path.join(ROOT, "bracket.png"))
+        print("→ bracket.png listo"); return True
+    return False
+
+def _hay_partidos_hoy():
+    try:
+        vp = json.load(open(os.path.join(ROOT, "viral_pronostico.json"), encoding="utf-8"))
+        return bool(vp.get("partidos"))
+    except Exception:
+        return True   # ante la duda, comportamiento clásico
+
 if __name__ == "__main__":
     what = sys.argv[1] if len(sys.argv) > 1 else "both"
     ok = True
+    if what in ("pronostico", "both") and not _hay_partidos_hoy() and _bracket_data():
+        print("(día sin partidos: el CUADRO es el contenido -> BracketViral en vez de PronosticoViral)")
+        what = {"pronostico": "bracket", "both": "bracket+recap"}[what]
     if what in ("pronostico", "both"):
         ok = render("PronosticoViral", "voice.mp3", "voice_words.json", "viral_pronostico.json",
                     "voz.mp3", "pronostico_props.json", "pronostico_viral.mp4", "voz_avatar.webm") and ok
-    if what in ("recap", "both"):
+    if what in ("bracket", "bracket+recap"):
+        dfile = _bracket_data()
+        if dfile:
+            ok = render("BracketViral", "voice.mp3", "voice_words.json", dfile,
+                        "voz.mp3", "bracket_props.json", "bracket_viral.mp4", "voz_avatar.webm") and ok
+        still_bracket()   # PNG del cuadro para el post de imagen (aunque no haya voz)
+    if what in ("recap", "both", "bracket+recap"):
         ok = render("RecapViral", "recap_voice.mp3", "recap_voice_words.json", "viral_recap.json",
                     "recap_voz.mp3", "recap_props.json", "recap_viral.mp4", "recap_avatar.webm") and ok
     sys.exit(0 if ok else 1)

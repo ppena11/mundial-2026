@@ -1,6 +1,7 @@
 import React from 'react';
 import {AbsoluteFill, Audio, Sequence, OffthreadVideo, staticFile, useCurrentFrame, useVideoConfig, interpolate, spring, Easing} from 'remotion';
 import {flagColors} from './flags';
+import {BracketScene} from './Bracket';
 
 // ---------- paleta MUNDIAL 2026 ----------
 const MAGENTA = '#FF2D78', BLUE = '#2563EB', TEAL = '#06D6C8', GREEN = '#22C55E', RED = '#EF4444', GOLD = '#FCD34D';
@@ -194,6 +195,14 @@ export const PronosticoViral: React.FC<{words: Word[]; data: any; audio: string;
     starts.push(s); prev = s;
   }
   const firstCard = starts.length ? starts[0] : hookMin;
+  // escena EL CUADRO (bracket de la recta final): anclada a la palabra "cuadro" en la voz; si no se
+  // menciona, entra justo antes de la tarjeta-resumen. Solo si viral_bracket.json vino en los props.
+  const hasBr = !!(data.bracket && (data.bracket.qf || []).length === 4);
+  const brAnchor = hasBr ? anchorOf(words, 'cuadro', hookMin / fps) : null;
+  let bracketStart = brAnchor != null ? Math.round(brAnchor * fps) : resumenStart - Math.round(fps * 4.2);
+  bracketStart = Math.max(firstCard + minGap, Math.min(bracketStart, resumenStart - Math.round(fps * 2.5)));
+  const showBr = hasBr && (resumenStart - bracketStart) >= Math.round(fps * 1.5);
+  const cardsEnd = showBr ? bracketStart : resumenStart;
 
   return (
     <AbsoluteFill style={{background: '#0A0A1F'}}>
@@ -207,11 +216,14 @@ export const PronosticoViral: React.FC<{words: Word[]; data: any; audio: string;
       {/* tarjetas de partido, en ORDEN de narración y ancladas a la voz */}
       {ordered.map((it: any, k: number) => {
         const start = starts[k];
-        const next = k + 1 < starts.length ? starts[k + 1] : resumenStart;
+        const next = k + 1 < starts.length ? starts[k + 1] : cardsEnd;
         const cdur = Math.max(Math.round(fps * 1.5), next - start);
-        if (start >= resumenStart) return null;
-        return <Sequence key={it.i} from={start} durationInFrames={Math.min(cdur, resumenStart - start)}><MatchCard p={it.p} dur={cdur} /></Sequence>;
+        if (start >= cardsEnd) return null;
+        return <Sequence key={it.i} from={start} durationInFrames={Math.min(cdur, cardsEnd - start)}><MatchCard p={it.p} dur={cdur} /></Sequence>;
       })}
+
+      {/* EL CUADRO: infografía del camino a la final (rumbo a Nueva York) */}
+      {showBr ? <Sequence from={bracketStart} durationInFrames={resumenStart - bracketStart}><BracketScene bracket={data.bracket} y={-10} s={0.9} /></Sequence> : null}
 
       {/* tarjeta-resumen capturable (todos los pronósticos) */}
       <Sequence from={resumenStart} durationInFrames={champStart - resumenStart}><ResumenCard data={data} /></Sequence>
@@ -458,5 +470,19 @@ const RecordScene: React.FC<{data: any}> = ({data}) => {
         <div style={{fontFamily: FONT, fontSize: 50, fontWeight: 900, color: WHITE, letterSpacing: 4}}>ACIERTOS</div>
       </div>
     </Scene>
+  );
+};
+
+// ===================== BRACKET VIRAL (días sin partido: el CUADRO es el contenido) =====================
+export const BracketViral: React.FC<{words: Word[]; data: any; audio: string; avatar?: string; avatarStadium?: boolean}> = ({words = [], data = {}, audio = '', avatar = '', avatarStadium = false}) => {
+  return (
+    <AbsoluteFill style={{background: '#0B0B10'}}>
+      {audio ? <Audio src={staticFile(audio)} /> : null}
+      <Audio src={staticFile('musica.mp3')} volume={0.14} loop />
+      <BracketScene bracket={data.bracket || {}} y={avatar ? -10 : 250} s={avatar ? 0.9 : 1.08} />
+      <Avatar src={avatar} stadium={avatarStadium} />
+      <TopBar fecha={data.fecha} />
+      <Captions words={words} bottom={avatar ? 760 : 250} />
+    </AbsoluteFill>
   );
 };

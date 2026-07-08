@@ -1,0 +1,52 @@
+{
+  "estado": "QF_PENDIENTES",
+  "ronda": "CUARTOS DE FINAL",
+  "final_fecha": "19 DE JULIO",
+  "final_sede": "MetLife Stadium",
+  "qf": [
+    {
+      "a": "Francia",
+      "b": "Marruecos",
+      "fecha": "9 JUL",
+      "ganador": null
+    },
+    {
+      "a": "España",
+      "b": "Bélgica",
+      "fecha": "10 JUL",
+      "ganador": null
+    },
+    {
+      "a": "Noruega",
+      "b": "Inglaterra",
+      "fecha": "11 JUL",
+      "ganador": null
+    },
+    {
+      "a": "Argentina",
+      "b": "Suiza",
+      "fecha": "12 JUL",
+      "ganador": null
+    }
+  ],
+  "sf": [
+    {
+      "a": null,
+      "b": null,
+      "fecha": "14 JUL",
+      "ganador": null
+    },
+    {
+      "a": null,
+      "b": null,
+      "fecha": "15 JUL",
+      "ganador": null
+    }
+  ],
+  "final": {
+    "a": null,
+    "b": null,
+    "fecha": "19 JUL",
+    "ganador": null
+  }
+}

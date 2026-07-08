@@ -421,6 +421,95 @@ finally:
     elif os.path.exists(_bl3): os.remove(_bl3)
 
 # ============================================================
+section("13b) CUADRO VIRAL (make_bracket: el bracket EVOLUCIONA solo con los resultados)")
+import make_bracket as mb
+def _bev(slug, date, a, b, ganador=None, venue=""):
+    return {"slug": slug, "date": date, "venue": venue, "a": a, "b": b, "ganador": ganador}
+_QF = lambda g1=None,g2=None,g3=None,g4=None: [
+    _bev("quarterfinals","2026-07-09T19:00Z","Francia","Marruecos",g1),
+    _bev("quarterfinals","2026-07-10T19:00Z","Espana","Belgica",g2),
+    _bev("quarterfinals","2026-07-11T19:00Z","Noruega","Inglaterra",g3),
+    _bev("quarterfinals","2026-07-12T19:00Z","Argentina","Suiza",g4)]
+_SFP = lambda w1=None,w2=None: [_bev("semifinals","2026-07-14T19:00Z",None,None,w1),
+                                _bev("semifinals","2026-07-15T19:00Z",None,None,w2)]
+_FP  = lambda w=None: [_bev("final","2026-07-19T19:00Z",None,None,w,venue="MetLife Stadium")]
+# 1) QF pendientes
+b0 = mb.build(_QF()+_SFP()+_FP())
+ok("bracket QF_PENDIENTES: 4 cruces en orden ESPN, sin ganadores, final 19 DE JULIO en MetLife",
+   b0["estado"]=="QF_PENDIENTES" and b0["ronda"]=="CUARTOS DE FINAL" and
+   [c["a"] for c in b0["qf"]]==["Francia","España","Noruega","Argentina"] and
+   all(c["ganador"] is None for c in b0["qf"]) and b0["final_fecha"]=="19 DE JULIO" and b0["final_sede"]=="MetLife Stadium",
+   f"estado={b0['estado']} qf={[ (c['a'],c['b']) for c in b0['qf'] ]}")
+# 2) QF en curso: 2 jugados -> ganadores AVANZAN a la LLAVE correcta (SF1=QF1+QF2)
+b1 = mb.build(_QF("Francia","Belgica")+_SFP()+_FP())
+ok("bracket QF_EN_CURSO: ganadores avanzan a la semifinal correcta (SF1 = ganadores de QF1 y QF2)",
+   b1["estado"]=="QF_EN_CURSO" and b1["qf"][0]["ganador"]=="Francia" and b1["qf"][1]["ganador"]=="Bélgica" and
+   b1["sf"][0]["a"]=="Francia" and b1["sf"][0]["b"]=="Bélgica" and b1["sf"][1]["a"] is None,
+   f"sf={b1['sf']}")
+# 3) SF listas: los 4 QF jugados
+b2 = mb.build(_QF("Francia","Belgica","Inglaterra","Argentina")+_SFP()+_FP())
+ok("bracket SF_LISTAS: 4 QF jugados -> SEMIFINALES completas (SF2 = ganadores de QF3 y QF4)",
+   b2["estado"]=="SF_LISTAS" and b2["ronda"]=="SEMIFINALES" and
+   (b2["sf"][0]["a"],b2["sf"][0]["b"],b2["sf"][1]["a"],b2["sf"][1]["b"])==("Francia","Bélgica","Inglaterra","Argentina"),
+   f"sf={b2['sf']}")
+# 4) SF en curso y FINAL lista
+b3 = mb.build(_QF("Francia","Belgica","Inglaterra","Argentina")+_SFP("Francia")+_FP())
+b4 = mb.build(_QF("Francia","Belgica","Inglaterra","Argentina")+_SFP("Francia","Argentina")+_FP())
+ok("bracket SF_EN_CURSO -> finalista 1 puesto; FINAL_LISTA -> ambos finalistas y ronda LA GRAN FINAL",
+   b3["estado"]=="SF_EN_CURSO" and b3["final"]["a"]=="Francia" and b3["final"]["b"] is None and
+   b4["estado"]=="FINAL_LISTA" and b4["ronda"]=="LA GRAN FINAL" and (b4["final"]["a"],b4["final"]["b"])==("Francia","Argentina"),
+   f"b3.final={b3['final']} b4.final={b4['final']}")
+# 5) CAMPEÓN
+b5 = mb.build(_QF("Francia","Belgica","Inglaterra","Argentina")+_SFP("Francia","Argentina")+_FP("Argentina"))
+ok("bracket CAMPEON: final jugada -> estado CAMPEON y ganador correcto",
+   b5["estado"]=="CAMPEON" and b5["ronda"]=="CAMPEÓN DEL MUNDO" and b5["final"]["ganador"]=="Argentina",
+   f"final={b5['final']}")
+# 6) PENALES: fetch_events toma al que AVANZA por el flag winner/advance, NUNCA por el marcador (1-1)
+_payload = {"events":[{"id":"f1","season":{"slug":"final"},"date":"2026-07-19T19:00Z","competitions":[{
+    "venue":{"fullName":"MetLife Stadium"},"status":{"type":{"state":"post"}},
+    "competitors":[{"team":{"displayName":"France"},"score":"1","winner":False},
+                   {"team":{"displayName":"Argentina"},"score":"1","winner":True,"advance":True}]}]}]}
+_og = dd._get; dd._get = lambda url: _payload
+try:
+    evs = mb.fetch_events()
+finally:
+    dd._get = _og
+_fin = [e for e in evs if e["slug"]=="final"]
+ok("bracket penales: final 1-1 -> ganador por flag winner (Argentina), y 'France' mapeado a 'Francia'",
+   len(_fin)==1 and _fin[0]["ganador"]=="Argentina" and _fin[0]["a"]=="Francia",
+   f"{_fin}")
+# 7) Robustez: placeholders no cuentan como equipo; sin datos -> build None (no romper el export previo)
+ok("bracket robustez: placeholder 'Quarterfinal 1 Winner' -> None; sin eventos -> build devuelve None",
+   mb._team("Quarterfinal 1 Winner") is None and mb._team("Congo DR")=="R.D. Congo" and mb.build([]) is None,
+   f"congo={mb._team('Congo DR')}")
+# 8) todos los equipos del cuadro existen en el modelo (nada inventado)
+_acc_ok = {dd.acc(t) for t in pm.MAP}
+_all_teams = [c[k] for c in b2["qf"]+b2["sf"] for k in ("a","b") if c[k]]
+ok("bracket: todos los equipos del cuadro existen en pm.MAP (con acentos de display)",
+   all(t in _acc_ok for t in _all_teams), f"fuera del modelo: {[t for t in _all_teams if t not in _acc_ok]}")
+# 9) render_viral: el data-file del video del cuadro se arma válido desde viral_bracket.json
+import render_viral as rv
+_bak_vb = None
+if os.path.exists("viral_bracket.json"):
+    _bak_vb = open("viral_bracket.json", encoding="utf-8").read()
+json.dump(b2, open("viral_bracket.json", "w", encoding="utf-8"), ensure_ascii=False)
+try:
+    _df = rv._bracket_data()
+    _dd2 = json.load(open(_df, encoding="utf-8")) if _df else {}
+    ok("render_viral._bracket_data: props del video con bracket completo (4 QF) y fecha",
+       bool(_df) and len(_dd2.get("bracket", {}).get("qf", [])) == 4 and bool(_dd2.get("fecha")),
+       f"df={_df}")
+finally:
+    if _bak_vb is not None: open("viral_bracket.json", "w", encoding="utf-8").write(_bak_vb)
+    for _f in ("viral_bracket_video.json",):
+        if os.path.exists(_f): os.remove(_f)
+# 10) frase_cuadro: narrable y con la palabra ancla 'cuadro' en rondas pendientes
+ok("frase_cuadro: contiene la palabra ancla 'cuadro' y los cruces reales",
+   "cuadro" in mb.frase_cuadro(b0) and "Francia contra Marruecos" in mb.frase_cuadro(b0) and
+   "campeón del mundo" in mb.frase_cuadro(b5),
+   mb.frase_cuadro(b0)[:90])
+
+# ============================================================
 section("14) SUBTÍTULOS (texto = nuestro guion; Whisper solo para el tiempo)")
 import subtitulos as sub
 guion_sub = "Aqui estan los pronosticos del dia. Catar pierde con Suiza. Brasil empata. Soy éi ái uíz Pédro."

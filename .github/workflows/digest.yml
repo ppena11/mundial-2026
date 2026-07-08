@@ -64,6 +64,11 @@ jobs:
         if: steps.guard.outputs.run == 'true'
         run: python make_matchday.py
 
+      - name: 3b) Cuadro de la recta final (bracket real de ESPN para la infografía viral)
+        if: steps.guard.outputs.run == 'true'
+        continue-on-error: true
+        run: python make_bracket.py
+
       - name: 4) Digest diario (para Substack)
         if: steps.guard.outputs.run == 'true'
         run: python daily_digest.py
@@ -139,5 +144,7 @@ jobs:
             recap_youtube.txt
             pronostico_viral.mp4
             recap_viral.mp4
+            bracket_viral.mp4
+            bracket.png
           if-no-files-found: ignore
           retention-days: 14

@@ -157,6 +157,14 @@ def _summary(fh, played, pick, clearest, tr):
             L.append("Equipos más buscados que juegan hoy (úsalos en los hashtags): " + ", ".join(stars) + ".")
     except Exception:
         pass
+    try:                              # EL CUADRO: dato real de la recta final (ancla la infografía del bracket)
+        import make_bracket as _mb
+        _brj = json.load(open("viral_bracket.json", encoding="utf-8"))
+        _fr = _mb.frase_cuadro(_brj)
+        if _fr:
+            L.append("EL CUADRO (dato REAL; para la frase del cuadro): " + _fr)
+    except Exception:
+        pass
     return "\n".join(L)
 
 AI_SYSTEM = (
@@ -190,6 +198,9 @@ AI_SYSTEM = (
     "Si el dato dice 'se DEFINE EN PENALES y avanzaría <equipo>' (eliminación directa con igualada en los noventa), "
     "NO digas que es un empate seco: di que el partido se IGUALA en los noventa y se DEFINE EN PENALES, y que AVANZA "
     "ese equipo (es eliminatoria, alguien tiene que pasar). Mantén el marcador en orden sx-sy igual. "
+    "Si los datos traen 'EL CUADRO', DESPUÉS del último pronóstico añade UNA frase corta que contenga la palabra "
+    "EXACTA 'cuadro' (p. ej. 'y así está el cuadro rumbo a Nueva York') basada SOLO en ese dato — dispara la "
+    "infografía del cuadro en el video, así que dila una única vez y NUNCA al inicio. "
     "REGLA ABSOLUTA E INNEGOCIABLE DEL MARCADOR (la tarjeta muestra '<equipo A> <sx> - <sy> <equipo B>'): el "
     "PRIMER número que pronuncies para un partido es SIEMPRE el del PRIMER equipo (sx) y el SEGUNDO el del segundo "
     "equipo (sy) — pase lo que pase, GANE QUIEN GANE. NUNCA pongas primero el número del segundo equipo. "
@@ -475,6 +486,12 @@ def build(target, played_override=None):
                                "destacado": (i == _feat) and not _elim} for i, d in enumerate(played)],
                  "campeon": [[dd.acc(t), round(float(p), 1)] for t, p in list(_ch.items())[:6]],
                  "record": {"aciertos": tr.get("aciertos_1x2", 0), "n": tr.get("n", 0)}}
+        try:                                   # EL CUADRO (bracket de la recta final) para la escena de Remotion
+            _br = json.load(open("viral_bracket.json", encoding="utf-8"))
+            if (_br.get("qf") or []) and len(_br["qf"]) == 4:
+                viral["bracket"] = _br
+        except Exception:
+            pass
         _vp = os.devnull if os.environ.get("MAKESCRIPT_NO_EXPORT") else "viral_pronostico.json"   # tests no pisan el real
         json.dump(viral, open(_vp, "w", encoding="utf-8"), ensure_ascii=False, indent=2)
     except Exception as e:
