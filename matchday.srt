@@ -1,87 +1,199 @@
 1
-00:00:00,000 --> 00:00:00,483
-¡Hola!
+00:00:00,000 --> 00:00:01,780
+Aquí están los pronósticos
 
 2
-00:00:00,483 --> 00:00:01,690
-Hoy es miércoles y
+00:00:01,780 --> 00:00:03,018
+del Mundial 2026 de
 
 3
-00:00:01,690 --> 00:00:03,059
-el balón descansa en
+00:00:03,018 --> 00:00:05,185
+mi inteligencia artificial para
 
 4
-00:00:03,059 --> 00:00:04,185
-el Mundial 2026,
+00:00:05,185 --> 00:00:05,585
+hoy,
 
 5
-00:00:04,185 --> 00:00:06,520
-pero tenemos noticias candentes.
+00:00:05,495 --> 00:00:06,656
+jueves 9 de julio.
 
 6
-00:00:06,520 --> 00:00:08,613
-Según nuestras simulaciones,
+00:00:06,656 --> 00:00:07,584
+Vamos 60 de 96.
 
 7
-00:00:08,613 --> 00:00:10,062
-España es la favorita
+00:00:07,584 --> 00:00:08,900
+Francia se mide ante
 
 8
-00:00:10,062 --> 00:00:11,672
-indiscutible con 26 por
+00:00:08,900 --> 00:00:10,371
+Marruecos a las cuatro
 
 9
-00:00:11,672 --> 00:00:13,121
-ciento de opciones de
+00:00:10,371 --> 00:00:11,222
+de la tarde en
 
 10
-00:00:13,121 --> 00:00:13,846
-campeona.
+00:00:11,222 --> 00:00:12,615
+el Gillette Stadium,
 
 11
-00:00:13,846 --> 00:00:15,133
-Francia le pisa los
+00:00:12,615 --> 00:00:13,466
+y el modelo ve
 
 12
-00:00:15,133 --> 00:00:16,341
-talones con 21 por
+00:00:13,466 --> 00:00:14,859
+a Francia ganando uno
 
 13
-00:00:16,341 --> 00:00:16,904
-ciento,
+00:00:14,859 --> 00:00:15,324
+a cero.
 
 14
-00:00:16,904 --> 00:00:18,836
-mientras Argentina ronda el
+00:00:15,324 --> 00:00:16,330
+El mercado lo ve
 
 15
-00:00:18,836 --> 00:00:19,802
-16 por ciento.
+00:00:16,330 --> 00:00:17,801
+mucho más favorito con
 
 16
-00:00:19,802 --> 00:00:21,493
-La batalla está abierta.
+00:00:17,801 --> 00:00:18,729
+61 por ciento,
 
 17
-00:00:21,493 --> 00:00:23,022
-No te pierdas nuestros
+00:00:18,729 --> 00:00:19,813
+pero mi modelo le
 
 18
-00:00:23,022 --> 00:00:25,035
-análisis diarios en YouTube.
+00:00:19,813 --> 00:00:20,664
+da solo 49 por
 
 19
-00:00:25,035 --> 00:00:26,645
-Suscríbete y sígueme en
+00:00:20,664 --> 00:00:21,825
+ciento a Francia,
 
 20
-00:00:26,645 --> 00:00:27,450
-el link de mi
+00:00:21,825 --> 00:00:23,063
+y ese Marruecos con
 
 21
-00:00:27,450 --> 00:00:27,850
-bio.
+00:00:23,063 --> 00:00:24,070
+27 por ciento me
 
 22
-00:00:27,772 --> 00:00:28,980
+00:00:24,070 --> 00:00:25,927
+parece infravalorado por el
+
+23
+00:00:25,927 --> 00:00:26,624
+consenso:
+
+24
+00:00:26,624 --> 00:00:28,094
+tienen más opciones de
+
+25
+00:00:28,094 --> 00:00:29,255
+las que el mercado
+
+26
+00:00:29,255 --> 00:00:29,655
+cree.
+
+27
+00:00:29,642 --> 00:00:31,267
+La polémica arbitral con
+
+28
+00:00:31,267 --> 00:00:33,589
+los árbitros argentinos asignados
+
+29
+00:00:33,589 --> 00:00:35,756
+añade una variable impredecible
+
+30
+00:00:35,756 --> 00:00:37,149
+que mi modelo captura
+
+31
+00:00:37,149 --> 00:00:37,614
+mejor.
+
+32
+00:00:37,614 --> 00:00:38,543
+Este uno a cero
+
+33
+00:00:38,543 --> 00:00:40,323
+es ajustado porque Francia
+
+34
+00:00:40,323 --> 00:00:41,484
+no abruma fácil en
+
+35
+00:00:41,484 --> 00:00:42,335
+este torneo.
+
+36
+00:00:42,335 --> 00:00:43,109
+Y así está el
+
+37
+00:00:43,109 --> 00:00:44,425
+cuadro rumbo a Nueva
+
+38
+00:00:44,425 --> 00:00:44,825
+York:
+
+39
+00:00:44,812 --> 00:00:46,592
+Francia contra Marruecos,
+
+40
+00:00:46,592 --> 00:00:48,140
+España contra Bélgica,
+
+41
+00:00:48,140 --> 00:00:49,997
+Noruega contra Inglaterra,
+
+42
+00:00:49,997 --> 00:00:51,622
+Argentina contra Suiza.
+
+43
+00:00:51,622 --> 00:00:52,783
+El fútbol es azar,
+
+44
+00:00:52,783 --> 00:00:54,950
+pero mi inteligencia artificial
+
+45
+00:00:54,950 --> 00:00:56,498
+ya escribió el libreto.
+
+46
+00:00:56,498 --> 00:00:57,892
+Suscríbete a mi canal
+
+47
+00:00:57,892 --> 00:00:59,594
+para el análisis completo
+
+48
+00:00:59,594 --> 00:01:00,368
+en el link de
+
+49
+00:01:00,368 --> 00:01:00,833
+mi bio.
+
+50
+00:01:00,833 --> 00:01:01,993
 Soy aiwithpedro.
