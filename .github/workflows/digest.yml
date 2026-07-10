@@ -82,6 +82,13 @@ jobs:
           python make_reel.py
           python subtitulos.py --video matchday.mp4 --audio voice.mp3 --text voiceover.txt || true
 
+      - name: 5b2) CARRERA VIRAL (tour explicado del bracket, recta final) — opcional
+        if: steps.guard.outputs.run == 'true'
+        continue-on-error: true
+        run: |
+          python carrera.py
+          python make_voice.py --in carrera_voiceover.txt --out carrera_voice.mp3
+
       - name: 5b) Cierre de anoche (resultados vs pronóstico) — opcional
         if: steps.guard.outputs.run == 'true'
         continue-on-error: true
@@ -96,12 +103,13 @@ jobs:
           cache: npm
           cache-dependency-path: video_remotion/package-lock.json
 
-      - name: 5c) Videos VIRALES (Remotion) — pronóstico + recap — opcional
+      - name: 5c) Videos VIRALES (Remotion) — pronóstico + recap + carrera — opcional
         if: steps.guard.outputs.run == 'true'
         continue-on-error: true
         run: |
           cd video_remotion && npm ci && npx remotion browser ensure && cd ..
-          RENDER_CONCURRENCY=$(nproc) python render_viral.py both   # usa TODOS los núcleos (público = 4 vCPU)
+          RENDER_CONCURRENCY=$(nproc) python render_viral.py both      # usa TODOS los núcleos (público = 4 vCPU)
+          RENDER_CONCURRENCY=$(nproc) python render_viral.py carrera   # tour del bracket (sin clon; omite si no hay cuadro)
 
       - name: 6) Resumen semanal (solo los lunes)
         if: steps.guard.outputs.run == 'true'
@@ -146,5 +154,9 @@ jobs:
             recap_viral.mp4
             bracket_viral.mp4
             bracket.png
+            carrera_viral.mp4
+            carrera_caption.txt
+            carrera_youtube.txt
+            carrera_voiceover.txt
           if-no-files-found: ignore
           retention-days: 14

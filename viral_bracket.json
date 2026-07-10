@@ -8,25 +8,31 @@
       "a": "Francia",
       "b": "Marruecos",
       "fecha": "9 JUL",
-      "ganador": "Francia"
+      "ganador": "Francia",
+      "marcador": "2-0",
+      "acierto": true,
+      "exacto": false
     },
     {
       "a": "España",
       "b": "Bélgica",
       "fecha": "10 JUL",
-      "ganador": null
+      "ganador": null,
+      "marcador": null
     },
     {
       "a": "Noruega",
       "b": "Inglaterra",
       "fecha": "11 JUL",
-      "ganador": null
+      "ganador": null,
+      "marcador": null
     },
     {
       "a": "Argentina",
       "b": "Suiza",
       "fecha": "11 JUL",
-      "ganador": null
+      "ganador": null,
+      "marcador": null
     }
   ],
   "sf": [
@@ -34,56 +40,59 @@
       "a": "Francia",
       "b": null,
       "fecha": "14 JUL",
-      "ganador": null
+      "ganador": null,
+      "marcador": null
     },
     {
       "a": null,
       "b": null,
       "fecha": "15 JUL",
-      "ganador": null
+      "ganador": null,
+      "marcador": null
     }
   ],
   "final": {
     "a": null,
     "b": null,
     "fecha": "19 JUL",
-    "ganador": null
+    "ganador": null,
+    "marcador": null
   },
   "probs": {
-    "España": {
-      "semis": 70.7,
-      "final": 42.0,
-      "campeon": 26.4
-    },
     "Francia": {
       "semis": 100.0,
-      "final": 46.8,
-      "campeon": 25.1
+      "final": 48.8,
+      "campeon": 27.1
+    },
+    "España": {
+      "semis": 70.7,
+      "final": 40.7,
+      "campeon": 25.7
     },
     "Argentina": {
-      "semis": 70.3,
-      "final": 44.0,
-      "campeon": 22.6
+      "semis": 70.2,
+      "final": 43.7,
+      "campeon": 21.9
     },
     "Inglaterra": {
       "semis": 63.5,
-      "final": 31.1,
-      "campeon": 13.6
+      "final": 31.2,
+      "campeon": 13.3
     },
     "Bélgica": {
       "semis": 29.3,
-      "final": 11.2,
-      "campeon": 4.8
+      "final": 10.5,
+      "campeon": 4.5
     },
     "Suiza": {
-      "semis": 29.7,
-      "final": 12.2,
+      "semis": 29.8,
+      "final": 12.6,
       "campeon": 3.9
     },
     "Noruega": {
       "semis": 36.5,
-      "final": 12.7,
-      "campeon": 3.7
+      "final": 12.6,
+      "campeon": 3.6
     }
   }
 }

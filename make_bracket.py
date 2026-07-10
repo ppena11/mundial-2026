@@ -61,15 +61,34 @@ def fetch_events():
             if len(cs) != 2:
                 continue
             nm = [_team(c.get("team", {}).get("displayName", "")) for c in cs]
-            ganador = None
+            ganador = None; marcador = None
             if comp.get("status", {}).get("type", {}).get("state") == "post":
                 w = next((c for c in cs if c.get("winner") or c.get("advance")), None)
                 if w is not None:
                     ganador = _team(w.get("team", {}).get("displayName", ""))
+                try:
+                    ga, gb = int(cs[0].get("score", 0)), int(cs[1].get("score", 0))
+                    marcador = f"{ga}-{gb}" + (" (pen.)" if ga == gb else "")   # empate reglamentario = penales
+                except Exception:
+                    pass
             out.append({"slug": slug, "date": e.get("date", ""),
                         "venue": comp.get("venue", {}).get("fullName", ""),
-                        "a": nm[0], "b": nm[1], "ganador": ganador})
+                        "a": nm[0], "b": nm[1], "ganador": ganador, "marcador": marcador})
     return out
+
+
+def _acierto_de(a, b, iso):
+    """(acierto_1x2, acierto_exacto) del pronóstico REGISTRADO para ese cruce (predictions_log.jsonl),
+    o (None, None) si no se registró. a/b SIN acentos (nombres del modelo); iso 'YYYY-MM-DD'."""
+    try:
+        key = f"{iso}|" + "|".join(sorted([a, b]))
+        for l in open("predictions_log.jsonl", encoding="utf-8"):
+            r = json.loads(l)
+            if r.get("key") == key and r.get("actual") is not None:
+                return bool(r.get("acierto_1x2")), bool(r.get("acierto_exacto"))
+    except Exception:
+        pass
+    return None, None
 
 
 def build(events=None):
@@ -83,8 +102,13 @@ def build(events=None):
         return None                      # cuartos aún sin definir del todo -> no hay cuadro que mostrar
 
     def _cruce(e):
-        return {"a": dd.acc(e["a"]) if e["a"] else None, "b": dd.acc(e["b"]) if e["b"] else None,
-                "fecha": _fecha_corta(e["date"]), "ganador": dd.acc(e["ganador"]) if e["ganador"] else None}
+        c = {"a": dd.acc(e["a"]) if e["a"] else None, "b": dd.acc(e["b"]) if e["b"] else None,
+             "fecha": _fecha_corta(e["date"]), "ganador": dd.acc(e["ganador"]) if e["ganador"] else None,
+             "marcador": e.get("marcador")}
+        if e.get("ganador") and e.get("a") and e.get("b"):     # cruce JUGADO: ¿la IA lo acertó?
+            iso = dd.et_date(e.get("date", "")) or e.get("date", "")[:10]
+            c["acierto"], c["exacto"] = _acierto_de(e["a"], e["b"], iso)
+        return c
 
     QF = [_cruce(e) for e in qf]
     SF = [_cruce(e) for e in (sf + [{}] * 2)[:2] if e] or []

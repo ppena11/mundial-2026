@@ -1,7 +1,7 @@
 import React from 'react';
 import {AbsoluteFill, Audio, Sequence, OffthreadVideo, staticFile, useCurrentFrame, useVideoConfig, interpolate, spring, Easing} from 'remotion';
 import {flagColors} from './flags';
-import {BracketScene, BracketRace} from './Bracket';
+import {BracketScene, BracketRace, CarreraTour, llavesDe} from './Bracket';
 
 // ---------- paleta MUNDIAL 2026 ----------
 const MAGENTA = '#FF2D78', BLUE = '#2563EB', TEAL = '#06D6C8', GREEN = '#22C55E', RED = '#EF4444', GOLD = '#FCD34D';
@@ -506,6 +506,42 @@ export const BracketViral: React.FC<{words: Word[]; data: any; audio: string; av
       <Avatar src={avatar} stadium={avatarStadium} />
       <TopBar fecha={data.fecha} />
       <Captions words={words} bottom={avatar ? 760 : 250} />
+    </AbsoluteFill>
+  );
+};
+
+// ===================== CARRERA VIRAL (~45s: tour explicado del bracket, SIN avatar) =====================
+// La cámara viaja llave por llave siguiendo la voz: cada parada = 1ª mención de un equipo de esa llave
+// (mismo mecanismo anchorOf de las tarjetas). Cierre = mención de 'campeón' (o cola del video): zoom-out
+// al cuadro completo + campeón con su %. Sin anclas (voz de respaldo), paradas equiespaciadas.
+export const CarreraViral: React.FC<{words: Word[]; data: any; audio: string}> = ({words = [], data = {}, audio = ''}) => {
+  const {fps, durationInFrames} = useVideoConfig();
+  const br = data.bracket || {};
+  const L = llavesDe(br);
+  const introMin = Math.round(fps * 1.6);
+  const tailEnd = durationInFrames - Math.round(fps * 3.2);       // deja aire para el cierre + CTA
+  const minGap = Math.round(fps * 1.2);
+  const stops: number[] = [];
+  let prev = introMin - minGap;
+  L.forEach((k, i) => {
+    const aT = anchorOf(words, k.c.a, prev / fps + 0.2);
+    const bT = anchorOf(words, k.c.b, prev / fps + 0.2);
+    const cand = [aT, bT].filter((x): x is number => x != null);
+    let s = cand.length ? Math.round(Math.min(...cand) * fps)
+                        : prev + Math.max(minGap, Math.round((tailEnd - introMin) / Math.max(1, L.length + 1)));
+    if (s < prev + minGap) s = prev + minGap;
+    stops.push(Math.min(s, tailEnd - minGap)); prev = stops[i];
+  });
+  const champT = anchorOf(words, 'campeon', prev / fps);          // 'campeón' normaliza a 'campeon'
+  let endStop = champT != null ? Math.round(champT * fps) : tailEnd;
+  endStop = Math.max(prev + minGap, Math.min(endStop, durationInFrames - Math.round(fps * 2.2)));
+  return (
+    <AbsoluteFill style={{background: '#0B0B10'}}>
+      {audio ? <Audio src={staticFile(audio)} /> : null}
+      <Audio src={staticFile('musica.mp3')} volume={0.14} loop />
+      <CarreraTour bracket={br} stops={stops} endStop={endStop} />
+      <TopBar fecha={data.fecha} />
+      <Captions words={words} bottom={250} />
     </AbsoluteFill>
   );
 };

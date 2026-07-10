@@ -35,8 +35,9 @@ def render(comp, audio_src, words_file, data_file, pub_audio, props_name, out_na
     if os.path.exists(mus): shutil.copy(mus, os.path.join(PUB, "musica.mp3"))
     # avatar HeyGen (opcional): genera tu clon hablando con la voz -> webm transparente -> público
     avatar_name = ""
-    keep = ("--keep-avatar" in sys.argv) or os.environ.get("RENDER_KEEP_AVATAR")
-    if keep and os.path.exists(os.path.join(PUB, avatar_pub)):
+    if not avatar_pub:
+        pass                                   # composición SIN clon (p. ej. CarreraViral): no gastar HeyGen
+    elif (("--keep-avatar" in sys.argv) or os.environ.get("RENDER_KEEP_AVATAR")) and os.path.exists(os.path.join(PUB, avatar_pub)):
         avatar_name = avatar_pub; print(f"(avatar: reuso {avatar_pub}, sin regenerar)")
     else:
         try:
@@ -125,4 +126,11 @@ if __name__ == "__main__":
     if what in ("recap", "both", "bracket+recap"):
         ok = render("RecapViral", "recap_voice.mp3", "recap_voice_words.json", "viral_recap.json",
                     "recap_voz.mp3", "recap_props.json", "recap_viral.mp4", "recap_avatar.webm") and ok
+    if what == "carrera":
+        dfile = _bracket_data()                # CARRERA VIRAL: tour explicado del bracket, SIN clon (HeyGen)
+        if dfile:
+            ok = render("CarreraViral", "carrera_voice.mp3", "carrera_voice_words.json", dfile,
+                        "carrera_voz.mp3", "carrera_props.json", "carrera_viral.mp4", "") and ok
+        else:
+            print("(carrera: sin viral_bracket.json con cuartos definidos; omito)")
     sys.exit(0 if ok else 1)

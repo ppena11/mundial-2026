@@ -563,6 +563,36 @@ try:
 finally:
     dd.matches_on = _omo2
     if _bak_vb is not None: open("viral_bracket.json", "w", encoding="utf-8").write(_bak_vb)
+# 11c) CARRERA VIRAL: marcador+acierto por cruce jugado y guion de respaldo que recorre las llaves EN ORDEN
+_bak_plog = open("predictions_log.jsonl", encoding="utf-8").read() if os.path.exists("predictions_log.jsonl") else None
+tr.save_log([{"key": "2026-07-09|Francia|Marruecos", "fecha": "2026-07-09", "a": "Francia", "b": "Marruecos",
+              "label": "Cuartos 1", "is_ko": True, "p1": 0.6, "pX": 0.25, "p2": 0.15, "pick": "1",
+              "marcador_pred": "2-1", "actual": "1", "marcador_real": "2-0",
+              "avanza_real": "Francia", "acierto_1x2": True, "acierto_exacto": False}])
+try:
+    _evC = [_bev("quarterfinals","2026-07-09T19:00Z","Francia","Marruecos","Francia")] + _QF()[1:] + _SFP() + _FP()
+    _evC[0]["marcador"] = "2-0"
+    for _e in _evC[1:]: _e.setdefault("marcador", None)
+    bC = mb.build(_evC)
+    q1 = bC["qf"][0]
+    ok("carrera datos: cruce jugado trae marcador y acierto del LOG (ganador sí, exacto no)",
+       q1.get("marcador") == "2-0" and q1.get("acierto") is True and q1.get("exacto") is False,
+       f"q1={q1}")
+    import carrera as ca
+    _llv = ca._llaves(bC)
+    ok("carrera._llaves: recorre QF1..QF4 en orden (jugada primero) y solo llaves con equipos",
+       len(_llv) == 4 and _llv[0][2] == "jugada" and [x[1]["a"] for x in _llv] == ["Francia","España","Noruega","Argentina"],
+       f"{[(x[0], x[2]) for x in _llv]}")
+    bC["probs"] = {"España": {"semis": 70.0, "final": 40.0, "campeon": 25.0},
+                   "Francia": {"semis": 100.0, "final": 45.0, "campeon": 27.0}}
+    _voz = ca._fallback_voz(bC)
+    ok("carrera voz respaldo: menciona equipos de cada llave EN ORDEN (anclas de cámara) + campeón + firma",
+       all(t in _voz for t in ("Francia", "España", "Noruega", "Argentina")) and
+       _voz.index("Francia") < _voz.index("España") < _voz.index("Noruega") < _voz.index("Argentina") and
+       "campeón más probable" in _voz and "Soy éi ái uíz Pédro" in _voz, _voz[:120])
+finally:
+    if _bak_plog is not None: open("predictions_log.jsonl", "w", encoding="utf-8").write(_bak_plog)
+    elif os.path.exists("predictions_log.jsonl"): os.remove("predictions_log.jsonl")
 # 12) sim: anclaje por ronda — deepest_start elige la ronda más profunda con cruces reales COMPLETOS
 import importlib.util as _ilu
 _spec = _ilu.spec_from_file_location("_slk_ds", "sim_live_ko.py")

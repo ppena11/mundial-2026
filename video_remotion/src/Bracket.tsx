@@ -242,6 +242,150 @@ export const BracketRace: React.FC<{bracket: any; dur?: number; y?: number; s?: 
   );
 };
 
+// ===================== CARRERA TOUR (explainer ~45s: cámara que VIAJA llave por llave) =====================
+// Pantalla completa (sin avatar). La cámara hace zoom a cada llave cuando la voz la narra (stops = frames
+// calculados en Viral.tsx desde las menciones de equipos), atenúa el resto, muestra el marcador + sello
+// "LA IA ACERTÓ/FALLÓ" en las jugadas y el duelo % en las pendientes, y cierra con zoom-out + CAMPEÓN.
+
+export const llavesDe = (bracket: any) => {   // orden narrable/visual (DEBE coincidir con carrera.py)
+  const qf = bracket.qf || [], sf = bracket.sf || [], fin = bracket.final || {};
+  const out: {c: any; kind: string; idx: number}[] = [];
+  qf.forEach((c: any, i: number) => { if (c?.a && c?.b) out.push({c, kind: 'QF', idx: i}); });
+  sf.forEach((c: any, i: number) => { if (c?.a && c?.b) out.push({c, kind: 'SF', idx: i}); });
+  if (fin?.a && fin?.b) out.push({c: fin, kind: 'F', idx: 0});
+  return out;
+};
+
+const Stamp: React.FC<{ok: boolean; exact?: boolean; delay?: number}> = ({ok, exact = false, delay = 0}) => {
+  const e = usePunch(delay, 7);
+  const col = ok ? '#22C55E' : '#EF4444';
+  return <div style={{transform: `rotate(-7deg) scale(${0.3 + e * 0.75})`, opacity: Math.min(1, e * 1.5),
+    background: col, color: '#08130B', fontFamily: FONT, fontSize: 30, fontWeight: 900, letterSpacing: 1,
+    padding: '10px 22px', borderRadius: 14, boxShadow: `0 0 40px ${col}88`, whiteSpace: 'nowrap'}}>
+    {ok ? (exact ? '✓ LA IA CLAVÓ EL MARCADOR' : '✓ LA IA ACERTÓ') : '✗ LA IA FALLÓ'}</div>;
+};
+
+export const CarreraTour: React.FC<{bracket: any; stops: number[]; endStop: number}> = ({bracket = {}, stops = [], endStop = 0}) => {
+  const f = useCurrentFrame();
+  const P = bracket.probs || {};
+  const pOf = (t: string | null, k: string) => (t && P[t] ? (P[t][k] || 0) : 0);
+  const L = llavesDe(bracket);
+  const qf = bracket.qf || [], sf = bracket.sf || [];
+  const fin = bracket.final || {};
+  // geometría (idéntica a BracketRace)
+  const D = 116, cxL = 150, cxR = 930, rows = [386, 534, 762, 910];
+  const midT = (rows[0] + rows[1]) / 2, midB = (rows[2] + rows[3]) / 2, midC = (midT + midB) / 2;
+  const jxL = 272, jxR = 808, sxL = 350, sxR = 730;
+  const OV = {cx: 540, cy: midC, w: 300, h: 142};
+  const favQF = (q: any) => q?.ganador || (!q?.a || !q?.b ? null : (pOf(q.a, 'semis') >= pOf(q.b, 'semis') ? q.a : q.b));
+  // objetivo de cámara por llave (centro del par) + parada final (zoom-out)
+  const target = (k: {kind: string; idx: number}) =>
+    k.kind === 'QF' ? {x: k.idx < 2 ? cxL + 90 : cxR - 90, y: k.idx % 2 === 0 ? midT : midB, s: 1.7}
+    : k.kind === 'SF' ? {x: k.idx === 0 ? sxL + 60 : sxR - 60, y: midC, s: 1.5}
+    : {x: 540, y: midC, s: 1.45};
+  // keyframes de cámara: overview -> llaves -> overview final (frames estrictamente crecientes)
+  const kf: number[] = [0]; const kx = [540], ky = [640], ks = [1.0];
+  L.forEach((k, i) => {
+    const t0 = stops[i] ?? 0; const tg = target(k);
+    kf.push(Math.max(kf[kf.length - 1] + 8, t0)); kx.push(tg.x); ky.push(tg.y); ks.push(tg.s);
+  });
+  kf.push(Math.max(kf[kf.length - 1] + 10, endStop)); kx.push(540); ky.push(620); ks.push(1.0);
+  const ease = {easing: Easing.inOut(Easing.cubic), extrapolateLeft: 'clamp' as const, extrapolateRight: 'clamp' as const};
+  const px = interpolate(f, kf, kx, ease), py = interpolate(f, kf, ky, ease), s = interpolate(f, kf, ks, ease);
+  // llave activa (para atenuar el resto y mostrar extras)
+  let act = -1;
+  L.forEach((_, i) => { if (f >= (stops[i] ?? 1e9) - 6) act = i; });
+  if (f >= endStop - 6) act = -2;                                  // cierre: cuadro completo + campeón
+  const dimOf = (i: number) => (act === -2 || act === -1 || act === i) ? 1 : 0.26;
+  const vivos = Object.keys(P);
+  const champPred = bracket.estado === 'CAMPEON' ? fin.ganador : (vivos.sort((a, b) => pOf(b, 'campeon') - pOf(a, 'campeon'))[0] || null);
+  const champE2 = usePunch(endStop + 4, 7);
+  const champPct2 = countUp(f, endStop + 6, 16, Math.round(bracket.estado === 'CAMPEON' ? 100 : pOf(champPred, 'campeon')));
+  const float = Math.sin(f / 26) * 3;
+
+  return (
+    <AbsoluteFill style={{background: '#0B0B10', overflow: 'hidden'}}>
+      <AbsoluteFill style={{background: 'repeating-linear-gradient(135deg, rgba(255,255,255,0.016) 0 44px, transparent 44px 88px)'}} />
+      {/* título fijo (fuera de la cámara) */}
+      <div style={{position: 'absolute', top: 108, width: '100%', textAlign: 'center', zIndex: 3, opacity: Math.min(1, usePunch(0, 8) * 1.5)}}>
+        <div style={{fontFamily: FONT, fontSize: 24, fontWeight: 800, letterSpacing: 8, color: 'rgba(255,255,255,0.55)'}}>MUNDIAL 2026 · SIMULACIÓN DE MI IA</div>
+        <div style={{fontFamily: FONT, fontSize: 72, fontWeight: 900, letterSpacing: -2, color: WHITE, transform: 'scaleY(1.06)', textShadow: '0 8px 40px rgba(0,0,0,0.9)'}}>LA CARRERA AL TÍTULO</div>
+      </div>
+      {/* CÁMARA */}
+      <div style={{position: 'absolute', inset: 0, transformOrigin: `${px}px ${py}px`,
+        transform: `translate(${540 - px}px, ${(act === -2 || act === -1 ? 900 : 830) - py + float}px) scale(${s})`}}>
+        {[0, 1, 2, 3].map(pi => {
+          const q = qf[pi] || {}; const gan = q.ganador;
+          const left = pi < 2, top = pi % 2 === 0;
+          const cx = left ? cxL : cxR, jx = left ? jxL : jxR, sxN = left ? sxL : sxR;
+          const yA = top ? rows[0] : rows[2], yB = top ? rows[1] : rows[3];
+          const mid = (yA + yB) / 2, edge = cx + (left ? D / 2 : -D / 2);
+          const li = L.findIndex(k => k.kind === 'QF' && k.idx === pi);
+          const active = act === li && li >= 0;
+          const fav = favQF(q);
+          const pend = !gan && q.a && q.b;
+          const sfGan = (pi < 2 ? sf[0] : sf[1])?.ganador;
+          return (
+            <div key={pi} style={{opacity: dimOf(li), transition: 'none', position: 'absolute', inset: 0}}>
+              <div style={{position: 'absolute', left: cx - D / 2, top: yA - D / 2}}>
+                <CircleFlag team={q.a} d={D} delay={6 + pi * 4} winner={gan === q.a} out={!!gan && gan !== q.a} outAt={(stops[li] ?? 60) + 8} /></div>
+              <div style={{position: 'absolute', left: cx - D / 2, top: yB - D / 2}}>
+                <CircleFlag team={q.b} d={D} delay={9 + pi * 4} winner={gan === q.b} out={!!gan && gan !== q.b} outAt={(stops[li] ?? 60) + 8} /></div>
+              <Lbl x={cx} y={yA - D / 2 - 20} size={nameSize(q.a)} w={230} nowrap>{(q.a || '').toUpperCase()}</Lbl>
+              <Lbl x={cx} y={yB + D / 2 + 26} size={nameSize(q.b)} w={230} nowrap>{(q.b || '').toUpperCase()}</Lbl>
+              <Seg x={edge} y={yA} len={Math.abs(jx - edge)} from={12} rev={!left} />
+              <Seg x={edge} y={yB} len={Math.abs(jx - edge)} from={12} rev={!left} />
+              <Seg x={jx} y={yA} len={yB - yA} vert from={16} />
+              <Seg x={left ? jx : sxN} y={mid} len={Math.abs(sxN - jx)} from={20} gold={!!gan || !!fav} />
+              {/* extras al llegar la cámara: marcador + sello (jugada) o duelo % (pendiente) */}
+              {active && gan && q.marcador ? (<>
+                <Lbl x={cx + (left ? 130 : -130)} y={mid - 88} size={54} color={WHITE} w={260} weight={900} nowrap>{q.marcador.replace(' (pen.)', '')}</Lbl>
+                {q.marcador.includes('pen.') ? <Lbl x={cx + (left ? 130 : -130)} y={mid - 50} size={20} color={GOLDF} w={200}>PENALES</Lbl> : null}
+                {q.acierto != null ? <div style={{position: 'absolute', left: cx + (left ? 40 : -300), top: mid + 26}}>
+                  <Stamp ok={!!q.acierto} exact={!!q.exacto} delay={(stops[li] ?? 0) + 8} /></div> : null}
+              </>) : null}
+              {active && pend ? <Pill x={jx} y={mid - 64} w={160}
+                txt={`${Math.round(pOf(q.a, 'semis'))}–${100 - Math.round(pOf(q.a, 'semis'))}%`} hot delay={(stops[li] ?? 0) + 6} /> : null}
+              {gan
+                ? (sfGan && gan !== sfGan
+                    ? <div style={{position: 'absolute', left: sxN - 44, top: (top ? midT : midB) - 44}}><CircleFlag team={gan} d={88} delay={20} out outAt={(stops[li] ?? 40) + 14} /></div>
+                    : <Traveler team={gan} x0={cx} y0={gan === q.a ? yA : yB} x1={sxN} y1={top ? midT : midB} from={(stops[li] ?? 30) + 10} d={88} />)
+                : (fav ? <Ghost team={fav} x={sxN} y={top ? midT : midB} d={88} delay={(stops[li] ?? 40) + 12} /> : null)}
+            </div>);
+        })}
+        {/* uniones SF -> centro + óvalo (siempre visibles, atenuados fuera de foco) */}
+        <div style={{opacity: act === -2 || act === -1 ? 1 : 0.4, position: 'absolute', inset: 0}}>
+          <Seg x={sxL} y={midT} len={midB - midT} vert from={26} gold={!!(sf[0] && sf[0].ganador)} />
+          <Seg x={sxR} y={midT} len={midB - midT} vert from={26} gold={!!(sf[1] && sf[1].ganador)} />
+          <Seg x={sxL} y={midC} len={OV.cx - OV.w / 2 - sxL} from={30} gold />
+          <Seg x={OV.cx + OV.w / 2} y={midC} len={sxR - (OV.cx + OV.w / 2)} from={30} gold />
+          <div style={{position: 'absolute', left: OV.cx - OV.w / 2, top: OV.cy - OV.h / 2, width: OV.w, height: OV.h,
+            borderRadius: '50%', border: `2.5px solid ${GOLDF}`, background: 'rgba(0,0,0,0.6)',
+            display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center'}}>
+            {fin.a && fin.b ? (
+              <div style={{display: 'flex', alignItems: 'center', gap: 10}}>
+                <CircleFlag team={fin.a} d={56} delay={30} /><span style={{fontFamily: FONT, fontSize: 26, fontWeight: 900, color: WHITE}}>VS</span><CircleFlag team={fin.b} d={56} delay={32} /></div>
+            ) : <div style={{fontFamily: FONT, fontSize: 38, fontWeight: 900, letterSpacing: 3, color: WHITE}}>FINAL</div>}
+            <div style={{fontFamily: FONT, fontSize: 24, fontWeight: 800, letterSpacing: 2, color: GOLDF, marginTop: 4}}>{bracket.final_fecha || '19 DE JULIO'}</div>
+          </div>
+        </div>
+        {/* CIERRE: campeón (más probable o coronado) con % gigante */}
+        {act === -2 && champPred ? (<>
+          <Lbl x={540} y={OV.cy - 318} size={30} color={GOLDF} w={800} ls={4} weight={900}>
+            {bracket.estado === 'CAMPEON' ? '🏆 CAMPEÓN DEL MUNDO 🏆' : 'CAMPEÓN MÁS PROBABLE'}</Lbl>
+          <div style={{position: 'absolute', left: 540 - 86, top: OV.cy - 282, transform: `scale(${0.3 + champE2 * 0.7})`}}>
+            <CircleFlag team={champPred} d={172} delay={endStop + 4} winner /></div>
+          {bracket.estado !== 'CAMPEON' ? <div style={{position: 'absolute', left: 540 - 78, top: OV.cy - 134, width: 156, textAlign: 'center',
+            opacity: Math.min(1, champE2 * 1.4), transform: `scale(${0.4 + champE2 * 0.6})`,
+            background: '#0B0B10', border: `3px solid ${GOLDF}`, borderRadius: 999, padding: '6px 0',
+            fontFamily: FONT, fontSize: 42, fontWeight: 900, color: GOLDF, boxShadow: `0 0 26px ${GOLDF}66`}}>{champPct2}%</div> : null}
+          {bracket.estado === 'CAMPEON' ? <Confetti from={endStop + 8} /> : null}
+        </>) : null}
+      </div>
+    </AbsoluteFill>
+  );
+};
+
 // ===================== ESCENA PRINCIPAL =====================
 export const BracketScene: React.FC<{bracket: any; y?: number; s?: number}> = ({bracket = {}, y = 0, s = 1}) => {
   const f = useCurrentFrame();
