@@ -1,87 +1,203 @@
 1
-00:00:00,000 --> 00:00:00,483
-¡Hola!
+00:00:00,280 --> 00:00:01,139
+Aquí están los pronósticos
 
 2
-00:00:00,483 --> 00:00:01,690
-Hoy es miércoles y
+00:00:01,139 --> 00:00:03,160
+del Mundial 2026 de
 
 3
-00:00:01,690 --> 00:00:03,059
-el balón descansa en
+00:00:03,160 --> 00:00:04,679
+mi inteligencia artificial para
 
 4
-00:00:03,059 --> 00:00:04,185
-el Mundial 2026,
+00:00:04,679 --> 00:00:05,419
+hoy,
 
 5
-00:00:04,185 --> 00:00:06,520
-pero tenemos noticias candentes.
+00:00:05,419 --> 00:00:07,219
+viernes 10 de julio.
 
 6
-00:00:06,520 --> 00:00:08,613
-Según nuestras simulaciones,
+00:00:07,219 --> 00:00:09,679
+Vamos 61 de 97.
 
 7
-00:00:08,613 --> 00:00:10,062
-España es la favorita
+00:00:09,679 --> 00:00:10,960
+España se mide ante
 
 8
-00:00:10,062 --> 00:00:11,672
-indiscutible con 26 por
+00:00:10,960 --> 00:00:12,119
+Bélgica en cuartos de
 
 9
-00:00:11,672 --> 00:00:13,121
-ciento de opciones de
+00:00:12,119 --> 00:00:12,919
+final,
 
 10
-00:00:13,121 --> 00:00:13,846
-campeona.
+00:00:12,919 --> 00:00:13,800
+y el modelo ve
 
 11
-00:00:13,846 --> 00:00:15,133
-Francia le pisa los
+00:00:13,800 --> 00:00:14,699
+a los españoles como
 
 12
-00:00:15,133 --> 00:00:16,341
-talones con 21 por
+00:00:14,699 --> 00:00:15,960
+favoritos claros con un
 
 13
-00:00:16,341 --> 00:00:16,904
-ciento,
+00:00:15,960 --> 00:00:17,379
+1 a 0.
 
 14
-00:00:16,904 --> 00:00:18,836
-mientras Argentina ronda el
+00:00:17,379 --> 00:00:18,620
+Aunque tanto mi modelo
 
 15
-00:00:18,836 --> 00:00:19,802
-16 por ciento.
+00:00:18,620 --> 00:00:19,559
+como el mercado casi
 
 16
-00:00:19,802 --> 00:00:21,493
-La batalla está abierta.
+00:00:19,559 --> 00:00:21,359
+coinciden en el favoritismo,
 
 17
-00:00:21,493 --> 00:00:23,022
-No te pierdas nuestros
+00:00:21,359 --> 00:00:22,239
+hay algo interesante:
 
 18
-00:00:23,022 --> 00:00:25,035
-análisis diarios en YouTube.
+00:00:22,239 --> 00:00:23,640
+le doy a Bélgica
 
 19
-00:00:25,035 --> 00:00:26,645
-Suscríbete y sígueme en
+00:00:23,640 --> 00:00:24,699
+un 21 por ciento
 
 20
-00:00:26,645 --> 00:00:27,450
-el link de mi
+00:00:24,699 --> 00:00:25,879
+de chances,
 
 21
-00:00:27,450 --> 00:00:27,850
-bio.
+00:00:25,879 --> 00:00:27,160
+mientras el consenso solo
 
 22
-00:00:27,772 --> 00:00:28,980
+00:00:27,160 --> 00:00:28,500
+le da 17,
+
+23
+00:00:28,500 --> 00:00:29,280
+así que el mercado
+
+24
+00:00:29,280 --> 00:00:31,359
+parece subestimarla un poco.
+
+25
+00:00:31,359 --> 00:00:32,640
+Con bajas y lesionados
+
+26
+00:00:32,640 --> 00:00:33,920
+en ambas escuadras,
+
+27
+00:00:33,920 --> 00:00:34,659
+este es un partido
+
+28
+00:00:34,659 --> 00:00:36,119
+donde España manda,
+
+29
+00:00:36,119 --> 00:00:37,259
+pero Bélgica tiene más
+
+30
+00:00:37,259 --> 00:00:38,219
+recorrido del que muchos
+
+31
+00:00:38,219 --> 00:00:39,200
+creen.
+
+32
+00:00:39,200 --> 00:00:40,140
+El partido se juega
+
+33
+00:00:40,140 --> 00:00:40,880
+a las tres de
+
+34
+00:00:40,880 --> 00:00:41,560
+la tarde,
+
+35
+00:00:41,560 --> 00:00:42,500
+hora del este,
+
+36
+00:00:42,500 --> 00:00:43,700
+en el SoFi Stadium.
+
+37
+00:00:43,700 --> 00:00:44,240
+Y así está el
+
+38
+00:00:44,240 --> 00:00:45,179
+cuadro rumbo a Nueva
+
+39
+00:00:45,179 --> 00:00:45,799
+York:
+
+40
+00:00:45,799 --> 00:00:47,079
+España contra Bélgica,
+
+41
+00:00:47,079 --> 00:00:48,600
+Noruega contra Inglaterra,
+
+42
+00:00:48,600 --> 00:00:49,759
+Argentina contra Suiza.
+
+43
+00:00:49,759 --> 00:00:51,939
+El fútbol es impredecible,
+
+44
+00:00:51,939 --> 00:00:53,140
+pero mi inteligencia artificial
+
+45
+00:00:53,140 --> 00:00:54,200
+ya tiene el mapa
+
+46
+00:00:54,200 --> 00:00:55,480
+dibujado.
+
+47
+00:00:55,480 --> 00:00:56,399
+Suscríbete a mi canal
+
+48
+00:00:56,399 --> 00:00:57,460
+para el análisis completo
+
+49
+00:00:57,460 --> 00:00:58,380
+gratis en el link
+
+50
+00:00:58,380 --> 00:00:59,039
+de mi bio.
+
+51
+00:00:59,039 --> 00:01:00,506
 Soy aiwithpedro.
