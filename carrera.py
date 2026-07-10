@@ -36,7 +36,9 @@ AI_CARRERA_SYS = (
     "toque); si está pendiente di el porcentaje del favorito; (3) cierra con el CAMPEÓN más probable y su "
     "porcentaje; (4) CTA breve a suscribirse (canal de YouTube, link en bio) y firma EXACTA: Soy éi ái uíz "
     "Pédro. Español con TODAS las tildes, sin emojis ni símbolos, números como cifras (el sistema los "
-    "convierte). PROHIBIDO inventar números o resultados que no estén en los datos.\n"
+    "convierte). PROHIBIDO inventar números o resultados que no estén en los datos. "
+    "PROHIBIDA la palabra 'campeonar' (no existe en español cuidado): di 'quedar campeón', 'ser campeón' "
+    "o 'levantar la copa'.\n"
     '"titulo": título viral (máx ~70 caracteres, máximo 1 emoji).\n'
     '"caption": caption corto para TikTok (1-2 líneas, 1-2 emojis, SIN hashtags).\n'
     '"hashtags": lista de EXACTAMENTE 5 hashtags virales (#Mundial2026 primero).\n'

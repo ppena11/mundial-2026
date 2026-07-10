@@ -370,6 +370,7 @@ def _limpiar_voz(text):
     text = re.sub(rf"\bun a (?={nums})", "uno a ", text)
     text = re.sub(r"\bSuscribete\b", "Suscríbete", text)
     text = re.sub(r"\bsuscribete\b", "suscríbete", text)
+    text = re.sub(r"\bcampeonar\b", "quedar campeón", text, flags=re.IGNORECASE)   # 'campeonar' no existe
     # duplicaciones: 'Bélgica y Bélgica' -> 'Bélgica'  y  'Bélgica Bélgica' / 'la la' -> una sola
     text = re.sub(r"\b([A-ZÁÉÍÓÚÑ]\w*)\s+y\s+\1\b", r"\1", text)
     text = re.sub(r"\b(\w+)(?:\s+\1\b)+", r"\1", text, flags=re.IGNORECASE)
