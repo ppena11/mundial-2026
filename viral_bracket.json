@@ -1,5 +1,5 @@
 {
-  "estado": "QF_PENDIENTES",
+  "estado": "QF_EN_CURSO",
   "ronda": "CUARTOS DE FINAL",
   "final_fecha": "19 DE JULIO",
   "final_sede": "MetLife Stadium",
@@ -8,7 +8,7 @@
       "a": "Francia",
       "b": "Marruecos",
       "fecha": "9 JUL",
-      "ganador": null
+      "ganador": "Francia"
     },
     {
       "a": "España",
@@ -31,7 +31,7 @@
   ],
   "sf": [
     {
-      "a": null,
+      "a": "Francia",
       "b": null,
       "fecha": "14 JUL",
       "ganador": null
