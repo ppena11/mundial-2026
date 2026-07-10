@@ -25,9 +25,11 @@ FINAL_SEDE_DEF = "MetLife Stadium"   # respaldo si el feed no trae la sede (fina
 
 
 def _fecha_corta(iso):
-    """'2026-07-09T19:00Z' -> '9 JUL' (solo datos del feed)."""
+    """'2026-07-09T19:00Z' -> '9 JUL' en día ET (todo el pipeline habla en ET; un juego a las 9 PM ET del 11
+    es 12-jul en UTC y mostraba el día equivocado)."""
     try:
-        return f"{int(iso[8:10])} {_MES.get(iso[5:7], '')}".strip()
+        d = dd.et_date(iso) or iso[:10]
+        return f"{int(d[8:10])} {_MES.get(d[5:7], '')}".strip()
     except Exception:
         return ""
 
@@ -112,9 +114,39 @@ def build(events=None):
         final_fecha = f"{int(f_iso[8:10])} DE {'JULIO' if f_iso[5:7] == '07' else 'JUNIO'}"
     except Exception:
         final_fecha = "19 DE JULIO"
-    return {"estado": estado, "ronda": ronda, "final_fecha": final_fecha,
-            "final_sede": (fin[0]["venue"] if fin and fin[0]["venue"] else FINAL_SEDE_DEF),
-            "qf": QF, "sf": SF, "final": FIN}
+    out = {"estado": estado, "ronda": ronda, "final_fecha": final_fecha,
+           "final_sede": (fin[0]["venue"] if fin and fin[0]["venue"] else FINAL_SEDE_DEF),
+           "qf": QF, "sf": SF, "final": FIN}
+    out["probs"] = _probs_vivos(out)   # P(semis/final/campeón) por equipo VIVO — la CARRERA AL TÍTULO del bracket
+    return out
+
+
+def _probs_vivos(br):
+    """{equipo_acentuado: {semis, final, campeon}} para los equipos AÚN VIVOS del cuadro, desde champ_today.json
+    (100.000 simulaciones condicionadas al torneo real). {} si el simulador aún no exporta las rondas."""
+    try:
+        ch = json.load(open("champ_today.json", encoding="utf-8"))
+    except Exception:
+        return {}
+    semis, final, camp = ch.get("semis") or {}, ch.get("final") or {}, ch.get("campeon") or {}
+    if not camp or not semis or not final:
+        return {}   # simulador viejo sin rondas (o export corrupto): sin probs no hay carrera (mejor que 0%)
+    if str(ch.get("fase", "")).startswith("PRE-TORNEO"):
+        return {}   # estado regresado a PRE-TORNEO con el torneo andando = datos NO condicionados: no publicar
+    vivos = set()
+    for c in br["qf"] + br["sf"] + [br["final"]]:
+        for k in ("a", "b"):
+            if c.get(k): vivos.add(c[k])
+    eliminados = {c[k] for c in br["qf"] + br["sf"] for k in ("a", "b")
+                  if c.get(k) and c.get("ganador") and c["ganador"] != c[k]}
+    vivos -= eliminados
+    out = {}
+    for t, cp in camp.items():
+        ta = dd.acc(t)
+        if ta in vivos:
+            out[ta] = {"semis": round(float(semis.get(t, 0)), 1), "final": round(float(final.get(t, 0)), 1),
+                       "campeon": round(float(cp), 1)}
+    return out
 
 
 def frase_cuadro(br):
@@ -128,6 +160,30 @@ def frase_cuadro(br):
     cruces = "; ".join(f"{c['a']} contra {c['b']}" for c in pend if c["a"] and c["b"])
     ronda = "cuartos de final" if br["estado"].startswith("QF") else "semifinales"
     return f"Así está el cuadro rumbo a Nueva York — {ronda}: {cruces}."
+
+
+def frase_carrera(br):
+    """UNA línea con la CARRERA AL TÍTULO simulada (datos del modelo, nada inventado): favorito de cada llave
+    pendiente + campeón más probable con su %. Contiene la palabra 'carrera' (ancla de la escena en Remotion)."""
+    if not br or not br.get("probs") or br.get("estado") == "CAMPEON":
+        return ""
+    P = br["probs"]
+    def fav(c):
+        if not (c.get("a") and c.get("b")) or c.get("ganador"): return None
+        pa, pb = P.get(c["a"], {}).get("semis", 0), P.get(c["b"], {}).get("semis", 0)
+        if br["estado"] not in ("QF_PENDIENTES", "QF_EN_CURSO"):   # en semis la P relevante es llegar a la final
+            pa, pb = P.get(c["a"], {}).get("final", 0), P.get(c["b"], {}).get("final", 0)
+        return (c["a"], pa) if pa >= pb else (c["b"], pb)
+    cruces = br["qf"] if br["estado"].startswith("QF") else br["sf"]
+    favs = [f for f in (fav(c) for c in cruces) if f]
+    champ = max(P.items(), key=lambda kv: kv[1].get("campeon", 0)) if P else None
+    partes = []
+    if favs:
+        partes.append("mi modelo ve avanzando a " + ", ".join(f"{t} ({round(p)} por ciento)" for t, p in favs))
+    if champ:
+        partes.append(("y " if partes else "") + f"el campeón más probable hoy es {champ[0]} con "
+                      f"{round(champ[1]['campeon'])} por ciento")   # sin favs (final lista) la frase abre limpia
+    return ("En la carrera al título, " + "; ".join(partes) + ".") if partes else ""
 
 
 if __name__ == "__main__":

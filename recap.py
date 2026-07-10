@@ -204,6 +204,13 @@ def build(target):
     dia = dd.weekday_es(target)   # día calculado en Python (Claude no lo deduce)
     sm = [f"Anoche fue {dia}, {fecha_h}. El modelo acertó {hits} de {n} partidos." if dia
           else f"Cierre del {fecha_h}. El modelo acertó {hits} de {n} partidos."]
+    try:                          # FASE de los partidos calificados (Claude NUNCA la deduce)
+        _fase = dd.fase_actual(target)
+        if _fase:
+            sm.append(f"FASE DEL TORNEO de estos partidos: {_fase}. Si mencionas la fase/ronda usa EXACTAMENTE "
+                      f"esa; JAMÁS digas 'fase de grupos' u otra ronda distinta.")
+    except Exception:
+        pass
     for x in matches:
         extra = (f", se fue a PENALES y avanzó {dd.acc(x['avanza_real'])}"
                  if x.get("penales") and x.get("avanza_real") else "")

@@ -522,6 +522,63 @@ ok("frase_cuadro: contiene la palabra ancla 'cuadro' y los cruces reales",
    "cuadro" in mb.frase_cuadro(b0) and "Francia contra Marruecos" in mb.frase_cuadro(b0) and
    "campeón del mundo" in mb.frase_cuadro(b5),
    mb.frase_cuadro(b0)[:90])
+# 11) CARRERA AL TÍTULO: probs de los VIVOS desde champ_today.json (eliminados fuera) + frase con ancla 'carrera'
+_bak_ch = open("champ_today.json", encoding="utf-8").read() if os.path.exists("champ_today.json") else None
+json.dump({"campeon": {"Francia": 15.0, "Marruecos": 7.0, "Espana": 28.0, "Belgica": 5.0, "Colombia": 2.0},
+           "final": {"Francia": 28.0, "Marruecos": 15.0, "Espana": 44.0, "Belgica": 12.0, "Colombia": 4.0},
+           "semis": {"Francia": 60.0, "Marruecos": 40.0, "Espana": 70.0, "Belgica": 30.0, "Colombia": 21.0}},
+          open("champ_today.json", "w", encoding="utf-8"))
+try:
+    b6 = mb.build(_QF()+_SFP()+_FP())
+    _pr = b6.get("probs", {})
+    _fc = mb.frase_carrera(b6)
+    ok("carrera: probs solo de equipos VIVOS del cuadro (Colombia eliminada fuera) con semis/final/campeon",
+       "Francia" in _pr and "España" in _pr and "Colombia" not in _pr and
+       _pr["Francia"] == {"semis": 60.0, "final": 28.0, "campeon": 15.0},
+       f"probs={list(_pr.keys())} Francia={_pr.get('Francia')}")
+    ok("frase_carrera: palabra ancla 'carrera' + favoritos por llave + campeón más probable con su %",
+       "carrera" in _fc and "Francia (60 por ciento)" in _fc and "España con 28 por ciento" in _fc,
+       _fc[:140])
+    b7 = mb.build(_QF("Francia","Espana","Inglaterra","Argentina")+_SFP("Francia","Argentina")+_FP("Argentina"))
+    ok("frase_carrera: con campeón coronado NO hay carrera (vacía)", mb.frase_carrera(b7) == "", mb.frase_carrera(b7))
+    b8 = mb.build(_QF("Francia","Espana","Inglaterra","Argentina")+_SFP("Francia","Argentina")+_FP())  # FINAL_LISTA
+    _f8 = mb.frase_carrera(b8)
+    ok("frase_carrera FINAL_LISTA: frase limpia (sin ', y' colgando) con solo el campeón",
+       "título, y" not in _f8 and "el campeón más probable" in _f8 and "carrera" in _f8, _f8[:110])
+finally:
+    if _bak_ch is not None: open("champ_today.json", "w", encoding="utf-8").write(_bak_ch)
+# 11b) fase_actual: la FASE que se le pasa a Claude sale de los DATOS (nunca la deduce el modelo)
+_omo2 = dd.matches_on
+try:
+    dd.matches_on = lambda t: [{"label": "Cuartos 1", "is_ko": True}]
+    _f_ko = dd.fase_actual("20260710")
+    dd.matches_on = lambda t: [{"label": "Grupo A", "is_ko": False}]
+    _f_gr = dd.fase_actual("20260615")
+    dd.matches_on = lambda t: []          # día de descanso en la recta final -> estado del cuadro (b2=SF_LISTAS)
+    json.dump(b2, open("viral_bracket.json", "w", encoding="utf-8"), ensure_ascii=False)
+    _f_desc = dd.fase_actual("20260713")
+    ok("fase_actual: día KO -> 'CUARTOS DE FINAL'; día de grupos -> 'FASE DE GRUPOS'; descanso -> ronda del cuadro",
+       _f_ko == "CUARTOS DE FINAL" and _f_gr == "FASE DE GRUPOS" and _f_desc.startswith("SEMIFINALES"),
+       f"ko={_f_ko} | grupos={_f_gr} | descanso={_f_desc}")
+finally:
+    dd.matches_on = _omo2
+    if _bak_vb is not None: open("viral_bracket.json", "w", encoding="utf-8").write(_bak_vb)
+# 12) sim: anclaje por ronda — deepest_start elige la ronda más profunda con cruces reales COMPLETOS
+import importlib.util as _ilu
+_spec = _ilu.spec_from_file_location("_slk_ds", "sim_live_ko.py")
+# (sin importar el módulo completo —correría las 100k sims—: se prueba la función aislada con exec del fragmento)
+_src = open("sim_live_ko.py", encoding="utf-8").read()
+_ds_src = _src[_src.index("def deepest_start"):]
+_ds_src = _ds_src[:_ds_src.index("\n# ")]            # solo la función (hasta la siguiente sección)
+_frag = _src[_src.index("_R_N="):_src.index("_PLACEHOLDER=")] + _ds_src
+_ns = {}
+exec(_frag, _ns)
+_ds = _ns["deepest_start"]
+ok("deepest_start: F>SF>QF>R16>R32 según cruces reales completos (parciales NO cuentan)",
+   _ds({"QF": [1]*4, "SF": [], "F": []}) == "QF" and _ds({"QF": [1]*4, "SF": [1]*2, "F": []}) == "SF" and
+   _ds({"QF": [1]*4, "SF": [1]*2, "F": [1]}) == "F" and _ds({"R16": [1]*8, "QF": [1]*3}) == "R16" and
+   _ds({"R16": [1]*7}) == "R32",
+   "selección de ronda ancla incorrecta")
 
 # ============================================================
 section("14) SUBTÍTULOS (texto = nuestro guion; Whisper solo para el tiempo)")

@@ -138,8 +138,16 @@ def _material(p):
     else:
         L.append("ESTADO: TORNEO EN CURSO, hoy es un día de descanso (sin partidos). NO uses cuenta regresiva; "
                  "lleva al frente la noticia más viral del Mundial.")
+        try:                       # FASE del torneo calculada en Python (Claude NUNCA la deduce)
+            _fase = dd.fase_actual(p.get("target", ""))
+            if _fase:
+                L.append(f"FASE ACTUAL DEL TORNEO: {_fase}. Si mencionas la fase/ronda usa EXACTAMENTE esa; "
+                         f"JAMÁS digas 'fase de grupos' u otra ronda distinta.")
+        except Exception:
+            pass
     if p["news"]:
         L.append(f"NOTICIA REAL (fuente {p['news']['source']}): {p['news']['title']}")
+    _hay_carrera = False
     try:                                # EL CUADRO real de la recta final: en día de descanso es EL contenido
         import json as _j, make_bracket as _mb
         _br = _j.load(open("viral_bracket.json", encoding="utf-8"))
@@ -147,10 +155,16 @@ def _material(p):
         if _fr and p["days"] <= 0:
             L.append("EL CUADRO REAL DE LA RECTA FINAL (dato prioritario; nárralo con la palabra 'cuadro', "
                      "el video muestra la infografía de las llaves): " + _fr)
+        _fc = _mb.frase_carrera(_br)
+        if _fc and p["days"] <= 0:
+            L.append("LA CARRERA AL TÍTULO SIMULADA (nárrala DESPUÉS del cuadro usando la palabra EXACTA "
+                     "'carrera' — dispara la segunda parte del video; deja claro que es lo que VE EL MODELO, "
+                     "no resultados): " + _fc)
+            _hay_carrera = True
     except Exception:
         pass
     L.append("DATO EXACTO DE MIS SIMULACIONES (úsalo, no inventes otros números): " + p["model_fact"])
-    if p["champ"]:
+    if p["champ"] and not _hay_carrera:   # con carrera NO repetir otro % de campeón (fuente distinta = confusión)
         L.append("Top campeón hoy: " + ", ".join(f"{dd.acc(t)} {round(v)} por ciento" for t, v in p["champ"][:3]) + ".")
     try:
         import contexto

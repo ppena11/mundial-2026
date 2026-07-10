@@ -138,13 +138,15 @@ R32_SLOTS = [
  (("W","J"),("R","H")),                                  # 15
  (("W","K"),("3",frozenset("DEIJL"))),                   # 16
 ]
-# pares de la siguiente ronda (1-indexados como ESPN): ganador de match i vs ganador de match j
-# VALIDADO 28-jun-2026 contra los placeholders en vivo de ESPN (round-of-16/quarterfinals/semifinals/final):
-#   R16 #4=(7,8) y #5=(11,12) — el orden importa porque QF empareja por número de octavo.
-R16_PAIRS=[(1,3),(2,5),(4,6),(7,8),(11,12),(9,10),(14,16),(13,15)]
-QF_PAIRS =[(1,2),(5,6),(3,4),(7,8)]   # QF1=R16(1,2) QF2=R16(5,6) QF3=R16(3,4) QF4=R16(7,8)  ✓ ESPN
-SF_PAIRS =[(1,2),(3,4)]               # SF1=QF1+QF2  SF2=QF3+QF4  ✓ ESPN
-F_PAIR   =(1,2)                       # Final=SF1+SF2  ✓ ESPN
+# pares de la siguiente ronda (1-indexados) — SOLO RESPALDO para rondas cuyos cruces reales aún no existen.
+# LECCIÓN 09-jul-2026: los PLACEHOLDERS de ESPN ('Round of 32 N Winner') mintieron en 4 de 8 octavos (su N no
+# es el orden nativo de eventos). Por eso la simulación ANCLA los emparejamientos REALES ronda por ronda
+# (deepest_start) y estos pares solo se usan para el futuro no conocido. R16_PAIRS corregido a los cruces
+# REALES que se jugaron (derivados de resultados, no de placeholders).
+R16_PAIRS=[(1,4),(3,6),(2,5),(7,8),(11,12),(9,10),(14,15),(13,16)]
+QF_PAIRS =[(1,2),(5,6),(3,4),(7,8)]   # verificado contra los CUARTOS REALES del 09-jul ✓
+SF_PAIRS =[(1,2),(3,4)]               # SF1=QF1+QF2  SF2=QF3+QF4 (se ancla al real en cuanto ESPN lo publique)
+F_PAIR   =(1,2)
 THIRD_SLOTS=[(i,s[1][1]) for i,s in enumerate(R32_SLOTS) if s[1][0]=="3"]  # (idx_R32, frozenset candidatos)
 
 def assign_thirds(qualified_groups):
@@ -181,9 +183,18 @@ def _get(url):
     try: return requests.get(url,headers=HEAD,timeout=20).json()
     except Exception: return requests.get(PROXY+urllib.parse.quote(url,safe=""),headers=HEAD,timeout=45).json()
 
+_R_SLUG={"round-of-32":"R32","round-of-16":"R16","quarterfinals":"QF","semifinals":"SF","final":"F"}
+_R_N={"R32":16,"R16":8,"QF":4,"SF":2,"F":1}
+_PLACEHOLDER=("Winner","Loser","Quarterfinal","Semifinal","Round","TBD","Place")
+def _realname(n): return bool(n) and not any(p in n for p in _PLACEHOLDER)
+
 def fetch_state():
-    """(group_played {frozenset:{a:ga,b:gb}}, ko_winner {frozenset:ganador}, r32_matchups [(a,b)...])."""
-    gp={}; ko={}; r32=[]
+    """(group_played {frozenset:{a:ga,b:gb}}, ko_winner {frozenset:ganador},
+        rmatch {ronda: [(a,b)...]} = emparejamientos KO REALES por ronda en ORDEN NATIVO de ESPN).
+    rmatch permite ANCLAR cada ronda en cuanto sus cruces existen — lección del 09-jul: la numeración de los
+    PLACEHOLDERS de ESPN ('Round of 32 N Winner') NO es fiable (mintió en 4 de 8 octavos); los emparejamientos
+    reales sí lo son."""
+    gp={}; ko={}; rmatch={r:[] for r in _R_N}
     try:
         for m in json.load(open("wc_results_mock.json",encoding="utf-8")):
             gp[frozenset((m[0],m[1]))]={m[0]:m[2],m[1]:m[3]}
@@ -193,33 +204,49 @@ def fetch_state():
             ko[frozenset((m[0],m[1]))]=m[2]
     except FileNotFoundError: pass
     if gp or ko:
-        print("(usando simulacros locales wc_*_mock.json)"); return gp,ko,r32
-    if date.today() < date(2026,6,11): return gp,ko,r32
-    try:
-        data=_get(f"{ESPN}/scoreboard?dates=20260611-20260720")
-    except Exception as e:
-        print(f"(sin estado ESPN: {e})"); return gp,ko,r32
-    for e in data.get("events",[]):
-        comp=(e.get("competitions") or [{}])[0]
-        cs=comp.get("competitors",[])
-        if len(cs)!=2: continue
-        try:
-            nm=[EN2ES.get(x["team"]["displayName"],x["team"]["displayName"]) for x in cs]
-        except Exception: continue
-        slug=e.get("season",{}).get("slug","")
-        if slug=="round-of-32": r32.append((nm[0],nm[1]))          # emparejamiento real (cualquier estado)
-        if comp.get("status",{}).get("type",{}).get("state")!="post": continue
-        try: gl=[int(x.get("score",0)) for x in cs]
-        except Exception: continue
-        if slug in KO_SLUGS:
-            # el que AVANZA según ESPN (flag winner/advance) — vale para partidos definidos en PENALES,
-            # donde el marcador queda empatado; respaldo por marcador si el feed no trae el flag.
-            w = next((x for x in cs if x.get("winner") or x.get("advance")), None)
-            if w is None: w = cs[0] if gl[0]>gl[1] else cs[1]
-            ko[frozenset(nm)] = EN2ES.get(w["team"]["displayName"],w["team"]["displayName"])
-        else:
-            gp[frozenset(nm)]={nm[0]:gl[0],nm[1]:gl[1]}
-    return gp,ko,r32
+        print("(usando simulacros locales wc_*_mock.json)"); return gp,ko,rmatch
+    if date.today() < date(2026,6,11): return gp,ko,rmatch
+    chunks=[]
+    for rng in ("20260611-20260720","20260714-20260725"):   # cada rango AISLADO: si uno falla, el otro sirve
+        try: chunks.append(_get(f"{ESPN}/scoreboard?dates={rng}"))
+        except Exception as e: print(f"(sin ESPN {rng}: {e})")
+    if not chunks:
+        print("(sin estado ESPN)"); return gp,ko,rmatch
+    seen=set()
+    for data in chunks:
+        for e in data.get("events",[]):
+            if e.get("id") in seen: continue
+            seen.add(e.get("id"))
+            comp=(e.get("competitions") or [{}])[0]
+            cs=comp.get("competitors",[])
+            if len(cs)!=2: continue
+            try:
+                nm=[EN2ES.get(x["team"]["displayName"],x["team"]["displayName"]) for x in cs]
+            except Exception: continue
+            slug=e.get("season",{}).get("slug","")
+            rnd=_R_SLUG.get(slug)
+            if rnd and _realname(nm[0]) and _realname(nm[1]):
+                rmatch[rnd].append((nm[0],nm[1]))                  # emparejamiento REAL (jugado o por jugar)
+            if comp.get("status",{}).get("type",{}).get("state")!="post": continue
+            try: gl=[int(x.get("score",0)) for x in cs]
+            except Exception: continue
+            if slug in KO_SLUGS or rnd:
+                # el que AVANZA según ESPN (flag winner/advance) — vale para partidos definidos en PENALES,
+                # donde el marcador queda empatado; respaldo por marcador si el feed no trae el flag.
+                w = next((x for x in cs if x.get("winner") or x.get("advance")), None)
+                if w is None: w = cs[0] if gl[0]>gl[1] else cs[1]
+                ko[frozenset(nm)] = EN2ES.get(w["team"]["displayName"],w["team"]["displayName"])
+            else:
+                gp[frozenset(nm)]={nm[0]:gl[0],nm[1]:gl[1]}
+    return gp,ko,rmatch
+
+def deepest_start(rmatch):
+    """Ronda más profunda cuyos emparejamientos REALES están completos: de ahí arranca la simulación
+    (todo lo anterior son HECHOS, no se re-simula). 'R32' si solo hay dieciseisavos (o nada)."""
+    for rnd in ("F","SF","QF","R16"):
+        if len(rmatch.get(rnd) or []) == _R_N[rnd]:
+            return rnd
+    return "R32"
 
 # ---------- CALENDARIO + FACTORES DE CONTEXTO EN GRUPOS (altura/calor/viaje) ----------
 try:
@@ -352,69 +379,103 @@ def compute_fixed_r32(gp, r32_matchups):
         used.add(hit[0]); fixed[hit[0]]=hit[1]
     return fixed if len(fixed)==16 else None
 
-GP, KO, R32M = fetch_state()
-FIXED_R32 = compute_fixed_r32(GP, R32M)
+GP, KO, RM = fetch_state()
+if date.today() >= date(2026,6,11) and not GP and not KO:
+    # ¡Torneo en marcha y SIN estado de ESPN! Re-simular desde cero publicaría probabilidades PRE-TORNEO
+    # como si fueran reales. NO se pisa champ_today.json: queda el de la última corrida buena.
+    print("¡SIN ESTADO DE ESPN con el torneo en marcha! champ_today.json NO se toca (se conserva el anterior).")
+    import sys as _sys; _sys.exit(0)
+FIXED_R32 = compute_fixed_r32(GP, RM.get("R32") or [])
+START = deepest_start(RM)                 # ronda más profunda con cruces REALES completos: de ahí se simula
+KNOWN_SEMIS = {t for m in (RM.get("SF") or []) for t in m} if START in ("SF","F") else set()
 n_grp=sum(1 for grp in GROUPS.values() for i in range(4) for j in range(i+1,4) if frozenset((grp[i],grp[j])) in GP)
 print(f"Partidos jugados detectados — grupos: {n_grp} | eliminatorias: {len(KO)}")
-print("  -> Dieciseisavos REALES de ESPN ANCLADOS (16 emparejamientos)" if FIXED_R32 else "  -> cuadro RECONSTRUIDO (grupos sin terminar)")
+print(f"  -> ANCLAJE por ronda: simulando desde {START} con los cruces REALES de ESPN"
+      + ("" if START != "R32" else (" (R32 anclado)" if FIXED_R32 else " (cuadro RECONSTRUIDO: grupos sin terminar)")))
 
 def play_ko(a, b, rnd, pos, last_played):
-    """Juega un partido KO en la casilla (rnd,pos): condiciona por el resultado real si existe; si no, simula
-    con los factores de contexto (altura/calor/viaje) de esa sede. Actualiza last_played del ganador."""
+    """Juega un partido KO en la casilla (rnd,pos): condiciona por el resultado real si existe (sin calcular
+    factores: no hacen falta y ahorra tiempo); si no, simula con altura/calor/viaje de esa sede.
+    SIEMPRE actualiza last_played del ganador (origen del viaje de su siguiente partido)."""
     info = KO_VENUE.get((rnd, pos))
-    fa = fb = 1.0
-    if info and info[0]:
-        ground, hour, dstr, off = info
-        ta = ko_travel(a, ground, dstr, off, last_played)
-        tb = ko_travel(b, ground, dstr, off, last_played)
-        fa, fb = cf.match_factors(a, b, ground, hour, home_travel=ta, away_travel=tb,
-                                  enable_alt=cf.USE_ALTITUDE, enable_heat=cf.USE_HEAT, enable_travel=cf.USE_TRAVEL)
     k = frozenset((a, b))
-    w = KO[k] if k in KO else gm(a, b, fa, fb)        # resultado REAL si ya se jugó; si no, simulación
+    if k in KO:
+        w = KO[k]                                     # resultado REAL ya jugado
+    else:
+        fa = fb = 1.0
+        if info and info[0]:
+            ground, hour, dstr, off = info
+            ta = ko_travel(a, ground, dstr, off, last_played)
+            tb = ko_travel(b, ground, dstr, off, last_played)
+            fa, fb = cf.match_factors(a, b, ground, hour, home_travel=ta, away_travel=tb,
+                                      enable_alt=cf.USE_ALTITUDE, enable_heat=cf.USE_HEAT, enable_travel=cf.USE_TRAVEL)
+        w = gm(a, b, fa, fb)
     if info and info[0]:
         last_played[w] = (info[0], info[2], info[3])
     return w
 
 # ---------- SIMULACIÓN ----------
 random.seed(int(os.environ.get("SL_SEED", "11"))); Ksims=int(os.environ.get("SL_K", "100000"))
-champ={t:0 for t in MAP}; fin={t:0 for t in MAP}
+champ={t:0 for t in MAP}; fin={t:0 for t in MAP}; semi={t:0 for t in MAP}   # semi = ganó su cuarto (llegó a semis)
 for _ in range(Ksims):
     winners={}; last_played=dict(LAST_GROUP)
-    if FIXED_R32 is not None:                          # cuadro KO REAL anclado: solo se simulan los RESULTADOS
-        for idx,(a,b) in FIXED_R32.items():
-            winners[("R32",idx+1)] = play_ko(a,b,"R32",idx+1,last_played)
-    else:                                              # pre-KO: simular grupos (con factores) y reconstruir el cuadro
-        pos={}; third_team={}; thirds=[]
-        for gN,T in GROUPS.items():
-            gmatches=[]
-            for i in range(4):
-                for j in range(i+1,4):
-                    a,b=T[i],T[j]; key=frozenset((a,b))
-                    if key in GP: ga,gb=GP[key][a],GP[key][b]
-                    else:
-                        _f=PAIR_FACTORS.get(key,{}); ga,gb=gscore(a,b,_f.get(a,1.0),_f.get(b,1.0))
-                    gmatches.append((a,b,ga,gb))
-            order=fe.rank_group(T,gmatches); tabg=fe.group_table(T,gmatches)
-            pos[("W",gN)]=order[0]; pos[("R",gN)]=order[1]; third_team[gN]=order[2]
-            thirds.append((order[2],tabg[order[2]]["pts"],tabg[order[2]]["gd"],tabg[order[2]]["gf"]))
-        top8=set(fe.rank_thirds(thirds)[:8])
-        qgroups={gN for gN in GROUPS if third_team[gN] in top8}
-        amap=assign_thirds(qgroups)
-        for idx,(sA,sB) in enumerate(R32_SLOTS):
-            ta = third_team[amap[idx]] if sA[0]=="3" else pos[sA]
-            tb = third_team[amap[idx]] if sB[0]=="3" else pos[sB]
-            winners[("R32",idx+1)] = play_ko(ta,tb,"R32",idx+1,last_played)
     def round_play(pairs,name,src):
         out={}
         for n,(i,j) in enumerate(pairs,1):
             out[(name,n)] = play_ko(winners[(src,i)],winners[(src,j)],name,n,last_played)
         winners.update(out)
-    round_play(R16_PAIRS,"R16","R32")
-    round_play(QF_PAIRS,"QF","R16")
-    round_play(SF_PAIRS,"SF","QF")
-    f1,f2=winners[("SF",F_PAIR[0])],winners[("SF",F_PAIR[1])]
+    def round_real(name):                              # ronda ANCLADA: cruces reales de ESPN (orden nativo)
+        for n,(a,b) in enumerate(RM[name],1):
+            winners[(name,n)] = play_ko(a,b,name,n,last_played)
+    if START != "R32":                                 # rondas KO ANTERIORES (ya jugadas): reproducirlas
+        for _r in ("R32","R16","QF","SF"):             # condicionadas (KO) para que last_played tenga la
+            if _r == START: break                      # SEDE REAL previa de cada equipo (viaje/jet lag);
+            if len(RM.get(_r) or []) == _R_N[_r]:      # si no, el viaje se calculaba desde la fase de grupos
+                round_real(_r)
+    if START == "R32":
+        if FIXED_R32 is not None:                      # R32 real anclado: solo se simulan los RESULTADOS
+            for idx,(a,b) in FIXED_R32.items():
+                winners[("R32",idx+1)] = play_ko(a,b,"R32",idx+1,last_played)
+        else:                                          # pre-KO: simular grupos (con factores) y reconstruir el cuadro
+            pos={}; third_team={}; thirds=[]
+            for gN,T in GROUPS.items():
+                gmatches=[]
+                for i in range(4):
+                    for j in range(i+1,4):
+                        a,b=T[i],T[j]; key=frozenset((a,b))
+                        if key in GP: ga,gb=GP[key][a],GP[key][b]
+                        else:
+                            _f=PAIR_FACTORS.get(key,{}); ga,gb=gscore(a,b,_f.get(a,1.0),_f.get(b,1.0))
+                        gmatches.append((a,b,ga,gb))
+                order=fe.rank_group(T,gmatches); tabg=fe.group_table(T,gmatches)
+                pos[("W",gN)]=order[0]; pos[("R",gN)]=order[1]; third_team[gN]=order[2]
+                thirds.append((order[2],tabg[order[2]]["pts"],tabg[order[2]]["gd"],tabg[order[2]]["gf"]))
+            top8=set(fe.rank_thirds(thirds)[:8])
+            qgroups={gN for gN in GROUPS if third_team[gN] in top8}
+            amap=assign_thirds(qgroups)
+            for idx,(sA,sB) in enumerate(R32_SLOTS):
+                ta = third_team[amap[idx]] if sA[0]=="3" else pos[sA]
+                tb = third_team[amap[idx]] if sB[0]=="3" else pos[sB]
+                winners[("R32",idx+1)] = play_ko(ta,tb,"R32",idx+1,last_played)
+        round_play(R16_PAIRS,"R16","R32")
+    elif START == "R16":
+        round_real("R16")
+    if START in ("R32","R16"):
+        round_play(QF_PAIRS,"QF","R16")
+    elif START == "QF":
+        round_real("QF")
+    if START in ("R32","R16","QF"):
+        for _n in range(1,5): semi[winners[("QF",_n)]]+=1   # semifinalistas de esta simulación
+        round_play(SF_PAIRS,"SF","QF")
+    elif START == "SF":
+        round_real("SF")
+    if START != "F":
+        f1,f2=winners[("SF",F_PAIR[0])],winners[("SF",F_PAIR[1])]
+    else:
+        f1,f2=RM["F"][0]
     fin[f1]+=1;fin[f2]+=1
     champ[play_ko(f1,f2,"F",1,last_played)]+=1
+for _t in KNOWN_SEMIS: semi[_t]=Ksims                  # con SF/F anclada, los semifinalistas son HECHO
 
 # ---------- SALIDA (mismo formato que sim_live) ----------
 fase = "PRE-TORNEO" if (n_grp==0 and len(KO)==0) else (f"EN CURSO (grupos:{n_grp}, KO:{len(KO)})")
@@ -424,7 +485,8 @@ for t in sorted(champ,key=lambda x:champ[x],reverse=True)[:8]:
 
 pct={t:round(100*champ[t]/Ksims,2) for t in sorted(champ,key=lambda x:champ[x],reverse=True)}
 finpct={t:round(100*fin[t]/Ksims,2) for t in champ}
-json.dump({"campeon":pct,"final":finpct,"fase":fase},open("champ_today.json","w",encoding="utf-8"),ensure_ascii=False,indent=2)
+semipct={t:round(100*semi[t]/Ksims,2) for t in champ}   # P(ganar su cuarto) — la usa la carrera al título del bracket
+json.dump({"campeon":pct,"final":finpct,"semis":semipct,"fase":fase},open("champ_today.json","w",encoding="utf-8"),ensure_ascii=False,indent=2)
 print("\n→ champ_today.json guardado (sim_live_ko)")
 try:
     import matplotlib; matplotlib.use("Agg"); import matplotlib.pyplot as plt

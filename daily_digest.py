@@ -231,6 +231,37 @@ def matches_on(yyyymmdd):
     iso = f"{yyyymmdd[0:4]}-{yyyymmdd[4:6]}-{yyyymmdd[6:8]}"
     return [m for m in fetch_all() if et_date(m["utc"]) == iso]   # día en ET, no UTC
 
+def fase_actual(target):
+    """FASE real del torneo para dar CONTEXTO a Claude (una sola fuente de verdad, data-driven):
+    1º por los PARTIDOS del día (su label: Grupo X / Octavos N / Cuartos N...), 2º por el calendario fijo
+    (ronda_ko), 3º en días de descanso por el estado del cuadro real (viral_bracket.json), 4º por fecha.
+    Ej.: 'FASE DE GRUPOS', 'OCTAVOS DE FINAL', 'CUARTOS DE FINAL', 'SEMIFINAL', 'GRAN FINAL'."""
+    _n = {"DIECISEISAVOS": "DIECISEISAVOS DE FINAL", "OCTAVOS": "OCTAVOS DE FINAL", "CUARTOS": "CUARTOS DE FINAL"}
+    try:
+        ms = matches_on(target)
+    except Exception:
+        ms = []
+    if ms:
+        ko = [m for m in ms if m.get("is_ko") and m.get("label")]
+        if not ko:
+            return "FASE DE GRUPOS"
+        import re as _re
+        lab = _re.sub(r"\s*\d+$", "", ko[0]["label"]).upper()
+        return _n.get(lab, lab)
+    r = ronda_ko(target)
+    if r:
+        return _n.get(r, r)
+    if target < "20260628":
+        return "FASE DE GRUPOS"
+    try:
+        import json as _j
+        br = _j.load(open("viral_bracket.json", encoding="utf-8"))
+        if br.get("ronda"):
+            return br["ronda"] + ("" if br.get("estado") == "CAMPEON" else " (día de descanso, la ronda sigue)")
+    except Exception:
+        pass
+    return "ELIMINATORIAS (recta final)"
+
 def champion_top(n=5):
     try:
         d = campeon_probs()   # ENSEMBLE modelo+mercado (cae al modelo si no hay)
@@ -269,6 +300,13 @@ AI_DIGEST_SYS = (
 def _digest_summary(fecha_h, data, pick, top, tr):
     dia = weekday_es(f"{fecha_h[6:10]}{fecha_h[3:5]}{fecha_h[0:2]}")   # día calculado en Python (Claude no lo deduce)
     L = [f"Hoy es {dia}, {fecha_h}." if dia else f"Fecha: {fecha_h}."]
+    try:                          # FASE del torneo calculada en Python (Claude NUNCA la deduce)
+        _fase = fase_actual(f"{fecha_h[6:10]}{fecha_h[3:5]}{fecha_h[0:2]}")
+        if _fase:
+            L.append(f"FASE ACTUAL DEL TORNEO: {_fase}. Si mencionas la fase/ronda usa EXACTAMENTE esa; "
+                     f"JAMÁS digas 'fase de grupos' u otra ronda distinta.")
+    except Exception:
+        pass
     played = [d for d in data if not d.get("skip")]
     if not played:
         L.append("Hoy no hay partidos del Mundial."); return "\n".join(L)

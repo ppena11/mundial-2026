@@ -1,7 +1,7 @@
 import React from 'react';
 import {AbsoluteFill, Audio, Sequence, OffthreadVideo, staticFile, useCurrentFrame, useVideoConfig, interpolate, spring, Easing} from 'remotion';
 import {flagColors} from './flags';
-import {BracketScene} from './Bracket';
+import {BracketScene, BracketRace} from './Bracket';
 
 // ---------- paleta MUNDIAL 2026 ----------
 const MAGENTA = '#FF2D78', BLUE = '#2563EB', TEAL = '#06D6C8', GREEN = '#22C55E', RED = '#EF4444', GOLD = '#FCD34D';
@@ -167,8 +167,16 @@ export const PronosticoViral: React.FC<{words: Word[]; data: any; audio: string;
   const {fps, durationInFrames} = useVideoConfig();
   const partidos = data.partidos || [];
   const brandStart = durationInFrames - Math.round(fps * 2.2);
-  const champStart = brandStart - Math.round(fps * 4);        // carrera al título (4s)
-  const resumenStart = champStart - Math.round(fps * 4.8);    // tarjeta-resumen capturable (4.8s)
+  // ORDEN DE ACTOS (criterio viral): tarjetas -> CUADRO real -> CARRERA simulada (contiguos: realidad ->
+  // predicción, con el campeón como clímax) -> TABLA CAPTURABLE penúltima (el "guarda esto" queda al final:
+  // pausa/screenshot/rebobinado = retención) -> marca. Sin bracket con probs cae al layout clásico
+  // (tarjetas -> captura -> barras ChampRace -> marca).
+  const hasBr = !!(data.bracket && (data.bracket.qf || []).length === 4);
+  const hasRace = hasBr && !!(data.bracket.probs && Object.keys(data.bracket.probs).length) && data.bracket.estado !== 'CAMPEON';
+  const champStart = brandStart - Math.round(fps * 4);                                  // solo layout clásico (barras)
+  const capturaStart = hasRace ? brandStart - Math.round(fps * 4.8) : champStart - Math.round(fps * 4.8);
+  const raceStart = hasRace ? capturaStart - Math.round(fps * 4.5) : capturaStart;      // carrera (4.5s) antes de la captura
+  const preEnd = raceStart;                                                             // aquí termina el bloque del cuadro
   // Anclar cada tarjeta a la 1ª MENCIÓN real de su equipo en la voz (independiente), y ORDENAR las tarjetas
   // por ese tiempo: así aparecen en el ORDEN en que el narrador las nombra y quedan SINCRONIZADAS. (El orden de
   // 'partidos' va por hora del partido, que NO coincide con el de la narración —el narrador abre por el estrella—
@@ -195,14 +203,13 @@ export const PronosticoViral: React.FC<{words: Word[]; data: any; audio: string;
     starts.push(s); prev = s;
   }
   const firstCard = starts.length ? starts[0] : hookMin;
-  // escena EL CUADRO (bracket de la recta final): anclada a la palabra "cuadro" en la voz; si no se
-  // menciona, entra justo antes de la tarjeta-resumen. Solo si viral_bracket.json vino en los props.
-  const hasBr = !!(data.bracket && (data.bracket.qf || []).length === 4);
+  // escena EL CUADRO (bracket real): anclada a la palabra "cuadro" en la voz; si no se menciona,
+  // entra justo antes de la carrera. Solo si viral_bracket.json vino en los props.
   const brAnchor = hasBr ? anchorOf(words, 'cuadro', hookMin / fps) : null;
-  let bracketStart = brAnchor != null ? Math.round(brAnchor * fps) : resumenStart - Math.round(fps * 4.2);
-  bracketStart = Math.max(firstCard + minGap, Math.min(bracketStart, resumenStart - Math.round(fps * 2.5)));
-  const showBr = hasBr && (resumenStart - bracketStart) >= Math.round(fps * 1.5);
-  const cardsEnd = showBr ? bracketStart : resumenStart;
+  let bracketStart = brAnchor != null ? Math.round(brAnchor * fps) : preEnd - Math.round(fps * 3.5);
+  bracketStart = Math.max(firstCard + minGap, Math.min(bracketStart, preEnd - Math.round(fps * 2.2)));
+  const showBr = hasBr && (preEnd - bracketStart) >= Math.round(fps * 1.5);
+  const cardsEnd = showBr ? bracketStart : preEnd;
 
   return (
     <AbsoluteFill style={{background: '#0A0A1F'}}>
@@ -222,13 +229,14 @@ export const PronosticoViral: React.FC<{words: Word[]; data: any; audio: string;
         return <Sequence key={it.i} from={start} durationInFrames={Math.min(cdur, cardsEnd - start)}><MatchCard p={it.p} dur={cdur} /></Sequence>;
       })}
 
-      {/* EL CUADRO: infografía del camino a la final (rumbo a Nueva York) */}
-      {showBr ? <Sequence from={bracketStart} durationInFrames={resumenStart - bracketStart}><BracketScene bracket={data.bracket} y={-10} s={0.9} /></Sequence> : null}
-
-      {/* tarjeta-resumen capturable (todos los pronósticos) */}
-      <Sequence from={resumenStart} durationInFrames={champStart - resumenStart}><ResumenCard data={data} /></Sequence>
-      {/* carrera al título */}
-      <Sequence from={champStart} durationInFrames={brandStart - champStart}><ChampRace campeon={data.campeon || []} /></Sequence>
+      {/* ACTO: EL CUADRO real (rumbo a Nueva York) */}
+      {showBr ? <Sequence from={bracketStart} durationInFrames={preEnd - bracketStart}><BracketScene bracket={data.bracket} y={-10} s={0.9} /></Sequence> : null}
+      {/* ACTO: LA CARRERA simulada, pegada al cuadro (realidad -> predicción, campeón como clímax) */}
+      {hasRace ? <Sequence from={raceStart} durationInFrames={capturaStart - raceStart}><BracketRace bracket={data.bracket} dur={capturaStart - raceStart} y={-10} s={0.9} /></Sequence> : null}
+      {/* ACTO: tarjeta-resumen capturable, penúltima (el "guarda esto" al final) */}
+      <Sequence from={capturaStart} durationInFrames={(hasRace ? brandStart : champStart) - capturaStart}><ResumenCard data={data} /></Sequence>
+      {/* layout clásico (sin carrera): las barras del campeón tras la captura */}
+      {!hasRace ? <Sequence from={champStart} durationInFrames={brandStart - champStart}><ChampRace campeon={data.campeon || []} /></Sequence> : null}
       {/* cierre */}
       <Sequence from={brandStart} durationInFrames={durationInFrames - brandStart}><Brand /></Sequence>
 
@@ -473,13 +481,28 @@ const RecordScene: React.FC<{data: any}> = ({data}) => {
   );
 };
 
-// ===================== BRACKET VIRAL (días sin partido: el CUADRO es el contenido) =====================
+// ===================== BRACKET VIRAL (días sin partido: cuadro REAL -> CARRERA simulada) =====================
+// Dos actos: primero el cuadro real ("así está el torneo") y luego la carrera al título de la IA ("así lo ve
+// mi modelo") — el contraste realidad vs simulación es el gancho. La carrera ancla a la palabra 'carrera' en
+// la voz; sin mención, entra al ~45% del video. Con campeón ya coronado (o sin probs) queda solo el cuadro.
 export const BracketViral: React.FC<{words: Word[]; data: any; audio: string; avatar?: string; avatarStadium?: boolean}> = ({words = [], data = {}, audio = '', avatar = '', avatarStadium = false}) => {
+  const {fps, durationInFrames} = useVideoConfig();
+  const br = data.bracket || {};
+  const hasRace = !!(br.probs && Object.keys(br.probs).length) && br.estado !== 'CAMPEON';
+  const raceAnchor = hasRace ? anchorOf(words, 'carrera', 2) : null;
+  let raceStart = raceAnchor != null ? Math.round(raceAnchor * fps) : Math.round(durationInFrames * 0.45);
+  raceStart = Math.max(Math.round(fps * 4), Math.min(raceStart, durationInFrames - Math.round(fps * 5)));
+  const showRace = hasRace && (durationInFrames - raceStart) >= Math.round(fps * 4);
+  const geo = {y: avatar ? -10 : 250, s: avatar ? 0.9 : 1.08};
   return (
     <AbsoluteFill style={{background: '#0B0B10'}}>
       {audio ? <Audio src={staticFile(audio)} /> : null}
       <Audio src={staticFile('musica.mp3')} volume={0.14} loop />
-      <BracketScene bracket={data.bracket || {}} y={avatar ? -10 : 250} s={avatar ? 0.9 : 1.08} />
+      {showRace ? (<>
+        <Sequence from={0} durationInFrames={raceStart}><BracketScene bracket={br} y={geo.y} s={geo.s} /></Sequence>
+        <Sequence from={raceStart} durationInFrames={durationInFrames - raceStart}>
+          <BracketRace bracket={br} dur={durationInFrames - raceStart} y={geo.y} s={geo.s} /></Sequence>
+      </>) : <BracketScene bracket={br} y={geo.y} s={geo.s} />}
       <Avatar src={avatar} stadium={avatarStadium} />
       <TopBar fecha={data.fecha} />
       <Captions words={words} bottom={avatar ? 760 : 250} />

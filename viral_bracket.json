@@ -1,5 +1,5 @@
 {
-  "estado": "QF_PENDIENTES",
+  "estado": "QF_EN_CURSO",
   "ronda": "CUARTOS DE FINAL",
   "final_fecha": "19 DE JULIO",
   "final_sede": "MetLife Stadium",
@@ -8,7 +8,7 @@
       "a": "Francia",
       "b": "Marruecos",
       "fecha": "9 JUL",
-      "ganador": null
+      "ganador": "Francia"
     },
     {
       "a": "España",
@@ -25,13 +25,13 @@
     {
       "a": "Argentina",
       "b": "Suiza",
-      "fecha": "12 JUL",
+      "fecha": "11 JUL",
       "ganador": null
     }
   ],
   "sf": [
     {
-      "a": null,
+      "a": "Francia",
       "b": null,
       "fecha": "14 JUL",
       "ganador": null
@@ -48,5 +48,42 @@
     "b": null,
     "fecha": "19 JUL",
     "ganador": null
+  },
+  "probs": {
+    "España": {
+      "semis": 70.7,
+      "final": 42.0,
+      "campeon": 26.4
+    },
+    "Francia": {
+      "semis": 100.0,
+      "final": 46.8,
+      "campeon": 25.1
+    },
+    "Argentina": {
+      "semis": 70.3,
+      "final": 44.0,
+      "campeon": 22.6
+    },
+    "Inglaterra": {
+      "semis": 63.5,
+      "final": 31.1,
+      "campeon": 13.6
+    },
+    "Bélgica": {
+      "semis": 29.3,
+      "final": 11.2,
+      "campeon": 4.8
+    },
+    "Suiza": {
+      "semis": 29.7,
+      "final": 12.2,
+      "campeon": 3.9
+    },
+    "Noruega": {
+      "semis": 36.5,
+      "final": 12.7,
+      "campeon": 3.7
+    }
   }
 }

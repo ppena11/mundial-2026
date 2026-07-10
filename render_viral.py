@@ -85,7 +85,9 @@ def still_bracket():
     dfile = _bracket_data()
     if not dfile: print("(bracket.png: sin viral_bracket.json; omito)"); return False
     os.makedirs(PUB, exist_ok=True); os.makedirs(os.path.join(VR, "out"), exist_ok=True)
-    props = {"words": [], "data": json.load(open(dfile, encoding="utf-8")), "audio": "", "durationSec": 8,
+    d = json.load(open(dfile, encoding="utf-8"))
+    d = {**d, "bracket": {**d.get("bracket", {}), "probs": {}}}   # el PNG es el CUADRO REAL, nunca la simulación
+    props = {"words": [], "data": d, "audio": "", "durationSec": 8,
              "avatar": "", "avatarStadium": False}
     json.dump(props, open(os.path.join(PUB, "bracket_still_props.json"), "w", encoding="utf-8"), ensure_ascii=False)
     r = subprocess.run("npx remotion still src/index.ts BracketViral out/bracket.png "

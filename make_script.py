@@ -62,6 +62,13 @@ def _summary(fh, played, pick, clearest, tr):
     """Resumen de datos del día que se le pasa a Claude para que redacte el guion."""
     flarga = dd.fecha_larga(f"{fh[6:10]}{fh[3:5]}{fh[0:2]}")   # 'jueves 18 de junio', calculada en Python
     L = [f"Hoy es {flarga} de 2026." if flarga else f"Fecha: {fh}."]
+    try:                                   # FASE del torneo calculada en Python (Claude NUNCA la deduce)
+        _fase = dd.fase_actual(f"{fh[6:10]}{fh[3:5]}{fh[0:2]}")
+        if _fase:
+            L.append(f"FASE ACTUAL DEL TORNEO: {_fase}. Nómbrala tal cual si hablas de la fase; JAMÁS digas "
+                     f"que es 'fase de grupos' u otra ronda distinta a esta.")
+    except Exception:
+        pass
     # anclaje temporal: evita que Claude diga "el Mundial comienza/comenzó hoy" en día equivocado
     try:
         td = date(int(fh[6:10]), int(fh[3:5]), int(fh[0:2]))
@@ -173,6 +180,9 @@ AI_SYSTEM = (
     "que la fecha del día sea exactamente el 11 de junio (mírala en los datos). "
     "DÍA DE LA SEMANA: el día correcto está en los datos ('Hoy es …'). Si nombras el día (hoy, mañana, 'el sábado'), "
     "usa EXACTAMENTE ese; NUNCA lo deduzcas tú de la fecha. "
+    "FASE DEL TORNEO: los datos traen 'FASE ACTUAL DEL TORNEO'; esa es la ÚNICA verdad. Si mencionas la fase o la "
+    "ronda (cuartos, semifinal, la final...), usa EXACTAMENTE esa; PROHIBIDO decir 'fase de grupos' o deducir la "
+    "ronda por tu cuenta. "
     "Con los datos del día del Mundial 2026, genera el contenido de un video de YouTube Shorts y devuelve EXCLUSIVAMENTE "
     "un objeto JSON válido (sin ``` ni texto extra) con EXACTAMENTE estas claves:\n"
     '"voiceover": el guion HABLADO, con TONO DE NARRADOR DEPORTIVO PROFESIONAL y PERSONALIDAD de creador: claro, '

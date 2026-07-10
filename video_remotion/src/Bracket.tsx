@@ -22,6 +22,8 @@ const shakeAt = (f: number, at: number, dur = 12, mag = 18) => {
 };
 const grow = (f: number, from: number, dur: number) =>
   interpolate(f, [from, from + dur], [0, 1], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: Easing.out(Easing.cubic)});
+const countUp = (f: number, delay: number, dur: number, target: number) =>
+  Math.round(interpolate(f, [delay, delay + dur], [0, target], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: Easing.out(Easing.cubic)}));
 
 // bandera CIRCULAR con aro (normal / ganadora dorada / eliminada gris)
 export const CircleFlag: React.FC<{team?: string | null; d?: number; delay?: number; winner?: boolean; out?: boolean; outAt?: number}> =
@@ -47,10 +49,13 @@ export const CircleFlag: React.FC<{team?: string | null; d?: number; delay?: num
     </div>);
 };
 
-const Lbl: React.FC<{x: number; y: number; children: React.ReactNode; size?: number; color?: string; w?: number; ls?: number; weight?: number}> =
-  ({x, y, children, size = 24, color = 'rgba(255,255,255,0.55)', w = 300, ls = 2, weight = 700}) => (
+const Lbl: React.FC<{x: number; y: number; children: React.ReactNode; size?: number; color?: string; w?: number; ls?: number; weight?: number; nowrap?: boolean}> =
+  ({x, y, children, size = 24, color = 'rgba(255,255,255,0.55)', w = 300, ls = 2, weight = 700, nowrap = false}) => (
   <div style={{position: 'absolute', left: x - w / 2, top: y - size * 0.7, width: w, textAlign: 'center',
-    fontFamily: FONT, fontSize: size, fontWeight: weight, letterSpacing: ls, color}}>{children}</div>);
+    fontFamily: FONT, fontSize: size, fontWeight: weight, letterSpacing: ls, color,
+    ...(nowrap ? {whiteSpace: 'nowrap' as const, overflow: 'visible' as const} : {})}}>{children}</div>);
+// nombres de equipo: SIN salto de línea; los largos ('Estados Unidos', 'R.D. Congo'...) bajan de tamaño
+const nameSize = (n?: string | null) => ((n || '').length > 13 ? 15 : 21);
 
 // línea que SE DIBUJA (h/v) desde un extremo
 const Seg: React.FC<{x: number; y: number; len: number; vert?: boolean; from: number; dur?: number; gold?: boolean; rev?: boolean}> =
@@ -86,6 +91,155 @@ const Confetti: React.FC<{from: number}> = ({from}) => {
         background: i % 3 ? GOLDF : WHITE, opacity: 0.85, transform: `rotate(${(t * 6 + i * 40) % 360}deg)`, borderRadius: 2}} />;
     })}
   </AbsoluteFill>;
+};
+
+// ===================== CARRERA AL TÍTULO (simulación de MI IA sobre el cuadro) =====================
+// Muestra lo que el MODELO ve HOY: % de avanzar en cada llave pendiente, avances "FANTASMA" (translúcidos,
+// aro dorado punteado — NUNCA se confunden con un resultado real), la final más probable en el óvalo y el
+// campeón más probable con su % en grande. Los cruces YA JUGADOS se ven sólidos (realidad) — el contraste
+// realidad vs simulación es el gancho. Cubre todas las fases: cuartos, semis y final definida.
+const Pill: React.FC<{x: number; y: number; txt: string; hot?: boolean; delay?: number; w?: number}> = ({x, y, txt, hot = false, delay = 0, w = 112}) => {
+  const e = usePunch(delay, 8);
+  return <div style={{position: 'absolute', left: x - w / 2, top: y - 21, width: w, textAlign: 'center',
+    transform: `scale(${0.3 + e * 0.7})`, opacity: Math.min(1, e * 1.5),
+    background: hot ? GOLDF : 'rgba(255,255,255,0.13)', color: hot ? '#0B0B10' : 'rgba(255,255,255,0.75)',
+    fontFamily: FONT, fontSize: 26, fontWeight: 900, padding: '7px 0', borderRadius: 999,
+    boxShadow: hot ? `0 0 22px ${GOLDF}88` : 'none'}}>{txt}</div>;
+};
+
+const Ghost: React.FC<{team: string; x: number; y: number; d?: number; delay?: number}> = ({team, x, y, d = 96, delay = 0}) => {
+  const f = useCurrentFrame();
+  const e = usePunch(delay, 8);
+  if (f < delay) return null;
+  return (
+    <div style={{position: 'absolute', left: x - d / 2, top: y - d / 2, width: d, height: d, borderRadius: '50%',
+      overflow: 'hidden', display: 'flex', opacity: 0.8 * Math.min(1, e * 1.4), transform: `scale(${0.3 + e * 0.7})`,
+      border: `4px dashed ${GOLDF}`, boxShadow: `0 0 ${14 + 8 * Math.sin(f / 8)}px ${GOLDF}66`}}>
+      {flagColors(team).map((c, i) => <div key={i} style={{flex: 1, background: c, opacity: 0.85}} />)}
+    </div>);
+};
+
+export const BracketRace: React.FC<{bracket: any; dur?: number; y?: number; s?: number}> = ({bracket = {}, dur = 150, y = 0, s = 1}) => {
+  const f = useCurrentFrame();
+  const P = bracket.probs || {};
+  const qf = bracket.qf || [], sf = bracket.sf || [], fin = bracket.final || {};
+  const pOf = (t: string | null, k: string) => (t && P[t] ? (P[t][k] || 0) : 0);
+  const favQF = (q: any) => q?.ganador || (!q?.a || !q?.b ? null : (pOf(q.a, 'semis') >= pOf(q.b, 'semis') ? q.a : q.b));
+  const T = (x: number) => Math.round(dur * x);
+  const sh = shakeAt(f, 5, 12, 14);
+  const tE = usePunch(0, 8);
+  const float = Math.sin(f / 24) * 4;
+
+  // misma geometría que BracketScene
+  const D = 116, cxL = 150, cxR = 930, rows = [386, 534, 762, 910];
+  const midT = (rows[0] + rows[1]) / 2, midB = (rows[2] + rows[3]) / 2, midC = (midT + midB) / 2;
+  const jxL = 272, jxR = 808, sxL = 350, sxR = 730;
+  const OV = {cx: 540, cy: midC, w: 300, h: 142};
+  const pairs = [
+    {L: true,  r: [0, 1], q: qf[0], sx: sxL, sy: midT}, {L: true,  r: [2, 3], q: qf[1], sx: sxL, sy: midB},
+    {L: false, r: [0, 1], q: qf[2], sx: sxR, sy: midT}, {L: false, r: [2, 3], q: qf[3], sx: sxR, sy: midB},
+  ];
+  // semifinalistas por nodo (REAL si el cuarto ya se jugó; si no, favorito del modelo)
+  const nodo = pairs.map(p => ({...p, team: favQF(p.q), real: !!(p.q && p.q.ganador)}));
+  // finalista más probable por lado (real si la semi ya se jugó)
+  const finalista = (i: number) => {
+    if (i === 0 && fin.a) return {t: fin.a, real: true};
+    if (i === 1 && fin.b) return {t: fin.b, real: true};
+    const [n1, n2] = i === 0 ? [nodo[0], nodo[1]] : [nodo[2], nodo[3]];
+    const c = [n1.team, n2.team].filter(Boolean) as string[];
+    if (!c.length) return {t: null, real: false};
+    return {t: c.sort((a, b) => pOf(b, 'final') - pOf(a, 'final'))[0], real: false};
+  };
+  const fA = finalista(0), fB = finalista(1);
+  const vivos = Object.keys(P);
+  const champPred = vivos.sort((a, b) => pOf(b, 'campeon') - pOf(a, 'campeon'))[0] || null;
+  const champE = usePunch(T(0.72), 7);
+  const champPct = countUp(f, T(0.74), 18, Math.round(pOf(champPred, 'campeon')));
+  const ovalE = usePunch(T(0.58), 7);
+
+  return (
+    <AbsoluteFill style={{background: '#0B0B10', overflow: 'hidden'}}>
+      <AbsoluteFill style={{background: 'repeating-linear-gradient(135deg, rgba(255,255,255,0.016) 0 44px, transparent 44px 88px)'}} />
+      <div style={{position: 'absolute', inset: 0, transform: `translateY(${y + float}px) scale(${s})`, transformOrigin: '540px 520px'}}>
+
+        {/* título */}
+        <div style={{position: 'absolute', top: 118, width: '100%', textAlign: 'center', transform: `translate(${sh.x}px,${sh.y}px) scale(${0.6 + tE * 0.4})`, opacity: Math.min(1, tE * 1.5)}}>
+          <div style={{fontFamily: FONT, fontSize: 27, fontWeight: 800, letterSpacing: 9, color: 'rgba(255,255,255,0.55)'}}>MI IA SIMULÓ LO QUE VIENE</div>
+          <div style={{fontFamily: FONT, fontSize: 84, fontWeight: 900, letterSpacing: -2, color: WHITE, lineHeight: 1.02, transform: 'scaleY(1.08)', textShadow: '0 8px 40px rgba(0,0,0,0.8)'}}>LA CARRERA AL TÍTULO</div>
+          <div style={{fontFamily: FONT, fontSize: 30, fontWeight: 800, letterSpacing: 5, color: GOLDF, marginTop: 8}}>ASÍ LA VE HOY · SIMULACIÓN</div>
+        </div>
+
+        {/* llaves con banderas + duelo de % en los cruces pendientes */}
+        {pairs.map((Pr, pi) => {
+          const cx = Pr.L ? cxL : cxR, jx = Pr.L ? jxL : jxR;
+          const q = Pr.q || {}; const gan = q.ganador;
+          const yA = rows[Pr.r[0]], yB = rows[Pr.r[1]], mid = (yA + yB) / 2;
+          const edge = cx + (Pr.L ? D / 2 : -D / 2);
+          const dA = 8 + pi * 4, lf = T(0.08) + pi * 4;
+          const fav = favQF(q);
+          const pend = !gan && q.a && q.b;
+          return (
+            <React.Fragment key={pi}>
+              <div style={{position: 'absolute', left: cx - D / 2, top: yA - D / 2}}>
+                <CircleFlag team={q.a} d={D} delay={dA} winner={gan === q.a} out={!!gan && gan !== q.a} outAt={lf} /></div>
+              <div style={{position: 'absolute', left: cx - D / 2, top: yB - D / 2}}>
+                <CircleFlag team={q.b} d={D} delay={dA + 3} winner={gan === q.b} out={!!gan && gan !== q.b} outAt={lf} /></div>
+              <Lbl x={cx} y={yA - D / 2 - 20} size={nameSize(q.a)} w={230} nowrap>{(q.a || '').toUpperCase()}</Lbl>
+              <Lbl x={cx} y={yB + D / 2 + 26} size={nameSize(q.b)} w={230} nowrap>{(q.b || '').toUpperCase()}</Lbl>
+              <Seg x={edge} y={yA} len={Math.abs(jx - edge)} from={lf} rev={!Pr.L} />
+              <Seg x={edge} y={yB} len={Math.abs(jx - edge)} from={lf} rev={!Pr.L} />
+              <Seg x={jx} y={yA} len={yB - yA} vert from={lf + 4} />
+              <Seg x={Pr.L ? jx : Pr.sx} y={mid} len={Math.abs(Pr.sx - jx)} from={lf + 8} gold={!!gan || !!fav} />
+              {/* duelo de %: UN pill por llave en la unión (arriba-abajo), dorado = va el favorito */}
+              {pend ? <Pill x={jx} y={mid - 64} w={150}
+                txt={`${Math.round(pOf(q.a, 'semis'))}–${100 - Math.round(pOf(q.a, 'semis'))}%`} hot
+                delay={T(0.12) + pi * 4} /> : null}
+              {/* nodo SF: REAL sólido si ya se jugó (APAGADO si luego perdió la semi); FANTASMA si es predicción */}
+              {(() => {
+                const sfGan = (pi < 2 ? sf[0] : sf[1])?.ganador;      // ganador REAL de la semi de este lado
+                if (gan && sfGan && gan !== sfGan)                    // clasificó al QF pero cayó en semis
+                  return <div style={{position: 'absolute', left: Pr.sx - 48, top: Pr.sy - 48}}>
+                    <CircleFlag team={gan} d={96} delay={lf + 10} out outAt={lf + 24} /></div>;
+                if (gan) return <Traveler team={gan} x0={cx} y0={gan === q.a ? yA : yB} x1={Pr.sx} y1={Pr.sy} from={lf + 10} />;
+                return fav ? <Ghost team={fav} x={Pr.sx} y={Pr.sy} delay={T(0.3) + pi * 5} /> : null;
+              })()}
+              {fav && !(pi < 2 ? sf[0] : sf[1])?.ganador
+                ? <Pill x={Pr.sx} y={Pr.sy + 84} w={150} txt={`FINAL ${Math.round(pOf(fav, 'final'))}%`} hot={false} delay={T(0.46) + pi * 4} /> : null}
+            </React.Fragment>);
+        })}
+
+        {/* uniones SF -> centro */}
+        <Seg x={sxL} y={midT} len={midB - midT} vert from={T(0.5)} gold />
+        <Seg x={sxR} y={midT} len={midB - midT} vert from={T(0.5)} gold />
+        <Seg x={sxL} y={midC} len={OV.cx - OV.w / 2 - sxL} from={T(0.55)} gold />
+        <Seg x={OV.cx + OV.w / 2} y={midC} len={sxR - (OV.cx + OV.w / 2)} from={T(0.55)} gold />
+
+        {/* óvalo: la FINAL más probable */}
+        <div style={{position: 'absolute', left: OV.cx - OV.w / 2, top: OV.cy - OV.h / 2, width: OV.w, height: OV.h,
+          borderRadius: '50%', border: `2.5px solid ${GOLDF}`, background: 'rgba(0,0,0,0.6)',
+          display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+          transform: `scale(${0.3 + ovalE * 0.7})`, boxShadow: `0 0 ${16 + 9 * Math.sin(f / 9)}px ${GOLDF}55`}}>
+          {fA.t && fB.t ? (
+            <div style={{display: 'flex', alignItems: 'center', gap: 12}}>
+              <CircleFlag team={fA.t} d={60} delay={T(0.6)} /><span style={{fontFamily: FONT, fontSize: 28, fontWeight: 900, color: WHITE}}>VS</span><CircleFlag team={fB.t} d={60} delay={T(0.62)} /></div>
+          ) : <div style={{fontFamily: FONT, fontSize: 40, fontWeight: 900, letterSpacing: 3, color: WHITE}}>FINAL</div>}
+          <div style={{fontFamily: FONT, fontSize: 22, fontWeight: 800, letterSpacing: 2, color: GOLDF, marginTop: 5}}>
+            {(fA.real && fB.real) ? bracket.final_fecha || '' : 'FINAL MÁS PROBABLE'}</div>
+        </div>
+
+        {/* remate: CAMPEÓN MÁS PROBABLE — bandera centrada con el % como chip dorado en su base */}
+        {champPred ? (<>
+          <Lbl x={540} y={OV.cy - 318} size={30} color={GOLDF} w={800} ls={4} weight={900}>CAMPEÓN MÁS PROBABLE</Lbl>
+          <div style={{position: 'absolute', left: 540 - 86, top: OV.cy - 282, transform: `scale(${0.3 + champE * 0.7})`}}>
+            <CircleFlag team={champPred} d={172} delay={T(0.72)} winner /></div>
+          <div style={{position: 'absolute', left: 540 - 78, top: OV.cy - 134, width: 156, textAlign: 'center',
+            opacity: Math.min(1, champE * 1.4), transform: `scale(${0.4 + champE * 0.6})`,
+            background: '#0B0B10', border: `3px solid ${GOLDF}`, borderRadius: 999, padding: '6px 0',
+            fontFamily: FONT, fontSize: 42, fontWeight: 900, color: GOLDF, boxShadow: `0 0 26px ${GOLDF}66`}}>{champPct}%</div>
+        </>) : null}
+      </div>
+    </AbsoluteFill>
+  );
 };
 
 // ===================== ESCENA PRINCIPAL =====================
@@ -143,8 +297,8 @@ export const BracketScene: React.FC<{bracket: any; y?: number; s?: number}> = ({
               <div style={{position: 'absolute', left: cx - D / 2, top: yB - D / 2}}>
                 <CircleFlag team={q.b} d={D} delay={dB} winner={gan === q.b} out={!!gan && gan !== q.b} outAt={lf + 40} /></div>
               {/* nombres: ARRIBA del par y ABAJO del par (no chocan con la otra bandera) */}
-              <Lbl x={cx} y={yA - D / 2 - 20} size={21} w={230}>{(q.a || '').toUpperCase()}</Lbl>
-              <Lbl x={cx} y={yB + D / 2 + 26} size={21} w={230}>{(q.b || '').toUpperCase()}</Lbl>
+              <Lbl x={cx} y={yA - D / 2 - 20} size={nameSize(q.a)} w={230} nowrap>{(q.a || '').toUpperCase()}</Lbl>
+              <Lbl x={cx} y={yB + D / 2 + 26} size={nameSize(q.b)} w={230} nowrap>{(q.b || '').toUpperCase()}</Lbl>
               {/* líneas: bandera->llave, unión vertical, llave->nodo SF */}
               <Seg x={edge} y={yA} len={Math.abs(jx - edge)} from={lf} rev={!P.L} />
               <Seg x={edge} y={yB} len={Math.abs(jx - edge)} from={lf} rev={!P.L} />
