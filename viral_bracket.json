@@ -17,8 +17,10 @@
       "a": "España",
       "b": "Bélgica",
       "fecha": "10 JUL",
-      "ganador": null,
-      "marcador": null
+      "ganador": "España",
+      "marcador": "2-1",
+      "acierto": true,
+      "exacto": false
     },
     {
       "a": "Noruega",
@@ -38,7 +40,7 @@
   "sf": [
     {
       "a": "Francia",
-      "b": null,
+      "b": "España",
       "fecha": "14 JUL",
       "ganador": null,
       "marcador": null
@@ -59,40 +61,35 @@
     "marcador": null
   },
   "probs": {
+    "España": {
+      "semis": 100.0,
+      "final": 57.5,
+      "campeon": 36.1
+    },
     "Francia": {
       "semis": 100.0,
-      "final": 48.8,
-      "campeon": 27.1
-    },
-    "España": {
-      "semis": 70.7,
-      "final": 40.7,
-      "campeon": 25.7
+      "final": 42.5,
+      "campeon": 23.9
     },
     "Argentina": {
-      "semis": 70.2,
-      "final": 43.7,
-      "campeon": 21.9
+      "semis": 70.0,
+      "final": 43.5,
+      "campeon": 20.7
     },
     "Inglaterra": {
-      "semis": 63.5,
+      "semis": 63.3,
       "final": 31.2,
-      "campeon": 13.3
-    },
-    "Bélgica": {
-      "semis": 29.3,
-      "final": 10.5,
-      "campeon": 4.5
+      "campeon": 12.4
     },
     "Suiza": {
-      "semis": 29.8,
-      "final": 12.6,
-      "campeon": 3.9
+      "semis": 30.0,
+      "final": 12.7,
+      "campeon": 3.6
     },
     "Noruega": {
-      "semis": 36.5,
-      "final": 12.6,
-      "campeon": 3.6
+      "semis": 36.7,
+      "final": 12.7,
+      "campeon": 3.3
     }
   }
 }
