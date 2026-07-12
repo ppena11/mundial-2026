@@ -1,19 +1,15 @@
 {
   "odds": {
-    "France": 2.64,
-    "Spain": 4.5,
-    "Argentina": 5.6,
-    "England": 6.4,
-    "Norway": 19.0,
-    "Switzerland": 55.0
+    "France": 2.66,
+    "Spain": 4.6,
+    "England": 4.7,
+    "Argentina": 5.0
   },
   "clean_probs": {
-    "France": 0.37628747608711954,
-    "Spain": 0.22075531930444348,
-    "Argentina": 0.1773926672982135,
-    "England": 0.15521858388593682,
-    "Norway": 0.05228415457210503,
-    "Switzerland": 0.01806179885218174
+    "France": 0.3736615932570847,
+    "Spain": 0.2160738778399664,
+    "England": 0.21147656129017986,
+    "Argentina": 0.19878796761276907
   },
-  "overround": 0.006644926710716037
+  "overround": 0.006097111418694734
 }
