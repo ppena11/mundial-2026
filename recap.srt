@@ -1,99 +1,179 @@
 1
-00:00:00,000 --> 00:00:01,316
-Ayer en cuartos de
+00:00:00,363 --> 00:00:01,819
+Acertamos dos de dos
 
 2
-00:00:01,316 --> 00:00:02,281
-final la IA no
+00:00:01,819 --> 00:00:03,274
+anoche en los Cuartos
 
 3
-00:00:02,281 --> 00:00:03,246
-se equivocó.
+00:00:03,274 --> 00:00:04,002
+de Final,
 
 4
-00:00:03,246 --> 00:00:04,035
-España 2 a 1
+00:00:04,002 --> 00:00:05,457
+y eso se siente
 
 5
-00:00:04,035 --> 00:00:04,737
-Bélgica:
+00:00:05,457 --> 00:00:05,857
+bien.
 
 6
-00:00:04,737 --> 00:00:06,667
-dijimos que ganaba España
+00:00:05,821 --> 00:00:06,913
+Noruega versus Inglaterra:
 
 7
-00:00:06,667 --> 00:00:07,369
-y así fue,
+00:00:06,913 --> 00:00:08,368
+dijimos que ganaba Inglaterra
 
 8
-00:00:07,369 --> 00:00:08,247
-con un 57 por
+00:00:08,368 --> 00:00:09,823
+al 51 por ciento,
 
 9
-00:00:08,247 --> 00:00:09,826
-ciento de confianza.
+00:00:09,823 --> 00:00:11,279
+y la selección inglesa
 
 10
-00:00:09,826 --> 00:00:11,405
-Perfecto en la noche.
+00:00:11,279 --> 00:00:12,734
+se llevó la victoria
 
 11
-00:00:11,405 --> 00:00:12,370
-Vamos 62 de 98
+00:00:12,734 --> 00:00:14,190
+con un 2 a
 
 12
-00:00:12,370 --> 00:00:14,037
-aciertos en el torneo,
+00:00:14,190 --> 00:00:14,590
+1.
 
 13
-00:00:14,037 --> 00:00:15,178
-un 63 por ciento
+00:00:14,553 --> 00:00:15,645
+Punto para nosotros.
 
 14
-00:00:15,178 --> 00:00:16,230
-de precisión.
+00:00:15,645 --> 00:00:16,045
+Después,
 
 15
-00:00:16,230 --> 00:00:17,722
-Hoy llega lo grande:
+00:00:16,009 --> 00:00:17,100
+Argentina contra Suiza:
 
 16
-00:00:17,722 --> 00:00:19,564
-Argentina contra Suiza,
+00:00:17,100 --> 00:00:18,556
+confiamos en los argentinos
 
 17
-00:00:19,564 --> 00:00:21,845
-favorito claro Argentina pero
+00:00:18,556 --> 00:00:19,940
+al 55 por ciento,
 
 18
-00:00:21,845 --> 00:00:22,723
-con un 53 por
+00:00:19,940 --> 00:00:21,679
+y no defraudaron,
 
 19
-00:00:22,723 --> 00:00:24,565
-ciento de probabilidad,
+00:00:21,679 --> 00:00:22,820
+goleada de 3 a
 
 20
-00:00:24,565 --> 00:00:25,793
-así que cuidado.
+00:00:22,820 --> 00:00:23,559
+1 que los metió
 
 21
-00:00:25,793 --> 00:00:26,934
-No te pierdas el
+00:00:23,559 --> 00:00:25,079
+en Semifinales.
 
 22
-00:00:26,934 --> 00:00:28,689
-análisis completo en el
+00:00:25,079 --> 00:00:26,399
+Dos aciertos limpios en
 
 23
-00:00:28,689 --> 00:00:29,741
-link de mi bio.
+00:00:26,399 --> 00:00:27,300
+una ronda donde cada
 
 24
-00:00:29,741 --> 00:00:31,057
-Nos vemos mañana.
+00:00:27,300 --> 00:00:28,839
+error cuesta caro.
 
 25
-00:00:31,057 --> 00:00:32,374
+00:00:28,839 --> 00:00:30,320
+Vamos 64 de 100
+
+26
+00:00:30,320 --> 00:00:31,800
+aciertos acumulados,
+
+27
+00:00:31,800 --> 00:00:32,960
+un 64 por ciento
+
+28
+00:00:32,960 --> 00:00:33,899
+que empieza a hablar
+
+29
+00:00:33,899 --> 00:00:35,020
+por sí solo.
+
+30
+00:00:35,020 --> 00:00:36,640
+Mañana llega un partidazo:
+
+31
+00:00:36,640 --> 00:00:38,240
+Francia contra España en
+
+32
+00:00:38,240 --> 00:00:39,219
+los Cuartos,
+
+33
+00:00:39,219 --> 00:00:40,380
+y aunque España arranca
+
+34
+00:00:40,380 --> 00:00:41,833
+como favorita al 42
+
+35
+00:00:41,833 --> 00:00:42,700
+por ciento,
+
+36
+00:00:42,700 --> 00:00:44,460
+sabemos que en eliminatoria
+
+37
+00:00:44,460 --> 00:00:46,000
+todo puede pasar.
+
+38
+00:00:46,000 --> 00:00:46,939
+Suscríbete a mi canal
+
+39
+00:00:46,939 --> 00:00:47,939
+de YouTube y ve
+
+40
+00:00:47,939 --> 00:00:49,079
+el cierre completo en
+
+41
+00:00:49,079 --> 00:00:49,600
+el link de mi
+
+42
+00:00:49,600 --> 00:00:50,960
+bio para el análisis
+
+43
+00:00:50,960 --> 00:00:53,200
+detallado de cada pronóstico.
+
+44
+00:00:53,200 --> 00:00:54,579
+Nos vemos mañana.
+
+45
+00:00:54,579 --> 00:00:55,949
 Soy aiwithpedro.
