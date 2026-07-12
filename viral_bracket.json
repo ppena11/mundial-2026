@@ -1,6 +1,6 @@
 {
-  "estado": "QF_EN_CURSO",
-  "ronda": "CUARTOS DE FINAL",
+  "estado": "SF_LISTAS",
+  "ronda": "SEMIFINALES",
   "final_fecha": "19 DE JULIO",
   "final_sede": "MetLife Stadium",
   "qf": [
@@ -26,15 +26,19 @@
       "a": "Noruega",
       "b": "Inglaterra",
       "fecha": "11 JUL",
-      "ganador": null,
-      "marcador": null
+      "ganador": "Inglaterra",
+      "marcador": "1-2",
+      "acierto": true,
+      "exacto": true
     },
     {
       "a": "Argentina",
       "b": "Suiza",
       "fecha": "11 JUL",
-      "ganador": null,
-      "marcador": null
+      "ganador": "Argentina",
+      "marcador": "3-1",
+      "acierto": true,
+      "exacto": false
     }
   ],
   "sf": [
@@ -46,8 +50,8 @@
       "marcador": null
     },
     {
-      "a": null,
-      "b": null,
+      "a": "Inglaterra",
+      "b": "Argentina",
       "fecha": "15 JUL",
       "ganador": null,
       "marcador": null
@@ -63,33 +67,23 @@
   "probs": {
     "España": {
       "semis": 100.0,
-      "final": 57.5,
-      "campeon": 36.1
+      "final": 57.2,
+      "campeon": 33.7
+    },
+    "Argentina": {
+      "semis": 100.0,
+      "final": 57.0,
+      "campeon": 27.0
     },
     "Francia": {
       "semis": 100.0,
-      "final": 42.5,
-      "campeon": 23.9
-    },
-    "Argentina": {
-      "semis": 70.0,
-      "final": 43.5,
-      "campeon": 20.7
+      "final": 42.8,
+      "campeon": 22.1
     },
     "Inglaterra": {
-      "semis": 63.3,
-      "final": 31.2,
-      "campeon": 12.4
-    },
-    "Suiza": {
-      "semis": 30.0,
-      "final": 12.7,
-      "campeon": 3.6
-    },
-    "Noruega": {
-      "semis": 36.7,
-      "final": 12.7,
-      "campeon": 3.3
+      "semis": 100.0,
+      "final": 43.0,
+      "campeon": 17.2
     }
   }
 }
