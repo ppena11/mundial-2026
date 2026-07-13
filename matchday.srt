@@ -1,95 +1,115 @@
 1
-00:00:00,000 --> 00:00:01,390
-Hoy no hay partidos,
+00:00:00,000 --> 00:00:00,952
+Hoy es lunes y
 
 2
-00:00:01,390 --> 00:00:02,617
-pero te muestro el
+00:00:00,952 --> 00:00:02,512
+no hay balón rodando,
 
 3
-00:00:02,617 --> 00:00:04,008
-cuadro de cuartos de
+00:00:02,512 --> 00:00:03,811
+pero la noticia es
 
 4
-00:00:04,008 --> 00:00:05,317
-final rumbo a Nueva
+00:00:03,811 --> 00:00:04,764
+monumental.
 
 5
-00:00:05,317 --> 00:00:05,726
-York.
+00:00:04,764 --> 00:00:06,323
+Ya tenemos los cuatro
 
 6
-00:00:05,726 --> 00:00:07,689
-Noruega contra Inglaterra,
+00:00:06,323 --> 00:00:08,835
+semifinalistas del Mundial 2026:
 
 7
-00:00:07,689 --> 00:00:09,407
-Argentina contra Suiza.
+00:00:08,835 --> 00:00:10,654
+Francia contra España en
 
 8
-00:00:09,407 --> 00:00:10,470
-En la carrera al
+00:00:10,654 --> 00:00:11,434
+una llave,
 
 9
-00:00:10,470 --> 00:00:11,043
-título,
+00:00:11,434 --> 00:00:13,686
+y Argentina contra Inglaterra
 
 10
-00:00:11,043 --> 00:00:11,943
-mi modelo ve a
+00:00:13,686 --> 00:00:14,465
+en la otra.
 
 11
-00:00:11,943 --> 00:00:13,415
-Inglaterra con 63 por
+00:00:14,465 --> 00:00:15,505
+En el cuadro de
 
 12
-00:00:13,415 --> 00:00:13,988
-ciento,
+00:00:15,505 --> 00:00:16,804
+las semifinales,
 
 13
-00:00:13,988 --> 00:00:15,378
-Argentina con 70 por
+00:00:16,804 --> 00:00:17,757
+mi modelo ve a
 
 14
-00:00:15,378 --> 00:00:15,951
-ciento,
+00:00:17,757 --> 00:00:19,923
+España y Argentina avanzando
 
 15
-00:00:15,951 --> 00:00:17,423
-y España como campeón
+00:00:19,923 --> 00:00:21,135
+con 57 por ciento
 
 16
-00:00:17,423 --> 00:00:18,732
-más probable con 36
+00:00:21,135 --> 00:00:21,828
+cada una.
 
 17
-00:00:18,732 --> 00:00:19,550
-por ciento.
+00:00:21,828 --> 00:00:23,301
+España es el campeón
 
 18
-00:00:19,550 --> 00:00:20,777
-Lo que sorprende:
+00:00:23,301 --> 00:00:24,687
+más probable con 34
 
 19
-00:00:20,777 --> 00:00:22,331
-Argentina tiene 23 por
+00:00:24,687 --> 00:00:25,553
+por ciento.
 
 20
-00:00:22,331 --> 00:00:24,213
-ciento de quedar campeona.
+00:00:25,553 --> 00:00:26,592
+La pelea por el
 
 21
-00:00:24,213 --> 00:00:25,685
-Suscríbete a mi canal
+00:00:26,592 --> 00:00:28,152
+título está cerrada:
 
 22
-00:00:25,685 --> 00:00:26,912
-de YouTube para el
+00:00:28,152 --> 00:00:29,711
+Francia 31 por ciento
 
 23
-00:00:26,912 --> 00:00:28,875
-análisis completo cada día.
+00:00:29,711 --> 00:00:31,183
+contra España 28 por
 
 24
-00:00:28,875 --> 00:00:30,102
+00:00:31,183 --> 00:00:31,790
+ciento.
+
+25
+00:00:31,790 --> 00:00:33,349
+Suscríbete a mi canal
+
+26
+00:00:33,349 --> 00:00:34,648
+de YouTube para el
+
+27
+00:00:34,648 --> 00:00:36,381
+análisis completo en el
+
+28
+00:00:36,381 --> 00:00:37,420
+link de mi bio.
+
+29
+00:00:37,420 --> 00:00:38,720
 Soy aiwithpedro.
