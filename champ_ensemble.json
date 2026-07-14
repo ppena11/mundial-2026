@@ -1,10 +1,10 @@
 {
   "W_mercado": 0.5,
   "ensemble": {
-    "Francia": 30.72,
-    "Espana": 27.63,
-    "Argentina": 22.05,
-    "Inglaterra": 19.6,
+    "Francia": 30.37,
+    "Espana": 27.89,
+    "Argentina": 22.12,
+    "Inglaterra": 19.62,
     "Mexico": 0.0,
     "Sudafrica": 0.0,
     "Corea del Sur": 0.0,
@@ -51,10 +51,10 @@
     "Panama": 0.0
   },
   "modelo": {
-    "Francia": 22.11,
-    "Espana": 33.71,
-    "Argentina": 27.01,
-    "Inglaterra": 17.17,
+    "Francia": 21.86,
+    "Espana": 33.34,
+    "Argentina": 27.5,
+    "Inglaterra": 17.3,
     "Mexico": 0.0,
     "Sudafrica": 0.0,
     "Corea del Sur": 0.0,
@@ -101,10 +101,10 @@
     "Panama": 0.0
   },
   "mercado": {
-    "Francia": 39.33,
-    "Espana": 21.55,
-    "Argentina": 17.09,
-    "Inglaterra": 22.03,
+    "Francia": 38.88,
+    "Espana": 22.44,
+    "Argentina": 16.74,
+    "Inglaterra": 21.94,
     "Mexico": NaN,
     "Sudafrica": NaN,
     "Corea del Sur": NaN,

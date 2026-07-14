@@ -68,22 +68,22 @@
     "España": {
       "semis": 100.0,
       "final": 57.2,
-      "campeon": 33.7
+      "campeon": 33.3
     },
     "Argentina": {
       "semis": 100.0,
-      "final": 57.0,
-      "campeon": 27.0
+      "final": 57.2,
+      "campeon": 27.5
     },
     "Francia": {
       "semis": 100.0,
       "final": 42.8,
-      "campeon": 22.1
+      "campeon": 21.9
     },
     "Inglaterra": {
       "semis": 100.0,
-      "final": 43.0,
-      "campeon": 17.2
+      "final": 42.8,
+      "campeon": 17.3
     }
   }
 }
