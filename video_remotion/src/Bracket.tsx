@@ -296,7 +296,12 @@ export const CarreraTour: React.FC<{bracket: any; stops: number[]; endStop: numb
   let act = -1;
   L.forEach((_, i) => { if (f >= (stops[i] ?? 1e9) - 6) act = i; });
   if (f >= endStop - 6) act = -2;                                  // cierre: cuadro completo + campeón
-  const dimOf = (i: number) => (act === -2 || act === -1 || act === i) ? 1 : 0.26;
+  const sfLiOf = (side: number) => L.findIndex(k => k.kind === 'SF' && k.idx === side);
+  const finLi = L.findIndex(k => k.kind === 'F');
+  // opacidad de un par de CUARTOS: pleno en overview/cierre, en SU parada y en la parada de la SEMI de su
+  // lado (los nodos SF viven dentro de estos divs; antes se atenuaban y la semi se veía toda GRIS)
+  const dimOf = (li: number, side: number) =>
+    (act === -2 || act === -1 || act === li || act === sfLiOf(side) || act === finLi) ? 1 : 0.26;
   const vivos = Object.keys(P);
   const champPred = bracket.estado === 'CAMPEON' ? fin.ganador : (vivos.sort((a, b) => pOf(b, 'campeon') - pOf(a, 'campeon'))[0] || null);
   const champE2 = usePunch(endStop + 4, 7);
@@ -326,7 +331,7 @@ export const CarreraTour: React.FC<{bracket: any; stops: number[]; endStop: numb
           const pend = !gan && q.a && q.b;
           const sfGan = (pi < 2 ? sf[0] : sf[1])?.ganador;
           return (
-            <div key={pi} style={{opacity: dimOf(li), transition: 'none', position: 'absolute', inset: 0}}>
+            <div key={pi} style={{opacity: dimOf(li, pi < 2 ? 0 : 1), transition: 'none', position: 'absolute', inset: 0}}>
               <div style={{position: 'absolute', left: cx - D / 2, top: yA - D / 2}}>
                 <CircleFlag team={q.a} d={D} delay={6 + pi * 4} winner={gan === q.a} out={!!gan && gan !== q.a} outAt={(stops[li] ?? 60) + 8} /></div>
               <div style={{position: 'absolute', left: cx - D / 2, top: yB - D / 2}}>
@@ -353,8 +358,33 @@ export const CarreraTour: React.FC<{bracket: any; stops: number[]; endStop: numb
                 : (fav ? <Ghost team={fav} x={sxN} y={top ? midT : midB} d={88} delay={(stops[li] ?? 40) + 12} /> : null)}
             </div>);
         })}
-        {/* uniones SF -> centro + óvalo (siempre visibles, atenuados fuera de foco) */}
-        <div style={{opacity: act === -2 || act === -1 ? 1 : 0.4, position: 'absolute', inset: 0}}>
+        {/* EXTRAS de las SEMIFINALES: marcador + sello si se jugó; duelo % si está pendiente */}
+        {[0, 1].map(side => {
+          const s = sf[side] || {}; const sLi = sfLiOf(side);
+          if (sLi < 0 || act !== sLi) return null;
+          const left = side === 0; const sxN = left ? sxL : sxR;
+          const pend = !s.ganador && s.a && s.b;
+          return (
+            <React.Fragment key={`sfx${side}`}>
+              {s.ganador && s.marcador ? (<>
+                <Lbl x={sxN + (left ? 170 : -170)} y={midC - 88} size={54} color={WHITE} w={260} weight={900} nowrap>{s.marcador.replace(' (pen.)', '')}</Lbl>
+                {s.marcador.includes('pen.') ? <Lbl x={sxN + (left ? 170 : -170)} y={midC - 50} size={20} color={GOLDF} w={200}>PENALES</Lbl> : null}
+                {s.acierto != null ? <div style={{position: 'absolute', left: sxN + (left ? -250 : 36), top: midC + 34}}>
+                  <Stamp ok={!!s.acierto} exact={!!s.exacto} delay={(stops[sLi] ?? 0) + 8} /></div> : null}
+              </>) : null}
+              {pend ? <Pill x={sxN} y={midC - 90} w={160}
+                txt={`${Math.round(pOf(s.a, 'final'))}–${100 - Math.round(pOf(s.a, 'final'))}%`} hot
+                delay={(stops[sLi] ?? 0) + 6} /> : null}
+            </React.Fragment>);
+        })}
+        {/* EXTRAS de la FINAL jugada (marcador + sello bajo el óvalo) */}
+        {finLi >= 0 && act === finLi && fin.ganador && fin.marcador ? (<>
+          <Lbl x={540} y={midC + 130} size={54} color={WHITE} w={300} weight={900} nowrap>{fin.marcador.replace(' (pen.)', '')}</Lbl>
+          {fin.acierto != null ? <div style={{position: 'absolute', left: 540 - 130, top: midC + 160}}>
+            <Stamp ok={!!fin.acierto} exact={!!fin.exacto} delay={(stops[finLi] ?? 0) + 8} /></div> : null}
+        </>) : null}
+        {/* uniones SF -> centro + óvalo (plenos en overview/cierre y en las paradas de semis/final) */}
+        <div style={{opacity: (act === -2 || act === -1 || act === finLi || act === sfLiOf(0) || act === sfLiOf(1)) ? 1 : 0.4, position: 'absolute', inset: 0}}>
           <Seg x={sxL} y={midT} len={midB - midT} vert from={26} gold={!!(sf[0] && sf[0].ganador)} />
           <Seg x={sxR} y={midT} len={midB - midT} vert from={26} gold={!!(sf[1] && sf[1].ganador)} />
           <Seg x={sxL} y={midC} len={OV.cx - OV.w / 2 - sxL} from={30} gold />
