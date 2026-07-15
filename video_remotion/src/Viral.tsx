@@ -545,3 +545,48 @@ export const CarreraViral: React.FC<{words: Word[]; data: any; audio: string}> =
     </AbsoluteFill>
   );
 };
+
+// ===================== VENEZUELA VIRAL (pieza personal: dedicatoria a los venezolanos) =====================
+// Emotivo, sin ventas: fondo VINOTINTO con las 8 estrellas, la bandera al centro, captions grandes que llevan
+// el peso del mensaje y el clon abajo. El cierre invita a la videollamada de la final. ¡Que viva Venezuela!
+const VINO = '#5E1A33', VINO2 = '#7A2444';
+export const VenezuelaViral: React.FC<{words: Word[]; data: any; audio: string; avatar?: string; avatarStadium?: boolean}> = ({words = [], data = {}, audio = '', avatar = '', avatarStadium = false}) => {
+  const f = useCurrentFrame();
+  const e = spring({frame: f - 4, fps: 30, config: {damping: 9, mass: 0.6, stiffness: 140}});
+  const glow = 26 + 12 * Math.sin(f / 14);
+  const stars = Array.from({length: 8}, (_, i) => {
+    const a = Math.PI * (0.18 + (i / 7) * 0.64);              // arco como en la bandera
+    return {x: 540 + Math.cos(a) * 300, y: 560 - Math.sin(a) * 170, d: 8 + (f > i * 6 ? 1 : 0)};
+  });
+  return (
+    <AbsoluteFill style={{background: `linear-gradient(170deg, #2A0714 0%, ${VINO} 42%, #3A0E20 100%)`}}>
+      <AbsoluteFill style={{background: 'repeating-linear-gradient(135deg, rgba(255,255,255,0.015) 0 46px, transparent 46px 92px)'}} />
+      {/* franja tricolor sutil arriba */}
+      <div style={{position: 'absolute', top: 0, left: 0, right: 0, height: 10, display: 'flex'}}>
+        {['#FFCC00', '#00247D', '#CF142B'].map((c, i) => <div key={i} style={{flex: 1, background: c}} />)}
+      </div>
+      {audio ? <Audio src={staticFile(audio)} /> : null}
+      <Audio src={staticFile('musica_suave.mp3')} volume={0.16} loop />
+      {/* bandera + estrellas */}
+      <div style={{position: 'absolute', top: 190, left: 540 - 130, transform: `scale(${0.4 + e * 0.6})`}}>
+        <div style={{width: 260, height: 260, borderRadius: '50%', overflow: 'hidden', display: 'flex',
+          border: `6px solid rgba(255,255,255,0.85)`, boxShadow: `0 0 ${glow}px rgba(255,204,0,0.5), 0 18px 60px rgba(0,0,0,0.6)`}}>
+          {flagColors('Venezuela').map((c, i) => <div key={i} style={{flex: 1, background: c}} />)}
+        </div>
+      </div>
+      {stars.map((s, i) => (
+        <div key={i} style={{position: 'absolute', left: s.x - 11, top: s.y - 11, opacity: f > 8 + i * 5 ? 1 : 0,
+          color: '#FFFFFF', fontSize: 25, textShadow: '0 0 14px rgba(255,255,255,0.8)'}}>★</div>
+      ))}
+      <div style={{position: 'absolute', top: 96, width: '100%', textAlign: 'center', opacity: Math.min(1, e * 1.4)}}>
+        <div style={{fontFamily: FONT, fontSize: 30, fontWeight: 800, letterSpacing: 6, color: 'rgba(255,255,255,0.75)'}}>PARA LOS QUE SOÑAMOS CON UN MUNDIAL</div>
+      </div>
+      <div style={{position: 'absolute', top: 520, width: '100%', textAlign: 'center', transform: `scale(${0.6 + e * 0.4})`}}>
+        <div style={{fontFamily: FONT, fontSize: 66, fontWeight: 900, letterSpacing: -1, color: WHITE, lineHeight: 1.04, textShadow: '0 8px 40px rgba(0,0,0,0.8)'}}>¿VENEZUELA NO FUE<br />AL MUNDIAL?</div>
+      </div>
+      <Avatar src={avatar} stadium={avatarStadium} />
+      <TopBar fecha={data.fecha} />
+      <Captions words={words} bottom={avatar ? 760 : 300} />
+    </AbsoluteFill>
+  );
+};

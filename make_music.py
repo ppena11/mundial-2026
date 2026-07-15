@@ -114,5 +114,35 @@ def build(out="musica.mp3"):
     print(f"→ {out} generado: cama original (I-V-vi-IV), {dur:.0f}s, libre de derechos (sintetizada).")
     return os.path.exists(out)
 
+def build_suave(out="musica_suave.mp3"):
+    """Cama SUAVE y emotiva (piezas personales): solo pads + bajo tenue, tempo lento, sin bombo ni arpegio."""
+    prog = [(['C4','E4','G4'], 'C3'), (['G3','B3','D4'], 'G2'),
+            (['A3','C4','E4'], 'A2'), (['F3','A3','C4'], 'F2')]
+    bar = 3.6
+    total = bar * len(prog)
+    n = int(SR * total); buf = [0.0] * n
+    for k, (ch, bs) in enumerate(prog):
+        at = k * bar
+        _add(buf, _pad(ch, bar), at, 1.0)
+        _add(buf, _bass(bs, bar), at, 0.45)
+    peak = max(1e-6, max(abs(v) for v in buf)); g = 0.85 / peak
+    buf = [v * g for v in buf]
+    full = buf * 3
+    tmp = tempfile.mktemp(suffix=".wav")
+    with wave.open(tmp, "w") as w:
+        w.setnchannels(1); w.setsampwidth(2); w.setframerate(SR)
+        w.writeframes(b"".join(struct.pack("<h", int(max(-1, min(1, v)) * 32000)) for v in full))
+    subprocess.run([_ff(), "-y", "-i", tmp, "-af", "lowpass=f=4200,highpass=f=90,afade=t=in:d=2",
+                    "-c:a", "libmp3lame", "-q:a", "4", out], capture_output=True)
+    try: os.remove(tmp)
+    except Exception: pass
+    print(f"→ {out}: cama SUAVE original ({len(full)/SR:.0f}s, libre de derechos).")
+    return os.path.exists(out)
+
+
 if __name__ == "__main__":
-    build()
+    import sys
+    if "suave" in sys.argv:
+        build_suave()
+    else:
+        build()

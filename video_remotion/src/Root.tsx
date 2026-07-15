@@ -1,6 +1,6 @@
 import React from 'react';
 import {Composition} from 'remotion';
-import {PronosticoViral, RecapViral, BracketViral, CarreraViral} from './Viral';
+import {PronosticoViral, RecapViral, BracketViral, CarreraViral, VenezuelaViral} from './Viral';
 
 const FPS = 30;
 
@@ -37,6 +37,12 @@ export const RemotionRoot: React.FC = () => (
       id="CarreraViral" component={CarreraViral as any}
       fps={FPS} width={1080} height={1920} durationInFrames={1350}
       defaultProps={{words: [] as any, data: {} as any, audio: '', durationSec: 0}}
+      calculateMetadata={calcDur as any}
+    />
+    <Composition
+      id="VenezuelaViral" component={VenezuelaViral as any}
+      fps={FPS} width={1080} height={1920} durationInFrames={1900}
+      defaultProps={{words: [] as any, data: {} as any, audio: '', durationSec: 0, avatar: '', avatarStadium: false}}
       calculateMetadata={calcDur as any}
     />
   </>

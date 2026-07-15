@@ -48,6 +48,7 @@ const RAW: Record<string, string[]> = {
   'Túnez': ['#E70013', '#FFFFFF', '#E70013'],
   'Uruguay': ['#0038A8', '#FFFFFF', '#0038A8'],
   'Uzbekistán': ['#1EB53A', '#FFFFFF', '#0099B5'],
+  'Venezuela': ['#FFCC00', '#00247D', '#CF142B'],
 };
 
 const norm = (s: string) =>
