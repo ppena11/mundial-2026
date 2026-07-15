@@ -371,6 +371,8 @@ def _limpiar_voz(text):
     text = re.sub(r"\bSuscribete\b", "Suscríbete", text)
     text = re.sub(r"\bsuscribete\b", "suscríbete", text)
     text = re.sub(r"\bcampeonar\b", "quedar campeón", text, flags=re.IGNORECASE)   # 'campeonar' no existe
+    # firma EXACTA de la marca: Claude a veces la corrompe ('Soy él ái uíz' / 'Soy ei ai uiz')
+    text = re.sub(r"Soy\s+\S{1,3}\s+[áa]i\s+u[íi]z\s+P[ée]dro", "Soy éi ái uíz Pédro", text)
     # duplicaciones: 'Bélgica y Bélgica' -> 'Bélgica'  y  'Bélgica Bélgica' / 'la la' -> una sola
     text = re.sub(r"\b([A-ZÁÉÍÓÚÑ]\w*)\s+y\s+\1\b", r"\1", text)
     text = re.sub(r"\b(\w+)(?:\s+\1\b)+", r"\1", text, flags=re.IGNORECASE)

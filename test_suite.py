@@ -593,6 +593,26 @@ try:
 finally:
     if _bak_plog is not None: open("predictions_log.jsonl", "w", encoding="utf-8").write(_bak_plog)
     elif os.path.exists("predictions_log.jsonl"): os.remove("predictions_log.jsonl")
+# 11d) RACHA para presumir: 100% solo desde la ronda más temprana que se sostenga (nunca inflar)
+_bak_plog2 = open("predictions_log.jsonl", encoding="utf-8").read() if os.path.exists("predictions_log.jsonl") else None
+def _kr(lab, ok):
+    return {"key": f"k{lab}{ok}", "fecha": "2026-07-01", "a": "A", "b": "B", "label": lab, "is_ko": True,
+            "p1": 0.5, "pX": 0.3, "p2": 0.2, "pick": "1", "marcador_pred": "1-0", "actual": "1" if ok else "2",
+            "marcador_real": "1-0" if ok else "0-1", "acierto_1x2": ok, "acierto_exacto": False}
+tr.save_log([_kr("Octavos 1", True), _kr("Octavos 2", False),
+             _kr("Cuartos 1", True), _kr("Cuartos 2", True), _kr("Cuartos 3", True), _kr("Cuartos 4", True),
+             _kr("Semifinal 1", True)])
+try:
+    import importlib, carrera as ca2; importlib.reload(ca2)
+    _rc = ca2._racha()
+    _rl2, _est = ca2._linea_racha(_rc)
+    ok("racha: perfecta desde CUARTOS (5/5), octavos NO la infla; dato estrella con CIEN POR CIENTO",
+       _rc["perfecta_desde"] == "Cuartos" and _rc["perfecta"] == [5, 5] and _rc["total"] == [6, 7] and
+       "CIEN POR CIENTO" in _est and "desde cuartos de final" in _est,
+       f"perfecta={_rc['perfecta_desde']} {_rc['perfecta']} estrella={_est}")
+finally:
+    if _bak_plog2 is not None: open("predictions_log.jsonl", "w", encoding="utf-8").write(_bak_plog2)
+    elif os.path.exists("predictions_log.jsonl"): os.remove("predictions_log.jsonl")
 # 12) sim: anclaje por ronda — deepest_start elige la ronda más profunda con cruces reales COMPLETOS
 import importlib.util as _ilu
 _spec = _ilu.spec_from_file_location("_slk_ds", "sim_live_ko.py")
