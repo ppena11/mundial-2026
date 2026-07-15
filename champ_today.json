@@ -1,9 +1,8 @@
 {
   "campeon": {
-    "Espana": 33.34,
-    "Argentina": 27.5,
-    "Francia": 21.86,
-    "Inglaterra": 17.3,
+    "Espana": 60.9,
+    "Argentina": 24.07,
+    "Inglaterra": 15.03,
     "Mexico": 0.0,
     "Sudafrica": 0.0,
     "Corea del Sur": 0.0,
@@ -35,6 +34,7 @@
     "Cabo Verde": 0.0,
     "Arabia Saudi": 0.0,
     "Uruguay": 0.0,
+    "Francia": 0.0,
     "Senegal": 0.0,
     "Irak": 0.0,
     "Noruega": 0.0,
@@ -78,15 +78,15 @@
     "Egipto": 0.0,
     "Iran": 0.0,
     "Nueva Zelanda": 0.0,
-    "Espana": 57.16,
+    "Espana": 100.0,
     "Cabo Verde": 0.0,
     "Arabia Saudi": 0.0,
     "Uruguay": 0.0,
-    "Francia": 42.84,
+    "Francia": 0.0,
     "Senegal": 0.0,
     "Irak": 0.0,
     "Noruega": 0.0,
-    "Argentina": 57.23,
+    "Argentina": 57.15,
     "Argelia": 0.0,
     "Austria": 0.0,
     "Jordania": 0.0,
@@ -94,7 +94,7 @@
     "R.D. Congo": 0.0,
     "Uzbekistan": 0.0,
     "Colombia": 0.0,
-    "Inglaterra": 42.77,
+    "Inglaterra": 42.85,
     "Croacia": 0.0,
     "Ghana": 0.0,
     "Panama": 0.0
@@ -149,5 +149,5 @@
     "Ghana": 0.0,
     "Panama": 0.0
   },
-  "fase": "EN CURSO (grupos:72, KO:28)"
+  "fase": "EN CURSO (grupos:72, KO:29)"
 }
