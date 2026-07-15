@@ -1,5 +1,5 @@
 {
-  "estado": "SF_LISTAS",
+  "estado": "SF_EN_CURSO",
   "ronda": "SEMIFINALES",
   "final_fecha": "19 DE JULIO",
   "final_sede": "MetLife Stadium",
@@ -46,8 +46,10 @@
       "a": "Francia",
       "b": "España",
       "fecha": "14 JUL",
-      "ganador": null,
-      "marcador": null
+      "ganador": "España",
+      "marcador": "0-2",
+      "acierto": true,
+      "exacto": false
     },
     {
       "a": "Inglaterra",
@@ -58,7 +60,7 @@
     }
   ],
   "final": {
-    "a": null,
+    "a": "España",
     "b": null,
     "fecha": "19 JUL",
     "ganador": null,
@@ -67,23 +69,18 @@
   "probs": {
     "España": {
       "semis": 100.0,
-      "final": 57.2,
-      "campeon": 33.3
+      "final": 100.0,
+      "campeon": 60.9
     },
     "Argentina": {
       "semis": 100.0,
-      "final": 57.2,
-      "campeon": 27.5
-    },
-    "Francia": {
-      "semis": 100.0,
-      "final": 42.8,
-      "campeon": 21.9
+      "final": 57.1,
+      "campeon": 24.1
     },
     "Inglaterra": {
       "semis": 100.0,
-      "final": 42.8,
-      "campeon": 17.3
+      "final": 42.9,
+      "campeon": 15.0
     }
   }
 }
