@@ -39,13 +39,15 @@ AI_CARRERA_SYS = (
     "por sus equipos; en las jugadas presume el acierto (o admite el fallo con gracia); en las pendientes di el "
     "porcentaje del favorito como QUIEN YA SABE; "
     "(3) cierra con el CAMPEÓN más probable y su porcentaje, desafiante (p. ej. 'apúntenlo'); "
-    "(4) CTA breve a suscribirse (canal de YouTube, link en bio) para ver si sigue la racha, y firma EXACTA: "
-    "Soy éi ái uíz Pédro. Español con TODAS las tildes, sin emojis ni símbolos, números como cifras (el "
+    "(4) CTA CLARO DE APRENDER INTELIGENCIA ARTIFICIAL CONMIGO: remata conectando la racha con la marca — "
+    "todo esto lo construí con inteligencia artificial y YO TE ENSEÑO a hacerlo; incluye la frase 'aprende "
+    "inteligencia artificial conmigo' (o muy similar) + suscríbete al canal de YouTube, link en bio; y firma "
+    "EXACTA: Soy éi ái uíz Pédro. Español con TODAS las tildes, sin emojis ni símbolos, números como cifras (el "
     "sistema los convierte). PROHIBIDO inventar números o resultados que no estén en los datos: presume SOLO "
     "con la RACHA REAL que te doy. PROHIBIDA la palabra 'campeonar' (no existe en español cuidado): di "
     "'quedar campeón', 'ser campeón' o 'levantar la copa'.\n"
     '"titulo": título viral (máx ~70 caracteres, máximo 1 emoji).\n'
-    '"caption": caption corto para TikTok (1-2 líneas, 1-2 emojis, SIN hashtags).\n'
+    '"caption": caption corto para TikTok (1-2 líneas, 1-2 emojis, SIN hashtags; que invite a aprender IA conmigo).\n'
     '"hashtags": lista de EXACTAMENTE 5 hashtags virales (#Mundial2026 primero).\n'
     '"youtube_titulo": título para Shorts (~40-60 caracteres).\n'
     '"youtube_descripcion": 2 frases para Shorts.\n'
@@ -106,6 +108,23 @@ def _linea_racha(rc):
     if rc["exactos"]:
         L.append(f"- Marcadores EXACTOS clavados en eliminatorias: {rc['exactos']}.")
     return L, estrella
+
+
+def _numeros_esperados(br):
+    """Los % EXACTOS que el guion debe decir: favorito de cada llave pendiente + campeón más probable."""
+    P = br.get("probs") or {}
+    out = []
+    for et, c, tipo in _llaves(br):
+        if tipo != "pendiente":
+            continue
+        _k = "semis" if et.startswith("CUARTOS") else ("final" if et.startswith("SEMI") else "campeon")
+        pa, pb = P.get(c["a"], {}).get(_k, 0), P.get(c["b"], {}).get(_k, 0)
+        fav, fp = (c["a"], pa) if pa >= pb else (c["b"], pb)
+        out.append((fav, round(fp)))
+    if P and br.get("estado") != "CAMPEON":
+        ch = max(P.items(), key=lambda kv: kv[1].get("campeon", 0))
+        out.append((ch[0], round(ch[1]["campeon"])))
+    return out
 
 
 def _llaves(br):
@@ -202,6 +221,9 @@ def valida_voz(voz, br):
             pos = min(hits)
     if "llave" in n:
         problemas.append("dice 'llave' en la voz (etiqueta interna: nómbralo por los equipos)")
+    for fav, fp in _numeros_esperados(br):          # los % deben ir EN CIFRAS y ser EXACTOS (verificables)
+        if str(fp) not in voz:
+            problemas.append(f"falta el {fp} (en cifras) de {fav} — sin inventar otros números")
     return problemas
 
 
@@ -217,13 +239,15 @@ def _fallback_voz(br):
             S.append(f"{c['a']} {(c.get('marcador') or '').replace('-', ' a ').replace('(pen.)', 'con penales')} "
                      f"{c['b']}, avanzó {c['ganador']}.")
         else:
-            pa = P.get(c["a"], {}).get("semis", 0); pb = P.get(c["b"], {}).get("semis", 0)
+            _k = "semis" if et.startswith("CUARTOS") else ("final" if et.startswith("SEMI") else "campeon")
+            pa = P.get(c["a"], {}).get(_k, 0); pb = P.get(c["b"], {}).get(_k, 0)
             fav, fp = (c["a"], pa) if pa >= pb else (c["b"], pb)
             S.append(f"{c['a']} contra {c['b']}: mi modelo favorece a {fav} con {round(fp)} por ciento.")
     if P and br.get("estado") != "CAMPEON":
         ch = max(P.items(), key=lambda kv: kv[1].get("campeon", 0))
         S.append(f"Y el campeón más probable hoy es {ch[0]} con {round(ch[1]['campeon'])} por ciento.")
-    S.append("Suscríbete a mi canal de YouTube y ve el análisis completo en el link de mi bio. Soy éi ái uíz Pédro.")
+    S.append("Todo esto lo construí con inteligencia artificial, y te enseño a hacerlo: aprende inteligencia "
+             "artificial conmigo. Suscríbete a mi canal de YouTube, link en mi bio. Soy éi ái uíz Pédro.")
     return " ".join(S)
 
 
@@ -244,7 +268,8 @@ def build(target=None):
         print(f"(guion inválido: {'; '.join(probs_v)}; reintento)")
         ai2 = _ai(mat, extra=" FALLASTE ANTES EN ESTO — CORRÍGELO SÍ O SÍ: narra LAS " +
                   f"{len(_llaves(br))} LLAVES numeradas, TODAS, UNA POR UNA y EN ESE ORDEN EXACTO, " +
-                  "nombrando un equipo de cada una; nada de combinarlas ni adelantar rondas.")
+                  "nombrando un equipo de cada una; nada de combinarlas ni adelantar rondas. Y escribe TODOS " +
+                  "los porcentajes EN CIFRAS (ej. '57 por ciento'), EXACTOS a los datos, sin inventar ninguno.")
         v2 = (ai2.get("voz") or "").strip()
         if v2 and not valida_voz(v2, br):
             ai, voz = ai2, v2
@@ -275,7 +300,7 @@ def build(target=None):
            "youtube_titulo": ai.get("youtube_titulo") or "La CARRERA AL TÍTULO del Mundial según la IA 🏆",
            "youtube_descripcion": ai.get("youtube_descripcion") or
                "Mi inteligencia artificial recorre el cuadro de la recta final: lo que pasó y lo que viene. "
-               "Suscríbete para el análisis diario, link en la bio.",
+               "Aprende inteligencia artificial conmigo — suscríbete para el análisis diario, link en la bio.",
            "youtube_hashtags": _five(ai.get("youtube_hashtags"))}
     json.dump(out, open(OUT_JSON, "w", encoding="utf-8"), ensure_ascii=False, indent=2)
     open("carrera_voiceover.txt", "w", encoding="utf-8").write(voz)

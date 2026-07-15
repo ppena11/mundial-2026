@@ -590,6 +590,10 @@ try:
        all(t in _voz for t in ("Francia", "España", "Noruega", "Argentina")) and
        _voz.index("Francia") < _voz.index("España") < _voz.index("Noruega") < _voz.index("Argentina") and
        "campeón más probable" in _voz and "Soy éi ái uíz Pédro" in _voz, _voz[:120])
+    ok("carrera: la PLANTILLA siempre pasa su propio validador (orden + números exactos en cifras)",
+       ca.valida_voz(_voz, bC) == [], f"{ca.valida_voz(_voz, bC)}")
+    ok("carrera CTA: la plantilla invita a aprender IA conmigo",
+       "prende inteligencia artificial conmigo" in _voz, _voz[-160:])
 finally:
     if _bak_plog is not None: open("predictions_log.jsonl", "w", encoding="utf-8").write(_bak_plog)
     elif os.path.exists("predictions_log.jsonl"): os.remove("predictions_log.jsonl")
