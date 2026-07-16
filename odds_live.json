@@ -1,13 +1,11 @@
 {
   "odds": {
-    "Spain": 1.73,
-    "England": 4.3,
-    "Argentina": 5.2
+    "Spain": 1.7,
+    "Argentina": 2.4
   },
   "clean_probs": {
-    "Spain": 0.5763629333677021,
-    "England": 0.2318855522618894,
-    "Argentina": 0.19175151437040852
+    "Spain": 0.5853658536585367,
+    "Argentina": 0.41463414634146345
   },
-  "overround": 0.0029005139235009914
+  "overround": 0.004901960784313708
 }
