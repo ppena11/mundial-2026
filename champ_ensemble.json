@@ -1,9 +1,8 @@
 {
   "W_mercado": 0.5,
   "ensemble": {
-    "Espana": 59.04,
-    "Argentina": 21.6,
-    "Inglaterra": 19.36,
+    "Espana": 57.76,
+    "Argentina": 42.24,
     "Mexico": 0.0,
     "Sudafrica": 0.0,
     "Corea del Sur": 0.0,
@@ -46,14 +45,14 @@
     "R.D. Congo": 0.0,
     "Uzbekistan": 0.0,
     "Colombia": 0.0,
+    "Inglaterra": 0.0,
     "Croacia": 0.0,
     "Ghana": 0.0,
     "Panama": 0.0
   },
   "modelo": {
-    "Espana": 60.9,
-    "Argentina": 24.07,
-    "Inglaterra": 15.03,
+    "Espana": 57.12,
+    "Argentina": 42.88,
     "Mexico": 0.0,
     "Sudafrica": 0.0,
     "Corea del Sur": 0.0,
@@ -96,14 +95,14 @@
     "R.D. Congo": 0.0,
     "Uzbekistan": 0.0,
     "Colombia": 0.0,
+    "Inglaterra": 0.0,
     "Croacia": 0.0,
     "Ghana": 0.0,
     "Panama": 0.0
   },
   "mercado": {
-    "Espana": 57.18,
-    "Argentina": 19.13,
-    "Inglaterra": 23.69,
+    "Espana": 58.39,
+    "Argentina": 41.61,
     "Mexico": NaN,
     "Sudafrica": NaN,
     "Corea del Sur": NaN,
@@ -146,6 +145,7 @@
     "R.D. Congo": NaN,
     "Uzbekistan": NaN,
     "Colombia": NaN,
+    "Inglaterra": NaN,
     "Croacia": NaN,
     "Ghana": NaN,
     "Panama": NaN

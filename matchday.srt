@@ -1,187 +1,103 @@
 1
-00:00:00,000 --> 00:00:01,732
-Aquí están los pronósticos
+00:00:00,000 --> 00:00:00,995
+Hoy es jueves,
 
 2
-00:00:01,732 --> 00:00:02,937
-del Mundial 2026 de
+00:00:00,995 --> 00:00:01,991
+no hay balón en
 
 3
-00:00:02,937 --> 00:00:05,046
-mi inteligencia artificial para
+00:00:01,991 --> 00:00:03,236
+las semifinales,
 
 4
-00:00:05,046 --> 00:00:05,446
-hoy,
+00:00:03,236 --> 00:00:04,895
+pero Lionel Messi acaba
 
 5
-00:00:05,347 --> 00:00:06,778
-miércoles 15 de julio.
+00:00:04,895 --> 00:00:06,638
+de hacer una declaración
 
 6
-00:00:06,778 --> 00:00:07,757
-Vamos 65 de 101.
+00:00:06,638 --> 00:00:08,878
+explosiva a Sports Illustrated
 
 7
-00:00:07,757 --> 00:00:09,189
-Argentina se mide ante
+00:00:08,878 --> 00:00:09,957
+sobre si la FIFA
 
 8
-00:00:09,189 --> 00:00:10,921
-Inglaterra en la semifinal
+00:00:09,957 --> 00:00:11,783
+ha favorecido a Argentina
 
 9
-00:00:10,921 --> 00:00:11,674
-a las tres de
+00:00:11,783 --> 00:00:13,110
+en el Mundial 2026.
 
 10
-00:00:11,674 --> 00:00:12,503
-la tarde en el
+00:00:13,110 --> 00:00:14,272
+Mientras tanto,
 
 11
-00:00:12,503 --> 00:00:14,084
-Mercedes-Benz Stadium,
+00:00:14,272 --> 00:00:15,434
+el cuadro rumbo a
 
 12
-00:00:14,084 --> 00:00:14,913
-y el modelo ve
+00:00:15,434 --> 00:00:16,844
+Nueva York muestra a
 
 13
-00:00:14,913 --> 00:00:16,419
-un resultado ajustado:
+00:00:16,844 --> 00:00:19,500
+Inglaterra enfrentando a Argentina,
 
 14
-00:00:16,419 --> 00:00:17,549
-Inglaterra cero,
+00:00:19,500 --> 00:00:20,495
+y en la carrera
 
 15
-00:00:17,549 --> 00:00:18,528
-Argentina uno.
+00:00:20,495 --> 00:00:21,823
+al título mi modelo
 
 16
-00:00:18,528 --> 00:00:19,507
-Este es un duelo
+00:00:21,823 --> 00:00:23,068
+ve a Argentina con
 
 17
-00:00:19,507 --> 00:00:20,863
-donde mi algoritmo ve
+00:00:23,068 --> 00:00:24,146
+57 por ciento de
 
 18
-00:00:20,863 --> 00:00:22,520
-un favoritismo claro para
+00:00:24,146 --> 00:00:24,727
+avance,
 
 19
-00:00:22,520 --> 00:00:23,273
-Argentina,
+00:00:24,727 --> 00:00:26,470
+pero España sigue siendo
 
 20
-00:00:23,273 --> 00:00:24,403
-pero el mercado lo
+00:00:26,470 --> 00:00:28,295
+campeona más probable con
 
 21
-00:00:24,403 --> 00:00:25,156
-subestima:
+00:00:28,295 --> 00:00:29,291
+61 por ciento.
 
 22
-00:00:25,156 --> 00:00:25,834
-yo le doy 42
+00:00:29,291 --> 00:00:30,785
+Suscríbete a mi canal
 
 23
-00:00:25,834 --> 00:00:27,265
-por ciento de chances,
+00:00:30,785 --> 00:00:32,029
+de YouTube para el
 
 24
-00:00:27,265 --> 00:00:29,073
-mientras el consenso apenas
+00:00:32,029 --> 00:00:33,689
+análisis completo en el
 
 25
-00:00:29,073 --> 00:00:29,977
-llega al 32 por
+00:00:33,689 --> 00:00:34,685
+link de mi bio.
 
 26
-00:00:29,977 --> 00:00:30,504
-ciento.
-
-27
-00:00:30,504 --> 00:00:32,161
-Argentina llega con ritmo
-
-28
-00:00:32,161 --> 00:00:33,818
-contundente tras golear a
-
-29
-00:00:33,818 --> 00:00:34,270
-Suiza,
-
-30
-00:00:34,270 --> 00:00:35,324
-y su defensa está
-
-31
-00:00:35,324 --> 00:00:35,852
-sólida,
-
-32
-00:00:35,852 --> 00:00:36,831
-así que este uno
-
-33
-00:00:36,831 --> 00:00:37,810
-a cero me parece
-
-34
-00:00:37,810 --> 00:00:38,563
-coherente.
-
-35
-00:00:38,563 --> 00:00:41,124
-Inglaterra ha mostrado vulnerabilidad
-
-36
-00:00:41,124 --> 00:00:42,480
-en ataque — recuerdan
-
-37
-00:00:42,480 --> 00:00:43,308
-el cero a cero
-
-38
-00:00:43,308 --> 00:00:44,137
-ante Ghana — y
-
-39
-00:00:44,137 --> 00:00:46,170
-enfrenta una presión defensiva
-
-40
-00:00:46,170 --> 00:00:47,752
-que históricamente no ha
-
-41
-00:00:47,752 --> 00:00:49,711
-sabido manejar contra equipos
-
-42
-00:00:49,711 --> 00:00:50,313
-de élite.
-
-43
-00:00:50,313 --> 00:00:51,744
-La semifinal se define
-
-44
-00:00:51,744 --> 00:00:52,949
-con este marcador,
-
-45
-00:00:52,949 --> 00:00:53,702
-y así está el
-
-46
-00:00:53,702 --> 00:00:54,983
-cuadro rumbo a Nueva
-
-47
-00:00:54,983 --> 00:00:55,383
-York.
+00:00:34,685 --> 00:00:35,929
+Soy aiwithpedro.
