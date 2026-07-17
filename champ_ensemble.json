@@ -1,8 +1,8 @@
 {
   "W_mercado": 0.5,
   "ensemble": {
-    "Espana": 57.76,
-    "Argentina": 42.24,
+    "Espana": 57.93,
+    "Argentina": 42.07,
     "Mexico": 0.0,
     "Sudafrica": 0.0,
     "Corea del Sur": 0.0,
@@ -101,8 +101,8 @@
     "Panama": 0.0
   },
   "mercado": {
-    "Espana": 58.39,
-    "Argentina": 41.61,
+    "Espana": 58.74,
+    "Argentina": 41.26,
     "Mexico": NaN,
     "Sudafrica": NaN,
     "Corea del Sur": NaN,
