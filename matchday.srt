@@ -1,115 +1,155 @@
 1
-00:00:00,000 --> 00:00:01,139
-Hoy es viernes y
+00:00:00,000 --> 00:00:01,721
+Aquí están los pronósticos
 
 2
-00:00:01,139 --> 00:00:02,541
-el balón descansa,
+00:00:01,721 --> 00:00:02,918
+del Mundial 2026 de
 
 3
-00:00:02,541 --> 00:00:03,681
-pero en la recta
+00:00:02,918 --> 00:00:05,013
+mi inteligencia artificial para
 
 4
-00:00:03,681 --> 00:00:05,346
-final del Mundial 2026
+00:00:05,013 --> 00:00:05,413
+hoy,
 
 5
-00:00:05,346 --> 00:00:07,099
-hay novedades de fuego.
+00:00:05,312 --> 00:00:06,509
+sábado 18 de julio.
 
 6
-00:00:07,099 --> 00:00:09,553
-Sports Illustrated confirma que
+00:00:06,509 --> 00:00:07,482
+Vamos 66 de 102.
 
 7
-00:00:09,553 --> 00:00:11,130
-Slavko Vinčić será el
+00:00:07,482 --> 00:00:08,230
+Hoy es el día
 
 8
-00:00:11,130 --> 00:00:12,445
-árbitro de la gran
+00:00:08,230 --> 00:00:09,503
+de las semifinales y
 
 9
-00:00:12,445 --> 00:00:13,935
-final entre España y
+00:00:09,503 --> 00:00:10,775
+Francia se mide ante
 
 10
-00:00:13,935 --> 00:00:14,811
-Argentina,
+00:00:10,775 --> 00:00:12,196
+Inglaterra a las cinco
 
 11
-00:00:14,811 --> 00:00:15,863
-el 19 de julio.
+00:00:12,196 --> 00:00:13,019
+de la tarde en
 
 12
-00:00:15,863 --> 00:00:17,090
-En el cuadro real
+00:00:13,019 --> 00:00:14,366
+el Hard Rock Stadium,
 
 13
-00:00:17,090 --> 00:00:18,142
-de las llaves,
+00:00:14,366 --> 00:00:16,087
+buscando asegurar su lugar
 
 14
-00:00:18,142 --> 00:00:20,070
-estos dos gigantes luchan
+00:00:16,087 --> 00:00:16,836
+en la final.
 
 15
-00:00:20,070 --> 00:00:21,122
-por la gloria.
+00:00:16,836 --> 00:00:17,659
+El modelo ve a
 
 16
-00:00:21,122 --> 00:00:22,261
-En la carrera al
+00:00:17,659 --> 00:00:19,380
+Francia con ligera ventaja
 
 17
-00:00:22,261 --> 00:00:22,874
-título,
+00:00:19,380 --> 00:00:20,502
+con un marcador de
 
 18
-00:00:22,874 --> 00:00:23,838
-mi modelo ve a
+00:00:20,502 --> 00:00:21,176
+uno a cero.
 
 19
-00:00:23,838 --> 00:00:25,679
-España como favorita con
+00:00:21,176 --> 00:00:22,148
+Aquí es donde mi
 
 20
-00:00:25,679 --> 00:00:26,731
-57 por ciento.
+00:00:22,148 --> 00:00:24,019
+modelo discrepa del mercado:
 
 21
-00:00:26,731 --> 00:00:28,746
-Según 20 mil simulaciones,
+00:00:24,019 --> 00:00:25,141
+le da a Inglaterra
 
 22
-00:00:28,746 --> 00:00:30,324
-España gana la corona
+00:00:25,141 --> 00:00:26,114
+un 32 por ciento
 
 23
-00:00:30,324 --> 00:00:31,463
-58 por ciento de
+00:00:26,114 --> 00:00:27,910
+de probabilidad mientras el
 
 24
-00:00:31,463 --> 00:00:32,252
-las veces.
+00:00:27,910 --> 00:00:29,407
+consenso solo le otorga
 
 25
-00:00:32,252 --> 00:00:33,830
-Suscríbete a mi canal
+00:00:29,407 --> 00:00:30,304
+25 por ciento.
 
 26
-00:00:33,830 --> 00:00:35,057
-de YouTube y mira
+00:00:30,304 --> 00:00:32,400
+El mercado parece subestimarla,
 
 27
-00:00:35,057 --> 00:00:36,021
-más en el link
+00:00:32,400 --> 00:00:33,821
+pero Francia lleva una
 
 28
-00:00:36,021 --> 00:00:36,722
-de mi bio.
+00:00:33,821 --> 00:00:35,916
+trayectoria contundente en este
 
 29
-00:00:36,722 --> 00:00:38,037
-Soy aiwithpedro.
+00:00:35,916 --> 00:00:37,413
+torneo y esa diferencia
+
+30
+00:00:37,413 --> 00:00:39,433
+defensiva marca la diferencia.
+
+31
+00:00:39,433 --> 00:00:40,780
+Esta es una semifinal
+
+32
+00:00:40,780 --> 00:00:41,678
+de puro honor,
+
+33
+00:00:41,678 --> 00:00:43,399
+ambos equipos luchando por
+
+34
+00:00:43,399 --> 00:00:44,746
+alcanzar la gloria en
+
+35
+00:00:44,746 --> 00:00:45,494
+Nueva York,
+
+36
+00:00:45,494 --> 00:00:46,243
+y así está el
+
+37
+00:00:46,243 --> 00:00:47,290
+cuadro rumbo a la
+
+38
+00:00:47,290 --> 00:00:48,562
+final entre España y
+
+39
+00:00:48,562 --> 00:00:49,759
+Argentina mañana.
