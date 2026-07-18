@@ -67,6 +67,9 @@ def _summary(fh, played, pick, clearest, tr):
         if _fase:
             L.append(f"FASE ACTUAL DEL TORNEO: {_fase}. Nómbrala tal cual si hablas de la fase; JAMÁS digas "
                      f"que es 'fase de grupos' u otra ronda distinta a esta.")
+        if _fase.startswith("TERCER"):
+            L.append("OJO: es el partido por el TERCER PUESTO, entre los PERDEDORES de las semifinales. NO es "
+                     "una semifinal, NO da pase a la final (la final YA está definida): se juega el podio.")
     except Exception:
         pass
     # anclaje temporal: evita que Claude diga "el Mundial comienza/comenzó hoy" en día equivocado

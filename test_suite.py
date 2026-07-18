@@ -560,6 +560,13 @@ try:
     ok("fase_actual: día KO -> 'CUARTOS DE FINAL'; día de grupos -> 'FASE DE GRUPOS'; descanso -> ronda del cuadro",
        _f_ko == "CUARTOS DE FINAL" and _f_gr == "FASE DE GRUPOS" and _f_desc.startswith("SEMIFINALES"),
        f"ko={_f_ko} | grupos={_f_gr} | descanso={_f_desc}")
+    dd.matches_on = lambda t: [{"label": "Tercer puesto", "is_ko": True}]
+    _f_3p = dd.fase_actual("20260718")
+    dd.matches_on = lambda t: [{"label": "Partido", "is_ko": False}]   # slug raro de ESPN (bug 18-jul)
+    _f_raro = dd.fase_actual("20260718")
+    ok("fase_actual: tercer puesto correcto; y en era KO un label raro JAMÁS da 'fase de grupos' (cae al calendario)",
+       _f_3p == "TERCER PUESTO" and _f_raro == "TERCER PUESTO",
+       f"3p={_f_3p} | raro={_f_raro}")
 finally:
     dd.matches_on = _omo2
     if _bak_vb is not None: open("viral_bracket.json", "w", encoding="utf-8").write(_bak_vb)

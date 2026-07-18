@@ -37,8 +37,9 @@ GROUPS = {"A":["Mexico","Sudafrica","Corea del Sur","Chequia"],"B":["Canada","Bo
  "K":["Portugal","R.D. Congo","Uzbekistan","Colombia"],"L":["Inglaterra","Croacia","Ghana","Panama"]}
 TEAM2GROUP = {t: gN for gN, T in GROUPS.items() for t in T}
 ROUND_ES = {"round-of-32":"Dieciseisavos","round-of-16":"Octavos","quarterfinals":"Cuartos",
-            "semifinals":"Semifinal","final":"Final","3rd-place":"Tercer puesto"}
-NO_NUMBER = {"final", "3rd-place"}
+            "semifinals":"Semifinal","final":"Final","3rd-place":"Tercer puesto",
+            "3rd-place-match":"Tercer puesto"}   # ESPN usa '3rd-place-match' (el 18-jul salió como 'Partido'/grupos)
+NO_NUMBER = {"final", "3rd-place", "3rd-place-match"}
 
 HEAD = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
                       "(KHTML, like Gecko) Chrome/124.0 Safari/537.36"}
@@ -243,11 +244,16 @@ def fase_actual(target):
         ms = []
     if ms:
         ko = [m for m in ms if m.get("is_ko") and m.get("label")]
-        if not ko:
+        if not ko and target < "20260628":
             return "FASE DE GRUPOS"
-        import re as _re
-        lab = _re.sub(r"\s*\d+$", "", ko[0]["label"]).upper()
-        return _n.get(lab, lab)
+        if ko:
+            import re as _re
+            lab = _re.sub(r"\s*\d+$", "", ko[0]["label"]).upper()
+            return _n.get(lab, lab)
+        # era ELIMINATORIA con labels raros (p. ej. slug nuevo de ESPN): JAMÁS decir 'grupos'; usa el calendario
+        r = ronda_ko(target)
+        if r:
+            return _n.get(r, r)
     r = ronda_ko(target)
     if r:
         return _n.get(r, r)
