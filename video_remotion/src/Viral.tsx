@@ -172,11 +172,12 @@ export const PronosticoViral: React.FC<{words: Word[]; data: any; audio: string;
   // pausa/screenshot/rebobinado = retención) -> marca. Sin bracket con probs cae al layout clásico
   // (tarjetas -> captura -> barras ChampRace -> marca).
   const hasBr = !!(data.bracket && (data.bracket.qf || []).length === 4);
-  const hasRace = hasBr && !!(data.bracket.probs && Object.keys(data.bracket.probs).length) && data.bracket.estado !== 'CAMPEON';
+  const hasRace0 = hasBr && !!(data.bracket.probs && Object.keys(data.bracket.probs).length) && data.bracket.estado !== 'CAMPEON';
   const champStart = brandStart - Math.round(fps * 4);                                  // solo layout clásico (barras)
-  const capturaStart = hasRace ? brandStart - Math.round(fps * 4.8) : champStart - Math.round(fps * 4.8);
-  const raceStart = hasRace ? capturaStart - Math.round(fps * 4.5) : capturaStart;      // carrera (4.5s) antes de la captura
-  const preEnd = raceStart;                                                             // aquí termina el bloque del cuadro
+  let capturaStart = hasRace0 ? brandStart - Math.round(fps * 4.8) : champStart - Math.round(fps * 4.8);
+  let raceStart = hasRace0 ? capturaStart - Math.round(fps * 4.5) : capturaStart;       // carrera (4.5s) antes de la captura
+  let preEnd = raceStart;                                                               // aquí termina el bloque del cuadro
+  let hasRace = hasRace0;
   // Anclar cada tarjeta a la 1ª MENCIÓN real de su equipo en la voz (independiente), y ORDENAR las tarjetas
   // por ese tiempo: así aparecen en el ORDEN en que el narrador las nombra y quedan SINCRONIZADAS. (El orden de
   // 'partidos' va por hora del partido, que NO coincide con el de la narración —el narrador abre por el estrella—
@@ -203,11 +204,23 @@ export const PronosticoViral: React.FC<{words: Word[]; data: any; audio: string;
     starts.push(s); prev = s;
   }
   const firstCard = starts.length ? starts[0] : hookMin;
-  // escena EL CUADRO (bracket real): anclada a la palabra "cuadro" en la voz; si no se menciona,
-  // entra justo antes de la carrera. Solo si viral_bracket.json vino en los props.
+  // escena EL CUADRO (bracket real) anclada a la palabra "cuadro". SINCRONÍA: si la voz la dice, los actos
+  // del cierre se recalculan HACIA ADELANTE desde esa mención (cuadro -> carrera si cabe -> captura -> marca)
+  // en vez de usar tiempos fijos hacia atrás — antes, con narraciones largas de 1 partido, el cuadro entraba
+  // segundos ANTES de que la voz lo nombrara y todo el cierre se sentía desfasado.
   const brAnchor = hasBr ? anchorOf(words, 'cuadro', hookMin / fps) : null;
-  let bracketStart = brAnchor != null ? Math.round(brAnchor * fps) : preEnd - Math.round(fps * 3.5);
-  bracketStart = Math.max(firstCard + minGap, Math.min(bracketStart, preEnd - Math.round(fps * 2.2)));
+  let bracketStart: number;
+  if (brAnchor != null) {
+    const cuadroLen = Math.round(fps * 3.2), raceLen = Math.round(fps * 4.2), minCap = Math.round(fps * 3);
+    bracketStart = Math.max(firstCard + minGap,
+      Math.min(Math.round(brAnchor * fps), brandStart - cuadroLen - minCap));   // deja sitio a cuadro+captura
+    raceStart = bracketStart + cuadroLen;
+    hasRace = hasRace0 && (brandStart - raceStart) >= (raceLen + minCap);       // carrera solo si CABE
+    capturaStart = hasRace ? Math.min(raceStart + raceLen, brandStart - minCap) : raceStart;
+    preEnd = raceStart;
+  } else {
+    bracketStart = Math.max(firstCard + minGap, Math.min(preEnd - Math.round(fps * 3.5), preEnd - Math.round(fps * 2.2)));
+  }
   const showBr = hasBr && (preEnd - bracketStart) >= Math.round(fps * 1.5);
   const cardsEnd = showBr ? bracketStart : preEnd;
 
@@ -234,9 +247,9 @@ export const PronosticoViral: React.FC<{words: Word[]; data: any; audio: string;
       {/* ACTO: LA CARRERA simulada, pegada al cuadro (realidad -> predicción, campeón como clímax) */}
       {hasRace ? <Sequence from={raceStart} durationInFrames={capturaStart - raceStart}><BracketRace bracket={data.bracket} dur={capturaStart - raceStart} y={-10} s={0.9} /></Sequence> : null}
       {/* ACTO: tarjeta-resumen capturable, penúltima (el "guarda esto" al final) */}
-      <Sequence from={capturaStart} durationInFrames={(hasRace ? brandStart : champStart) - capturaStart}><ResumenCard data={data} /></Sequence>
-      {/* layout clásico (sin carrera): las barras del campeón tras la captura */}
-      {!hasRace ? <Sequence from={champStart} durationInFrames={brandStart - champStart}><ChampRace campeon={data.campeon || []} /></Sequence> : null}
+      <Sequence from={capturaStart} durationInFrames={((hasRace || brAnchor != null) ? brandStart : champStart) - capturaStart}><ResumenCard data={data} /></Sequence>
+      {/* layout clásico (sin carrera ni ancla): las barras del campeón tras la captura */}
+      {!hasRace && brAnchor == null ? <Sequence from={champStart} durationInFrames={brandStart - champStart}><ChampRace campeon={data.campeon || []} /></Sequence> : null}
       {/* cierre */}
       <Sequence from={brandStart} durationInFrames={durationInFrames - brandStart}><Brand /></Sequence>
 
