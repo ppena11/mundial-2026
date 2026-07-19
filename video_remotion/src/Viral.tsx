@@ -247,9 +247,9 @@ export const PronosticoViral: React.FC<{words: Word[]; data: any; audio: string;
       {/* ACTO: LA CARRERA simulada, pegada al cuadro (realidad -> predicción, campeón como clímax) */}
       {hasRace ? <Sequence from={raceStart} durationInFrames={capturaStart - raceStart}><BracketRace bracket={data.bracket} dur={capturaStart - raceStart} y={-10} s={0.9} /></Sequence> : null}
       {/* ACTO: tarjeta-resumen capturable, penúltima (el "guarda esto" al final) */}
-      <Sequence from={capturaStart} durationInFrames={((hasRace || brAnchor != null) ? brandStart : champStart) - capturaStart}><ResumenCard data={data} /></Sequence>
-      {/* layout clásico (sin carrera ni ancla): las barras del campeón tras la captura */}
-      {!hasRace && brAnchor == null ? <Sequence from={champStart} durationInFrames={brandStart - champStart}><ChampRace campeon={data.campeon || []} /></Sequence> : null}
+      <Sequence from={capturaStart} durationInFrames={((hasRace || brAnchor != null || !(data.campeon || []).length) ? brandStart : champStart) - capturaStart}><ResumenCard data={data} /></Sequence>
+      {/* layout clásico (sin carrera ni ancla): las barras del campeón tras la captura — solo si HAY datos */}
+      {!hasRace && brAnchor == null && (data.campeon || []).length ? <Sequence from={champStart} durationInFrames={brandStart - champStart}><ChampRace campeon={data.campeon || []} /></Sequence> : null}
       {/* cierre */}
       <Sequence from={brandStart} durationInFrames={durationInFrames - brandStart}><Brand /></Sequence>
 
