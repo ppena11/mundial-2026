@@ -101,3 +101,4 @@
 {"ts": "2026-07-19T04:02:58.783154+00:00", "matches": [{"home": "Spain", "away": "Argentina", "clean_probs": {"Argentina": 0.26760554619026, "Spain": 0.4177619915525726, "Draw": 0.31463246225716757}, "overround": 0.03893553399809058}]}
 {"ts": "2026-07-19T09:02:13.845878+00:00", "matches": [{"home": "Spain", "away": "Argentina", "clean_probs": {"Argentina": 0.2668892083467749, "Spain": 0.41734961790332475, "Draw": 0.3157611737499004}, "overround": 0.037799999198184775}]}
 {"ts": "2026-07-19T13:59:42.966674+00:00", "matches": [{"home": "Spain", "away": "Argentina", "clean_probs": {"Argentina": 0.26711927674312, "Spain": 0.41575900373340346, "Draw": 0.3171217195234765}, "overround": 0.037859569488395195}]}
+{"ts": "2026-07-19T19:39:07.099198+00:00", "matches": [{"home": "Spain", "away": "Argentina", "clean_probs": {"Argentina": 0.23868422470185652, "Spain": 0.4122547595804039, "Draw": 0.3490610157177397}, "overround": 0.07271842902258285}]}
