@@ -1,203 +1,91 @@
 1
-00:00:00,412 --> 00:00:02,063
-Aquí están los pronósticos
+00:00:00,000 --> 00:00:01,061
+Hoy es lunes en
 
 2
-00:00:02,063 --> 00:00:03,714
-del Mundial 2026 de
+00:00:01,061 --> 00:00:02,299
+el Mundial 2026 y
 
 3
-00:00:03,714 --> 00:00:05,365
-mi inteligencia artificial para
+00:00:02,299 --> 00:00:03,626
+no rueda el balón,
 
 4
-00:00:05,365 --> 00:00:05,778
-hoy,
+00:00:03,626 --> 00:00:05,483
+pero tenemos noticias de
 
 5
-00:00:05,778 --> 00:00:07,429
-domingo 19 de julio.
+00:00:05,483 --> 00:00:06,014
+fuego.
 
 6
-00:00:07,429 --> 00:00:09,080
-Vamos 66 de 103.
+00:00:06,014 --> 00:00:07,429
+La FIFA dispara los
 
 7
-00:00:09,080 --> 00:00:09,480
-En la final,
+00:00:07,429 --> 00:00:08,137
+premios:
 
 8
-00:00:09,080 --> 00:00:11,279
-España se mide ante
+00:00:08,137 --> 00:00:09,817
+51 millones de dólares
 
 9
-00:00:11,279 --> 00:00:12,880
-Argentina con un marcador
+00:00:09,817 --> 00:00:11,055
+para el campeón.
 
 10
-00:00:12,880 --> 00:00:13,839
-previsto de uno a
+00:00:11,055 --> 00:00:12,117
+En el cuadro de
 
 11
-00:00:13,839 --> 00:00:16,040
-cero para los españoles.
+00:00:12,117 --> 00:00:13,178
+la gran final,
 
 12
-00:00:16,040 --> 00:00:17,620
-España llega como favorita
+00:00:13,178 --> 00:00:14,682
+España se enfrenta a
 
 13
-00:00:17,620 --> 00:00:18,539
-con el 42 por
+00:00:14,682 --> 00:00:16,008
+Argentina el 19 de
 
 14
-00:00:18,539 --> 00:00:19,280
-ciento,
+00:00:16,008 --> 00:00:16,539
+julio.
 
 15
-00:00:19,280 --> 00:00:20,359
-y el mercado coincide
+00:00:16,539 --> 00:00:17,689
+En la carrera al
 
 16
-00:00:20,359 --> 00:00:21,539
-con ese porcentaje,
+00:00:17,689 --> 00:00:18,308
+título,
 
 17
-00:00:21,539 --> 00:00:22,739
-así que hay consenso
+00:00:18,308 --> 00:00:19,812
+España lidera con 57
 
 18
-00:00:22,739 --> 00:00:24,359
-claro en la cancha.
+00:00:19,812 --> 00:00:21,934
+por ciento de probabilidad.
 
 19
-00:00:24,359 --> 00:00:25,460
-Lo que veo es
+00:00:21,934 --> 00:00:23,526
+Suscríbete a mi canal
 
 20
-00:00:25,460 --> 00:00:27,480
-un partido ajustado donde
+00:00:23,526 --> 00:00:24,853
+de YouTube para el
 
 21
-00:00:27,480 --> 00:00:28,980
-España domina,
+00:00:24,853 --> 00:00:26,445
+análisis diario en el
 
 22
-00:00:28,980 --> 00:00:30,140
-pero Argentina tiene sus
+00:00:26,445 --> 00:00:27,507
+link de mi bio.
 
 23
-00:00:30,140 --> 00:00:30,620
-cartas:
-
-24
-00:00:30,620 --> 00:00:31,899
-Messi persigue la historia
-
-25
-00:00:31,899 --> 00:00:33,240
-como máximo goleador del
-
-26
-00:00:33,240 --> 00:00:33,700
-torneo,
-
-27
-00:00:33,700 --> 00:00:35,200
-y eso añade una
-
-28
-00:00:35,200 --> 00:00:36,679
-capa de tensión a
-
-29
-00:00:36,679 --> 00:00:37,820
-este duelo.
-
-30
-00:00:37,820 --> 00:00:38,820
-Este uno a cero
-
-31
-00:00:38,820 --> 00:00:40,719
-me parece contundente porque
-
-32
-00:00:40,719 --> 00:00:42,060
-la defensa española ha
-
-33
-00:00:42,060 --> 00:00:43,020
-sido sólida en toda
-
-34
-00:00:43,020 --> 00:00:43,479
-la final,
-
-35
-00:00:43,479 --> 00:00:45,119
-pero España no está
-
-36
-00:00:45,119 --> 00:00:46,460
-para goleadas hoy,
-
-37
-00:00:46,460 --> 00:00:47,140
-es un partido de
-
-38
-00:00:47,140 --> 00:00:49,079
-control y eficiencia.
-
-39
-00:00:49,079 --> 00:00:49,719
-Y así está el
-
-40
-00:00:49,719 --> 00:00:50,520
-cuadro rumbo a Nueva
-
-41
-00:00:50,520 --> 00:00:50,920
-York,
-
-42
-00:00:50,780 --> 00:00:52,340
-con España e Inglaterra
-
-43
-00:00:52,340 --> 00:00:53,659
-escribiendo el desenlace de
-
-44
-00:00:53,659 --> 00:00:54,759
-este Mundial.
-
-45
-00:00:54,759 --> 00:00:56,140
-El fútbol es impredecible,
-
-46
-00:00:56,140 --> 00:00:57,640
-pero mi inteligencia artificial
-
-47
-00:00:57,640 --> 00:00:59,840
-ya leyó el guion.
-
-48
-00:00:59,840 --> 00:01:00,859
-Suscríbete al canal para
-
-49
-00:01:00,859 --> 00:01:02,159
-el análisis completo,
-
-50
-00:01:02,159 --> 00:01:03,119
-link en mi bio.
-
-51
-00:01:03,119 --> 00:01:04,654
+00:00:27,507 --> 00:00:28,833
 Soy aiwithpedro.

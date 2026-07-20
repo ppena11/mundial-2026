@@ -1,8 +1,8 @@
 {
   "W_mercado": 0.5,
   "ensemble": {
-    "Espana": 57.87,
-    "Argentina": 42.13,
+    "Espana": 80.07,
+    "Argentina": 19.93,
     "Mexico": 0.0,
     "Sudafrica": 0.0,
     "Corea del Sur": 0.0,
@@ -51,8 +51,8 @@
     "Panama": 0.0
   },
   "modelo": {
-    "Espana": 56.85,
-    "Argentina": 43.15,
+    "Espana": 100.0,
+    "Argentina": 0.0,
     "Mexico": 0.0,
     "Sudafrica": 0.0,
     "Corea del Sur": 0.0,
@@ -101,8 +101,8 @@
     "Panama": 0.0
   },
   "mercado": {
-    "Espana": 58.88,
-    "Argentina": 41.12,
+    "Espana": 60.15,
+    "Argentina": 39.85,
     "Mexico": NaN,
     "Sudafrica": NaN,
     "Corea del Sur": NaN,

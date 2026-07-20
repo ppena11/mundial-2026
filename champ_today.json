@@ -1,7 +1,6 @@
 {
   "campeon": {
-    "Espana": 56.85,
-    "Argentina": 43.15,
+    "Espana": 100.0,
     "Mexico": 0.0,
     "Sudafrica": 0.0,
     "Corea del Sur": 0.0,
@@ -37,6 +36,7 @@
     "Senegal": 0.0,
     "Irak": 0.0,
     "Noruega": 0.0,
+    "Argentina": 0.0,
     "Argelia": 0.0,
     "Austria": 0.0,
     "Jordania": 0.0,
@@ -149,5 +149,5 @@
     "Ghana": 0.0,
     "Panama": 0.0
   },
-  "fase": "EN CURSO (grupos:72, KO:30)"
+  "fase": "EN CURSO (grupos:72, KO:31)"
 }
