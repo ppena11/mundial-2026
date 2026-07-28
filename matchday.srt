@@ -1,91 +1,87 @@
 1
-00:00:00,000 --> 00:00:00,924
-Hoy es lunes y
+00:00:00,000 --> 00:00:00,982
+Hoy es martes y
 
 2
-00:00:00,924 --> 00:00:02,102
-no hay partidos,
+00:00:00,982 --> 00:00:02,373
+la pelota descansa,
 
 3
-00:00:02,102 --> 00:00:03,868
-pero tenemos una noticia
+00:00:02,373 --> 00:00:03,601
+pero el cuadro del
 
 4
-00:00:03,868 --> 00:00:04,540
-de fuego.
+00:00:03,601 --> 00:00:05,566
+Mundial 2026 está candente.
 
 5
-00:00:04,540 --> 00:00:06,138
-España es campeona del
+00:00:05,566 --> 00:00:06,957
+España es el campeón
 
 6
-00:00:06,138 --> 00:00:06,979
-mundo 2026.
+00:00:06,957 --> 00:00:08,676
+del mundo según nuestras
 
 7
-00:00:06,979 --> 00:00:09,249
-Nuestro modelo de inteligencia
+00:00:08,676 --> 00:00:09,740
+simulaciones,
 
 8
-00:00:09,249 --> 00:00:10,595
-artificial le da un
+00:00:09,740 --> 00:00:10,559
+con un 80 por
 
 9
-00:00:10,595 --> 00:00:11,688
-80 por ciento de
+00:00:10,559 --> 00:00:12,360
+ciento de probabilidad de
 
 10
-00:00:11,688 --> 00:00:13,706
-probabilidad de levantar la
+00:00:12,360 --> 00:00:13,587
+levantar la copa.
 
 11
-00:00:13,706 --> 00:00:14,127
-copa,
+00:00:13,587 --> 00:00:15,061
+Argentina le pisa los
 
 12
-00:00:14,127 --> 00:00:16,145
-mientras Argentina tiene un
+00:00:15,061 --> 00:00:16,289
+talones con 20 por
 
 13
-00:00:16,145 --> 00:00:17,154
-20 por ciento.
+00:00:16,289 --> 00:00:16,862
+ciento.
 
 14
-00:00:17,154 --> 00:00:18,667
-Y lo más sorprendente
+00:00:16,862 --> 00:00:18,826
+Infantino acaba de defender
 
 15
-00:00:18,667 --> 00:00:19,929
-es que México mete
+00:00:18,826 --> 00:00:20,627
+el torneo contra críticas
 
 16
-00:00:19,929 --> 00:00:21,274
-la cabeza entre los
+00:00:20,627 --> 00:00:21,691
+en Dallas News.
 
 17
-00:00:21,274 --> 00:00:22,367
-tres primeros.
+00:00:21,691 --> 00:00:23,164
+Suscríbete a mi canal
 
 18
-00:00:22,367 --> 00:00:24,301
-Suscríbete a nuestro canal
-
-19
-00:00:24,301 --> 00:00:25,563
+00:00:23,164 --> 00:00:24,392
 de YouTube para el
 
+19
+00:00:24,392 --> 00:00:25,866
+análisis diario y más
+
 20
-00:00:25,563 --> 00:00:26,992
-análisis completo,
+00:00:25,866 --> 00:00:27,175
+detalles en el link
 
 21
-00:00:26,992 --> 00:00:28,085
-y visita el link
+00:00:27,175 --> 00:00:27,830
+de mi bio.
 
 22
-00:00:28,085 --> 00:00:28,758
-en mi bio.
-
-23
-00:00:28,758 --> 00:00:30,020
+00:00:27,830 --> 00:00:29,058
 Soy aiwithpedro.
