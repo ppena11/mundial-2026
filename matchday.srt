@@ -1,75 +1,87 @@
 1
-00:00:00,000 --> 00:00:00,940
-Hoy miércoles no rueda
+00:00:00,000 --> 00:00:01,418
+La FIFA investigará a
 
 2
-00:00:00,940 --> 00:00:01,679
-el balón,
+00:00:01,418 --> 00:00:02,758
+Argentina por lo que
 
 3
-00:00:01,679 --> 00:00:02,720
-pero tenemos la noticia
+00:00:02,758 --> 00:00:03,941
+pasó en el Mundial
 
 4
-00:00:02,720 --> 00:00:03,720
-más grande del Mundial
+00:00:03,941 --> 00:00:04,341
+2026,
 
 5
-00:00:03,720 --> 00:00:05,179
-2026.
+00:00:04,335 --> 00:00:05,517
+según Telemundo.
 
 6
-00:00:05,179 --> 00:00:06,179
-Según mis veinte mil
+00:00:05,517 --> 00:00:06,621
+Mientras tanto,
 
 7
-00:00:06,179 --> 00:00:07,360
-simulaciones,
+00:00:06,621 --> 00:00:08,592
+España sigue siendo campeona
 
 8
-00:00:07,360 --> 00:00:08,339
-España es la campeona
+00:00:08,592 --> 00:00:09,617
+del mundo con un
 
 9
-00:00:08,339 --> 00:00:09,779
-del mundo con ochenta
+00:00:09,617 --> 00:00:10,641
+80 por ciento de
 
 10
-00:00:09,779 --> 00:00:11,660
-por ciento de probabilidad.
+00:00:10,641 --> 00:00:11,666
+probabilidad,
 
 11
-00:00:11,660 --> 00:00:12,839
-El cuadro está cerrado
+00:00:11,666 --> 00:00:13,479
+mientras que Argentina cae
 
 12
-00:00:12,839 --> 00:00:13,800
-y los números hablan
+00:00:13,479 --> 00:00:14,583
+al 20 por ciento.
 
 13
-00:00:13,800 --> 00:00:14,960
-solos.
+00:00:14,583 --> 00:00:16,396
+México sorprende entre los
 
 14
-00:00:14,960 --> 00:00:15,839
-Suscríbete a mi canal
+00:00:16,396 --> 00:00:17,342
+tres mejores,
 
 15
-00:00:15,839 --> 00:00:17,179
-de YouTube para el
+00:00:17,342 --> 00:00:18,445
+pero con cero por
 
 16
-00:00:17,179 --> 00:00:18,600
-análisis detallado y sigue
+00:00:18,445 --> 00:00:19,943
+ciento de ser campeón.
 
 17
-00:00:18,600 --> 00:00:19,239
-todo en el link
+00:00:19,943 --> 00:00:21,362
+Suscríbete a mi canal
 
 18
-00:00:19,239 --> 00:00:20,260
-de mi bio.
+00:00:21,362 --> 00:00:22,623
+de YouTube para los
 
 19
-00:00:20,260 --> 00:00:21,605
+00:00:22,623 --> 00:00:24,515
+detalles diarios del torneo
+
+20
+00:00:24,515 --> 00:00:26,171
+y todas las predicciones
+
+21
+00:00:26,171 --> 00:00:26,722
+de la IA.
+
+22
+00:00:26,722 --> 00:00:27,905
 Soy aiwithpedro.
