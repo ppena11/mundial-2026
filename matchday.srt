@@ -1,75 +1,87 @@
 1
-00:00:00,000 --> 00:00:00,760
-Hoy es viernes y
+00:00:00,000 --> 00:00:00,959
+Hoy es sábado,
 
 2
-00:00:00,760 --> 00:00:01,919
-descansamos del fútbol,
+00:00:00,959 --> 00:00:02,078
+no rueda el balón
 
 3
-00:00:01,919 --> 00:00:02,759
-pero tenemos noticia de
+00:00:02,078 --> 00:00:03,357
+en el Mundial 2026,
 
 4
-00:00:02,759 --> 00:00:03,919
-campeonato.
+00:00:03,357 --> 00:00:04,156
+pero la IA ya
 
 5
-00:00:03,919 --> 00:00:05,559
-España es oficialmente campeona
+00:00:04,156 --> 00:00:05,515
+tiene el veredicto.
 
 6
-00:00:05,559 --> 00:00:08,119
-del mundo 2026.
+00:00:05,515 --> 00:00:07,673
+Según mis 20.000 simulaciones,
 
 7
-00:00:08,119 --> 00:00:09,560
-Nuestro modelo la proyecta
+00:00:07,673 --> 00:00:08,792
+España es la gran
 
 8
-00:00:09,560 --> 00:00:10,380
-con el 80 por
+00:00:08,792 --> 00:00:10,630
+favorita para ser campeona
 
 9
-00:00:10,380 --> 00:00:12,000
-ciento de probabilidad de
+00:00:10,630 --> 00:00:11,669
+del mundo con un
 
 10
-00:00:12,000 --> 00:00:13,220
-ganar el título,
+00:00:11,669 --> 00:00:12,708
+80 por ciento de
 
 11
-00:00:13,220 --> 00:00:13,980
-muy por encima de
+00:00:12,708 --> 00:00:13,748
+probabilidad.
 
 12
-00:00:13,980 --> 00:00:15,060
-Argentina con el 20
+00:00:13,748 --> 00:00:15,266
+Argentina le sigue con
 
 13
-00:00:15,060 --> 00:00:16,219
-por ciento.
+00:00:15,266 --> 00:00:16,385
+un 20 por ciento.
 
 14
-00:00:16,219 --> 00:00:17,100
-Suscríbete a mi canal
+00:00:16,385 --> 00:00:17,504
+El cuadro ya está
 
 15
-00:00:17,100 --> 00:00:18,399
-de YouTube para ver
+00:00:17,504 --> 00:00:18,863
+definido y España no
 
 16
-00:00:18,399 --> 00:00:19,980
-el análisis completo en
+00:00:18,863 --> 00:00:19,662
+ha fallado.
 
 17
-00:00:19,980 --> 00:00:20,519
-el link de mi
+00:00:19,662 --> 00:00:21,101
+Suscríbete a mi canal
 
 18
-00:00:20,519 --> 00:00:21,059
-bio.
+00:00:21,101 --> 00:00:22,380
+de YouTube para ver
 
 19
-00:00:21,059 --> 00:00:22,410
+00:00:22,380 --> 00:00:23,979
+el análisis completo en
+
+20
+00:00:23,979 --> 00:00:24,778
+el link de mi
+
+21
+00:00:24,778 --> 00:00:25,178
+bio.
+
+22
+00:00:25,098 --> 00:00:26,297
 Soy aiwithpedro.
