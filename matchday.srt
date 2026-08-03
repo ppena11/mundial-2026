@@ -1,95 +1,79 @@
 1
-00:00:00,000 --> 00:00:01,082
-Hoy es domingo y
+00:00:00,000 --> 00:00:01,476
+España es campeona del
 
 2
-00:00:01,082 --> 00:00:02,414
-el balón descansa,
+00:00:01,476 --> 00:00:02,253
+mundo 2026.
 
 3
-00:00:02,414 --> 00:00:03,246
-pero la IA ya
+00:00:02,253 --> 00:00:04,273
+La inteligencia artificial lo
 
 4
-00:00:03,246 --> 00:00:04,495
-tiene el campeón.
+00:00:04,273 --> 00:00:06,138
+confirmó analizando toda la
 
 5
-00:00:04,495 --> 00:00:05,910
-España lidera con 80
+00:00:06,138 --> 00:00:07,692
+recta final del torneo:
 
 6
-00:00:05,910 --> 00:00:07,824
-por ciento de probabilidad
+00:00:07,692 --> 00:00:08,935
+La Roja terminó con
 
 7
-00:00:07,824 --> 00:00:09,156
-de ser campeona del
+00:00:08,935 --> 00:00:09,945
+80 por ciento de
 
 8
-00:00:09,156 --> 00:00:10,405
-mundo en el torneo
+00:00:09,945 --> 00:00:12,043
+probabilidades de quedarse con
 
 9
-00:00:10,405 --> 00:00:10,988
-de 2026.
+00:00:12,043 --> 00:00:12,742
+la corona,
 
 10
-00:00:10,988 --> 00:00:12,569
-Argentina le sigue con
+00:00:12,742 --> 00:00:14,297
+dejando a Argentina con
 
 11
-00:00:12,569 --> 00:00:13,568
-20 por ciento.
+00:00:14,297 --> 00:00:15,540
+solo 20 por ciento.
 
 12
-00:00:13,568 --> 00:00:14,817
-Lo sorprendente:
+00:00:15,540 --> 00:00:16,861
+Hoy no hay partidos,
 
 13
-00:00:14,817 --> 00:00:16,065
-México entra en el
+00:00:16,861 --> 00:00:18,259
+pero en nuestro canal
 
 14
-00:00:16,065 --> 00:00:16,482
-top 3,
+00:00:18,259 --> 00:00:19,658
+de YouTube tenemos el
 
 15
-00:00:16,482 --> 00:00:17,564
-aunque con 0 por
+00:00:19,658 --> 00:00:21,212
+cuadro completo y todos
 
 16
-00:00:17,564 --> 00:00:18,979
-ciento de chances de
+00:00:21,212 --> 00:00:22,144
+los detalles.
 
 17
-00:00:18,979 --> 00:00:19,478
-ganar.
+00:00:22,144 --> 00:00:23,543
+Suscríbete y sigue el
 
 18
-00:00:19,478 --> 00:00:20,977
-Suscríbete a mi canal
+00:00:23,543 --> 00:00:24,942
+análisis diario en el
 
 19
-00:00:20,977 --> 00:00:22,309
-de YouTube para ver
-
-20
-00:00:22,309 --> 00:00:23,724
-el cuadro completo y
-
-21
-00:00:23,724 --> 00:00:25,555
-todos los pronósticos día
-
-22
-00:00:25,555 --> 00:00:26,221
-a día en el
-
-23
-00:00:26,221 --> 00:00:27,220
+00:00:24,942 --> 00:00:25,874
 link de mi bio.
 
-24
-00:00:27,220 --> 00:00:28,469
+20
+00:00:25,874 --> 00:00:27,040
 Soy aiwithpedro.
