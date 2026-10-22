@@ -1,5 +1,5 @@
-7 de 7 aciertos: Mi IA predijo España campeón
+7 de 7 aciertos: Cómo mi IA predijo a España campeona
 
-Cien por ciento de precisión desde cuartos de final. El tour completo de cómo mi inteligencia artificial acertó cada resultado hasta la final. Aprende IA conmigo.
+Cien por ciento de precisión desde cuartos de final. Descubre cómo construí un modelo de IA que predijo cada resultado del camino al título mundial.
 
-#Mundial2026 #IA #Predicciones #Espana #InteligenciaArtificial
+#Mundial2026 #IA #Predicciones #Espana #MachineLearning
