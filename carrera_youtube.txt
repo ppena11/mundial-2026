@@ -1,5 +1,5 @@
-ESPAÑA CAMPEONA: 7 DE 7 ACIERTOS CON IA
+7/7 aciertos: Cómo mi IA predijo a España campeón
 
-La carrera al título: cien por ciento de precisión desde cuartos de final. Cómo mi inteligencia artificial predijo cada paso.
+Tour retrospectivo por la carrera al título. Cien por ciento de aciertos desde cuartos de final. Descubre cómo construí este modelo de IA.
 
-#Mundial2026 #InteligenciaArtificial #EspañaCampeona #Predicciones #IAFutbol
+#Mundial2026 #IA #Predicciones #PédroAI #Espana
