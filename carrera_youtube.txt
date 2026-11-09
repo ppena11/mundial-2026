@@ -1,5 +1,5 @@
-7 de 7 aciertos: España campeona mundial
+7 de 7 ACIERTOS: Mi IA predijo a España campeona
 
-Mi IA acertó todos los resultados desde cuartos: cien por ciento. Mira cómo predije a España campeona del mundo.
+Cien por ciento de precisión desde cuartos de final. Sesenta y siete de ciento cuatro aciertos totales en todo el torneo. Así construí una IA que predice el fútbol.
 
-#Mundial2026 #InteligenciaArtificial #PremiosiaClavados #Espana #IA
+#Mundial2026 #IA #Predicciones #ArtificialIntelligence #Espana
